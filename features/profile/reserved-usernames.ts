@@ -42,8 +42,6 @@ export const RESERVED_USERNAMES = new Set([
   "workspace",
   "workspaces",
   "ai",
-  "explore",
-  "stories",
   "prava",
 ]);
 

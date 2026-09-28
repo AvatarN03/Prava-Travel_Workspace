@@ -2,9 +2,7 @@ import { Suspense } from "react";
 
 import { AlertCircle } from "lucide-react";
 
-import { ProfileEditor } from "@/features/profile/components/profile-editor";
-
-import { getCurrentProfile } from "@/features/profile/actions";
+import { getCurrentProfile, ProfileEditor } from "@/features/profile";
 
 export const dynamic = "force-dynamic";
 

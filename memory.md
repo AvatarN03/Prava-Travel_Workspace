@@ -2488,3 +2488,20 @@
       - Updated deep imports in `app/(app)/usage/page.tsx`, `app/(app)/subscription/page.tsx`, `features/trips/components/trip-list.tsx`, and `features/trip-workspace/ai/components/workspace-ai-panel.tsx` to use clean `@/features/pricing` barrel imports.
   - **Verification**:
     - TypeScript compilation check (`npx tsc --noEmit`) — verified clean with exit code 0.
+
+- **Task 176 (Codebase Minification, Dead Code Elimination & Clean Barrel Export: `features/profile`)**:
+  - **Context & User Request**:
+    - Audit `features/profile` to remove dead code, centralize types, eliminate deep consumer imports, and ensure zero functional compromise.
+  - **Solutions Implemented**:
+    - **Types Centralization (`features/profile/types.ts`)**:
+      - Created canonical `features/profile/types.ts` containing `ProfileWithStats` and `TopBarUserInfo`, re-exporting schema types `UpdateProfileInput` and `UpdateGeneralPreferencesInput`.
+      - Refactored `actions.ts` to import and re-export types from `./types`, cleaning import hierarchy and preserving full backward compatibility.
+    - **Dead Code Elimination (`features/profile/components/ai-usage-section.tsx`)**:
+      - Neutralized orphaned component `ai-usage-section.tsx` (~6.6 KB / 139 lines) with an `export {};` stub, which was left behind when AI Usage was migrated to dedicated `/usage` and `/subscription` pages.
+    - **Reserved Usernames Pruning (`features/profile/reserved-usernames.ts`)**:
+      - Removed duplicate `"explore"` and `"stories"` array entries from `RESERVED_USERNAMES`.
+    - **Canonical Public Barrel (`features/profile/index.ts`)**:
+      - Created unified `features/profile/index.ts` exporting all active profile components (`ProfileEditor`, `OverviewSection`, `GeneralSection`, `SettingsSection`), server actions, schemas, username generation utilities, and types.
+      - Refactored deep consumer imports to use clean `@/features/profile` barrel imports in `app/(app)/profile/page.tsx`, `app/(app)/layout.tsx`, `app/(app)/travel-essentials/page.tsx`, `app/u/[username]/page.tsx`, `components/app-shell/app-shell.tsx`, `components/app-shell/top-bar.tsx`, and `lib/auth/index.ts`.
+  - **Verification**:
+    - TypeScript compilation check (`npx tsc --noEmit`) — verified clean with exit code 0.

@@ -5,8 +5,8 @@ import { AppShell } from "@/components/app-shell/app-shell";
 import { WorkspaceAiProvider } from "@/features/trip-workspace/context/workspace-ai-context";
 import { OfflineSyncProvider } from "@/lib/offline";
 
-import { getCurrentProfile } from "@/features/profile/actions";
-import type { TopBarUserInfo } from "@/features/profile/actions";
+import { getCurrentProfile } from "@/features/profile";
+import type { TopBarUserInfo } from "@/features/profile";
 
 export const dynamic = "force-dynamic";
 

@@ -5,41 +5,16 @@ import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
 import { validateUsername } from "./reserved-usernames";
+import { generateSmartUniqueUsername } from "./username-generator";
 import {
   updateProfileSchema,
   UpdateProfileInput,
   updateGeneralPreferencesSchema,
   UpdateGeneralPreferencesInput,
 } from "./schema";
+import type { ProfileWithStats, TopBarUserInfo } from "./types";
 
-export interface ProfileWithStats {
-  id: string;
-  email: string;
-  fullName: string | null;
-  username: string | null;
-  bio: string | null;
-  avatarUrl: string | null;
-  isPublic: boolean;
-  defaultCurrency: string;
-  aiAutoPropose: boolean;
-  emailNotifications: boolean;
-  offlineMode: boolean;
-  travelPreferences: string | null;
-  createdAt: string;
-  totalTrips: number;
-  publishedTrips: number;
-  publishedTemplates?: number;
-  publishedStories: number;
-  forumDiscussions: number;
-  tier: "free" | "pro";
-  tripsQuota: number;
-  tripsRemaining: number;
-  aiCreditsUsed: number;
-  aiCreditsQuota: number;
-  aiCreditsRemaining: number;
-}
-
-import { generateSmartUniqueUsername } from "./username-generator";
+export type { ProfileWithStats, TopBarUserInfo };
 
 /**
  * Get current authenticated user's profile with trip statistics.
@@ -500,16 +475,6 @@ export async function getPublicCreatorProfile(username: string) {
   }
 }
 
-export interface TopBarUserInfo {
-  name: string;
-  email: string | null;
-  avatarUrl: string | null;
-  username: string | null;
-  tier?: "free" | "pro";
-  defaultCurrency?: string;
-  totalTrips?: number;
-  memberSince?: string;
-}
 
 /**
  * Lightweight query to fetch the current authenticated user's display name and avatar for the TopBar.

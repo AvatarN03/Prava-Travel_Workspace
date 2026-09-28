@@ -2,7 +2,7 @@ import { Suspense } from "react";
 
 import { TravelEssentialsShell } from "./travel-essentials-shell";
 
-import { getCurrentProfile } from "@/features/profile/actions";
+import { getCurrentProfile } from "@/features/profile";
 import { fetchCurrencyPerformance, fetchFxRates } from "@/features/travel-essentials/currency/currency-service";
 import { getVaultLinks } from "@/features/travel-essentials/vault/actions";
 import { fetchCitySuggestions, fetchWeather } from "@/features/travel-essentials/weather/weather-service";

@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import type { User } from "@supabase/supabase-js";
-import { generateSmartUniqueUsername } from "@/features/profile/username-generator";
+import { generateSmartUniqueUsername } from "@/features/profile";
 
 /**
  * Ensures a Supabase auth user is reliably synced with the Postgres Profile table.
