@@ -3,18 +3,8 @@ export const MAX_PRO_TRIPS = 25;
 export const MAX_FREE_AI_MESSAGES = 30;
 export const MAX_PRO_AI_MESSAGES = 150;
 
-export interface PricingPlan {
-  id: "free" | "pro";
-  name: string;
-  badge?: string;
-  tagline: string;
-  monthlyPrice: number;
-  annualPrice: number;
-  features: string[];
-  limitations?: string[];
-  ctaText: string;
-  popular?: boolean;
-}
+import type { PricingPlan } from "./types";
+export type { PricingPlan };
 
 export const PRICING_PLANS: PricingPlan[] = [
   {

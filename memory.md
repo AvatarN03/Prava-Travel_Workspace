@@ -2473,3 +2473,18 @@
       - Cleaned barrel export in `features/landing/index.ts` by removing dead `TravelNetworkBackground`.
   - **Verification**:
     - TypeScript compilation check (`npx tsc --noEmit`) — verified clean with exit code 0.
+
+- **Task 175 (Codebase Minification & Clean Barrel Export: `features/pricing`)**:
+  - **Context & User Request**:
+    - Audit `features/pricing` to remove dead code, centralize types, eliminate deep consumer imports, and ensure zero functional compromise.
+  - **Solutions Implemented**:
+    - **Types Centralization (`features/pricing/types.ts`)**:
+      - Created canonical `features/pricing/types.ts` containing `AccountUsageData`, `MonthlyHistoryItem`, `TripAiUsageItem`, `ConvertedPricingDTO`, `PolarCheckoutResult`, and `PricingPlan`.
+      - Refactored `actions.ts` and `pricing-config.ts` to import and re-export types from `./types`, ensuring full backward compatibility.
+    - **Dead Code Elimination (`features/pricing/actions.ts`)**:
+      - Removed obsolete `simulatePolarDowngrade` server action (~30 lines), which was left behind after the development "Test Free" button was removed from the subscription banner.
+    - **Canonical Public Barrel (`features/pricing/index.ts`)**:
+      - Created unified `features/pricing/index.ts` exporting all components (`AccountUsageView`, `UsageView`, `UpgradeDialog`, `UsageChart`), server actions, tier configs, and types.
+      - Updated deep imports in `app/(app)/usage/page.tsx`, `app/(app)/subscription/page.tsx`, `features/trips/components/trip-list.tsx`, and `features/trip-workspace/ai/components/workspace-ai-panel.tsx` to use clean `@/features/pricing` barrel imports.
+  - **Verification**:
+    - TypeScript compilation check (`npx tsc --noEmit`) — verified clean with exit code 0.

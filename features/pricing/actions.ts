@@ -12,55 +12,21 @@ import {
   fetchFxRates,
   SUPPORTED_CURRENCIES,
 } from "@/features/travel-essentials/currency/currency-service";
+import type {
+  AccountUsageData,
+  ConvertedPricingDTO,
+  MonthlyHistoryItem,
+  PolarCheckoutResult,
+  TripAiUsageItem,
+} from "./types";
 
-export interface MonthlyHistoryItem {
-  id: string;
-  month: string;
-  period: string;
-  plan: "Free Explorer" | "Pro Wanderer";
-  tripsCreated: number;
-  tripsUsed: number;
-  tripsQuota: number;
-  aiCreditsUsed: number;
-  aiCreditsQuota: number;
-  aiCreditsRemaining: number;
-  status: "Active Cycle" | "Completed";
-}
-
-export interface TripAiUsageItem {
-  id: string;
-  title: string;
-  destination: string | null;
-  createdAt: string;
-  coverImageUrl?: string | null;
-  creditsUsed: number;
-  percentageOfQuota: number;
-}
-
-export interface AccountUsageData {
-  tier: "free" | "pro";
-  tierName: "Free Explorer" | "Pro Wanderer";
-  tripsUsed: number;
-  tripsQuota: number;
-  tripsRemaining: number;
-  aiCreditsUsed: number;
-  aiCreditsQuota: number;
-  aiCreditsRemaining: number;
-  storiesCount: number;
-  totalExpensesLogged: number;
-  billingCycleStart: string;
-  billingCycleEnd: string;
-  nextRenewalDate?: string;
-  daysUntilRenewal?: number;
-  currentMonthName: string;
-  monthlyHistory: MonthlyHistoryItem[];
-  tripUsage: TripAiUsageItem[];
-  subscription?: {
-    status: string;
-    currentPeriodEnd: string | null;
-    cancelAtPeriodEnd: boolean;
-  } | null;
-}
+export type {
+  AccountUsageData,
+  ConvertedPricingDTO,
+  MonthlyHistoryItem,
+  PolarCheckoutResult,
+  TripAiUsageItem,
+};
 
 export async function getAccountUsage(): Promise<{
   success: boolean;
@@ -403,21 +369,6 @@ export async function getAccountUsage(): Promise<{
   }
 }
 
-export interface ConvertedPricingDTO {
-  currencyCode: string;
-  currencySymbol: string;
-  rateFromInr: number;
-  monthlyInr: number;
-  annualInr: number;
-  monthlyConverted: number;
-  annualConverted: number;
-  annualMonthlyEquivalent: number;
-  savingsAmount: string;
-  formattedMonthly: string;
-  formattedAnnual: string;
-  formattedAnnualMonthly: string;
-}
-
 export async function getUserPricingCurrency(requestedCurrency?: string): Promise<ConvertedPricingDTO> {
   const defaultPricing: ConvertedPricingDTO = {
     currencyCode: "INR",
@@ -497,14 +448,6 @@ export async function getUserPricingCurrency(requestedCurrency?: string): Promis
     console.error("Error determining user pricing currency:", err);
     return defaultPricing;
   }
-}
-
-export interface PolarCheckoutResult {
-  success: boolean;
-  checkoutUrl?: string;
-  isSimulation?: boolean;
-  message?: string;
-  error?: string;
 }
 
 /**
@@ -789,39 +732,6 @@ export async function simulatePolarUpgrade(params: {
     return { success: true };
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Failed to activate Pro tier";
-    return { success: false, error: message };
-  }
-}
-
-/**
- * Development simulation action to revert to Free Explorer tier
- */
-export async function simulatePolarDowngrade(): Promise<{ success: boolean; error?: string }> {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return { success: false, error: "Unauthorized" };
-    }
-
-    const { error: updateError } = await supabase.auth.updateUser({
-      data: {
-        tier: "free",
-        is_pro: false,
-      },
-    });
-
-    if (updateError) {
-      return { success: false, error: updateError.message };
-    }
-
-    return { success: true };
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Failed to downgrade tier";
     return { success: false, error: message };
   }
 }

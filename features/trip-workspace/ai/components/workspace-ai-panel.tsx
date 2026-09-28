@@ -34,7 +34,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AiProposalCard } from "./ai-proposal-card";
-import { UpgradeDialog } from "@/features/pricing/components/upgrade-dialog";
+import { UpgradeDialog } from "@/features/pricing";
 
 import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
 

@@ -35,7 +35,7 @@ import { Trip, TripStatus, TripViewMode, TripSortOption, TripUsageQuota } from "
 import { TripCard } from "./trip-card";
 import { TripTableView } from "./trip-table-view";
 import { CreateTripDialog } from "./create-trip-dialog";
-import { UpgradeDialog } from "@/features/pricing/components/upgrade-dialog";
+import { UpgradeDialog } from "@/features/pricing";
 import { useOfflineSyncContext, getOfflineTrips } from "@/lib/offline";
 
 interface TripListProps {

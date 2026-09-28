@@ -1,8 +1,10 @@
 import { Suspense } from "react";
 
-import { AccountUsageView } from "@/features/pricing/components/account-usage-view";
-
-import { getAccountUsage, getUserPricingCurrency } from "@/features/pricing/actions";
+import {
+  AccountUsageView,
+  getAccountUsage,
+  getUserPricingCurrency,
+} from "@/features/pricing";
 
 export const dynamic = "force-dynamic";
 
