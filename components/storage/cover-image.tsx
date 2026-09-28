@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { updateTripCoverImage } from "@/features/storage/actions";
+import { updateTripCoverImage } from "@/features/storage";
 import { ImageUpload } from "./image-upload";
 import {
   Dialog,

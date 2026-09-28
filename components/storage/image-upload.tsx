@@ -3,11 +3,11 @@
 import { useRef, useState } from "react";
 import { AlertCircle, Loader2, UploadCloud, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { uploadImageAction } from "@/features/storage/actions";
+import { uploadImageAction, type StorageFolder } from "@/features/storage";
 import { resizeImageToBlob } from "@/lib/utils/image-resize";
 
 interface ImageUploadProps {
-  folder?: "trips" | "avatars" | "posts" | "community" | "stories";
+  folder?: StorageFolder;
   currentImageUrl?: string | null;
   onUploaded: (url: string) => void;
   onRemoved?: () => void;

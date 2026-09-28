@@ -5,7 +5,7 @@ import { useState, useRef } from "react";
 import { Camera, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { uploadImageAction, updateProfileAvatar } from "@/features/storage/actions";
+import { uploadImageAction, updateProfileAvatar } from "@/features/storage";
 import { resizeImageToBlob } from "@/lib/utils/image-resize";
 
 interface AvatarUploadProps {

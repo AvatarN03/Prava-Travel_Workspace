@@ -10,6 +10,8 @@ import {
   MAX_FILE_SIZE_BYTES,
 } from "@/lib/storage";
 
+import type { StorageFolder } from "./types";
+
 /**
  * Server action to upload an image to Supabase Storage.
  */
@@ -26,13 +28,7 @@ export async function uploadImageAction(formData: FormData) {
     }
 
     const file = formData.get("file") as File | null;
-    const folder =
-      (formData.get("folder") as
-        | "trips"
-        | "avatars"
-        | "posts"
-        | "community"
-        | "stories") || "trips";
+    const folder = (formData.get("folder") as StorageFolder) || "trips";
 
     if (!file || typeof file === "string") {
       return { success: false, error: "No image file provided." };

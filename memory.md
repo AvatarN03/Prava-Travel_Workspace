@@ -2505,3 +2505,16 @@
       - Refactored deep consumer imports to use clean `@/features/profile` barrel imports in `app/(app)/profile/page.tsx`, `app/(app)/layout.tsx`, `app/(app)/travel-essentials/page.tsx`, `app/u/[username]/page.tsx`, `components/app-shell/app-shell.tsx`, `components/app-shell/top-bar.tsx`, and `lib/auth/index.ts`.
   - **Verification**:
     - TypeScript compilation check (`npx tsc --noEmit`) — verified clean with exit code 0.
+
+- **Task 177 (Types Standardization & Clean Barrel Export: `features/storage`)**:
+  - **Context & User Request**:
+    - Audit `features/storage` to ensure zero bloat, standardize folder typing, eliminate deep consumer imports, and create a public barrel export.
+  - **Solutions Implemented**:
+    - **Types Standardization (`features/storage/types.ts`)**:
+      - Created `features/storage/types.ts` defining canonical `StorageFolder` type (`"trips" | "avatars" | "posts" | "community" | "stories"`).
+      - Refactored `actions.ts` and `components/storage/image-upload.tsx` to use `StorageFolder` instead of repeated inline string unions.
+    - **Canonical Public Barrel (`features/storage/index.ts`)**:
+      - Created unified `features/storage/index.ts` exporting all server actions (`uploadImageAction`, `updateTripCoverImage`, `updateProfileAvatar`) and types (`StorageFolder`).
+      - Refactored deep consumer imports to use clean `@/features/storage` barrel imports across `components/storage/image-upload.tsx`, `components/storage/cover-image.tsx`, and `components/storage/avatar-upload.tsx`.
+  - **Verification**:
+    - TypeScript compilation check (`npx tsc --noEmit`) — verified clean with exit code 0.
