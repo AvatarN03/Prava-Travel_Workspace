@@ -1,6 +1,5 @@
 "use client";
-
-import { ArrowUpRight, CheckCircle2, Coins, Compass, Hotel, PieChart, ShieldCheck, TrendingUp, Utensils } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
 export function ExpensesSection() {
   const expenseEntries = [

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { AlertCircle, Cloud, Globe2, PhoneCall, Sun, Zap } from "lucide-react";
+import { Cloud, Globe2, PhoneCall, Sun, Zap } from "lucide-react";
 
 export function TravelEssentialsSection() {
   const [inrAmount, setInrAmount] = useState<number>(10000);

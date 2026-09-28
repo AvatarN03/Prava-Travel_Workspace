@@ -2457,3 +2457,19 @@
     - **Verification**:
       - TypeScript check (`npx tsc --noEmit`) — exit code 0.
       - Production build (`npx next build`) — exit code 0, all routes static and dynamic optimized.
+
+- **Task 174 (Codebase Minification & Bloat Cleanup: `features/dashboard` and `features/landing`)**:
+  - **Context & User Request**:
+    - Audit subfolders of `features/` to remove bloat, eliminate dead code, extract duplicated types/constants when beneficial, and minify without functional compromise.
+  - **Solutions Implemented**:
+    - **`features/dashboard`**:
+      - Extracted duplicated `getCurrencyConfig` helper from `dashboard-metrics.tsx` and `financial-snapshot-card.tsx` into canonical shared utility `lib/utils/currency.ts` with `CurrencyConfig` interface.
+      - Extracted `getTripStatusBadge` and `TRIP_STATUS_BADGES` map into `features/dashboard/constants.ts`, deduplicating badge styling logic in `recent-trips-list.tsx`.
+    - **`features/landing`**:
+      - Neutralized 5 dead legacy components (~39 KB / 959 lines) with `export {};` stubs: `interactive-mockup.tsx` (superseded by `workspace-showcase.tsx`), `travel-network-background.tsx` (superseded by `hero-background-pattern.tsx`), `feature-highlights.tsx` (superseded by `thesis-section.tsx`), `animated-nav.tsx`, and `workflow-section.tsx`.
+      - Extracted 225 lines of inline static mock journey data and `DestinationJourney` interface from `components/hero-section.tsx` into a dedicated `hero-journeys.ts`, reducing `hero-section.tsx` from 506 lines to 278 lines.
+      - Cleaned 8 unused Lucide icons (`ArrowUpRight`, `Coins`, `Compass`, `Hotel`, `PieChart`, `ShieldCheck`, `TrendingUp`, `Utensils`) from `components/expenses-section.tsx`.
+      - Cleaned unused `AlertCircle` icon import from `components/travel-essentials-section.tsx`.
+      - Cleaned barrel export in `features/landing/index.ts` by removing dead `TravelNetworkBackground`.
+  - **Verification**:
+    - TypeScript compilation check (`npx tsc --noEmit`) — verified clean with exit code 0.
