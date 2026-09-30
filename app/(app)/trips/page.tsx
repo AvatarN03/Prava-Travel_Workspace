@@ -1,8 +1,10 @@
 
-import { CreateTripDialog } from "@/features/trips/components/create-trip-dialog";
-import { TripList } from "@/features/trips/components/trip-list";
-
-import { getTrips, getTripUsageQuota } from "@/features/trips/actions";
+import {
+  CreateTripDialog,
+  getTrips,
+  getTripUsageQuota,
+  TripList,
+} from "@/features/trips";
 
 export const dynamic = "force-dynamic";
 
@@ -19,12 +21,18 @@ export default async function TripsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            Prava Trips
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-border">
+        <div className="space-y-1">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+            Travel Workspace
+          </span>
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
+            My{" "}
+            <span className="font-serif italic font-normal text-foreground">
+              Trips
+            </span>
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
             Manage your travel itineraries, bookings, budgets, notes, and preparation checklists.
           </p>
         </div>

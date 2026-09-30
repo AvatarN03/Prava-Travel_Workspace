@@ -154,10 +154,10 @@ export default async function PublicCreatorProfilePage({ params }: PublicProfile
             {/* Identity Info */}
             <div className="space-y-1.5 flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground truncate">
+                <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground truncate">
                   {creator.fullName}
                 </h1>
-                <Badge variant="secondary" className="gap-1 text-[11px] font-mono">
+                <Badge variant="secondary" className="gap-1 text-[11px] font-mono rounded-sm">
                   <Globe className="h-3 w-3 text-primary" /> @{creator.username}
                 </Badge>
               </div>
@@ -190,10 +190,11 @@ export default async function PublicCreatorProfilePage({ params }: PublicProfile
             <section className="space-y-6">
               <div className="flex items-center justify-between border-b border-border pb-3">
                 <div>
-                  <h2 className="text-lg font-bold tracking-tight flex items-center gap-2">
-                    <BookOpen className="h-4 w-4 text-primary" /> Travel Stories & Guides
+                  <h2 className="font-sans text-lg font-light tracking-tight flex items-center gap-2 text-foreground">
+                    <BookOpen className="h-4 w-4 text-[#2D9BF0]" /> Travel Stories &{" "}
+                    <span className="font-serif italic font-normal">Guides</span>
                   </h2>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground mt-0.5">
                     Articles and guides authored by @{creator.username}
                   </p>
                 </div>
@@ -222,10 +223,11 @@ export default async function PublicCreatorProfilePage({ params }: PublicProfile
           <section className="space-y-6">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div>
-                <h2 className="text-lg font-bold tracking-tight flex items-center gap-2">
-                  <Compass className="h-4 w-4 text-primary" /> Published Itineraries
+                <h2 className="font-sans text-lg font-light tracking-tight flex items-center gap-2 text-foreground">
+                  <Compass className="h-4 w-4 text-[#2D9BF0]" /> Published{" "}
+                  <span className="font-serif italic font-normal">Itineraries</span>
                 </h2>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground mt-0.5">
                   Public travel frameworks and itineraries designed by @{creator.username}
                 </p>
               </div>

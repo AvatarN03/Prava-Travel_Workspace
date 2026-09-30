@@ -12,7 +12,7 @@ import { RecentTripsList } from "@/features/dashboard/components/recent-trips-li
 import { TravelEssentialsGrid } from "@/features/dashboard/components/travel-essentials-grid";
 import { UpcomingTripCard } from "@/features/dashboard/components/upcoming-trip-card";
 import { UrgentChecklist } from "@/features/dashboard/components/urgent-checklist";
-import { CreateTripDialog } from "@/features/trips/components/create-trip-dialog";
+import { CreateTripDialog } from "@/features/trips";
 
 import { getDashboardSummary } from "@/features/dashboard/queries";
 

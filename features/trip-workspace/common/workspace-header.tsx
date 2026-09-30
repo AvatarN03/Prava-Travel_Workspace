@@ -40,19 +40,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EditTripDialog } from "@/features/trips/components/edit-trip-dialog";
-
-import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
-
 import {
   deleteTrip,
   duplicateTrip,
+  EditTripDialog,
   toggleTripPublicStatus,
   updateTrip,
-} from "@/features/trips/actions";
-import { formatDateRange } from "@/lib/utils";
+  type Trip,
+  type TripStatus,
+} from "@/features/trips";
+import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
 
-import type { Trip, TripStatus } from "@/features/trips/types";
+import { formatDateRange } from "@/lib/utils";
 
 interface WorkspaceHeaderProps {
   trip: Trip & { isPublic?: boolean };
@@ -349,6 +348,9 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
 
         {/* Trip Title & Sub-header Badges */}
         <div className="space-y-2 pt-1">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+            Trip Workspace
+          </span>
           <div className="flex items-center gap-2 flex-wrap">
             {isPublic && (
               <Badge
@@ -360,7 +362,7 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
             )}
             {trip.destination && (
               <span className="inline-flex items-center gap-1 font-sans text-xs font-medium text-foreground/80">
-                <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+                <MapPin className="w-3.5 h-3.5 text-[#2D9BF0] shrink-0" />
                 {trip.destination}
               </span>
             )}
@@ -373,10 +375,10 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
 
           <div className="space-y-1">
             <div className="flex items-center gap-2.5">
-              <div className="hidden sm:flex h-8 w-8 items-center justify-center rounded-xs bg-sky-50 dark:bg-sky-950/40 text-primary border border-sky-200/60 dark:border-sky-800/40 shadow-2xs shrink-0">
+              <div className="hidden sm:flex h-8 w-8 items-center justify-center rounded-sm bg-[#2D9BF0]/10 border border-[#2D9BF0]/20 text-[#2D9BF0] shadow-2xs shrink-0">
                 <Compass className="h-4.5 w-4.5" />
               </div>
-              <h1 className="font-sans text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+              <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
                 {trip.title}
               </h1>
             </div>

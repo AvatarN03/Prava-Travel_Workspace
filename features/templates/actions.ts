@@ -2,13 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 
+import { callOpenRouterFree } from "@/lib/ai";
 import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 
-import { TemplateTripItem } from "./types";
-
-import { callOpenRouterFree } from "@/lib/ai";
+import type { TemplateTripItem } from "./types";
 
 /**
  * Fetch all authentic public trips and templates from PostgreSQL.

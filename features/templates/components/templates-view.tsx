@@ -26,7 +26,7 @@ import {
 
 import { TemplateCard } from "./template-card";
 import { TemplatePreviewDialog } from "./template-preview-dialog";
-import {
+import type {
   DurationFilter,
   InclusionFilter,
   SortOption,
@@ -128,13 +128,19 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
   return (
     <div className="space-y-6 pb-16">
       {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            Curated Community Itineraries
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-border">
+        <div className="space-y-1">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+            Trip Blueprints
+          </span>
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
+            Curated{" "}
+            <span className="font-serif italic font-normal text-foreground">
+              Itineraries
+            </span>
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5 max-w-2xl">
-            Real trip blueprints published by travelers. Preview complete day-by-day schedules, accommodations, and estimated budgets, then clone directly into your workspace with 1 click.
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
+            Real trip blueprints published by travelers. Preview complete day-by-day schedules, accommodations, and estimated budgets, then clone directly into your workspace.
           </p>
         </div>
 
@@ -142,7 +148,7 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search destination, keyword, creator..."
-            className="pl-8.5 h-9 text-xs bg-card"
+            className="pl-8.5 h-9 text-xs bg-card rounded-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

@@ -164,49 +164,49 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
       {totalCount > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
           {/* Active Trips Metric */}
-          <Card className="rounded-md border border-border bg-card p-3.5 shadow-2xs">
+          <Card className="rounded-sm border border-border bg-card p-3.5 shadow-2xs">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">Active Trips</span>
+              <span className="font-sans text-xs font-medium text-muted-foreground">Active Trips</span>
               <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-emerald-500/10 text-emerald-600">
                 <Clock className="h-4 w-4" />
               </div>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl font-bold tracking-tight text-foreground">{activeCount}</span>
+              <span className="font-mono text-2xl font-light tracking-tight text-foreground tabular-nums">{activeCount}</span>
               <span className="text-[11px] text-muted-foreground">In progress</span>
             </div>
           </Card>
 
           {/* Planning Metric */}
-          <Card className="rounded-md border border-border bg-card p-3.5 shadow-2xs">
+          <Card className="rounded-sm border border-border bg-card p-3.5 shadow-2xs">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">Planning</span>
+              <span className="font-sans text-xs font-medium text-muted-foreground">Planning</span>
               <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-sky-500/10 text-sky-600">
                 <Calendar className="h-4 w-4" />
               </div>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl font-bold tracking-tight text-foreground">{planningCount}</span>
+              <span className="font-mono text-2xl font-light tracking-tight text-foreground tabular-nums">{planningCount}</span>
               <span className="text-[11px] text-muted-foreground">Upcoming drafts</span>
             </div>
           </Card>
 
           {/* Completed Metric */}
-          <Card className="rounded-md border border-border bg-card p-3.5 shadow-2xs">
+          <Card className="rounded-sm border border-border bg-card p-3.5 shadow-2xs">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">Completed</span>
+              <span className="font-sans text-xs font-medium text-muted-foreground">Completed</span>
               <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-blue-500/10 text-blue-600">
                 <CheckCircle2 className="h-4 w-4" />
               </div>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl font-bold tracking-tight text-foreground">{completedCount}</span>
+              <span className="font-mono text-2xl font-light tracking-tight text-foreground tabular-nums">{completedCount}</span>
               <span className="text-[11px] text-muted-foreground">Past journeys</span>
             </div>
           </Card>
 
           {/* Workspace Tier & Quota Meter */}
-          <Card className="rounded-md border border-border bg-card p-3.5 shadow-2xs flex flex-col justify-between">
+          <Card className="rounded-sm border border-border bg-card p-3.5 shadow-2xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
                 <Layers className="h-3.5 w-3.5 text-primary" /> Workspace Slots

@@ -1,14 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
 import { db } from "@/lib/db";
-import { createClient } from "@/lib/supabase/server";
 import {
-  uploadImageToStorage,
-  normalizeMimeType,
   ALLOWED_IMAGE_TYPES,
   MAX_FILE_SIZE_BYTES,
+  normalizeMimeType,
+  uploadImageToStorage,
 } from "@/lib/storage";
+import { createClient } from "@/lib/supabase/server";
 
 import type { StorageFolder } from "./types";
 

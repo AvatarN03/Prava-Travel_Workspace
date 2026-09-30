@@ -33,7 +33,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { cloneTripTemplate } from "../actions";
-import { TemplateTripItem } from "../types";
+import type { TemplateTripItem } from "../types";
 
 interface TemplatePreviewDialogProps {
   trip: TemplateTripItem | null;

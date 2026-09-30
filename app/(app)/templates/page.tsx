@@ -1,5 +1,4 @@
-import { getPublicTripTemplates } from "@/features/templates/actions";
-import { TemplatesView } from "@/features/templates/components/templates-view";
+import { getPublicTripTemplates, TemplatesView } from "@/features/templates";
 
 export const dynamic = "force-dynamic";
 

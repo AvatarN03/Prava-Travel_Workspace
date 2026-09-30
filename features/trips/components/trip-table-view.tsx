@@ -1,23 +1,26 @@
 "use client";
 
-import * as React from "react";
-import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import * as React from "react";
+import { useState, useTransition } from "react";
+
 import {
-  MapPin,
+  ArrowUpRight,
   Calendar,
+  Compass,
+  Copy,
+  Globe,
+  Loader2,
+  Lock,
+  MapPin,
   MoreHorizontal,
   Pencil,
   Trash2,
-  Copy,
-  Globe,
-  Lock,
-  ArrowUpRight,
-  Loader2,
-  Compass,
 } from "lucide-react";
 import { toast } from "sonner";
+
+import { ConfirmDeleteDialog } from "@/components/app-shell/confirm-delete-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,11 +30,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ConfirmDeleteDialog } from "@/components/app-shell/confirm-delete-dialog";
+
+import { EditTripDialog } from "./edit-trip-dialog";
+
 import { formatDateRange } from "@/lib/utils";
 import { deleteTrip, duplicateTrip, toggleTripPublicStatus } from "../actions";
-import { Trip } from "../types";
-import { EditTripDialog } from "./edit-trip-dialog";
+
+import type { Trip } from "../types";
 
 interface TripTableViewProps {
   trips: Trip[];

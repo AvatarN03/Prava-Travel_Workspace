@@ -5,7 +5,7 @@ import { Compass, Hotel, MapPin, Plus, Sparkles, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
-import { CreateTripDialog } from "@/features/trips/components/create-trip-dialog";
+import { CreateTripDialog } from "@/features/trips";
 
 export function DashboardEmptyState() {
   return (

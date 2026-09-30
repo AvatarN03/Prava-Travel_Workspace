@@ -1,20 +1,22 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { db } from "@/lib/db";
-import { createClient } from "@/lib/supabase/server";
-import {
-  createTripSchema,
-  updateTripSchema,
-  deleteTripSchema,
-  CreateTripInput,
-  UpdateTripInput,
-  DeleteTripInput,
-} from "./schema";
-import { ActionResult, Trip } from "./types";
 
 import { syncUserProfile } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { createClient } from "@/lib/supabase/server";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
+import { searchTourCoverImages, type UnsplashImage } from "@/services/unsplash";
+
+import {
+  createTripSchema,
+  deleteTripSchema,
+  updateTripSchema,
+  type CreateTripInput,
+  type DeleteTripInput,
+  type UpdateTripInput,
+} from "./schema";
+import type { ActionResult, Trip } from "./types";
 
 /**
  * Helper to get the authenticated user and ensure profile exists in database.
@@ -487,8 +489,6 @@ export async function getTrips(): Promise<Trip[]> {
     return [];
   }
 }
-
-import { searchTourCoverImages, UnsplashImage } from "@/services/unsplash";
 
 /**
  * Server Action: Retrieve 6 tour-vibe / destination cover images

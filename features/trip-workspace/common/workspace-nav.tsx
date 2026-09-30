@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
+
 import {
   Compass,
   ListTodo,
@@ -10,7 +11,9 @@ import {
   CheckSquare,
   Link2,
 } from "lucide-react";
+
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { cn } from "@/lib/utils";
 
 export interface WorkspaceCounts {
@@ -92,27 +95,27 @@ export function WorkspaceNav({ tripId, counts }: WorkspaceNavProps) {
                 key={item.value}
                 value={item.value}
                 className={cn(
-                  "group inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium whitespace-nowrap cursor-pointer",
+                  "group inline-flex items-center gap-1.5 px-3 py-2 font-sans text-xs font-medium whitespace-nowrap cursor-pointer",
                   "rounded-none border-b-2 transition-colors duration-150",
                   "border-transparent text-muted-foreground hover:text-foreground hover:border-border",
                   "data-[state=active]:bg-transparent data-[state=active]:shadow-none",
-                  "data-[state=active]:text-primary data-[state=active]:border-primary",
+                  "data-[state=active]:text-[#2D9BF0] data-[state=active]:border-[#2D9BF0]",
                   "data-[state=active]:font-semibold"
                 )}
               >
                 <Icon
                   className={cn(
                     "w-3.5 h-3.5 shrink-0",
-                    isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                    isActive ? "text-[#2D9BF0]" : "text-muted-foreground group-hover:text-foreground"
                   )}
                 />
                 <span>{item.label}</span>
                 {badge && (
                   <span
                     className={cn(
-                      "ml-1 text-[10px] px-1.5 py-0.2 rounded-full font-semibold transition-colors",
+                      "ml-1 font-sans text-[10px] px-1.5 py-0.5 rounded-sm font-semibold tabular-nums transition-colors",
                       isActive
-                        ? "bg-primary/10 text-primary"
+                        ? "bg-[#2D9BF0]/10 text-[#2D9BF0]"
                         : "bg-muted text-muted-foreground group-hover:text-foreground"
                     )}
                   >

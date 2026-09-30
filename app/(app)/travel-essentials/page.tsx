@@ -74,10 +74,10 @@ export default async function TravelEssentialsPage({ searchParams }: PageProps) 
   return (
     <Suspense
       fallback={
-        <div className="space-y-6 animate-pulse">
-          <div className="h-10 w-48 bg-muted rounded-md" />
-          <div className="h-10 w-full bg-muted rounded-xl" />
-          <div className="h-64 w-full bg-muted rounded-xl" />
+        <div className="w-full max-w-5xl mx-auto space-y-6 animate-pulse">
+          <div className="h-10 w-48 bg-muted rounded-sm" />
+          <div className="h-10 w-full bg-muted rounded-sm" />
+          <div className="h-64 w-full bg-muted rounded-sm" />
         </div>
       }
     >

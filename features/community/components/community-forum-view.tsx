@@ -195,12 +195,18 @@ export function CommunityForumView({
   return (
     <div className="space-y-6 pb-12">
       {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            Traveler Forum
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-border">
+        <div className="space-y-1">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+            Community Discussions
+          </span>
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
+            Traveler{" "}
+            <span className="font-serif italic font-normal text-foreground">
+              Forum
+            </span>
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5 max-w-2xl">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
             Ask for route advice, share secret viewpoints and culinary spots, discuss gear packing, or inspect fellow travelers&apos; itineraries.
           </p>
         </div>
@@ -210,7 +216,7 @@ export function CommunityForumView({
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search topics, destinations..."
-              className="pl-8.5 h-9 text-xs bg-background border-border"
+              className="pl-8.5 h-9 text-xs bg-background border-border rounded-sm"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -219,7 +225,7 @@ export function CommunityForumView({
           <Button
             size="sm"
             onClick={() => setNewDiscussionOpen(true)}
-            className="h-9 gap-1.5 text-xs bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-xs cursor-pointer shrink-0"
+            className="h-9 gap-1.5 text-xs bg-[#2D9BF0] hover:bg-[#2085d3] text-white font-medium shadow-xs cursor-pointer shrink-0 rounded-sm"
           >
             <Plus className="h-3.5 w-3.5" />
             <span className="hidden xs:inline">Start Discussion</span>

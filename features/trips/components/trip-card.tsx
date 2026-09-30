@@ -36,11 +36,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { ConfirmDeleteDialog } from "@/components/app-shell/confirm-delete-dialog";
+import { EditTripDialog } from "./edit-trip-dialog";
+
 import { formatDateRange } from "@/lib/utils";
 import { deleteTrip, duplicateTrip, toggleTripPublicStatus } from "../actions";
 
 import type { Trip } from "../types";
-import { EditTripDialog } from "./edit-trip-dialog";
 
 interface TripCardProps {
   trip: Trip;

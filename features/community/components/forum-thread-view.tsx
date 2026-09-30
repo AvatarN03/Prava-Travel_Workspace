@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
 
-import { cloneTripTemplate } from "@/features/templates/actions";
+import { cloneTripTemplate } from "@/features/templates";
 import { EditDiscussionDialog } from "@/features/community/components/edit-discussion-dialog";
 import { SaveTipDialog } from "@/features/community/components/save-tip-dialog";
 import {
@@ -343,7 +343,7 @@ export function ForumThreadView({
           <Card className="border border-border bg-card shadow-2xs rounded-md overflow-hidden">
             <CardContent className="p-5 sm:p-6 space-y-5">
               {/* Post Title */}
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground leading-snug">
+              <h1 className="font-sans text-xl sm:text-2xl font-semibold tracking-tight text-foreground leading-snug">
                 {post.title}
               </h1>
 

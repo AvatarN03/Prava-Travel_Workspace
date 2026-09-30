@@ -41,7 +41,8 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
 
 import { createTrip, getDestinationCoverImages, getUserAiPreferences } from "../actions";
-import { TripStatus } from "../types";
+
+import type { TripStatus } from "../types";
 import type { UnsplashImage } from "@/services/unsplash/types";
 
 interface CreateTripDialogProps {
@@ -235,10 +236,12 @@ export function CreateTripDialog({
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
           <DialogHeader className="p-4 sm:p-6 pb-3 sm:pb-4 pr-12 border-b border-border/60 shrink-0 text-left bg-card">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
+              <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-[#2D9BF0]/10 text-[#2D9BF0] shrink-0">
                 <Compass className="h-4.5 w-4.5" />
               </div>
-              <DialogTitle className="text-lg sm:text-xl font-bold tracking-tight text-foreground">Create New Trip</DialogTitle>
+              <DialogTitle className="font-sans text-lg sm:text-xl font-light tracking-tight text-foreground">
+                Create New <span className="font-serif italic font-normal">Trip</span>
+              </DialogTitle>
             </div>
             <DialogDescription className="text-xs text-muted-foreground">
               Plan an itinerary, organize stays, and coordinate travel with AI-assisted proposals.

@@ -139,43 +139,67 @@ When implementing or modifying pages, agents must adhere to the following strict
 ### Quick Typography Reference
 
 ```tsx
-// 1. Brand Heading / Wordmark
+// 1. Canonical Page Header Pattern (Used across Dashboard, Trips, Stories, Forum, Essentials, Profile, Subscription)
+<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-border">
+  <div className="space-y-1">
+    <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+      Section Eyebrow (e.g., Travel Workspace, Community Chronicles, Travel Toolkit)
+    </span>
+    <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
+      Primary Title{" "}
+      <span className="font-serif italic font-normal text-foreground">
+        Editorial Accent
+      </span>
+    </h1>
+    <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
+      Descriptive helper subtitle giving clear context on what this workspace module manages.
+    </p>
+  </div>
+  {/* Action Buttons: rounded-sm, bg-[#2D9BF0] for primary, cursor-pointer */}
+  <div className="flex items-center gap-2 shrink-0">
+    <Button size="sm" className="gap-1.5 text-xs shadow-xs cursor-pointer rounded-sm bg-[#2D9BF0] hover:bg-[#2085d3] text-white font-medium">
+      <Plus className="h-3.5 w-3.5" /> Primary Action
+    </Button>
+  </div>
+</div>
+
+// 2. Brand Heading / Wordmark
 <span className="font-brand font-medium tracking-[0.24em] text-base uppercase text-white dark:text-slate-900">
   Prava
 </span>
 
-// 2. Page Header with Greeting & Editorial Flourish
+// 3. Greeting with Editorial Flourish (Dashboard)
 <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
   Good morning, <span className="font-serif italic font-normal text-foreground">Aarav</span>
 </h1>
 
-// 3. Section Eyebrow / Kicker
+// 4. Section Eyebrow / Kicker (Cards & Widgets)
 <span className="font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 select-none">
   Upcoming Trip
 </span>
 
-// 4. Trip Title
+// 5. Trip / Content Title
 <h2 className="font-sans text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
   Tokyo & Kyoto Expedition
 </h2>
 
-// 5. Travel Notes / Description
+// 6. Travel Notes / Description
 <p className="font-serif italic text-sm sm:text-base text-muted-foreground leading-relaxed">
   Exploring historic temples, bamboo groves, and neighborhood ramen shops.
 </p>
 
-// 6. Metrics & Financial Balances
-<div className="font-sans text-xl font-semibold tabular-nums text-foreground">
+// 7. Metrics & Financial Balances
+<div className="font-mono text-xl sm:text-2xl font-light tracking-tight tabular-nums text-foreground">
   ₹84,200
 </div>
 
-// 7. Navigation Links & Items
+// 8. Navigation Links & Items
 <Link className="font-sans text-xs font-medium tracking-normal text-muted-foreground hover:text-foreground">
   Overview
 </Link>
 
-// 8. Countdown & Status Pills
-<Badge className="font-sans text-[10px] font-semibold tabular-nums tracking-wide uppercase">
+// 9. Countdown & Status Pills
+<Badge className="font-sans text-[10px] font-semibold tabular-nums tracking-wide uppercase rounded-sm">
   Starts in 3 days
 </Badge>
 ```

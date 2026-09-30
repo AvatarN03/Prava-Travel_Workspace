@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { BlogEditor } from "@/features/blog/components/blog-editor";
 
 import { getBlogPostForEdit } from "@/features/blog/actions";
-import { getTrips } from "@/features/trips/actions";
+import { getTrips } from "@/features/trips";
 
 export const dynamic = "force-dynamic";
 

@@ -130,12 +130,29 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
       </Link>
 
       {/* Top Header Banner */}
-      <div className="border-b border-border pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            {mode === "create" ? "Write a Travel Story" : "Edit Story"}
+      <div className="border-b border-border pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+            {mode === "create" ? "Creator Studio" : "Story Revision"}
+          </span>
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
+            {mode === "create" ? (
+              <>
+                Write a Travel{" "}
+                <span className="font-serif italic font-normal text-foreground">
+                  Story
+                </span>
+              </>
+            ) : (
+              <>
+                Edit{" "}
+                <span className="font-serif italic font-normal text-foreground">
+                  Story
+                </span>
+              </>
+            )}
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-xl">
             Share your travel experiences, recommendations, and itinerary insights with the Prava community.
           </p>
         </div>
@@ -146,7 +163,7 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
             type="button"
             variant="outline"
             size="sm"
-            className="h-8 text-xs gap-1.5 cursor-pointer"
+            className="h-8 text-xs gap-1.5 cursor-pointer rounded-sm"
             onClick={() => handleSave("DRAFT")}
             disabled={isSaving || !title.trim() || !content.trim()}
           >
@@ -156,7 +173,7 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
           <Button
             type="button"
             size="sm"
-            className="h-8 text-xs gap-1.5 shadow-xs cursor-pointer"
+            className="h-8 text-xs gap-1.5 shadow-xs cursor-pointer rounded-sm bg-[#2D9BF0] hover:bg-[#2085d3] text-white font-medium"
             onClick={() => handleSave("PUBLISHED")}
             disabled={isSaving || !title.trim() || !content.trim()}
           >

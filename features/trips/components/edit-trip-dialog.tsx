@@ -3,27 +3,29 @@
 import * as React from "react";
 import { useState, useEffect, useTransition, useCallback } from "react";
 import { useRouter } from "next/navigation";
+
 import {
+  Calendar as CalendarIcon,
+  Check,
+  ImageIcon,
   Loader2,
   MapPin,
-  Calendar as CalendarIcon,
-  ImageIcon,
   RotateCw,
-  Check,
-  UploadCloud,
 } from "lucide-react";
+
+import { ImageUpload } from "@/components/storage/image-upload";
+import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -32,10 +34,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DatePicker } from "@/components/ui/date-picker";
-import { ImageUpload } from "@/components/storage/image-upload";
-import { updateTrip, getDestinationCoverImages } from "../actions";
-import { Trip, TripStatus } from "../types";
+import { Textarea } from "@/components/ui/textarea";
+
+import { getDestinationCoverImages, updateTrip } from "../actions";
+
+import type { Trip, TripStatus } from "../types";
 import type { UnsplashImage } from "@/services/unsplash/types";
 
 interface EditTripDialogProps {

@@ -40,7 +40,7 @@ import {
 import { ThemeToggle } from "./theme-toggle";
 import { TopBarWeather } from "./top-bar-weather";
 
-import { getTopBarUserInfo, type TopBarUserInfo } from "@/features/profile";
+import { getTopBarUserInfo, type TopBarUserInfo } from "@/features/profile/actions";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 

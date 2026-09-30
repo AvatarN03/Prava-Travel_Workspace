@@ -2518,3 +2518,71 @@
       - Refactored deep consumer imports to use clean `@/features/storage` barrel imports across `components/storage/image-upload.tsx`, `components/storage/cover-image.tsx`, and `components/storage/avatar-upload.tsx`.
   - **Verification**:
     - TypeScript compilation check (`npx tsc --noEmit`) — verified clean with exit code 0.
+
+- **Task 178 (Codebase Minification & Clean Barrel Export: `features/templates`)**:
+  - **Context & User Request**:
+    - Audit `features/templates` to ensure zero bloat, remove dead code, enforce strict Rule 7 import hierarchy, eliminate deep consumer imports, and establish a canonical public barrel export.
+  - **Solutions Implemented**:
+    - **Canonical Public Barrel (`features/templates/index.ts`)**:
+      - Created unified `features/templates/index.ts` exporting all template components (`TemplatesView`, `TemplateCard`, `TemplatePreviewDialog`), server actions (`getPublicTripTemplates`, `cloneTripTemplate`), and all domain types/filter unions (`TemplateTripItem`, `TemplateItineraryItem`, `TemplateAccommodationItem`, `TemplateAuthor`, `TemplateMetrics`, `TemplateInclusions`, `DurationFilter`, `InclusionFilter`, `SortOption`).
+    - **Import Hierarchy & Type Imports**:
+      - Cleaned import hierarchy in `features/templates/actions.ts` so `@/lib/ai` precedes `./types`, and typed `TemplateTripItem` with `import type`.
+      - Converted type imports in `components/template-card.tsx`, `components/template-preview-dialog.tsx`, and `components/templates-view.tsx` to use `import type`.
+    - **Consumer Deep-Import Refactoring**:
+      - Refactored `app/(app)/templates/page.tsx` to import `{ getPublicTripTemplates, TemplatesView }` from `@/features/templates`.
+      - Refactored `features/community/components/forum-thread-view.tsx` to import `{ cloneTripTemplate }` from `@/features/templates`.
+      - Refactored `app/u/[username]/clone-trip-button.tsx` to import `{ cloneTripTemplate }` from `@/features/templates`, standardizing its 6-tier import structure.
+  - **Verification**:
+    - TypeScript compilation check (`npx tsc --noEmit`) — verified clean with exit code 0 across the entire workspace.
+
+- **Task 179 (Codebase Minification & Clean Barrel Export: `features/trips`)**:
+  - **Context & User Request**:
+    - Audit `features/trips` to eliminate bloat, remove unused imports, relocate mid-file import statements, establish a canonical public barrel export, and refactor all deep consumer imports across the application.
+  - **Solutions Implemented**:
+    - **Canonical Public Barrel (`features/trips/index.ts`)**:
+      - Created unified `features/trips/index.ts` exporting all trip components (`CreateTripDialog`, `EditTripDialog`, `TripCard`, `TripList`, `TripTableView`), server actions (`createTrip`, `updateTrip`, `deleteTrip`, `duplicateTrip`, `toggleTripPublicStatus`, `getTrips`, `getTripUsageQuota`, `getDestinationCoverImages`, `getUserAiPreferences`), schemas & schema input types (`createTripSchema`, `updateTripSchema`, `deleteTripSchema`, `tripStatusEnum`, `CreateTripInput`, `UpdateTripInput`, `DeleteTripInput`), and all domain types (`Trip`, `TripWithCounts`, `TripCounts`, `TripStatus`, `TripViewMode`, `TripSortOption`, `TripUsageQuota`, `ActionResult`).
+    - **Import Hierarchy & Dead Code Cleanup (`features/trips/actions.ts` & `edit-trip-dialog.tsx`)**:
+      - Relocated mid-file import `searchTourCoverImages, type UnsplashImage` from line 491 to the top import header in `features/trips/actions.ts`, structuring imports strictly into the 6-tier hierarchy.
+      - Removed unused `UploadCloud` icon import from `features/trips/components/edit-trip-dialog.tsx`.
+      - Standardized type imports and import ordering across `components/create-trip-dialog.tsx`, `components/trip-card.tsx`, and `components/trip-table-view.tsx`.
+    - **Consumer Deep-Import Refactoring Across 7 Files**:
+      - Refactored `features/trip-workspace/common/workspace-header.tsx` to import `{ deleteTrip, duplicateTrip, EditTripDialog, toggleTripPublicStatus, updateTrip, type Trip, type TripStatus }` from `@/features/trips`.
+      - Refactored `features/pricing/components/usage-view.tsx` to import `{ CreateTripDialog }` from `@/features/trips`.
+      - Refactored `features/dashboard/components/dashboard-empty-state.tsx` to import `{ CreateTripDialog }` from `@/features/trips`.
+      - Refactored `app/(app)/trips/page.tsx` to import `{ CreateTripDialog, getTrips, getTripUsageQuota, TripList }` from `@/features/trips`.
+      - Refactored `app/(app)/stories/[slug]/edit/page.tsx` to import `{ getTrips }` from `@/features/trips`.
+      - Refactored `app/(app)/stories/new/page.tsx` to import `{ getTrips }` from `@/features/trips`.
+      - Refactored `app/(app)/dashboard/page.tsx` to import `{ CreateTripDialog }` from `@/features/trips`.
+  - **Verification**:
+    - TypeScript compilation check (`npx tsc --noEmit`) — verified clean with exit code 0 across the entire workspace.
+
+- **Task 180 (Full Workspace UI Harmonization: Editorial Typography, Headers & Geometry Alignment)**:
+  - **Context & User Request**:
+    - Complete the design system and UI harmonization across all remaining application pages and components, matching the typography, font pairings (Cinzel, Sora font-sans light, Newsreader font-serif italic), cerulean brand kickers (`text-[#2D9BF0] uppercase`), rounded-sm geometry, and data-dense card patterns established in the Landing, Auth, Dashboard, Subscription, and Profile pages.
+    - Update `docs/02-design-system.md` with the canonical page header pattern for AI agents to reference directly.
+  - **Solutions Implemented**:
+    - **Trips Management (`app/(app)/trips/page.tsx` & `features/trips/components/trip-list.tsx`)**:
+      - Applied editorial header pattern with `Travel Workspace` cerulean kicker, `font-sans font-light` + `font-serif italic` accent, and subtitle.
+      - Refactored 4 metrics cards (`Active Trips`, `Planning`, `Completed`, `Workspace Slots`) to `rounded-sm border border-border bg-card p-3.5 shadow-2xs` and numbers to `font-mono text-2xl font-light tracking-tight tabular-nums`.
+    - **Community Chronicles & Travel Stories (`app/(app)/stories/page.tsx`, `my-stories-list.tsx`, `blog-editor.tsx`)**:
+      - Harmonized stories exploration page with `Community Chronicles` cerulean kicker, `Travel Stories` editorial heading, and rounded-sm action buttons.
+      - Refactored `MyStoriesList` (`features/blog/components/my-stories-list.tsx`) with `Creator Dashboard` kicker, `My Stories` editorial heading with tabular-nums counter badge.
+      - Refactored `BlogEditor` (`features/blog/components/blog-editor.tsx`) with `Creator Studio` / `Story Revision` kicker, `Write a Travel Story` / `Edit Story` editorial heading, and rounded-sm action buttons.
+    - **Templates & Curated Itineraries (`features/templates/components/templates-view.tsx`)**:
+      - Applied `Trip Blueprints` cerulean kicker, `Curated Itineraries` editorial heading, and rounded-sm search input.
+    - **Community Discussions & Forum (`features/community/components/community-forum-view.tsx` & `forum-thread-view.tsx`)**:
+      - Applied `Community Discussions` cerulean kicker, `Traveler Forum` editorial heading, and rounded-sm search/button controls.
+      - Refined forum thread post title typography in `forum-thread-view.tsx`.
+    - **Public Creator Profile (`app/u/[username]/page.tsx`)**:
+      - Refined creator name heading to `font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground`.
+      - Refined showcase section headers (`Travel Stories & Guides`, `Published Itineraries`) with `font-sans font-light` + `font-serif italic` accents and cerulean iconography.
+    - **Modals & Error Boundaries (`features/trips/components/create-trip-dialog.tsx` & `app/(app)/trips/[tripId]/not-found.tsx`)**:
+      - Harmonized `CreateTripDialog` header with `font-sans font-light` + `font-serif italic` and `rounded-sm bg-[#2D9BF0]/10 text-[#2D9BF0]` icon badge.
+      - Harmonized trip workspace `not-found.tsx` with editorial typography, `rounded-sm` card geometry, and cerulean brand styling.
+    - **Canonical Documentation (`docs/02-design-system.md`)**:
+      - Documented the canonical Page Header Pattern in Section 6 Quick Typography Reference with code snippet, class tokens, and action button conventions.
+  - **Verification**:
+    - TypeScript full project type-checking (`npx tsc --noEmit`) verified clean with exit code 0 and zero compilation errors.
+
+
+

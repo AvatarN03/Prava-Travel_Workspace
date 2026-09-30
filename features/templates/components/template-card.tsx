@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/card";
 
 import { cloneTripTemplate } from "../actions";
-import { TemplateTripItem } from "../types";
+import type { TemplateTripItem } from "../types";
 
 interface TemplateCardProps {
   trip: TemplateTripItem;

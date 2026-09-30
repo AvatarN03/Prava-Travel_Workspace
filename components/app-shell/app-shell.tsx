@@ -10,7 +10,7 @@ import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-c
 
 import { cn } from "@/lib/utils";
 
-import type { TopBarUserInfo } from "@/features/profile";
+import type { TopBarUserInfo } from "@/features/profile/actions";
 
 interface AppShellProps {
   children: React.ReactNode;

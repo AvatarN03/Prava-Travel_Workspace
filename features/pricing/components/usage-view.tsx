@@ -23,7 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { CreateTripDialog } from "@/features/trips/components/create-trip-dialog";
+import { CreateTripDialog } from "@/features/trips";
 
 import { UpgradeDialog } from "./upgrade-dialog";
 import { UsageChart } from "./usage-chart";

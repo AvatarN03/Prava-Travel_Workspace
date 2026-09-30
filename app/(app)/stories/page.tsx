@@ -25,24 +25,30 @@ export default async function StoriesPage() {
   return (
     <div className="space-y-8 pb-12">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            Explore Creator Narratives
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
+        <div className="space-y-1">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+            Community Chronicles
+          </span>
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
+            Travel{" "}
+            <span className="font-serif italic font-normal text-foreground">
+              Stories
+            </span>
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mt-0.5">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-xl">
             Real itineraries, cultural insights, hidden spots, and actionable travel stories from the Prava community.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <Link href="/stories/manage">
-            <Button variant="outline" size="sm" className="text-xs">
+            <Button variant="outline" size="sm" className="text-xs cursor-pointer rounded-sm">
               My Stories
             </Button>
           </Link>
           <Link href="/stories/new">
-            <Button size="sm" className="gap-1.5 text-xs shadow-xs">
+            <Button size="sm" className="gap-1.5 text-xs shadow-xs cursor-pointer rounded-sm bg-[#2D9BF0] hover:bg-[#2085d3] text-white font-medium">
               <Plus className="h-3.5 w-3.5" /> Write Story
             </Button>
           </Link>
