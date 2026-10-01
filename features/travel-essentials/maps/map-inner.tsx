@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from "react";
 
 import L from "leaflet";
-import { Clock, ExternalLink, MapPin, Navigation } from "lucide-react";
+import { Clock, ExternalLink, Navigation } from "lucide-react";
 import { Circle, MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 
 import { formatDistance } from "./map-service";

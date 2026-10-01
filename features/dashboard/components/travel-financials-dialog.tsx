@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { ConfirmDeleteDialog } from "@/components/app-shell/confirm-delete-dialog";
+import { ConfirmDeleteDialog } from "@/components/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,7 +44,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   createGeneralTravelExpense,
   deleteGeneralTravelExpense,
-} from "@/features/trip-workspace/expenses/actions";
+} from "@/features/trip-workspace";
 
 const OVERHEAD_CATEGORIES = [
   { value: "GEAR", label: "Travel Gear & Bags", icon: Package, badge: "bg-blue-500/10 text-blue-600 border-blue-200 dark:border-blue-800" },

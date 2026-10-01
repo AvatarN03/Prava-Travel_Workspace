@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 
-import { Globe, Lock, Loader2, Save, ExternalLink } from "lucide-react";
+import { Camera, ExternalLink, Globe, Loader2, Lock, Save } from "lucide-react";
 
-import { AvatarUpload } from "@/components/storage/avatar-upload";
+import { AvatarUpload } from "@/components/storage";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -97,6 +97,10 @@ export function OverviewSection({
                 </div>
                 <p className="font-sans text-xs font-mono text-muted-foreground">
                   @{profile.username || "traveler"}
+                </p>
+                <p className="font-sans text-[11px] text-muted-foreground flex items-center gap-1.5 pt-0.5">
+                  <Camera className="h-3 w-3 text-primary shrink-0" />
+                  <span>Click badge in top-right to upload photo</span>
                 </p>
               </div>
             </div>

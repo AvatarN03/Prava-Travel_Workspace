@@ -215,6 +215,12 @@ export async function fetchCountrySuggestions(
   return result;
 }
 
+export async function searchCountrySuggestions(
+  query: string
+): Promise<CountrySuggestionItem[]> {
+  return fetchCountrySuggestions(query);
+}
+
 /**
  * Full country details — REST Countries v5 API with emergency integration & rich dataset
  */

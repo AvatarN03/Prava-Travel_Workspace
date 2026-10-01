@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { ImageUpload } from "@/components/storage/image-upload";
+import { ImageUpload } from "@/components/storage";
 
 import { updateForumDiscussion } from "@/features/community/forum-actions";
 

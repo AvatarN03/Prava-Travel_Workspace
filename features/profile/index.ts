@@ -24,10 +24,6 @@ export {
   updateGeneralPreferencesSchema,
   updateProfileSchema,
 } from "./schema";
-export {
-  generateSmartUniqueUsername,
-  normalizeToUsernameCandidate,
-} from "./username-generator";
 
 // Types
 export type * from "./types";

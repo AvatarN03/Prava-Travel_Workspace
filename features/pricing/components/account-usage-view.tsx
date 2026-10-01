@@ -57,7 +57,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 import { cn } from "@/lib/utils";
-import { SUPPORTED_CURRENCIES } from "@/features/travel-essentials/currency/currency-service";
+import { SUPPORTED_CURRENCIES } from "@/features/travel-essentials";
 
 import {
   createPolarCheckoutSession,

@@ -7,12 +7,12 @@ import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 
 import {
-  AttachVaultLinkToTripInput,
   attachVaultLinkToTripSchema,
-  CreateVaultLinkInput,
   createVaultLinkSchema,
-  UpdateVaultLinkInput,
   updateVaultLinkSchema,
+  type AttachVaultLinkToTripInput,
+  type CreateVaultLinkInput,
+  type UpdateVaultLinkInput,
 } from "./schema";
 
 /**

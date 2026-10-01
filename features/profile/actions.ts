@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
+import { pruneUnusedUserAvatars } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
 import { validateUsername } from "./reserved-usernames";
@@ -268,6 +269,14 @@ export async function updateProfile(input: UpdateProfileInput) {
       }
     } catch (authErr) {
       console.warn("Could not sync auth user metadata:", authErr);
+    }
+
+    if (avatarUrl !== undefined) {
+      try {
+        await pruneUnusedUserAvatars(user.id, avatarUrl);
+      } catch (cleanupErr) {
+        console.warn("Storage avatar cleanup non-fatal warning in updateProfile:", cleanupErr);
+      }
     }
 
     revalidatePath("/profile");

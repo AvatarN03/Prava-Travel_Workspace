@@ -16,7 +16,7 @@ import {
   X,
 } from "lucide-react";
 
-import { ImageUpload } from "@/components/storage/image-upload";
+import { ImageUpload } from "@/components/storage";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
