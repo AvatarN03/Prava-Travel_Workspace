@@ -1,5 +1,9 @@
 "use client";
+
+import { motion } from "motion/react";
 import { CheckCircle2 } from "lucide-react";
+
+const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function ExpensesSection() {
   const expenseEntries = [
@@ -38,67 +42,171 @@ export function ExpensesSection() {
   ];
 
   return (
-    <section data-nav-theme="dark" className="py-16 sm:py-24 lg:py-28 border-t border-zinc-200/80 dark:border-zinc-800/80 bg-[#FAFAF9]/80 dark:bg-zinc-950/60 backdrop-blur-xs transition-colors">
+    <section
+      data-nav-theme="dark"
+      className="py-16 sm:py-24 lg:py-28 border-t border-zinc-200/80 dark:border-zinc-800/80 bg-[#FAFAF9]/80 dark:bg-zinc-950/60 backdrop-blur-xs transition-colors"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-10 lg:px-16 space-y-10 sm:space-y-12">
         {/* Editorial Split Header with Responsive Typography */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end">
           <div className="lg:col-span-6 space-y-3">
-            <span className="text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase">
+            <motion.span
+              className="inline-block text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase font-sans"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, ease: easeDecelerate }}
+            >
               Financial Clarity
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 dark:text-zinc-50 leading-[1.15] break-words [text-wrap:balance]">
-              Know where the{" "}
-              <span className="block font-serif italic font-normal text-zinc-800 dark:text-zinc-200 mt-1 sm:mt-2">
-                budget goes.
+            </motion.span>
+            
+            <motion.h2
+              className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 dark:text-zinc-50 leading-[1.15] break-words [text-wrap:balance]"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-60px" }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.08,
+                    delayChildren: 0.05,
+                  },
+                },
+              }}
+            >
+              <span className="block">
+                {["Know", "where", "the"].map((word) => (
+                  <motion.span
+                    key={word}
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        filter: "blur(0px)",
+                        transition: { duration: 0.65, ease: easeDecelerate },
+                      },
+                    }}
+                    className="inline-block mr-[0.28em]"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
               </span>
-            </h2>
+              <span className="block font-serif italic font-normal text-zinc-800 dark:text-zinc-200 mt-1 sm:mt-2">
+                {["budget", "goes."].map((word) => (
+                  <motion.span
+                    key={word}
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        filter: "blur(0px)",
+                        transition: { duration: 0.7, ease: easeDecelerate },
+                      },
+                    }}
+                    className="inline-block mr-[0.28em]"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </span>
+            </motion.h2>
           </div>
 
-          <div className="lg:col-span-6">
+          <motion.div
+            className="lg:col-span-6"
+            initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.7, delay: 0.25, ease: easeDecelerate }}
+          >
             <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed break-words [text-wrap:balance]">
               Travel expenses shouldn't feel like spreadsheets. Prava records stays, transit
               fares, dining, and activity tickets with live spot currency conversions, category
               headroom meters, and offline entry.
             </p>
-          </div>
+          </motion.div>
         </div>
 
-        {/* 3 Budget KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-zinc-200 dark:bg-zinc-800 rounded-sm overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-xs">
-          <div className="p-5 sm:p-6 bg-white dark:bg-zinc-900 space-y-2">
-            <span className="text-[11px] uppercase tracking-wider text-zinc-500 font-medium">
+        {/* 3 Budget KPI Cards with Staggered Entrance */}
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-zinc-200 dark:bg-zinc-800 rounded-sm overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-xs"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.1,
+              },
+            },
+          }}
+        >
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 14 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeDecelerate } },
+            }}
+            className="p-5 sm:p-6 bg-white dark:bg-zinc-900 space-y-2"
+          >
+            <span className="text-[11px] uppercase tracking-wider text-zinc-500 font-medium font-sans">
               Trip Budget
             </span>
             <div className="text-2xl sm:text-3xl font-light text-zinc-950 dark:text-zinc-50 tabular-nums">
               ₹1,50,000
             </div>
-            <p className="text-xs text-zinc-500">Allocated across 8 days in Rajasthan</p>
-          </div>
+            <p className="text-xs text-zinc-500 font-sans">Allocated across 8 days in Rajasthan</p>
+          </motion.div>
 
-          <div className="p-5 sm:p-6 bg-white dark:bg-zinc-900 space-y-2">
-            <span className="text-[11px] uppercase tracking-wider text-zinc-500 font-medium">
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 14 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeDecelerate } },
+            }}
+            className="p-5 sm:p-6 bg-white dark:bg-zinc-900 space-y-2"
+          >
+            <span className="text-[11px] uppercase tracking-wider text-zinc-500 font-medium font-sans">
               Logged to Date
             </span>
             <div className="text-2xl sm:text-3xl font-light text-zinc-950 dark:text-zinc-50 tabular-nums">
               ₹54,200
             </div>
-            <p className="text-xs text-zinc-500">36.1% allocated · On pace with itinerary</p>
-          </div>
+            <p className="text-xs text-zinc-500 font-sans">36.1% allocated · On pace with itinerary</p>
+          </motion.div>
 
-          <div className="p-5 sm:p-6 bg-white dark:bg-zinc-900 space-y-2">
-            <span className="text-[11px] uppercase tracking-wider text-zinc-500 font-medium">
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 14 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeDecelerate } },
+            }}
+            className="p-5 sm:p-6 bg-white dark:bg-zinc-900 space-y-2"
+          >
+            <span className="text-[11px] uppercase tracking-wider text-zinc-500 font-medium font-sans">
               Remaining Headroom
             </span>
             <div className="text-2xl sm:text-3xl font-light text-[#2D9BF0] tabular-nums">
               ₹95,800
             </div>
-            <p className="text-xs text-zinc-500">Approx. $1,151 USD at live ECB spot rate</p>
-          </div>
-        </div>
+            <p className="text-xs text-zinc-500 font-sans">Approx. $1,151 USD at live ECB spot rate</p>
+          </motion.div>
+        </motion.div>
 
         {/* Recent Expense Entries Table */}
-        <div className="rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-xs">
-          <div className="flex items-center justify-between p-4 sm:px-6 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-950/60 text-xs text-zinc-500 uppercase tracking-wider font-medium">
+        <motion.div
+          className="rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-xs"
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.65, delay: 0.15, ease: easeDecelerate }}
+        >
+          <div className="flex items-center justify-between p-4 sm:px-6 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-950/60 text-xs text-zinc-500 uppercase tracking-wider font-medium font-sans">
             <span>Recent Workspace Entries</span>
             <span>Spot Converted (INR / USD)</span>
           </div>
@@ -113,12 +221,12 @@ export function ExpensesSection() {
                   <p className="font-medium text-sm text-zinc-900 dark:text-zinc-100">
                     {item.title}
                   </p>
-                  <p className="text-[11px] text-zinc-500">
+                  <p className="text-[11px] text-zinc-500 font-sans">
                     <span className="text-[#2D9BF0] font-medium">{item.category}</span> · {item.date} · {item.paidBy}
                   </p>
                 </div>
 
-                <div className="text-left sm:text-right">
+                <div className="text-left sm:text-right font-sans">
                   <span className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 tabular-nums">
                     {item.inr}
                   </span>
@@ -128,7 +236,7 @@ export function ExpensesSection() {
             ))}
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 sm:px-6 bg-zinc-50/40 dark:bg-zinc-950/40 border-t border-zinc-200/80 dark:border-zinc-800/80 text-[11px] text-zinc-500">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 sm:px-6 bg-zinc-50/40 dark:bg-zinc-950/40 border-t border-zinc-200/80 dark:border-zinc-800/80 text-[11px] text-zinc-500 font-sans">
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
               IndexedDB offline persistence with auto-sync
@@ -137,8 +245,9 @@ export function ExpensesSection() {
               Category breakdowns · CSV export ready
             </span>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 }
+

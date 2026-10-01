@@ -2,7 +2,10 @@
 
 import { useMemo, useState } from "react";
 
+import { AnimatePresence, motion } from "motion/react";
 import { ArrowUpRight, Compass } from "lucide-react";
+
+const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 interface Story {
   id: string;
@@ -119,97 +122,200 @@ export function CommunityStoriesSection() {
         {/* Editorial Split Header with Responsive Typography */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end">
           <div className="lg:col-span-6 space-y-3">
-            <div className="flex items-center gap-2">
+            <motion.div
+              className="flex items-center gap-2"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, ease: easeDecelerate }}
+            >
               <Compass className="h-3.5 w-3.5 text-[#2D9BF0]" />
-              <span className="text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase">
+              <span className="text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase font-sans">
                 Shared Journeys
               </span>
-            </div>
+            </motion.div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 leading-[1.15] break-words [text-wrap:balance]">
-              Before you go,
-              <span className="block font-serif italic font-normal text-zinc-800 mt-1 sm:mt-2">
-                see how others travelled.
+            <motion.h2
+              className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 leading-[1.15] break-words [text-wrap:balance]"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-60px" }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.08,
+                    delayChildren: 0.05,
+                  },
+                },
+              }}
+            >
+              <span className="block">
+                {["Before", "you", "go,"].map((word) => (
+                  <motion.span
+                    key={word}
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        filter: "blur(0px)",
+                        transition: { duration: 0.65, ease: easeDecelerate },
+                      },
+                    }}
+                    className="inline-block mr-[0.28em]"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
               </span>
-            </h2>
+              <span className="block font-serif italic font-normal text-zinc-800 mt-1 sm:mt-2">
+                {["see", "how", "others", "travelled."].map((word) => (
+                  <motion.span
+                    key={word}
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        filter: "blur(0px)",
+                        transition: { duration: 0.7, ease: easeDecelerate },
+                      },
+                    }}
+                    className="inline-block mr-[0.28em]"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </span>
+            </motion.h2>
           </div>
 
           <div className="lg:col-span-6 space-y-4">
-            <p className="text-sm sm:text-base text-zinc-600 font-normal leading-relaxed break-words [text-wrap:balance]">
+            <motion.p
+              className="text-sm sm:text-base text-zinc-600 font-normal leading-relaxed break-words [text-wrap:balance]"
+              initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.7, delay: 0.25, ease: easeDecelerate }}
+            >
               Authentic travel itineraries shared by creators, writers,
               and explorers. Clone verified stops, palace stays, and mountain passes
               straight into your own Prava workspace with 1 click.
-            </p>
+            </motion.p>
 
-            {/* Filter Controls with Little Rounded Corners */}
-            <div className="flex flex-wrap items-center gap-2 pt-1">
+            {/* Filter Controls with Animated Sliding Active Pill */}
+            <motion.div
+              className="flex flex-wrap items-center gap-1.5 pt-1 select-none"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.6, delay: 0.35, ease: easeDecelerate }}
+            >
               {[
                 { id: "all", label: "All Journeys" },
                 { id: "himalayas", label: "Himalayas" },
                 { id: "heritage", label: "Royal Heritage" },
                 { id: "south", label: "Coastal & South" },
                 { id: "east", label: "Ancient & East" },
-              ].map((cat) => (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => setActiveCategory(cat.id as any)}
-                  className={`text-xs px-3.5 py-1.5 rounded-md transition-all cursor-pointer font-medium ${
-                    activeCategory === cat.id
-                      ? "bg-zinc-950 text-white shadow-xs"
-                      : "bg-zinc-100 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200"
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
+              ].map((cat) => {
+                const isActive = activeCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setActiveCategory(cat.id as any)}
+                    className={`relative text-xs px-3.5 py-1.5 rounded-md transition-colors cursor-pointer font-medium font-sans ${
+                      isActive
+                        ? "text-white"
+                        : "text-zinc-600 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200/80"
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.div
+                        layoutId="community-category-pill"
+                        className="absolute inset-0 bg-zinc-950 rounded-md shadow-xs"
+                        transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                      />
+                    )}
+                    <span className="relative z-10">{cat.label}</span>
+                  </button>
+                );
+              })}
+            </motion.div>
           </div>
         </div>
 
-        {/* 3 Dynamic Editorial Story Cards in Pure Crisp Light Theme */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {filteredStories.map((story) => (
-            <div
-              key={story.id}
-              className="group flex flex-col justify-between rounded-sm border border-zinc-200/90 bg-[#FAFAF9]/90 overflow-hidden hover:border-zinc-300 transition-all cursor-pointer shadow-xs"
-            >
-              <div>
-                {/* Cover Image with Archival Destination Tag */}
-                <div className="relative h-60 w-full overflow-hidden bg-zinc-100">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={story.imageUrl}
-                    alt={story.title}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-103"
-                  />
-                  <div className="absolute top-3 left-3 bg-black/75 px-2.5 py-0.5 text-[10px] uppercase tracking-wider text-white backdrop-blur-xs font-medium rounded-xs">
-                    {story.destination}
+        {/* Dynamic Editorial Story Cards in Pure Crisp Light Theme */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeCategory}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.1 },
+              },
+              exit: { opacity: 0, transition: { duration: 0.15 } },
+            }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            {filteredStories.map((story) => (
+              <motion.div
+                key={story.id}
+                variants={{
+                  hidden: { opacity: 0, y: 16, scale: 0.98 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    transition: { duration: 0.5, ease: easeDecelerate },
+                  },
+                  exit: { opacity: 0, scale: 0.98, transition: { duration: 0.15 } },
+                }}
+                className="group flex flex-col justify-between rounded-sm border border-zinc-200/90 bg-[#FAFAF9]/90 overflow-hidden hover:border-zinc-300 transition-all cursor-pointer shadow-xs"
+              >
+                <div>
+                  {/* Cover Image with Archival Destination Tag */}
+                  <div className="relative h-60 w-full overflow-hidden bg-zinc-100">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={story.imageUrl}
+                      alt={story.title}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-103"
+                    />
+                    <div className="absolute top-3 left-3 bg-black/75 px-2.5 py-0.5 text-[10px] uppercase tracking-wider text-white backdrop-blur-xs font-medium rounded-xs font-sans">
+                      {story.destination}
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-5 space-y-2.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-semibold text-base text-zinc-950 leading-snug group-hover:text-[#2D9BF0] transition-colors break-words">
+                        {story.title}
+                      </h3>
+                      <ArrowUpRight className="h-4 w-4 text-zinc-400 group-hover:text-[#2D9BF0] transition-colors shrink-0 mt-0.5" />
+                    </div>
+                    <p className="text-xs text-zinc-600 leading-relaxed font-sans line-clamp-3 break-words">
+                      {story.excerpt}
+                    </p>
                   </div>
                 </div>
 
-                {/* Content */}
-                <div className="p-5 space-y-2.5">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-semibold text-base text-zinc-950 leading-snug group-hover:text-[#2D9BF0] transition-colors break-words">
-                      {story.title}
-                    </h3>
-                    <ArrowUpRight className="h-4 w-4 text-zinc-400 group-hover:text-[#2D9BF0] transition-colors shrink-0 mt-0.5" />
-                  </div>
-                  <p className="text-xs text-zinc-600 leading-relaxed font-sans line-clamp-3 break-words">
-                    {story.excerpt}
-                  </p>
+                {/* Card Footer */}
+                <div className="p-5 pt-3 border-t border-zinc-200/80 flex items-center justify-between text-[11px] text-zinc-500 font-sans">
+                  <span className="truncate max-w-[60%] font-medium">By {story.author}</span>
+                  <span className="shrink-0 tabular-nums">{story.meta}</span>
                 </div>
-              </div>
-
-              {/* Card Footer */}
-              <div className="p-5 pt-3 border-t border-zinc-200/80 flex items-center justify-between text-[11px] text-zinc-500">
-                <span className="truncate max-w-[60%] font-medium">By {story.author}</span>
-                <span className="shrink-0 tabular-nums">{story.meta}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   );

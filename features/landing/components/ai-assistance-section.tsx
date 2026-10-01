@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 
+import { motion } from "motion/react";
 import { Check, ChevronDown, ChevronUp, Compass, MapPin, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+
+const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function AiAssistanceSection() {
   const [applied, setApplied] = useState(false);
@@ -42,28 +45,96 @@ export function AiAssistanceSection() {
         {/* Editorial Split Header with Responsive Typography */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end">
           <div className="lg:col-span-6 space-y-3">
-            <span className="text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase">
+            <motion.span
+              className="inline-block text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase font-sans"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, ease: easeDecelerate }}
+            >
               Intelligent Accelerant
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 dark:text-zinc-50 leading-[1.15] break-words [text-wrap:balance]">
-              When you need{" "}
-              <span className="block font-serif italic font-normal text-zinc-800 dark:text-zinc-200 mt-1 sm:mt-2">
-                a little help.
+            </motion.span>
+            
+            <motion.h2
+              className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 dark:text-zinc-50 leading-[1.15] break-words [text-wrap:balance]"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-60px" }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.08,
+                    delayChildren: 0.05,
+                  },
+                },
+              }}
+            >
+              <span className="block">
+                {["When", "you", "need"].map((word) => (
+                  <motion.span
+                    key={word}
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        filter: "blur(0px)",
+                        transition: { duration: 0.65, ease: easeDecelerate },
+                      },
+                    }}
+                    className="inline-block mr-[0.28em]"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
               </span>
-            </h2>
+              <span className="block font-serif italic font-normal text-zinc-800 dark:text-zinc-200 mt-1 sm:mt-2">
+                {["a", "little", "help."].map((word) => (
+                  <motion.span
+                    key={word}
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        filter: "blur(0px)",
+                        transition: { duration: 0.7, ease: easeDecelerate },
+                      },
+                    }}
+                    className="inline-block mr-[0.28em]"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </span>
+            </motion.h2>
           </div>
 
-          <div className="lg:col-span-6">
+          <motion.div
+            className="lg:col-span-6"
+            initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.7, delay: 0.25, ease: easeDecelerate }}
+          >
             <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed break-words [text-wrap:balance]">
               Prava Assist is not an autonomous bot taking over your plans—it is an
               intelligent thinking partner grounded directly in your trip's real
               constraints. AI drafts proposals. You stay in full control.
             </p>
-          </div>
+          </motion.div>
         </div>
 
         {/* AI Proposal Card Simulation */}
-        <div className="rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl shadow-zinc-950/5 dark:shadow-black/40 overflow-hidden">
+        <motion.div
+          className="rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl shadow-zinc-950/5 dark:shadow-black/40 overflow-hidden"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.75, delay: 0.1, ease: easeDecelerate }}
+        >
           {/* Card Top Bar with min-w-0 for Mobile Truncation */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-950/70 px-4 sm:px-6 py-2.5 sm:py-3 text-xs">
             <div className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300 min-w-0">
@@ -304,7 +375,7 @@ export function AiAssistanceSection() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

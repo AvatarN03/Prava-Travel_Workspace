@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { motion } from "motion/react";
 import { Check, ShieldCheck, Sparkles, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,8 @@ import type { User } from "@supabase/supabase-js";
 interface PricingSectionProps {
   user: User | null;
 }
+
+const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function PricingSection({ user }: PricingSectionProps) {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
@@ -26,75 +29,174 @@ export function PricingSection({ user }: PricingSectionProps) {
         
         {/* Section Header with Responsive Typography */}
         <div className="text-center max-w-2xl mx-auto space-y-4">
-          <span className="text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase">
+          <motion.span
+            className="inline-block text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase font-sans"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, ease: easeDecelerate }}
+          >
             Transparent Membership
-          </span>
+          </motion.span>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 dark:text-zinc-50 leading-[1.15] break-words [text-wrap:balance]">
-            Simple, transparent
-            <span className="block font-serif italic font-normal text-zinc-800 dark:text-zinc-200 mt-1 sm:mt-2">
-              pricing for every journey.
+          <motion.h2
+            className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 dark:text-zinc-50 leading-[1.15] break-words [text-wrap:balance]"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.08,
+                  delayChildren: 0.05,
+                },
+              },
+            }}
+          >
+            <span className="block">
+              {["Simple,", "transparent"].map((word) => (
+                <motion.span
+                  key={word}
+                  variants={{
+                    hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      filter: "blur(0px)",
+                      transition: { duration: 0.65, ease: easeDecelerate },
+                    },
+                  }}
+                  className="inline-block mr-[0.28em]"
+                >
+                  {word}
+                </motion.span>
+              ))}
             </span>
-          </h2>
+            <span className="block font-serif italic font-normal text-zinc-800 dark:text-zinc-200 mt-1 sm:mt-2">
+              {["pricing", "for", "every", "journey."].map((word) => (
+                <motion.span
+                  key={word}
+                  variants={{
+                    hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      filter: "blur(0px)",
+                      transition: { duration: 0.7, ease: easeDecelerate },
+                    },
+                  }}
+                  className="inline-block mr-[0.28em]"
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </span>
+          </motion.h2>
 
-          <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed break-words [text-wrap:balance]">
+          <motion.p
+            className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed break-words [text-wrap:balance]"
+            initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.7, delay: 0.25, ease: easeDecelerate }}
+          >
             Start free with full workspace access. Upgrade when you need higher trip capacities
             and deeper AI reasoning for complex itineraries.
-          </p>
+          </motion.p>
 
-          {/* Billing Switcher with Full Dark Theme Support */}
-          <div className="pt-2 flex items-center justify-center">
-            <div className="inline-flex items-center rounded-sm p-1 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          {/* Billing Switcher with Full Dark Theme Support & Spring Sliding Pill */}
+          <motion.div
+            className="pt-2 flex items-center justify-center select-none"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, delay: 0.35, ease: easeDecelerate }}
+          >
+            <div className="relative inline-flex items-center rounded-sm p-1 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
               <button
                 type="button"
                 onClick={() => setBillingCycle("monthly")}
-                className={`px-3.5 py-1.5 text-xs rounded-xs transition-all cursor-pointer font-medium ${
+                className={`relative z-10 px-3.5 py-1.5 text-xs rounded-xs transition-colors cursor-pointer font-medium font-sans ${
                   billingCycle === "monthly"
-                    ? "bg-white dark:bg-zinc-800 text-zinc-950 dark:text-zinc-50 shadow-xs border border-zinc-200/60 dark:border-zinc-700 font-semibold"
+                    ? "text-zinc-950 dark:text-zinc-50 font-semibold"
                     : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
                 }`}
               >
-                Monthly
+                {billingCycle === "monthly" && (
+                  <motion.div
+                    layoutId="billing-cycle-pill"
+                    className="absolute inset-0 bg-white dark:bg-zinc-800 rounded-xs shadow-xs border border-zinc-200/60 dark:border-zinc-700"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">Monthly</span>
               </button>
+
               <button
                 type="button"
                 onClick={() => setBillingCycle("annual")}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs rounded-xs transition-all cursor-pointer font-medium ${
+                className={`relative z-10 flex items-center gap-1.5 px-3.5 py-1.5 text-xs rounded-xs transition-colors cursor-pointer font-medium font-sans ${
                   billingCycle === "annual"
-                    ? "bg-white dark:bg-zinc-800 text-zinc-950 dark:text-zinc-50 shadow-xs border border-zinc-200/60 dark:border-zinc-700 font-semibold"
+                    ? "text-zinc-950 dark:text-zinc-50 font-semibold"
                     : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
                 }`}
               >
-                <span>Annual</span>
-                <span className="bg-[#2D9BF0] text-white text-[10px] px-1.5 py-0.5 rounded-xs font-semibold">
+                {billingCycle === "annual" && (
+                  <motion.div
+                    layoutId="billing-cycle-pill"
+                    className="absolute inset-0 bg-white dark:bg-zinc-800 rounded-xs shadow-xs border border-zinc-200/60 dark:border-zinc-700"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">Annual</span>
+                <span className="relative z-10 bg-[#2D9BF0] text-white text-[10px] px-1.5 py-0.5 rounded-xs font-semibold">
                   Save 16.5%
                 </span>
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* 2-Tier Pricing Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
-          
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.12, delayChildren: 0.1 },
+            },
+          }}
+        >
           {/* Plan 1: Free Explorer */}
-          <div className="rounded-sm border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-900/80 p-6 sm:p-8 flex flex-col justify-between space-y-8 shadow-xs">
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: easeDecelerate } },
+            }}
+            className="rounded-sm border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-900/80 p-6 sm:p-8 flex flex-col justify-between space-y-8 shadow-xs"
+          >
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-lg text-zinc-950 dark:text-zinc-50">
                     Free Explorer
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-1">
+                  <p className="text-xs text-zinc-500 mt-1 font-sans">
                     For solo travelers and occasional explorers.
                   </p>
                 </div>
-                <span className="text-xs uppercase px-2 py-0.5 rounded-xs bg-zinc-200/80 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-medium">
+                <span className="text-xs uppercase px-2 py-0.5 rounded-xs bg-zinc-200/80 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-medium font-sans">
                   Starter
                 </span>
               </div>
 
-              <div className="pt-2 border-t border-zinc-200/80 dark:border-zinc-800/80">
+              <div className="pt-2 border-t border-zinc-200/80 dark:border-zinc-800/80 font-sans">
                 <div className="flex items-baseline gap-1">
                   <span className="text-4xl font-light text-zinc-950 dark:text-zinc-50 tabular-nums">
                     ₹0
@@ -107,7 +209,7 @@ export function PricingSection({ user }: PricingSectionProps) {
               </div>
 
               {/* Feature Checklist */}
-              <ul className="space-y-3 text-xs text-zinc-700 dark:text-zinc-300 pt-2 border-t border-zinc-200/80 dark:border-zinc-800/80">
+              <ul className="space-y-3 text-xs text-zinc-700 dark:text-zinc-300 pt-2 border-t border-zinc-200/80 dark:border-zinc-800/80 font-sans">
                 <li className="flex items-start gap-2.5">
                   <Check className="h-4 w-4 text-[#2D9BF0] shrink-0 mt-0.5" />
                   <span>
@@ -138,18 +240,24 @@ export function PricingSection({ user }: PricingSectionProps) {
             <Button
               asChild
               variant="outline"
-              className="w-full text-xs h-10 rounded-sm border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer shadow-none font-medium"
+              className="w-full text-xs h-10 rounded-sm border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer shadow-none font-medium font-sans"
             >
               <Link href={user ? "/dashboard" : "/auth?tab=signup"}>
                 <span>{user ? "Open Dashboard" : "Start Planning Free"}</span>
               </Link>
             </Button>
-          </div>
+          </motion.div>
 
           {/* Plan 2: Pro Wanderer (Featured) */}
-          <div className="relative rounded-sm border-2 border-[#2D9BF0] bg-white dark:bg-zinc-900 p-6 sm:p-8 flex flex-col justify-between space-y-8 shadow-xl shadow-[#2D9BF0]/5">
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: easeDecelerate } },
+            }}
+            className="relative rounded-sm border-2 border-[#2D9BF0] bg-white dark:bg-zinc-900 p-6 sm:p-8 flex flex-col justify-between space-y-8 shadow-xl shadow-[#2D9BF0]/5"
+          >
             {/* Popular Badge */}
-            <div className="absolute -top-3 right-6 bg-[#2D9BF0] text-white text-[10px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-xs shadow-xs flex items-center gap-1">
+            <div className="absolute -top-3 right-6 bg-[#2D9BF0] text-white text-[10px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-xs shadow-xs flex items-center gap-1 font-sans">
               <Sparkles className="h-3 w-3" />
               <span>Recommended</span>
             </div>
@@ -160,13 +268,13 @@ export function PricingSection({ user }: PricingSectionProps) {
                   <h3 className="font-semibold text-lg text-zinc-950 dark:text-zinc-50">
                     Pro Wanderer
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-1">
+                  <p className="text-xs text-zinc-500 mt-1 font-sans">
                     For frequent adventurers, digital nomads & creators.
                   </p>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-zinc-200/80 dark:border-zinc-800/80">
+              <div className="pt-2 border-t border-zinc-200/80 dark:border-zinc-800/80 font-sans">
                 <div className="flex items-baseline gap-1">
                   <span className="text-4xl font-light text-zinc-950 dark:text-zinc-50 tabular-nums">
                     {billingCycle === "annual" ? "₹167" : "₹200"}
@@ -183,7 +291,7 @@ export function PricingSection({ user }: PricingSectionProps) {
               </div>
 
               {/* Feature Checklist */}
-              <ul className="space-y-3 text-xs text-zinc-700 dark:text-zinc-300 pt-2 border-t border-zinc-200/80 dark:border-zinc-800/80">
+              <ul className="space-y-3 text-xs text-zinc-700 dark:text-zinc-300 pt-2 border-t border-zinc-200/80 dark:border-zinc-800/80 font-sans">
                 <li className="flex items-start gap-2.5">
                   <Check className="h-4 w-4 text-[#2D9BF0] shrink-0 mt-0.5" />
                   <span>
@@ -217,17 +325,23 @@ export function PricingSection({ user }: PricingSectionProps) {
 
             <Button
               asChild
-              className="w-full text-xs h-10 rounded-sm bg-zinc-950 hover:bg-black text-white dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-white cursor-pointer shadow-none transition-all font-medium"
+              className="w-full text-xs h-10 rounded-sm bg-zinc-950 hover:bg-black text-white dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-white cursor-pointer shadow-none transition-all font-medium font-sans hover:scale-102 active:scale-98"
             >
               <Link href={user ? "/subscription" : "/auth?tab=signup"}>
                 <span>{user ? "Manage Subscription" : "Upgrade to Pro"}</span>
               </Link>
             </Button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Guarantee Banner */}
-        <div className="max-w-2xl mx-auto rounded-sm border border-zinc-200/80 dark:border-zinc-800/80 bg-[#FAFAF9]/80 dark:bg-zinc-900/60 p-4 flex flex-wrap items-center justify-around gap-4 text-xs text-zinc-500">
+        <motion.div
+          className="max-w-2xl mx-auto rounded-sm border border-zinc-200/80 dark:border-zinc-800/80 bg-[#FAFAF9]/80 dark:bg-zinc-900/60 p-4 flex flex-wrap items-center justify-around gap-4 text-xs text-zinc-500 font-sans"
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.6, delay: 0.2, ease: easeDecelerate }}
+        >
           <div className="flex items-center gap-1.5 font-medium">
             <ShieldCheck className="h-4 w-4 text-[#2D9BF0]" />
             <span>Encrypted Payments</span>
@@ -240,7 +354,7 @@ export function PricingSection({ user }: PricingSectionProps) {
             <Check className="h-4 w-4 text-[#2D9BF0]" />
             <span>Cancel Anytime</span>
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </section>
