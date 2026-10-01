@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
-import { db } from "@/lib/db";
+
+import { NotesGrid } from "@/features/trip-workspace";
 import { verifyTripOwnership } from "@/features/trip-workspace/common/auth-check";
-import { NotesGrid } from "@/features/trip-workspace/notes/components/notes-grid";
+
+import { db } from "@/lib/db";
 
 interface NotesPageProps {
   params: Promise<{

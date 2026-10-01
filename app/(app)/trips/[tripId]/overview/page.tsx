@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
-import { db } from "@/lib/db";
+
+import { OverviewDashboard } from "@/features/trip-workspace";
 import { verifyTripOwnership } from "@/features/trip-workspace/common/auth-check";
-import { OverviewDashboard } from "@/features/trip-workspace/overview/components/overview-dashboard";
+
+import { db } from "@/lib/db";
 
 interface OverviewPageProps {
   params: Promise<{

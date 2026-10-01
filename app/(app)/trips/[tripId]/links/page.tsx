@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
-import { db } from "@/lib/db";
+
+import { LinksGrid } from "@/features/trip-workspace";
 import { verifyTripOwnership } from "@/features/trip-workspace/common/auth-check";
-import { LinksGrid } from "@/features/trip-workspace/links/components/links-grid";
+
+import { db } from "@/lib/db";
 
 interface LinksPageProps {
   params: Promise<{

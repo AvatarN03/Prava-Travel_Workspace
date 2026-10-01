@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
-import { db } from "@/lib/db";
+
+import { ExpenseTracker } from "@/features/trip-workspace";
 import { verifyTripOwnership } from "@/features/trip-workspace/common/auth-check";
-import { ExpenseTracker } from "@/features/trip-workspace/expenses/components/expense-tracker";
-import { fetchFxRates } from "@/features/travel-essentials/currency/currency-service";
+import { fetchFxRates } from "@/features/travel-essentials";
+
+import { db } from "@/lib/db";
 
 interface ExpensesPageProps {
   params: Promise<{

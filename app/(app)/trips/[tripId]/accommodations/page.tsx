@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
-import { db } from "@/lib/db";
+
+import { AccommodationList } from "@/features/trip-workspace";
 import { verifyTripOwnership } from "@/features/trip-workspace/common/auth-check";
-import { AccommodationList } from "@/features/trip-workspace/accommodations/components/accommodation-list";
+
+import { db } from "@/lib/db";
 
 interface AccommodationsPageProps {
   params: Promise<{

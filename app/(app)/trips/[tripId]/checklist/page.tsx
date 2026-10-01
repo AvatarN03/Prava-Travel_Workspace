@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
-import { db } from "@/lib/db";
+
+import { ChecklistView } from "@/features/trip-workspace";
 import { verifyTripOwnership } from "@/features/trip-workspace/common/auth-check";
-import { ChecklistView } from "@/features/trip-workspace/checklist/components/checklist-view";
+
+import { db } from "@/lib/db";
 
 interface ChecklistPageProps {
   params: Promise<{

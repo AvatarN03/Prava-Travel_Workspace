@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 
-import { ItineraryView } from "@/features/trip-workspace/itinerary/components/itinerary-view";
+import { ItineraryView } from "@/features/trip-workspace";
+import { verifyTripOwnership } from "@/features/trip-workspace/common/auth-check";
 
 import { db } from "@/lib/db";
-import { verifyTripOwnership } from "@/features/trip-workspace/common/auth-check";
 
 interface ItineraryPageProps {
   params: Promise<{
