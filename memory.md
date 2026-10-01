@@ -2700,6 +2700,29 @@
   - **Verification**:
     - TypeScript compilation check (`node ./node_modules/typescript/bin/tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors across the entire codebase.
 
+- **Task 184 (Codebase Minification & Clean Barrel Export: `components/storage`)**:
+  - **Context & User Request**:
+    - Audit `components/storage` (avatar-upload, cover-image, image-upload), organize 6-tier import structure, establish a canonical public barrel (`components/storage/index.ts`), and refactor all consumer imports across the application.
+  - **Solutions Implemented**:
+    - **6-Tier Import Structure Standardization**:
+      - Reorganized import blocks in `components/storage/cover-image.tsx` and `components/storage/image-upload.tsx` into strict 6-tier hierarchy (`react` → `lucide-react` → `components/ui` → `features/storage` & `lib/utils`).
+    - **Canonical Public Barrel (`components/storage/index.ts`)**:
+      - Created centralized `components/storage/index.ts` exporting:
+        - `AvatarUpload` from `./avatar-upload`
+        - `CoverImage` from `./cover-image`
+        - `ImageUpload` from `./image-upload`
+    - **Consumer Deep-Import Refactoring Across 6 Files**:
+      - Refactored all application consumers to import from `@/components/storage`:
+        - `features/trips/components/edit-trip-dialog.tsx` -> `{ ImageUpload }`
+        - `features/trip-workspace/common/workspace-header.tsx` -> `{ CoverImage }`
+        - `features/profile/components/overview-section.tsx` -> `{ AvatarUpload }`
+        - `features/blog/components/blog-editor.tsx` -> `{ ImageUpload }`
+        - `features/community/components/edit-discussion-dialog.tsx` -> `{ ImageUpload }`
+        - `features/community/components/new-discussion-dialog.tsx` -> `{ ImageUpload }`
+  - **Verification**:
+    - TypeScript compilation check (`node ./node_modules/typescript/bin/tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors across the entire codebase.
+
+
 
 
 

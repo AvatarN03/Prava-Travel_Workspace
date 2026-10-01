@@ -1,5 +1,4 @@
-import { fetchWeather } from "@/features/travel-essentials/weather/weather-service";
-import { fetchFxRates } from "@/features/travel-essentials/currency/currency-service";
+import { fetchFxRates, fetchWeather } from "@/features/travel-essentials";
 
 export interface ToolExecutionResult {
   toolName: "weather" | "currency" | "emergency";

@@ -1,16 +1,18 @@
 "use client";
 
 import { useTransition } from "react";
-import { Loader2, Trash2, AlertTriangle } from "lucide-react";
+
+import { AlertTriangle, Loader2 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 
 interface ConfirmDeleteDialogProps {
   open: boolean;

@@ -2,15 +2,14 @@
 
 import { useState, useEffect } from "react";
 
-import { Sidebar } from "@/components/app-shell/sidebar";
-import { TopBar } from "@/components/app-shell/top-bar";
-import { WorkspaceAiPanel } from "@/features/trip-workspace/ai/components/workspace-ai-panel";
+import { Sidebar } from "./sidebar";
+import { TopBar } from "./top-bar";
 
-import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
+import { useWorkspaceAi, WorkspaceAiPanel } from "@/features/trip-workspace";
 
 import { cn } from "@/lib/utils";
 
-import type { TopBarUserInfo } from "@/features/profile/actions";
+import type { TopBarUserInfo } from "@/features/profile";
 
 interface AppShellProps {
   children: React.ReactNode;

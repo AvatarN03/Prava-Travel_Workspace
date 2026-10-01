@@ -32,7 +32,8 @@ import {
 import {
   getWeatherAction,
   getWeatherByCoordsAction,
-} from "@/features/travel-essentials/weather/actions";
+  type WeatherData,
+} from "@/features/travel-essentials";
 import {
   broadcastWeatherUpdate,
   detectLocationViaGPS,
@@ -40,7 +41,6 @@ import {
   getCachedWeather,
   listenWeatherUpdate,
 } from "@/features/travel-essentials/weather/location-service";
-import type { WeatherData } from "@/features/travel-essentials/types";
 
 function getTopBarWeatherIcon(code?: number, iconCode?: string) {
   if (code === undefined) {

@@ -11,10 +11,10 @@ import { cn } from "@/lib/utils";
 
 import {
   accountNavItems,
-  NavItem,
   otherNavItems,
   workspaceNavItems,
-} from "@/components/app-shell/nav-config";
+  type NavItem,
+} from "./nav-config";
 
 interface SidebarProps {
   mobileOpen?: boolean;
