@@ -7,6 +7,12 @@ import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Check, Compass, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import { HeroBackgroundPattern } from "./hero-background-pattern";
 import { INDIAN_JOURNEYS } from "../hero-journeys";
@@ -308,18 +314,27 @@ export function HeroSection({ user }: HeroSectionProps) {
                 </AnimatePresence>
 
                 {/* Switch Photo Button in Top Right */}
-                <button
-                  type="button"
-                  onClick={handleCyclePhoto}
-                  className="absolute top-2.5 right-2.5 rounded-xs bg-black/75 hover:bg-black px-2 py-1 text-[10px] font-sans font-medium text-white/90 backdrop-blur-xs flex items-center gap-1 transition-all cursor-pointer hover:scale-105 active:scale-95"
-                  title="Next photo"
-                >
-                  <RefreshCw className="h-2.5 w-2.5" />
-                  <span>
-                    Photo {(photoIndex % currentJourney.photos.length) + 1}/
-                    {currentJourney.photos.length}
-                  </span>
-                </button>
+                <TooltipProvider delayDuration={150}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        onClick={handleCyclePhoto}
+                        className="absolute top-2.5 right-2.5 rounded-xs bg-black/75 hover:bg-black px-2 py-1 text-[10px] font-sans font-medium text-white/90 backdrop-blur-xs flex items-center gap-1 transition-all cursor-pointer hover:scale-105 active:scale-95"
+                        aria-label="Cycle to next photo"
+                      >
+                        <RefreshCw className="h-2.5 w-2.5" />
+                        <span>
+                          Photo {(photoIndex % currentJourney.photos.length) + 1}/
+                          {currentJourney.photos.length}
+                        </span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs font-sans">
+                      Cycle to next photo
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
 
               {/* Dynamic Widgets Below Photo with Smooth Crossfade */}

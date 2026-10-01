@@ -17,6 +17,12 @@ import {
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type WorkspaceTab =
   | "overview"
@@ -146,20 +152,45 @@ export function WorkspaceShowcase() {
               {/* Left Group: Traffic Light Buttons + Left-Aligned Rectangular Address Bar */}
               <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                 {/* macOS Traffic Light Buttons */}
-                <div className="flex items-center gap-2 shrink-0">
-                  <span
-                    className="h-3 w-3 rounded-full bg-[#FF5F56] border border-[#E0443E] hover:opacity-80 transition-opacity shadow-2xs cursor-pointer inline-block"
-                    title="Close window"
-                  />
-                  <span
-                    className="h-3 w-3 rounded-full bg-[#FFBD2E] border border-[#DEA123] hover:opacity-80 transition-opacity shadow-2xs cursor-pointer inline-block"
-                    title="Minimize window"
-                  />
-                  <span
-                    className="h-3 w-3 rounded-full bg-[#27C93F] border border-[#1AAB29] hover:opacity-80 transition-opacity shadow-2xs cursor-pointer inline-block"
-                    title="Fullscreen"
-                  />
-                </div>
+                <TooltipProvider delayDuration={200}>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span
+                          className="h-3 w-3 rounded-full bg-[#FF5F56] border border-[#E0443E] hover:opacity-80 transition-opacity shadow-2xs cursor-pointer inline-block"
+                          aria-label="Close window"
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="text-[11px] font-sans">
+                        Close window
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span
+                          className="h-3 w-3 rounded-full bg-[#FFBD2E] border border-[#DEA123] hover:opacity-80 transition-opacity shadow-2xs cursor-pointer inline-block"
+                          aria-label="Minimize window"
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="text-[11px] font-sans">
+                        Minimize window
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span
+                          className="h-3 w-3 rounded-full bg-[#27C93F] border border-[#1AAB29] hover:opacity-80 transition-opacity shadow-2xs cursor-pointer inline-block"
+                          aria-label="Fullscreen"
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="text-[11px] font-sans">
+                        Fullscreen
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </TooltipProvider>
 
                 {/* Simple Non-Rounded Rectangular Address Bar Input Box */}
                 <div className="flex items-center gap-2 px-3 py-1 rounded-none bg-white dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-[11px] text-zinc-600 dark:text-zinc-300 shadow-2xs max-w-[320px] sm:max-w-md truncate tracking-wider">
@@ -433,24 +464,54 @@ export function WorkspaceShowcase() {
                           </div>
                           {/* Segmented Budget Progress */}
                           <div className="space-y-1.5">
-                            <div className="h-2 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden flex">
-                              <div
-                                className="h-full bg-[#2D9BF0] w-[21.3%]"
-                                title="Lodging (₹32,000)"
-                              />
-                              <div
-                                className="h-full bg-emerald-500 w-[7.6%]"
-                                title="Transit (₹11,400)"
-                              />
-                              <div
-                                className="h-full bg-amber-500 w-[4.8%]"
-                                title="Dining (₹7,200)"
-                              />
-                              <div
-                                className="h-full bg-purple-500 w-[2.4%]"
-                                title="Activities (₹3,600)"
-                              />
-                            </div>
+                            <TooltipProvider delayDuration={150}>
+                              <div className="h-2 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden flex">
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div
+                                      className="h-full bg-[#2D9BF0] w-[21.3%] cursor-pointer transition-opacity hover:opacity-85"
+                                      aria-label="Lodging"
+                                    />
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="text-xs">
+                                    Lodging · ₹32,000 (21.3%)
+                                  </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div
+                                      className="h-full bg-emerald-500 w-[7.6%] cursor-pointer transition-opacity hover:opacity-85"
+                                      aria-label="Transit"
+                                    />
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="text-xs">
+                                    Transit · ₹11,400 (7.6%)
+                                  </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div
+                                      className="h-full bg-amber-500 w-[4.8%] cursor-pointer transition-opacity hover:opacity-85"
+                                      aria-label="Dining"
+                                    />
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="text-xs">
+                                    Dining · ₹7,200 (4.8%)
+                                  </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div
+                                      className="h-full bg-purple-500 w-[2.4%] cursor-pointer transition-opacity hover:opacity-85"
+                                      aria-label="Activities"
+                                    />
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="text-xs">
+                                    Activities · ₹3,600 (2.4%)
+                                  </TooltipContent>
+                                </Tooltip>
+                              </div>
+                            </TooltipProvider>
                             <div className="flex items-center justify-between text-[10px] text-zinc-500">
                               <span>36.1% allocated</span>
                               <span className="text-zinc-700 dark:text-zinc-300 font-medium">

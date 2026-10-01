@@ -2722,9 +2722,86 @@
   - **Verification**:
     - TypeScript compilation check (`node ./node_modules/typescript/bin/tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors across the entire codebase.
 
+- **Task 185 (Landing Page Smooth Text Animations, Staggered Kinetic Typography & Transitions)**:
+  - **Context & User Request**:
+    - Implement smooth, premium text animations and transitions across the Prava landing page.
+    - Specifically implement staggered word-by-word kinetic typography for headlines, including the hero title ("Your journey, in one place."), and scroll-triggered transitions across all landing page sections.
+    - Ensure fluid micro-interactions with hardware-accelerated transforms, zero layout shifts, and adherence to Prava's minimalist design philosophy.
+  - **Solutions Implemented**:
+    - **Shared Animation Physics & Deceleration Curve**:
+      - Standardized `const easeDecelerate = [0.16, 1, 0.3, 1] as const;` across all components for smooth Apple/Linear-grade easing.
+      - Integrated scroll-triggered reveals using `whileInView` with `viewport={{ once: true, margin: "-60px" }}` to ensure animations execute smoothly only once as the user reads down the page.
+    - **Hero Section (`features/landing/components/hero-section.tsx`)**:
+      - Staggered kinetic typography word-by-word reveal for `"Your journey,"` and `"in one place."` with gentle vertical translate and blur-to-sharp dissolve (`y: 18, filter: "blur(6px)"` -> `y: 0, filter: "blur(0px)"`).
+      - Interactive Indian journeys switcher with fluid sliding indicator (`layoutId="active-journey-indicator"`).
+      - Dynamic right preview frame with `AnimatePresence` for smooth photo cycling and itinerary stops crossfades.
+      - Staggered reveals for eyebrow badge, subtitle paragraph, CTAs, and the 3 numbered micro-pillars.
+    - **Expenses Section (`features/landing/components/expenses-section.tsx`)**:
+      - Eyebrow badge animation and staggered headline reveal for `"Know where the"` / `"budget goes."`.
+      - Right-hand description blur-fade and staggered KPI metric cards (`Trip Budget`, `Logged to Date`, `Remaining Headroom`).
+      - Expense entries table and footer persistence notice with smooth viewport reveal.
+    - **Travel Essentials Section (`features/landing/components/travel-essentials-section.tsx`)**:
+      - Staggered headline reveal for `"Useful when you need it."` / `"Quiet when you don't."`.
+      - 3-column utility grid with staggered child cards (Weather live matrix, Spot FX converter, Country guide matrix).
+    - **AI Assistance Section (`features/landing/components/ai-assistance-section.tsx`)**:
+      - Staggered typography for `"When you need"` / `"a little help."`.
+      - Simulated AI proposal card with smooth upward entrance and interactive waypoint checklist.
+    - **Community Stories Section (`features/landing/components/community-stories-section.tsx`)**:
+      - Eyebrow compass animation and staggered headline reveal for `"Before you go,"` / `"see how others travelled."`.
+      - Category filter controls with fluid spring sliding indicator (`layoutId="community-category-pill"`).
+      - Story cards with `AnimatePresence mode="wait"` for smooth staggered crossfades when filtering categories.
+    - **Landscape Banner (`features/landing/components/landscape-banner.tsx`)**:
+      - Staggered typography reveal for `"The journey"` / `"is yours."` and explore button reveal.
+    - **Core Philosophy Section (`features/landing/components/core-philosophy-section.tsx`)**:
+      - Staggered typography reveal for `"Three principles for"` / `"modern journeys."`.
+      - 3 philosophy columns (`PLAN`, `ORGANIZE`, `ASSIST`) staggered viewport reveal.
+    - **Pricing Section (`features/landing/components/pricing-section.tsx`)**:
+      - Staggered typography reveal for `"Simple, transparent"` / `"pricing for every journey."`.
+      - Monthly vs. Annual switcher with fluid spring sliding indicator (`layoutId="billing-cycle-pill"`).
+      - Free Explorer & Pro Wanderer tier cards staggered viewport reveals and guarantee banner entrance.
+    - **CTA Banner (`features/landing/components/cta-banner.tsx`)**:
+      - Staggered typography reveal for `"Make space"` / `"for the journey."`, subtitle fade, and CTA action buttons reveal.
+  - **Verification**:
+    - TypeScript compilation check (`npx tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors across the entire codebase.
 
+- **Task 186 (Landing Footer GitHub Repository Integration)**:
+  - **Context & User Request**:
+    - Add a GitHub icon link for the Prava repository (`https://github.com/AvatarN03/Prava-Travel_Workspace`) in the landing footer.
+    - Keep only the project repo link and remove any author/about links from the footer per user instruction.
+  - **Solutions Implemented**:
+    - **`features/landing/components/landing-footer.tsx`**:
+      - Integrated accessible, crisp `GithubIcon` SVG component (`role="img"`, `viewBox="0 0 24 24"`, `fill="currentColor"`).
+      - Added dedicated GitHub repository link in column 3 pointing to `https://github.com/AvatarN03/Prava-Travel_Workspace` (`target="_blank" rel="noopener noreferrer"`) with hover scaling micro-interaction (`group-hover:scale-110`).
+      - Cleaned up nav and column 3, retaining pure, uncluttered navigation (`Workspace`, `Travel Tools`, `Community`, `Pricing`) and copyright info.
+  - **Verification**:
+    - TypeScript compilation check (`npx tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors.
 
+- **Task 187 (Landing Page Navbar ButtonGroup Integration: Sign In & Start Planning)**:
+  - **Context & User Request**:
+    - Utilize the `ButtonGroup` primitive (`components/ui/button-group.tsx`) in the landing page header navigation to combine "Sign In" and "Start Planning" into a cohesive, connected CTA control.
+  - **Solutions Implemented**:
+    - **`features/landing/components/landing-header.tsx`**:
+      - Imported `ButtonGroup` from `@/components/ui/button-group`.
+      - Replaced detached auth link + button layout with a connected `<ButtonGroup className="hidden sm:inline-flex items-center">`.
+      - Styled "Sign In" as a ghost button with gentle hover fill and squared off right border.
+      - Styled "Start Planning" as the primary high-contrast button with `ArrowRight` icon and squared off left border.
+    - **Activation of `components/ui/button-group.tsx`**:
+      - `button-group.tsx` is now actively integrated into the primary marketing funnel with zero orphaned status.
+  - **Verification**:
+    - TypeScript compilation check (`node ./node_modules/typescript/bin/tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors.
 
-
-
+- **Task 188 (Landing Page shadcn Tooltip Integration Across Hover Targets)**:
+  - **Context & User Request**:
+    - User noticed the native browser/OS tooltip box appearing when hovering over the footer GitHub link and requested replacing all native tooltip affordances with shadcn `Tooltip` components (`Tooltip`, `TooltipTrigger`, `TooltipContent`, `TooltipProvider`).
+  - **Solutions Implemented**:
+    - **`features/landing/components/landing-footer.tsx`**:
+      - Wrapped the GitHub repository link with `TooltipProvider delayDuration={150}` and `Tooltip` + `TooltipTrigger asChild` + `TooltipContent side="top"`.
+      - Removed native browser `title` attribute, rendering a sleek shadcn tooltip: `"Prava Workspace on GitHub"`.
+    - **`features/landing/components/hero-section.tsx`**:
+      - Replaced native `title="Next photo"` on the photo cycle button with shadcn `Tooltip` displaying `"Cycle to next photo"`.
+    - **`features/landing/components/workspace-showcase.tsx`**:
+      - Replaced native `title` attributes on macOS traffic light window controls (Close, Minimize, Fullscreen) with shadcn `Tooltip` displaying `"Close window"`, `"Minimize window"`, `"Fullscreen"`.
+      - Replaced native `title="..."` attributes on the segmented expense progress bar (Lodging, Transit, Dining, Activities) with shadcn `Tooltip` components displaying detailed breakdown info (e.g., `Lodging · ₹32,000 (21.3%)`, `Transit · ₹11,400 (7.6%)`, etc.).
+  - **Verification**:
+    - TypeScript compilation check (`npx tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors.
 

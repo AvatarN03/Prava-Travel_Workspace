@@ -9,6 +9,7 @@ import { useTheme } from "next-themes";
 
 import { ThemeToggle } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 
 import { cn } from "@/lib/utils";
 
@@ -202,18 +203,20 @@ export function LandingHeader({ user }: LandingHeaderProps) {
               </Button>
             </Link>
           ) : (
-            <div className="hidden sm:flex items-center gap-5">
-              <Link
-                href="/auth"
+            <ButtonGroup className="hidden sm:inline-flex items-center">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
                 className={cn(
-                  "text-xs font-medium transition-colors duration-300 cursor-pointer",
+                  "text-xs font-medium px-3.5 h-8 rounded-sm cursor-pointer shadow-none transition-all duration-300",
                   isNavDark
-                    ? "text-zinc-300 hover:text-white"
-                    : "text-zinc-600 hover:text-zinc-950"
+                    ? "text-zinc-300 hover:text-white hover:bg-white/10"
+                    : "text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100"
                 )}
               >
-                Sign In
-              </Link>
+                <Link href="/auth">Sign In</Link>
+              </Button>
               <Button
                 asChild
                 size="sm"
@@ -226,9 +229,10 @@ export function LandingHeader({ user }: LandingHeaderProps) {
               >
                 <Link href="/auth?tab=signup">
                   <span>Start Planning</span>
+                  <ArrowRight className="h-3 w-3" />
                 </Link>
               </Button>
-            </div>
+            </ButtonGroup>
           )}
 
           {/* Mobile Menu Button */}
