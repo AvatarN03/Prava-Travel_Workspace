@@ -1,15 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Plus, Calendar, Compass, Clock, DollarSign, Sparkles } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Compass, Plus, Sparkles } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
-import { ItineraryCard } from "./itinerary-card";
-import { AddItineraryDialog } from "./add-itinerary-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
+import { AddItineraryDialog } from "./add-itinerary-dialog";
+import { ItineraryCard } from "./itinerary-card";
+import { useWorkspaceAi } from "../../context/workspace-ai-context";
 
 import type { ItineraryItem } from "@prisma/client";
 

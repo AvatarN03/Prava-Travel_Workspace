@@ -1,8 +1,8 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 
-import { UserAiQuotaDTO } from "@/features/trip-workspace/ai/actions";
+import type { UserAiQuotaDTO } from "../ai/actions";
 
 export interface ActiveTripContext {
   tripId: string;
@@ -26,7 +26,7 @@ interface WorkspaceAiContextType {
   clearPendingPrompt: () => void;
 }
 
-const WorkspaceAiContext = createContext<WorkspaceAiContextType | undefined>(undefined);
+export const WorkspaceAiContext = createContext<WorkspaceAiContextType | undefined>(undefined);
 
 export function WorkspaceAiProvider({
   children,

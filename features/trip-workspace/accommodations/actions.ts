@@ -1,15 +1,20 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
 import { db } from "@/lib/db";
+
 import { verifyTripOwnership } from "../common/auth-check";
 import {
   createAccommodationSchema,
-  updateAccommodationSchema,
   deleteAccommodationSchema,
+  updateAccommodationSchema,
+} from "./schema";
+
+import type {
   CreateAccommodationInput,
-  UpdateAccommodationInput,
   DeleteAccommodationInput,
+  UpdateAccommodationInput,
 } from "./schema";
 
 export async function createAccommodation(input: CreateAccommodationInput) {

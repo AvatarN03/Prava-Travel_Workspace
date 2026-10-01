@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { ConfirmDeleteDialog } from "@/components/app-shell/confirm-delete-dialog";
+import { ConfirmDeleteDialog } from "@/components/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -48,7 +48,7 @@ import {
 import { AddExpenseDialog } from "./add-expense-dialog";
 import { EditExpenseDialog } from "./edit-expense-dialog";
 
-import { SUPPORTED_CURRENCIES } from "@/features/travel-essentials/currency/currency-service";
+import { SUPPORTED_CURRENCIES } from "@/features/travel-essentials";
 import { deleteExpense, updateTripBudget } from "../actions";
 
 interface ExpenseTrackerProps {

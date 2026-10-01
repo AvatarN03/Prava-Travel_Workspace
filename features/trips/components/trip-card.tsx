@@ -35,7 +35,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { ConfirmDeleteDialog } from "@/components/app-shell/confirm-delete-dialog";
+import { ConfirmDeleteDialog } from "@/components/app-shell";
 import { EditTripDialog } from "./edit-trip-dialog";
 
 import { formatDateRange } from "@/lib/utils";

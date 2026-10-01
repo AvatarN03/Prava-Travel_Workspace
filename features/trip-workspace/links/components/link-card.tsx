@@ -23,11 +23,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ConfirmDeleteDialog } from "@/components/app-shell/confirm-delete-dialog";
-import { Link as PrismaLink } from "@prisma/client";
 import { toast } from "sonner";
-import { deleteLink } from "../actions";
+
+import { ConfirmDeleteDialog } from "@/components/app-shell";
+
 import { EditLinkDialog } from "./edit-link-dialog";
+import { deleteLink } from "../actions";
+
+import type { Link as PrismaLink } from "@prisma/client";
 
 interface LinkCardProps {
   item: PrismaLink;

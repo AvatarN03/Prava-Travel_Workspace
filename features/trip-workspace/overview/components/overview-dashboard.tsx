@@ -1,41 +1,40 @@
 "use client";
 
 import Link from "next/link";
+
 import {
-  Compass,
-  Calendar,
-  BedDouble,
-  Receipt,
-  FileText,
-  CheckSquare,
-  Link2,
   ArrowUpRight,
-  Plus,
+  BedDouble,
+  Calendar,
+  CheckSquare,
   Clock,
+  Compass,
+  FileText,
   MapPin,
-  Check,
   Pin,
-  Sparkles,
-  TrendingUp,
-  AlertCircle,
+  Plus,
+  Receipt,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Trip,
-  ItineraryItem,
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { AddAccommodationDialog } from "../../accommodations/components/add-accommodation-dialog";
+import { AddTaskDialog } from "../../checklist/components/add-task-dialog";
+import { TaskItem } from "../../checklist/components/task-item";
+import { AddExpenseDialog } from "../../expenses/components/add-expense-dialog";
+import { AddItineraryDialog } from "../../itinerary/components/add-itinerary-dialog";
+
+import type {
   Accommodation,
-  Expense,
-  Note,
   ChecklistItem,
+  Expense,
+  ItineraryItem,
   Link as PrismaLink,
+  Note,
+  Trip,
 } from "@prisma/client";
-import { AddItineraryDialog } from "@/features/trip-workspace/itinerary/components/add-itinerary-dialog";
-import { AddExpenseDialog } from "@/features/trip-workspace/expenses/components/add-expense-dialog";
-import { AddAccommodationDialog } from "@/features/trip-workspace/accommodations/components/add-accommodation-dialog";
-import { AddTaskDialog } from "@/features/trip-workspace/checklist/components/add-task-dialog";
-import { TaskItem } from "@/features/trip-workspace/checklist/components/task-item";
 
 interface OverviewDashboardProps {
   trip: Trip;

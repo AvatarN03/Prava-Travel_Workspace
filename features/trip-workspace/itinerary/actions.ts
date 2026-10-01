@@ -1,15 +1,20 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
 import { db } from "@/lib/db";
+
 import { verifyTripOwnership } from "../common/auth-check";
 import {
   createItinerarySchema,
-  updateItinerarySchema,
   deleteItinerarySchema,
+  updateItinerarySchema,
+} from "./schema";
+
+import type {
   CreateItineraryInput,
-  UpdateItineraryInput,
   DeleteItineraryInput,
+  UpdateItineraryInput,
 } from "./schema";
 
 export async function createItineraryItem(input: CreateItineraryInput) {

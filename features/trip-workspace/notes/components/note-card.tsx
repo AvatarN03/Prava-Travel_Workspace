@@ -22,12 +22,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ConfirmDeleteDialog } from "@/components/app-shell/confirm-delete-dialog";
-import { Note } from "@prisma/client";
 import { toast } from "sonner";
-import { deleteNote, togglePinNote } from "../actions";
+
+import { ConfirmDeleteDialog } from "@/components/app-shell";
+import { MarkdownRenderer } from "@/features/blog";
+
 import { EditNoteDialog } from "./edit-note-dialog";
-import { MarkdownRenderer } from "@/features/blog/components/markdown-renderer";
+import { deleteNote, togglePinNote } from "../actions";
+
+import type { Note } from "@prisma/client";
 
 const CATEGORY_STYLES: Record<string, string> = {
   General: "bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/20",

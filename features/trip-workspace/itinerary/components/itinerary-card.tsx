@@ -27,10 +27,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ConfirmDeleteDialog } from "@/components/app-shell/confirm-delete-dialog";
-import { ItineraryItem } from "@prisma/client";
+import { ConfirmDeleteDialog } from "@/components/app-shell";
 import { deleteItineraryItem } from "../actions";
 import { EditItineraryDialog } from "./edit-itinerary-dialog";
+
+import type { ItineraryItem } from "@prisma/client";
 
 const CAT_STYLES: Record<
   string,

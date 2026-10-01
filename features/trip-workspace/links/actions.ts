@@ -1,15 +1,20 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
 import { db } from "@/lib/db";
+
 import { verifyTripOwnership } from "../common/auth-check";
 import {
   createLinkSchema,
-  updateLinkSchema,
   deleteLinkSchema,
+  updateLinkSchema,
+} from "./schema";
+
+import type {
   CreateLinkInput,
-  UpdateLinkInput,
   DeleteLinkInput,
+  UpdateLinkInput,
 } from "./schema";
 
 export async function createLink(input: CreateLinkInput) {

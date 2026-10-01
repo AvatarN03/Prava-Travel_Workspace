@@ -36,7 +36,7 @@ import {
 import { AiProposalCard } from "./ai-proposal-card";
 import { UpgradeDialog } from "@/features/pricing";
 
-import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
+import { useWorkspaceAi } from "../../context/workspace-ai-context";
 
 import {
   getTripConversation,

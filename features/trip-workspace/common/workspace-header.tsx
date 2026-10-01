@@ -22,8 +22,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { ConfirmDeleteDialog } from "@/components/app-shell/confirm-delete-dialog";
-import { CoverImage } from "@/components/storage/cover-image";
+import { ConfirmDeleteDialog } from "@/components/app-shell";
+import { CoverImage } from "@/components/storage";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,7 +49,7 @@ import {
   type Trip,
   type TripStatus,
 } from "@/features/trips";
-import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
+import { useWorkspaceAi } from "../context/workspace-ai-context";
 
 import { formatDateRange } from "@/lib/utils";
 

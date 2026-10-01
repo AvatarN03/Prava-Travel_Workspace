@@ -2,22 +2,23 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+
 import {
-  BedDouble,
-  MapPin,
-  Calendar,
-  Phone,
-  KeyRound,
+  Copy,
   DollarSign,
+  ExternalLink,
+  KeyRound,
+  Loader2,
+  MapPin,
+  Moon,
   MoreHorizontal,
   Pencil,
+  Phone,
   Trash2,
-  Loader2,
-  Copy,
-  ExternalLink,
-  Moon,
 } from "lucide-react";
 import { toast } from "sonner";
+
+import { ConfirmDeleteDialog } from "@/components/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,10 +28,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ConfirmDeleteDialog } from "@/components/app-shell/confirm-delete-dialog";
-import { Accommodation } from "@prisma/client";
-import { deleteAccommodation } from "../actions";
+
 import { EditAccommodationDialog } from "./edit-accommodation-dialog";
+import { deleteAccommodation } from "../actions";
+
+import type { Accommodation } from "@prisma/client";
 
 interface AccommodationCardProps {
   item: Accommodation;

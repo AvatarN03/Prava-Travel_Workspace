@@ -1,17 +1,22 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
 import { db } from "@/lib/db";
+
 import { verifyTripOwnership } from "../common/auth-check";
 import {
   createChecklistItemSchema,
-  updateChecklistItemSchema,
   deleteChecklistItemSchema,
   toggleChecklistItemSchema,
+  updateChecklistItemSchema,
+} from "./schema";
+
+import type {
   CreateChecklistItemInput,
-  UpdateChecklistItemInput,
   DeleteChecklistItemInput,
   ToggleChecklistItemInput,
+  UpdateChecklistItemInput,
 } from "./schema";
 
 export async function createChecklistItem(input: CreateChecklistItemInput) {

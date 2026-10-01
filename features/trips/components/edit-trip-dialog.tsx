@@ -13,7 +13,7 @@ import {
   RotateCw,
 } from "lucide-react";
 
-import { ImageUpload } from "@/components/storage/image-upload";
+import { ImageUpload } from "@/components/storage";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import {

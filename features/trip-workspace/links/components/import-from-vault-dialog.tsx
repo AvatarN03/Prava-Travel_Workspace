@@ -18,7 +18,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { getVaultLinks } from "@/features/travel-essentials/vault/actions";
+import { getVaultLinks } from "@/features/travel-essentials";
 import { createLink } from "../actions";
 
 interface ImportFromVaultDialogProps {

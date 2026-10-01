@@ -1,17 +1,22 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
 import { db } from "@/lib/db";
+
 import { verifyTripOwnership } from "../common/auth-check";
 import {
   createNoteSchema,
-  updateNoteSchema,
   deleteNoteSchema,
   togglePinNoteSchema,
+  updateNoteSchema,
+} from "./schema";
+
+import type {
   CreateNoteInput,
-  UpdateNoteInput,
   DeleteNoteInput,
   TogglePinNoteInput,
+  UpdateNoteInput,
 } from "./schema";
 
 export async function createNote(input: CreateNoteInput) {

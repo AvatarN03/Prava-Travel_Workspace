@@ -2,14 +2,18 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, CheckSquare, Sparkles, Loader2, CheckCircle2, ListFilter } from "lucide-react";
+
+import { CheckCircle2, CheckSquare, Loader2, Plus, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { ChecklistItem } from "@prisma/client";
-import { TaskItem } from "./task-item";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { AddTaskDialog } from "./add-task-dialog";
+import { TaskItem } from "./task-item";
 import { seedEssentialChecklist } from "../actions";
+
+import type { ChecklistItem } from "@prisma/client";
 
 interface ChecklistViewProps {
   tripId: string;

@@ -2,13 +2,17 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Trash2, Pencil, Calendar, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ConfirmDeleteDialog } from "@/components/app-shell/confirm-delete-dialog";
-import { ChecklistItem } from "@prisma/client";
-import { toggleChecklistItem, deleteChecklistItem } from "../actions";
-import { EditTaskDialog } from "./edit-task-dialog";
+
+import { Calendar, Check, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+
+import { ConfirmDeleteDialog } from "@/components/app-shell";
+import { Button } from "@/components/ui/button";
+
+import { EditTaskDialog } from "./edit-task-dialog";
+import { deleteChecklistItem, toggleChecklistItem } from "../actions";
+
+import type { ChecklistItem } from "@prisma/client";
 
 interface TaskItemProps {
   item: ChecklistItem;

@@ -1,13 +1,12 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
-
-import { Trip } from "@prisma/client";
+import { useEffect, type ReactNode } from "react";
 
 import { WorkspaceHeader } from "./workspace-header";
 import { WorkspaceNav } from "./workspace-nav";
+import { useWorkspaceAi } from "../context/workspace-ai-context";
 
-import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
+import type { Trip } from "@prisma/client";
 
 interface TripWorkspaceContainerProps {
   trip: Trip;

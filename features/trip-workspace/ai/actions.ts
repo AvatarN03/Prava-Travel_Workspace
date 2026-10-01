@@ -1,17 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
-import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
 import { buildTripContext } from "@/services/ai/context-builder";
-import {
-  aiProposalPayloadSchema,
-  AiProposalPayload,
-  AiProposalDTO,
-} from "./schema";
+import { isItineraryPlanningIntent, runTripAgentGraph } from "@/services/ai/trip-agent-graph";
+import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
 
-import { runTripAgentGraph, isItineraryPlanningIntent } from "@/services/ai/trip-agent-graph";
+import { aiProposalPayloadSchema } from "./schema";
+
+import type { AiProposalDTO, AiProposalPayload } from "./schema";
 
 export interface UserAiQuotaDTO {
   used: number;

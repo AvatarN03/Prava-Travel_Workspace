@@ -5,16 +5,20 @@ import { revalidatePath } from "next/cache";
 import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
+
 import { verifyTripOwnership } from "../common/auth-check";
 import {
-  CreateExpenseInput,
   createExpenseSchema,
-  CreateGeneralExpenseInput,
   createGeneralExpenseSchema,
-  DeleteExpenseInput,
   deleteExpenseSchema,
-  UpdateExpenseInput,
   updateExpenseSchema,
+} from "./schema";
+
+import type {
+  CreateExpenseInput,
+  CreateGeneralExpenseInput,
+  DeleteExpenseInput,
+  UpdateExpenseInput,
 } from "./schema";
 
 export async function createExpense(input: CreateExpenseInput) {
