@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { AnimatePresence, motion } from "motion/react";
 import {
   BedDouble,
   Calendar,
@@ -25,6 +26,8 @@ type WorkspaceTab =
   | "notes"
   | "checklist"
   | "links";
+
+const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function WorkspaceShowcase() {
   const [activeTab, setActiveTab] = useState<WorkspaceTab>("overview");
@@ -50,23 +53,87 @@ export function WorkspaceShowcase() {
       <div className="mx-auto max-w-7xl px-4 sm:px-10 lg:px-16 space-y-10">
         {/* Section Header with Responsive Typography */}
         <div className="space-y-3 max-w-2xl">
-          <span className="text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase">
+          <motion.span
+            className="inline-block font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, ease: easeDecelerate }}
+          >
             The Workspace
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 dark:text-zinc-50 leading-[1.15] break-words [text-wrap:balance]">
-            Your trip has a{" "}
-            <span className="font-serif italic text-zinc-700 dark:text-zinc-300 block sm:inline">
-              home.
+          </motion.span>
+
+          <motion.h2
+            className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 dark:text-zinc-50 leading-[1.15] break-words [text-wrap:balance]"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.08,
+                  delayChildren: 0.05,
+                },
+              },
+            }}
+          >
+            <span className="inline-block mr-[0.28em]">
+              {["Your", "trip", "has", "a"].map((word) => (
+                <motion.span
+                  key={word}
+                  variants={{
+                    hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      filter: "blur(0px)",
+                      transition: { duration: 0.65, ease: easeDecelerate },
+                    },
+                  }}
+                  className="inline-block mr-[0.28em]"
+                >
+                  {word}
+                </motion.span>
+              ))}
             </span>
-          </h2>
-          <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed pt-1 break-words [text-wrap:balance]">
+            <motion.span
+              variants={{
+                hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  filter: "blur(0px)",
+                  transition: { duration: 0.7, ease: easeDecelerate },
+                },
+              }}
+              className="font-serif italic text-zinc-700 dark:text-zinc-300 inline-block"
+            >
+              home.
+            </motion.span>
+          </motion.h2>
+
+          <motion.p
+            className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed pt-1 break-words [text-wrap:balance]"
+            initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.7, delay: 0.3, ease: easeDecelerate }}
+          >
             A quiet, structured canvas tailored to human travel. Not a data warehouse,
             but a responsive workspace built for clarity on the road.
-          </p>
+          </motion.p>
         </div>
 
         {/* MacBook Hardware Chassis / Display Enclosure */}
-        <div className="rounded-2xl border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-950 p-2 sm:p-3 shadow-2xl shadow-zinc-300/60 dark:shadow-black/80 ring-1 ring-zinc-200 dark:ring-zinc-800/80">
+        <motion.div
+          className="rounded-2xl border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-950 p-2 sm:p-3 shadow-2xl shadow-zinc-300/60 dark:shadow-black/80 ring-1 ring-zinc-200 dark:ring-zinc-800/80"
+          initial={{ opacity: 0, y: 24, scale: 0.98 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.8, ease: easeDecelerate }}
+        >
           {/* MacBook Top Bezel Camera Dot */}
           <div className="hidden sm:flex items-center justify-center pb-2">
             <span className="h-1.5 w-1.5 rounded-full bg-zinc-400 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700/80 shadow-inner" />
@@ -152,19 +219,26 @@ export function WorkspaceShowcase() {
                           key={tab.id}
                           type="button"
                           onClick={() => setActiveTab(tab.id as WorkspaceTab)}
-                          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xs text-xs font-medium transition-all cursor-pointer ${
+                          className={`relative w-full flex items-center justify-between px-3 py-2.5 rounded-xs text-xs font-medium transition-colors duration-200 cursor-pointer ${
                             isActive
-                              ? "bg-white text-zinc-950 shadow-xs border border-zinc-200/90 dark:bg-zinc-800 dark:text-zinc-100 dark:border-zinc-700"
+                              ? "text-zinc-950 dark:text-zinc-100 font-semibold"
                               : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/60 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-zinc-800/50"
                           }`}
                         >
-                          <div className="flex items-center gap-2.5">
+                          {isActive && (
+                            <motion.div
+                              layoutId="workspace-active-tab-pill"
+                              className="absolute inset-0 bg-white shadow-xs border border-zinc-200/90 dark:bg-zinc-800 dark:border-zinc-700 rounded-xs"
+                              transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                            />
+                          )}
+                          <div className="relative z-10 flex items-center gap-2.5">
                             <Icon className="h-3.5 w-3.5" />
                             <span>{tab.label}</span>
                           </div>
                           {tab.badge && (
                             <span
-                              className={`text-[10px] tabular-nums px-1.5 py-0.5 rounded-xs font-medium ${
+                              className={`relative z-10 text-[10px] tabular-nums px-1.5 py-0.5 rounded-xs font-medium ${
                                 isActive
                                   ? "bg-zinc-100 text-zinc-800 border border-zinc-200/80 dark:bg-zinc-700 dark:text-zinc-200 dark:border-zinc-600"
                                   : "text-zinc-400 dark:text-zinc-500"
@@ -203,9 +277,18 @@ export function WorkspaceShowcase() {
               </div>
 
               {/* Right Active Workspace Canvas */}
-              <div className="md:col-span-9 p-5 sm:p-7 lg:p-8 bg-white dark:bg-zinc-900 flex flex-col justify-between space-y-6">
-                {/* TAB 1: OVERVIEW */}
-                {activeTab === "overview" && (
+              <div className="md:col-span-9 p-5 sm:p-7 lg:p-8 bg-white dark:bg-zinc-900 flex flex-col justify-between space-y-6 min-h-[580px]">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.22, ease: easeDecelerate }}
+                    className="h-full flex flex-col justify-between flex-1"
+                  >
+                    {/* TAB 1: OVERVIEW */}
+                    {activeTab === "overview" && (
                   <div className="space-y-6 animate-in fade-in duration-200 h-full flex flex-col justify-between">
                     {/* Header */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-zinc-200/80 dark:border-zinc-800/80">
@@ -879,13 +962,15 @@ export function WorkspaceShowcase() {
                     </div>
                   </div>
                 )}
+                  </motion.div>
+                </AnimatePresence>
               </div>
             </div>
           </div>
 
           {/* MacBook Display Hinge / Chin */}
           <div className="hidden sm:block h-1 w-28 bg-zinc-300 dark:bg-zinc-800 rounded-b-md mx-auto mt-0.5" />
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -1,6 +1,9 @@
 "use client";
 
+import { motion } from "motion/react";
 import { Clock, MapPin, Navigation } from "lucide-react";
+
+const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function ItinerarySection() {
   const scheduleItems = [
@@ -48,31 +51,113 @@ export function ItinerarySection() {
         {/* Editorial Split Header with Responsive Typography */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end">
           <div className="lg:col-span-6 space-y-3">
-            <span className="text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase">
+            <motion.span
+              className="inline-block text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, ease: easeDecelerate }}
+            >
               Temporal Structure
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 leading-[1.15] break-words [text-wrap:balance]">
-              Plan the days.
-              <span className="block font-serif italic font-normal text-zinc-800 mt-1 sm:mt-2">
-                Not the chaos.
+            </motion.span>
+            
+            <motion.h2
+              className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 leading-[1.15] break-words [text-wrap:balance]"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-60px" }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.08,
+                    delayChildren: 0.05,
+                  },
+                },
+              }}
+            >
+              <span className="block">
+                {["Plan", "the", "days."].map((word) => (
+                  <motion.span
+                    key={word}
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        filter: "blur(0px)",
+                        transition: { duration: 0.65, ease: easeDecelerate },
+                      },
+                    }}
+                    className="inline-block mr-[0.28em]"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
               </span>
-            </h2>
+              <span className="block font-serif italic font-normal text-zinc-800 mt-1 sm:mt-2">
+                {["Not", "the", "chaos."].map((word) => (
+                  <motion.span
+                    key={word}
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        filter: "blur(0px)",
+                        transition: { duration: 0.7, ease: easeDecelerate },
+                      },
+                    }}
+                    className="inline-block mr-[0.28em]"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </span>
+            </motion.h2>
           </div>
 
-          <div className="lg:col-span-6">
+          <motion.div
+            className="lg:col-span-6"
+            initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.7, delay: 0.25, ease: easeDecelerate }}
+          >
             <p className="text-sm sm:text-base text-zinc-600 font-normal leading-relaxed break-words [text-wrap:balance]">
               An itinerary should breathe. Prava organizes your hours with natural transit
               buffers, contextual coordinates, and unhurried pacing so your travel feels like
               discovery, not a frantic checklist.
             </p>
-          </div>
+          </motion.div>
         </div>
 
         {/* Timeline Items in Pure Crisp Light Theme */}
-        <div className="border border-zinc-200/90 rounded-sm divide-y divide-zinc-200/80 bg-[#FAFAF9]/80 overflow-hidden shadow-xs">
+        <motion.div
+          className="border border-zinc-200/90 rounded-sm divide-y divide-zinc-200/80 bg-[#FAFAF9]/80 overflow-hidden shadow-xs"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+            },
+          }}
+        >
           {scheduleItems.map((item, index) => (
-            <div
+            <motion.div
               key={index}
+              variants={{
+                hidden: { opacity: 0, y: 14 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.5, ease: easeDecelerate },
+                },
+              }}
               className="p-5 sm:p-7 lg:p-8 grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-start hover:bg-white transition-colors"
             >
               {/* Time Column */}
@@ -112,9 +197,9 @@ export function ItinerarySection() {
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

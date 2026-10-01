@@ -7,7 +7,7 @@ import Link from "next/link";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { useTheme } from "next-themes";
 
-import { ThemeToggle } from "@/components/app-shell/theme-toggle";
+import { ThemeToggle } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";

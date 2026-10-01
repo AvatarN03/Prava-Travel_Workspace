@@ -23,9 +23,18 @@
 - **Phase 19: Security, Integration & Production Verification (Roadmap 2)** (Complete)
 - **Phase 20: Polar Sandbox Subscription Billing** (Complete)
 - **Phase 21: Authentication Page Minimalist Redesign** (Complete)
+- **Phase 22: Landing Page Smooth Text & Journey Transitions** (Complete)
+- **Phase 23: Profile Avatar Storage Optimization & Orphaned Image Pruning** (Complete)
 
 ## Current Task
-- **Phase 21 Complete**: Authentication page (`/auth`) redesigned to match the minimalist, editorial aesthetic of the landing page. Added `AuthBackgroundPattern` (`app/auth/auth-background-pattern.tsx`) rendering fluent harmonic sine waves, radiant cerulean & sky ambient radial glow, cartographic coordinate crosshairs, and floating waypoint particles matching the Hero and CTA sections. Created `app/auth/layout.tsx` providing comprehensive SEO, OpenGraph, Twitter, and canonical metadata tags. Configured `metadataBase` in root layout (`app/layout.tsx`). Verified with clean `npm run build` (Next.js 16 + Turbopack).
+- **Phase 22 Complete**: Landing Page Smooth Text & Journey Transitions:
+  - **Hero Section Kinetic Typography (`features/landing/components/hero-section.tsx`)**: Implemented word-by-word staggered reveal for `"Your"` $\rightarrow$ `"journey,"` $\rightarrow$ `"in"` $\rightarrow$ `"one"` $\rightarrow$ `"place."` using `motion/react` with custom cubic-bezier deceleration curve (`[0.16, 1, 0.3, 1]`) and blur-to-clear dissipation (`filter: blur(6px) -> blur(0px)`). Staggered narrative elements (eyebrow badge $\rightarrow$ headline $\rightarrow$ description $\rightarrow$ CTAs $\rightarrow$ Indian journeys selector chips $\rightarrow$ micro-pillars).
+  - **Hero Interactive Journey Switcher**: Added `layoutId="active-journey-indicator"` sliding pill and `AnimatePresence mode="wait"` for seamless crossfading of destination name, coordinates, archival photos, itinerary items, budget progress bar, and checklist items.
+  - **Thesis Section Animations (`features/landing/components/thesis-section.tsx`)**: Added word-by-word headline reveal on scroll into view (`"Travel planning gets complicated..."`), staggered reveal of the 3 Architecture cards (`Multi-Day Itineraries`, `Accommodations & Passes`, `Expenses & Travel Tools`), and the 4 capability stats.
+  - **Scattered vs. Unified Interactive Section (`features/landing/components/scattered-vs-unified.tsx`)**: Added kinetic word reveal for the headline, spring-animated sliding toggle pill (`layoutId="scattered-mode-pill"`), and `AnimatePresence mode="wait"` staggered card crossfading between chaotic notes/tickets and the organized workspace.
+  - **Workspace Showcase Hardware Chassis & Tabs (`features/landing/components/workspace-showcase.tsx`)**: Added word reveal for `"Your trip has a home."`, smooth scroll entrance for the MacBook Retina enclosure, spring-animated active tab indicator (`layoutId="workspace-active-tab-pill"`), and animated tab view transitions across all 7 workspace modules.
+  - **Client/Server Module Boundary Hardening**: Decoupled server-only Prisma database utilities (`verifyTripOwnership` and `generateSmartUniqueUsername`) from client-consumed barrel files (`features/trip-workspace/index.ts` and `features/profile/index.ts`), ensuring pure client bundles for browser components (`top-bar.tsx`, `create-trip-dialog.tsx`).
+  - **Production Verification**: Passed `npx tsc --noEmit` with 0 errors and completed clean Next.js 16 + Turbopack production build (`npm run build`, exit code 0).
 
 ## Completed Work
 - Inspected repository state and validated Next.js 16.3.0, React 19.2.8, Tailwind CSS v4, and ESLint 9 configuration.
@@ -2583,6 +2592,116 @@
       - Documented the canonical Page Header Pattern in Section 6 Quick Typography Reference with code snippet, class tokens, and action button conventions.
   - **Verification**:
     - TypeScript full project type-checking (`npx tsc --noEmit`) verified clean with exit code 0 and zero compilation errors.
+
+- **Task 181 (Codebase Minification, Dead Code Neutralization & Clean Barrel Export: `features/travel-essentials`)**:
+  - **Context & User Request**:
+    - Audit `features/travel-essentials` to eliminate dead code, prune unused icons, enforce strict Rule 7 import hierarchy, establish a canonical public barrel export, and refactor all deep consumer imports across the entire workspace.
+  - **Solutions Implemented**:
+    - **Dead Code Neutralization (`features/travel-essentials/emergency/emergency-view.tsx`)**:
+      - Identified orphaned component `emergency-view.tsx` (~6.5 KB / 173 lines) that was completely unreferenced after emergency information was integrated directly into Country Guide view.
+      - Neutralized with an official `export {};` stub in accordance with AGENTS.md Rule 11.
+    - **Unused Icon Pruning**:
+      - Pruned unused `Compass` and `ShieldCheck` icons from `features/travel-essentials/weather/weather-view.tsx`.
+      - Pruned unused `MapPin` icon from `features/travel-essentials/maps/map-inner.tsx`.
+    - **Canonical Public Barrel (`features/travel-essentials/index.ts`)**:
+      - Created unified `features/travel-essentials/index.ts` exporting all primary views (`CountryGuideView`, `CurrencyConverter`, `LanguageView`, `MapView`, `VaultView`, `WeatherView`), currency services & constants (`fetchCurrencyPerformance`, `fetchFxRates`, `SUPPORTED_CURRENCIES`), weather actions & services (`getWeatherAction`, `getWeatherByCoordsAction`, `fetchCitySuggestions`, `fetchWeather`, `fetchWeatherByCoords`), vault actions & schemas (`attachVaultLinkToTrip`, `createVaultLink`, `deleteVaultLink`, `getUserTripOptions`, `getVaultLinks`, `updateVaultLink`, schemas and input types), maps actions & services (`getNearbyEssentialsAction`, `calculateDistanceMeters`, `fetchMapLocationSuggestions`, `fetchNearbyTravelEssentials`, `formatDistance`, `reverseGeocodeLocation`), language services & constants (`LANGUAGE_GUIDES`, `generateAiSpeechAction`, `translateCustomTravelPhrase`), country guide services & constants (`QUICK_PICK_COUNTRIES`, `QuickPickCountry`, `fetchCountryNews`, `fetchCountrySuggestions`, `searchCountryInfo`), and all domain types (`export type * from "./types"`).
+    - **Consumer Deep-Import Refactoring Across 7 Files**:
+      - Refactored `features/trip-workspace/links/components/import-from-vault-dialog.tsx` to import `{ attachVaultLinkToTrip, getVaultLinks, type VaultLinkItem }` from `@/features/travel-essentials`.
+      - Refactored `features/trip-workspace/expenses/components/expense-tracker.tsx` to import `{ SUPPORTED_CURRENCIES }` from `@/features/travel-essentials`.
+      - Refactored `features/pricing/components/account-usage-view.tsx` to import `{ SUPPORTED_CURRENCIES }` from `@/features/travel-essentials`.
+      - Refactored `features/pricing/actions.ts` to import `{ SUPPORTED_CURRENCIES }` from `@/features/travel-essentials`.
+      - Refactored `app/(app)/trips/[tripId]/expenses/page.tsx` to import `{ SUPPORTED_CURRENCIES }` from `@/features/travel-essentials`.
+      - Refactored `services/ai/travel-tools-dispatcher.ts` to import `{ fetchNearbyTravelEssentials, fetchWeather, searchCountryInfo }` from `@/features/travel-essentials`.
+      - Refactored `app/(app)/travel-essentials/page.tsx` to import `{ CountryGuideView, CurrencyConverter, LanguageView, MapView, VaultView, WeatherView, type EssentialTab }` from `@/features/travel-essentials`.
+  - **Verification**:
+    - TypeScript compilation check (`node ./node_modules/typescript/bin/tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors across the entire repository.
+
+- **Task 182 (Codebase Minification, Dead Code Elimination & Clean Barrel Export: `features/trip-workspace`)**:
+  - **Context & User Request**:
+    - Audit the final and largest feature module in the repository: `features/trip-workspace` (all 10 subdirectories: accommodations, ai, checklist, common, context, expenses, itinerary, links, notes, overview).
+    - Eliminate unused icons, standardize TypeScript `import type` annotations, enforce strict Rule 7 import hierarchy, establish a canonical public barrel (`features/trip-workspace/index.ts`), and refactor all deep consumer imports across the application.
+  - **Solutions Implemented**:
+    - **Dead Icon & Unused Import Pruning**:
+      - Pruned unused `BedDouble` and `Calendar` icons from `features/trip-workspace/accommodations/components/accommodation-card.tsx`.
+      - Pruned unused `ListFilter` icon from `features/trip-workspace/checklist/components/checklist-view.tsx`.
+      - Pruned unused `Loader2` icon from `features/trip-workspace/checklist/components/task-item.tsx`.
+      - Pruned unused `Calendar`, `Clock`, and `DollarSign` icons from `features/trip-workspace/itinerary/components/itinerary-view.tsx`.
+      - Pruned unused `Link2`, `Check`, `Sparkles`, `TrendingUp`, and `AlertCircle` icons from `features/trip-workspace/overview/components/overview-dashboard.tsx`.
+    - **TypeScript `import type` & Hierarchy Standardization**:
+      - Converted Prisma entities (`Accommodation`, `ChecklistItem`, `ItineraryItem`, `Trip`, `Expense`, `Note`, `Link as PrismaLink`) and schema DTOs across actions, views, and contexts to strict `import type { ... }`.
+      - Converted `ReactNode` in `context/workspace-ai-context.tsx` and `common/trip-workspace-container.tsx` to strict `import type { ReactNode }`.
+      - Standardized intra-module relative imports between `context`, `common`, `ai`, and sub-workspace tabs.
+    - **Canonical Public Barrel (`features/trip-workspace/index.ts`)**:
+      - Created unified `features/trip-workspace/index.ts` exporting:
+        - Common & Shell: `TripWorkspaceContainer`, `WorkspaceHeader`, `WorkspaceNav`, `verifyTripOwnership`
+        - Context & State: `useWorkspaceAi`, `WorkspaceAiContext`, `WorkspaceAiProvider`, `type ActiveTripContext`
+        - AI: `AiProposalCard`, `WorkspaceAiPanel`, all AI actions and proposal DTO types
+        - Overview: `OverviewDashboard`
+        - Itinerary: `AddItineraryDialog`, `EditItineraryDialog`, `ItineraryCard`, `ItineraryView`, CRUD actions, schemas, input types
+        - Accommodations: `AccommodationCard`, `AccommodationList`, `AddAccommodationDialog`, `EditAccommodationDialog`, CRUD actions, schemas, input types
+        - Expenses: `AddExpenseDialog`, `EditExpenseDialog`, `ExpenseTracker`, CRUD actions, overhead expense actions, schemas, input types
+        - Checklist: `AddTaskDialog`, `ChecklistView`, `EditTaskDialog`, `TaskItem`, CRUD actions, schemas, input types
+        - Notes: `AddNoteDialog`, `EditNoteDialog`, `NoteCard`, `NotesGrid`, CRUD actions, schemas, input types
+        - Links: `AddLinkDialog`, `EditLinkDialog`, `ImportFromVaultDialog`, `LinkCard`, `LinksGrid`, CRUD actions, schemas, input types
+    - **Consumer Deep-Import Refactoring Across 13 Files**:
+      - `app/(app)/trips/[tripId]/layout.tsx` -> `{ TripWorkspaceContainer, verifyTripOwnership }` from `@/features/trip-workspace`
+      - `app/(app)/trips/[tripId]/overview/page.tsx` -> `{ OverviewDashboard, verifyTripOwnership }` from `@/features/trip-workspace`
+      - `app/(app)/trips/[tripId]/itinerary/page.tsx` -> `{ ItineraryView, verifyTripOwnership }` from `@/features/trip-workspace`
+      - `app/(app)/trips/[tripId]/accommodations/page.tsx` -> `{ AccommodationList, verifyTripOwnership }` from `@/features/trip-workspace`
+      - `app/(app)/trips/[tripId]/expenses/page.tsx` -> `{ ExpenseTracker, verifyTripOwnership }` from `@/features/trip-workspace`
+      - `app/(app)/trips/[tripId]/checklist/page.tsx` -> `{ ChecklistView, verifyTripOwnership }` from `@/features/trip-workspace`
+      - `app/(app)/trips/[tripId]/notes/page.tsx` -> `{ NotesGrid, verifyTripOwnership }` from `@/features/trip-workspace`
+      - `app/(app)/trips/[tripId]/links/page.tsx` -> `{ LinksGrid, verifyTripOwnership }` from `@/features/trip-workspace`
+      - `app/(app)/layout.tsx` -> `{ WorkspaceAiProvider }` from `@/features/trip-workspace`
+      - `components/app-shell/app-shell.tsx` -> `{ useWorkspaceAi, WorkspaceAiPanel }` from `@/features/trip-workspace`
+      - `features/trips/components/create-trip-dialog.tsx` -> `{ useWorkspaceAi }` from `@/features/trip-workspace`
+      - `features/dashboard/components/travel-financials-dialog.tsx` -> `{ createGeneralTravelExpense, deleteGeneralTravelExpense }` from `@/features/trip-workspace`
+      - `services/ai/trip-agent-graph.ts` -> `{ aiProposalPayloadSchema, type AiProposalPayload }` from `@/features/trip-workspace`
+  - **Verification**:
+    - TypeScript compilation check (`node ./node_modules/typescript/bin/tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors across the entire codebase.
+
+- **Task 183 (Codebase Minification, Dead Code Elimination & Clean Barrel Export: `components/app-shell`)**:
+  - **Context & User Request**:
+    - Audit `components/app-shell` to eliminate unused icons and imports, standardize `import type` annotations, enforce strict Rule 7 import hierarchy, establish a canonical public barrel (`components/app-shell/index.ts`), and refactor all consumer imports across the application.
+  - **Solutions Implemented**:
+    - **Dead Icon & Import Pruning**:
+      - Pruned unused `Trash2` icon import from `components/app-shell/confirm-delete-dialog.tsx`.
+      - Converted `NavItem` import in `components/app-shell/sidebar.tsx` and `LucideIcon` in `components/app-shell/nav-config.ts` to strict `import type`.
+      - Standardized relative intra-folder imports in `components/app-shell/app-shell.tsx` (`./sidebar`, `./top-bar`).
+      - Refactored `components/app-shell/top-bar.tsx` to use canonical `@/features/profile` barrel import.
+      - Refactored `components/app-shell/top-bar-weather.tsx` to use canonical `@/features/travel-essentials` barrel import.
+    - **Preservation of Rule 10 MorphIcon Requirement**:
+      - Preserved vanilla `lucide` import (`import { Moon, Sun } from "lucide"`) in `components/app-shell/theme-toggle.tsx` per AGENTS.md Rule 10.
+    - **Canonical Public Barrel (`components/app-shell/index.ts`)**:
+      - Created unified `components/app-shell/index.ts` exporting:
+        - `AppShell`
+        - `Sidebar`
+        - `TopBar`
+        - `TopBarWeather`
+        - `ThemeToggle`
+        - `ConfirmDeleteDialog`
+        - `accountNavItems`, `mainNavItems`, `otherNavItems`, `secondaryNavItems`, `workspaceNavItems`, `type NavItem`
+    - **Consumer Deep-Import Refactoring Across 14 Files**:
+      - Refactored all application consumers to import from `@/components/app-shell`:
+        - `app/(app)/layout.tsx` -> `{ AppShell }`
+        - `app/auth/page.tsx` -> `{ ThemeToggle }`
+        - `features/landing/components/landing-header.tsx` -> `{ ThemeToggle }`
+        - `features/travel-essentials/vault/components/vault-view.tsx` -> `{ ConfirmDeleteDialog }`
+        - `features/dashboard/components/travel-financials-dialog.tsx` -> `{ ConfirmDeleteDialog }`
+        - `features/trips/components/trip-card.tsx` -> `{ ConfirmDeleteDialog }`
+        - `features/trips/components/trip-table-view.tsx` -> `{ ConfirmDeleteDialog }`
+        - `features/trip-workspace/accommodations/components/accommodation-card.tsx` -> `{ ConfirmDeleteDialog }`
+        - `features/trip-workspace/checklist/components/task-item.tsx` -> `{ ConfirmDeleteDialog }`
+        - `features/trip-workspace/common/workspace-header.tsx` -> `{ ConfirmDeleteDialog }`
+        - `features/trip-workspace/expenses/components/expense-tracker.tsx` -> `{ ConfirmDeleteDialog }`
+        - `features/trip-workspace/itinerary/components/itinerary-card.tsx` -> `{ ConfirmDeleteDialog }`
+        - `features/trip-workspace/links/components/link-card.tsx` -> `{ ConfirmDeleteDialog }`
+        - `features/trip-workspace/notes/components/note-card.tsx` -> `{ ConfirmDeleteDialog }`
+  - **Verification**:
+    - TypeScript compilation check (`node ./node_modules/typescript/bin/tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors across the entire codebase.
+
+
+
 
 
 

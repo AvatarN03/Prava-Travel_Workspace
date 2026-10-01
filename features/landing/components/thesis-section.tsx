@@ -1,6 +1,9 @@
 "use client";
 
+import { motion } from "motion/react";
 import { Calendar, CheckCircle2, CreditCard, Hotel } from "lucide-react";
+
+const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function ThesisSection() {
   const pillars = [
@@ -34,14 +37,23 @@ export function ThesisSection() {
   ];
 
   return (
-    <section data-nav-theme="dark" className="relative border-y border-zinc-200/80 dark:border-zinc-800/80 bg-[#FAFAF9] dark:bg-[#070B12] text-zinc-950 dark:text-zinc-50 py-16 sm:py-24 lg:py-28 transition-colors">
+    <section
+      data-nav-theme="dark"
+      className="relative border-y border-zinc-200/80 dark:border-zinc-800/80 bg-[#FAFAF9] dark:bg-[#070B12] text-zinc-950 dark:text-zinc-50 py-16 sm:py-24 lg:py-28 transition-colors"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-10 lg:px-16 space-y-12 sm:space-y-16">
         
         {/* Top Editorial Row */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
           
           {/* Left Metadata Column */}
-          <div className="lg:col-span-3 space-y-2">
+          <motion.div
+            className="lg:col-span-3 space-y-2"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, ease: easeDecelerate }}
+          >
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-sm bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 font-semibold uppercase tracking-wider text-[10px] font-sans">
               <span>Section 01</span>
               <span>·</span>
@@ -50,32 +62,109 @@ export function ThesisSection() {
             <p className="text-zinc-500 dark:text-zinc-400 text-xs font-medium font-sans">
               The Problem of Fragmentation
             </p>
-          </div>
+          </motion.div>
 
-          {/* Right Statement Column */}
+          {/* Right Statement Column with Staggered Word Reveal */}
           <div className="lg:col-span-9 space-y-3 sm:space-y-4">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 dark:text-zinc-50 leading-[1.15] break-words [text-wrap:balance]">
-              Travel planning gets complicated
-              <br />
-              <span className="block font-serif italic font-normal text-zinc-900 dark:text-zinc-100 mt-1 sm:mt-2">
-                when everything lives somewhere else.
+            <motion.h2
+              className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 dark:text-zinc-50 leading-[1.15] break-words [text-wrap:balance]"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-60px" }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.07,
+                    delayChildren: 0.05,
+                  },
+                },
+              }}
+            >
+              <span className="block">
+                {["Travel", "planning", "gets", "complicated"].map((word) => (
+                  <motion.span
+                    key={word}
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        filter: "blur(0px)",
+                        transition: { duration: 0.65, ease: easeDecelerate },
+                      },
+                    }}
+                    className="inline-block mr-[0.28em]"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
               </span>
-            </h2>
+              <span className="block font-serif italic font-normal text-zinc-900 dark:text-zinc-100 mt-1 sm:mt-2">
+                {["when", "everything", "lives", "somewhere", "else."].map((word) => (
+                  <motion.span
+                    key={word}
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        filter: "blur(0px)",
+                        transition: { duration: 0.7, ease: easeDecelerate },
+                      },
+                    }}
+                    className="inline-block mr-[0.28em]"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </span>
+            </motion.h2>
 
-            <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed max-w-3xl pt-1 [text-wrap:balance]">
+            <motion.p
+              className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed max-w-3xl pt-1 [text-wrap:balance]"
+              initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.7, delay: 0.35, ease: easeDecelerate }}
+            >
               From hotel reservations and train tickets to daily routes, group budgets, and packing lists.
               Prava brings every part of your trip into one clear, reliable workspace built specifically for travel.
-            </p>
+            </motion.p>
           </div>
         </div>
 
         {/* 3 Real Feature Architecture Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 pt-4 border-t border-zinc-200/80 dark:border-zinc-800/80">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 pt-4 border-t border-zinc-200/80 dark:border-zinc-800/80"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.12,
+                delayChildren: 0.1,
+              },
+            },
+          }}
+        >
           {pillars.map((pillar) => {
             const Icon = pillar.icon;
             return (
-              <div
+              <motion.div
                 key={pillar.index}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.6, ease: easeDecelerate },
+                  },
+                }}
                 className="group relative rounded-md border border-zinc-200/90 dark:border-zinc-800/90 bg-white dark:bg-zinc-900/60 p-6 sm:p-7 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700 transition-all flex flex-col justify-between"
               >
                 <div className="space-y-4">
@@ -106,48 +195,58 @@ export function ThesisSection() {
                   <CheckCircle2 className="h-3.5 w-3.5 text-[#2D9BF0] shrink-0" />
                   <span className="truncate">{pillar.detail}</span>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Real Workspace Capabilities Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-zinc-200/80 dark:border-zinc-800/80">
-          <div className="space-y-1">
-            <span className="text-2xl sm:text-3xl font-light text-zinc-950 dark:text-zinc-50 font-sans tracking-tight">
-              7 Tabs
-            </span>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 font-sans">
-              Dedicated trip workspace
-            </p>
-          </div>
-          <div className="space-y-1">
-            <span className="text-2xl sm:text-3xl font-light text-zinc-950 dark:text-zinc-50 font-sans tracking-tight">
-              Live FX
-            </span>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 font-sans">
-              Multi-currency budgeting
-            </p>
-          </div>
-          <div className="space-y-1">
-            <span className="text-2xl sm:text-3xl font-light text-zinc-950 dark:text-zinc-50 font-sans tracking-tight">
-              Offline
-            </span>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 font-sans">
-              Cached trip itineraries
-            </p>
-          </div>
-          <div className="space-y-1">
-            <span className="text-2xl sm:text-3xl font-light text-zinc-950 dark:text-zinc-50 font-sans tracking-tight">
-              1-Click
-            </span>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 font-sans">
-              Community trip cloning
-            </p>
-          </div>
-        </div>
+        <motion.div
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-zinc-200/80 dark:border-zinc-800/80"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-40px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.08,
+                delayChildren: 0.1,
+              },
+            },
+          }}
+        >
+          {[
+            { metric: "7 Tabs", desc: "Dedicated trip workspace" },
+            { metric: "Live FX", desc: "Multi-currency budgeting" },
+            { metric: "Offline", desc: "Cached trip itineraries" },
+            { metric: "1-Click", desc: "Community trip cloning" },
+          ].map((item, idx) => (
+            <motion.div
+              key={idx}
+              variants={{
+                hidden: { opacity: 0, y: 14 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.5, ease: easeDecelerate },
+                },
+              }}
+              className="space-y-1"
+            >
+              <span className="text-2xl sm:text-3xl font-light text-zinc-950 dark:text-zinc-50 font-sans tracking-tight">
+                {item.metric}
+              </span>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 font-sans">
+                {item.desc}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
 
       </div>
     </section>
   );
 }
+

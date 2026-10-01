@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { AnimatePresence, motion } from "motion/react";
 import {
   Bookmark,
   Calendar,
@@ -18,6 +19,8 @@ import {
   Sparkles,
   Train,
 } from "lucide-react";
+
+const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function ScatteredVsUnified() {
   const [mode, setMode] = useState<"scattered" | "unified">("scattered");
@@ -127,60 +130,164 @@ export function ScatteredVsUnified() {
   ];
 
   return (
-    <section data-nav-theme="light" className="py-16 sm:py-24 lg:py-28 border-t border-zinc-200/80 bg-[#FAFAF9] text-zinc-950 transition-colors">
+    <section
+      data-nav-theme="light"
+      className="py-16 sm:py-24 lg:py-28 border-t border-zinc-200/80 bg-[#FAFAF9] text-zinc-950 transition-colors"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-10 lg:px-16 space-y-10 sm:space-y-12">
         {/* Editorial Split Header with Responsive Typography */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end">
           <div className="lg:col-span-7 space-y-3">
-            <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase">
+            <motion.span
+              className="inline-block font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, ease: easeDecelerate }}
+            >
               The Architecture of Travel
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 leading-[1.15] break-words">
-              Scattered across apps,
-              <br />
-              <span className="block font-serif italic font-normal text-zinc-900 mt-1 sm:mt-2">
-                or unified in one workspace.
+            </motion.span>
+            
+            <motion.h2
+              className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 leading-[1.15] break-words"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-60px" }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.08,
+                    delayChildren: 0.05,
+                  },
+                },
+              }}
+            >
+              <span className="block">
+                {["Scattered", "across", "apps,"].map((word) => (
+                  <motion.span
+                    key={word}
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        filter: "blur(0px)",
+                        transition: { duration: 0.65, ease: easeDecelerate },
+                      },
+                    }}
+                    className="inline-block mr-[0.28em]"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
               </span>
-            </h2>
+              <span className="block font-serif italic font-normal text-zinc-900 mt-1 sm:mt-2">
+                {["or", "unified", "in", "one", "workspace."].map((word) => (
+                  <motion.span
+                    key={word}
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        filter: "blur(0px)",
+                        transition: { duration: 0.7, ease: easeDecelerate },
+                      },
+                    }}
+                    className="inline-block mr-[0.28em]"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </span>
+            </motion.h2>
           </div>
 
-          <div className="lg:col-span-5 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
-            {/* Minimalist Switch Toggle */}
-            <div className="inline-flex rounded-sm p-1 bg-zinc-200/60 border border-zinc-200 self-start sm:self-auto">
+          <motion.div
+            className="lg:col-span-5 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3"
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, delay: 0.2, ease: easeDecelerate }}
+          >
+            {/* Minimalist Switch Toggle with Sliding Active Indicator */}
+            <div className="relative inline-flex rounded-sm p-1 bg-zinc-200/60 border border-zinc-200 self-start sm:self-auto select-none">
               <button
                 type="button"
                 onClick={() => setMode("scattered")}
-                className={`px-3.5 py-1.5 text-xs font-sans rounded-xs transition-all cursor-pointer ${
+                className={`relative z-10 px-3.5 py-1.5 text-xs font-sans rounded-xs transition-colors duration-200 cursor-pointer ${
                   mode === "scattered"
-                    ? "bg-white text-zinc-950 shadow-xs font-semibold"
+                    ? "text-zinc-950 font-semibold"
                     : "text-zinc-600 hover:text-zinc-950 font-medium"
                 }`}
               >
-                The Scattered Way
+                {mode === "scattered" && (
+                  <motion.div
+                    layoutId="scattered-mode-pill"
+                    className="absolute inset-0 bg-white rounded-xs shadow-xs"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">The Scattered Way</span>
               </button>
+
               <button
                 type="button"
                 onClick={() => setMode("unified")}
-                className={`px-3.5 py-1.5 text-xs font-sans rounded-xs transition-all cursor-pointer ${
+                className={`relative z-10 px-3.5 py-1.5 text-xs font-sans rounded-xs transition-colors duration-200 cursor-pointer ${
                   mode === "unified"
-                    ? "bg-zinc-950 text-white shadow-xs font-semibold"
+                    ? "text-white font-semibold"
                     : "text-zinc-600 hover:text-zinc-950 font-medium"
                 }`}
               >
-                The Prava Workspace
+                {mode === "unified" && (
+                  <motion.div
+                    layoutId="scattered-mode-pill"
+                    className="absolute inset-0 bg-zinc-950 rounded-xs shadow-xs"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">The Prava Workspace</span>
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
 
-        {/* Dynamic Card Display */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {mode === "scattered"
-            ? scatteredItems.map((item, index) => {
+        {/* Dynamic Card Display with Fluid AnimatePresence Stagger */}
+        <AnimatePresence mode="wait">
+          {mode === "scattered" ? (
+            <motion.div
+              key="scattered-grid"
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.04 },
+                },
+                exit: { opacity: 0, transition: { duration: 0.2 } },
+              }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            >
+              {scatteredItems.map((item, index) => {
                 const Icon = item.icon;
                 return (
-                  <div
+                  <motion.div
                     key={index}
+                    variants={{
+                      hidden: { opacity: 0, y: 14, scale: 0.98 },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        transition: { duration: 0.4, ease: easeDecelerate },
+                      },
+                      exit: { opacity: 0, scale: 0.98, transition: { duration: 0.15 } },
+                    }}
                     className="rounded-md border border-zinc-200/90 bg-white/70 p-4 flex flex-col justify-between space-y-3 opacity-90 hover:opacity-100 transition-opacity"
                   >
                     <div className="space-y-2">
@@ -195,14 +302,41 @@ export function ScatteredVsUnified() {
                     <span className="text-[10px] font-sans text-zinc-400 border-t border-zinc-200/60 pt-2">
                       {item.detail}
                     </span>
-                  </div>
+                  </motion.div>
                 );
-              })
-            : unifiedItems.map((item, index) => {
+              })}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="unified-grid"
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.04 },
+                },
+                exit: { opacity: 0, transition: { duration: 0.2 } },
+              }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            >
+              {unifiedItems.map((item, index) => {
                 const Icon = item.icon;
                 return (
-                  <div
+                  <motion.div
                     key={index}
+                    variants={{
+                      hidden: { opacity: 0, y: 14, scale: 0.98 },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        transition: { duration: 0.4, ease: easeDecelerate },
+                      },
+                      exit: { opacity: 0, scale: 0.98, transition: { duration: 0.15 } },
+                    }}
                     className={`rounded-md border p-4 flex flex-col justify-between space-y-3 transition-all ${
                       item.accent
                         ? "border-[#2D9BF0]/40 bg-[#F0F8FF]/80 shadow-xs"
@@ -233,13 +367,21 @@ export function ScatteredVsUnified() {
                     <span className="text-[10px] font-sans text-zinc-500 border-t border-zinc-200/60 pt-2 leading-relaxed">
                       {item.detail}
                     </span>
-                  </div>
+                  </motion.div>
                 );
               })}
-        </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Bottom Editorial Callout */}
-        <div className="rounded-md border border-zinc-200/90 bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs font-sans">
+        <motion.div
+          className="rounded-md border border-zinc-200/90 bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs font-sans"
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.6, ease: easeDecelerate }}
+        >
           <div className="flex items-center gap-2.5">
             <CheckCircle2 className="h-4 w-4 text-[#2D9BF0] shrink-0" />
             <span className="text-zinc-700 font-medium">
@@ -249,8 +391,9 @@ export function ScatteredVsUnified() {
           <span className="text-[11px] text-zinc-400 shrink-0 font-medium">
             Export ready · Offline sync · Multi-currency
           </span>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 }
+
