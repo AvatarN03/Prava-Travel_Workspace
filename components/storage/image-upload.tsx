@@ -1,8 +1,11 @@
 "use client";
 
 import { useRef, useState } from "react";
+
 import { AlertCircle, Loader2, UploadCloud, X } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
+
 import { uploadImageAction, type StorageFolder } from "@/features/storage";
 import { resizeImageToBlob } from "@/lib/utils/image-resize";
 

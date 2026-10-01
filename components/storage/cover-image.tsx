@@ -1,23 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { updateTripCoverImage } from "@/features/storage";
-import { ImageUpload } from "./image-upload";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+
 import {
   Camera,
   ImageIcon,
+  Loader2,
   MapPin,
   Trash2,
-  Loader2,
 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+import { ImageUpload } from "./image-upload";
+import { updateTripCoverImage } from "@/features/storage";
 
 interface CoverImageProps {
   tripId?: string;

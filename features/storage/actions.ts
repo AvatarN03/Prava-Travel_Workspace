@@ -8,6 +8,7 @@ import {
   MAX_FILE_SIZE_BYTES,
   normalizeMimeType,
   uploadImageToStorage,
+  pruneUnusedUserAvatars,
 } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
 
@@ -110,6 +111,7 @@ export async function updateTripCoverImage(tripId: string, coverImageUrl: string
 
 /**
  * Server action to update or clear the authenticated user's profile avatar.
+ * Automatically deletes unused or historical orphaned avatar images from Supabase Storage.
  */
 export async function updateProfileAvatar(avatarUrl: string | null) {
   try {
@@ -139,6 +141,13 @@ export async function updateProfileAvatar(avatarUrl: string | null) {
       console.warn("Could not sync auth metadata for avatar:", authMetaErr);
     }
 
+    // Storage optimization: purge orphaned or previous avatar files in the user's avatar folder
+    try {
+      await pruneUnusedUserAvatars(user.id, avatarUrl);
+    } catch (cleanupErr) {
+      console.warn("Storage avatar cleanup non-fatal warning:", cleanupErr);
+    }
+
     revalidatePath(`/profile`);
     revalidatePath(`/dashboard`);
     revalidatePath(`/community`);
@@ -152,3 +161,11 @@ export async function updateProfileAvatar(avatarUrl: string | null) {
     };
   }
 }
+
+/**
+ * Server action to explicitly remove the authenticated user's profile avatar and free storage.
+ */
+export async function deleteProfileAvatarAction() {
+  return await updateProfileAvatar(null);
+}
+

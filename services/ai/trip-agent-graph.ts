@@ -12,13 +12,13 @@ import {
   detectTravelToolIntent,
   executeCurrencyTool,
   executeWeatherTool,
-  ToolExecutionResult,
+  type ToolExecutionResult,
 } from "./travel-tools-dispatcher";
 import { buildTripContext } from "./context-builder";
 import {
   aiProposalPayloadSchema,
-  AiProposalPayload,
-} from "@/features/trip-workspace/ai/schema";
+  type AiProposalPayload,
+} from "@/features/trip-workspace";
 
 export interface AgentGraphInput {
   tripId: string;

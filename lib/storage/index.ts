@@ -217,25 +217,72 @@ export async function uploadImageToStorage(
 }
 
 /**
- * Delete an image from Supabase Storage by path.
- * Verifies that the path belongs to the given user before deletion.
+ * Extracts bucket and relative storage path from a Supabase storage URL or relative path.
+ * Returns null if the URL is external (e.g. Google OAuth, Unsplash) or not a Supabase storage asset.
+ */
+export function parseSupabaseStoragePath(
+  urlOrPath?: string | null
+): { bucket: string; path: string; filename: string } | null {
+  if (!urlOrPath || typeof urlOrPath !== "string") return null;
+
+  const clean = urlOrPath.trim();
+
+  // Pattern 1: Supabase Storage public or signed URL
+  // e.g. https://<ref>.supabase.co/storage/v1/object/public/<bucket>/<path>
+  const marker = "/storage/v1/object/public/";
+  const markerIndex = clean.indexOf(marker);
+
+  if (markerIndex !== -1) {
+    const afterMarker = clean.slice(markerIndex + marker.length);
+    const firstSlash = afterMarker.indexOf("/");
+    if (firstSlash === -1) return null;
+
+    const bucket = decodeURIComponent(afterMarker.slice(0, firstSlash));
+    const rawPath = decodeURIComponent(afterMarker.slice(firstSlash + 1));
+    const path = rawPath.split("?")[0].split("#")[0];
+    const filename = path.split("/").pop() || "";
+
+    return { bucket, path, filename };
+  }
+
+  // Pattern 2: Relative storage path (e.g. avatars/user-id/filename.webp)
+  const knownFolders = ["avatars", "trips", "posts", "community", "stories"];
+  const firstSegment = clean.split("/")[0];
+  if (knownFolders.includes(firstSegment)) {
+    const path = clean.split("?")[0].split("#")[0];
+    const filename = path.split("/").pop() || "";
+    return { bucket: STORAGE_BUCKET, path, filename };
+  }
+
+  return null;
+}
+
+/**
+ * Delete an image from Supabase Storage by public URL or relative storage path.
+ * Verifies that the path belongs to the authenticated user before deletion.
  */
 export async function deleteImageFromStorage(
-  storagePath: string,
+  urlOrPath: string,
   userId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const supabase = await getStorageClient();
+    const parsed = parseSupabaseStoragePath(urlOrPath);
+    if (!parsed) {
+      // Not a Supabase storage asset (e.g. Google avatar or external link) — no storage deletion required
+      return { success: true };
+    }
 
     // Security check: ensure path belongs to the authenticated user's folder
-    const pathParts = storagePath.split("/");
+    const pathParts = parsed.path.split("/");
     if (pathParts.length < 2 || pathParts[1] !== userId) {
+      console.warn(`[Storage] Unauthorized path deletion attempt: ${parsed.path} for user ${userId}`);
       return { success: false, error: "Unauthorized path deletion" };
     }
 
+    const supabase = await getStorageClient();
     const { error } = await supabase.storage
-      .from(STORAGE_BUCKET)
-      .remove([storagePath]);
+      .from(parsed.bucket)
+      .remove([parsed.path]);
 
     if (error) {
       console.error("Supabase Storage delete error:", error);
@@ -251,3 +298,91 @@ export async function deleteImageFromStorage(
     };
   }
 }
+
+/**
+ * Prunes all unused or historical orphaned avatar files in a user's isolated avatar directory (avatars/${userId}/).
+ * If activeAvatarUrl is provided, keeps that specific active file and purges all others.
+ * If activeAvatarUrl is null/undefined, purges all files in the user's avatar folder to free storage space.
+ */
+export async function pruneUnusedUserAvatars(
+  userId: string,
+  activeAvatarUrl?: string | null
+): Promise<{ success: boolean; deletedCount: number; error?: string }> {
+  try {
+    if (!userId) {
+      return { success: false, deletedCount: 0, error: "Invalid user ID" };
+    }
+
+    let activeFilename: string | null = null;
+    if (activeAvatarUrl) {
+      const parsed = parseSupabaseStoragePath(activeAvatarUrl);
+      if (parsed && parsed.path.startsWith(`avatars/${userId}/`)) {
+        activeFilename = parsed.filename;
+      }
+    }
+
+    const supabase = await getStorageClient();
+    let totalDeleted = 0;
+
+    // Check primary bucket
+    const targetBucket = STORAGE_BUCKET;
+    const folderPath = `avatars/${userId}`;
+
+    const { data: files, error: listError } = await supabase.storage
+      .from(targetBucket)
+      .list(folderPath, { limit: 100 });
+
+    if (!listError && files && files.length > 0) {
+      const staleFiles = files.filter(
+        (f) => f.name && f.name !== activeFilename && f.name !== ".emptyFolderPlaceholder"
+      );
+
+      if (staleFiles.length > 0) {
+        const pathsToDelete = staleFiles.map((f) => `${folderPath}/${f.name}`);
+        const { error: removeError } = await supabase.storage
+          .from(targetBucket)
+          .remove(pathsToDelete);
+
+        if (!removeError) {
+          totalDeleted += pathsToDelete.length;
+        } else {
+          console.warn("Storage removal warning:", removeError);
+        }
+      }
+    }
+
+    // Also check fallback "avatars" bucket if present
+    try {
+      const { data: fallbackFiles, error: fbListError } = await supabase.storage
+        .from("avatars")
+        .list(folderPath, { limit: 100 });
+
+      if (!fbListError && fallbackFiles && fallbackFiles.length > 0) {
+        const staleFb = fallbackFiles.filter(
+          (f) => f.name && f.name !== activeFilename && f.name !== ".emptyFolderPlaceholder"
+        );
+        if (staleFb.length > 0) {
+          const fbPaths = staleFb.map((f) => `${folderPath}/${f.name}`);
+          const { error: fbRemoveErr } = await supabase.storage
+            .from("avatars")
+            .remove(fbPaths);
+          if (!fbRemoveErr) {
+            totalDeleted += fbPaths.length;
+          }
+        }
+      }
+    } catch {
+      // Fallback bucket might not exist, ignore
+    }
+
+    return { success: true, deletedCount: totalDeleted };
+  } catch (error) {
+    console.error("Error pruning unused user avatars:", error);
+    return {
+      success: false,
+      deletedCount: 0,
+      error: error instanceof Error ? error.message : "Failed to prune avatars",
+    };
+  }
+}
+

@@ -1,5 +1,6 @@
 // Server Actions
 export {
+  deleteProfileAvatarAction,
   updateProfileAvatar,
   updateTripCoverImage,
   uploadImageAction,

@@ -11,7 +11,7 @@ import {
 import {
   fetchFxRates,
   SUPPORTED_CURRENCIES,
-} from "@/features/travel-essentials/currency/currency-service";
+} from "@/features/travel-essentials";
 import type {
   AccountUsageData,
   ConvertedPricingDTO,
