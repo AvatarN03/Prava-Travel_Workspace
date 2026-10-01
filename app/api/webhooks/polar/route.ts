@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Webhook, WebhookVerificationError as StandardWebhookError } from "standardwebhooks";
-import { validateEvent, WebhookVerificationError as SdkWebhookError } from "@polar-sh/sdk/webhooks";
+import { validateEvent } from "@polar-sh/sdk/webhooks";
+import { Webhook } from "standardwebhooks";
+
 import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";

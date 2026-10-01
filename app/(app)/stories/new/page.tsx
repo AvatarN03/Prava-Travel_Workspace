@@ -1,4 +1,4 @@
-import { BlogEditor } from "@/features/blog/components/blog-editor";
+import { BlogEditor } from "@/features/blog";
 import { getTrips } from "@/features/trips";
 
 export const dynamic = "force-dynamic";

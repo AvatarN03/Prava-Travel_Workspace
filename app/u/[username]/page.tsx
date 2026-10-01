@@ -1,26 +1,29 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { getPublicCreatorProfile } from "@/features/profile";
-import { createClient } from "@/lib/supabase/server";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import {
+  BedDouble,
+  BookOpen,
   Compass,
-  MapPin,
-  Calendar,
-  Layers,
-  ArrowRight,
-  User,
   Globe,
   ListTodo,
-  BedDouble,
-  Copy,
-  BookOpen,
-  Clock,
+  MapPin,
+  User,
 } from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+import { StoryCard } from "@/features/blog";
 import { CloneTripButton } from "./clone-trip-button";
-import { StoryCard } from "@/features/blog/components/story-card";
+import { getPublicCreatorProfile } from "@/features/profile";
+import { createClient } from "@/lib/supabase/server";
+
 
 interface PublicProfilePageProps {
   params: Promise<{ username: string }>;

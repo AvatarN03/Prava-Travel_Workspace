@@ -2802,6 +2802,53 @@
     - **`features/landing/components/workspace-showcase.tsx`**:
       - Replaced native `title` attributes on macOS traffic light window controls (Close, Minimize, Fullscreen) with shadcn `Tooltip` displaying `"Close window"`, `"Minimize window"`, `"Fullscreen"`.
       - Replaced native `title="..."` attributes on the segmented expense progress bar (Lodging, Transit, Dining, Activities) with shadcn `Tooltip` components displaying detailed breakdown info (e.g., `Lodging · ₹32,000 (21.3%)`, `Transit · ₹11,400 (7.6%)`, etc.).
+- **Task 189 (`app/` Root Files Audit & `globals.css` Dead Code Pruning)**:
+  - **Context & Audit**:
+    - Inspected `app/page.tsx`, `app/layout.tsx`, and `app/globals.css`.
+    - `app/page.tsx` and `app/layout.tsx` were 100% clean and strictly conformed to rules (e.g., preserving `suppressHydrationWarning` on `<html>` and `<body>`).
+    - `app/globals.css` contained dead/duplicate CSS definitions.
+  - **Solutions Implemented**:
+    - **`app/globals.css`**:
+      - Pruned duplicate `html { scroll-behavior: smooth; }` (already defined at line 156).
+      - Pruned unused `.comfortable-scrollbar` utility (38 lines, 0 references across entire codebase).
+      - Pruned unused `.animate-fadeIn` and `@keyframes fadeIn` declaration (14 lines, 0 references across entire codebase).
+      - Retained all active styling utilities (`.no-scrollbar`, `.ultra-thin-scrollbar`, `.thin-scrollbar`, `.bg-prava-pattern`, accordion keyframes).
   - **Verification**:
-    - TypeScript compilation check (`npx tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors.
+    - TypeScript compilation check (`node ./node_modules/typescript/bin/tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors.
 
+- **Task 190 (`app/api/webhooks/polar` and `app/u/[username]` Audit & Optimization)**:
+  - **Context & Audit**:
+    - Inspected `app/api/webhooks/polar/route.ts`, `app/u/[username]/page.tsx`, and `app/u/[username]/clone-trip-button.tsx`.
+    - Identified unused error class imports in Polar webhook route.
+    - Identified 5 unused Lucide icons (`Calendar`, `Layers`, `ArrowRight`, `Copy`, `Clock`) and unused `notFound` import in public creator profile.
+    - Identified native browser `alert` and missing `cursor-pointer` on public clone trip button.
+  - **Solutions Implemented**:
+    - **`app/api/webhooks/polar/route.ts`**:
+      - Pruned unused `StandardWebhookError` and `SdkWebhookError` imports.
+      - Organized imports into clean 6-tier hierarchy.
+    - **`app/u/[username]/page.tsx`**:
+      - Pruned unused `notFound` import and 5 unused icons (`Calendar`, `Layers`, `ArrowRight`, `Copy`, `Clock`).
+      - Switched `StoryCard` import to canonical `@/features/blog` barrel export.
+      - Organized imports into 6-tier hierarchy.
+    - **`app/u/[username]/clone-trip-button.tsx`**:
+      - Replaced raw browser `alert()` with modern `toast.error()` and added `toast.success()` notifications from `sonner`.
+      - Added explicit `cursor-pointer` to button.
+      - Formatted imports into 6-tier hierarchy.
+  - **Verification**:
+    - TypeScript compilation check (`node ./node_modules/typescript/bin/tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors.
+
+- **Task 191 (`app/(app)` Route Group Audit & Optimization)**:
+  - **Context & Audit**:
+    - Inspected all 11 subdirectories and 18 route files across `app/(app)/`.
+    - Identified unused `TabsContent` import from `@/components/ui/tabs` in `travel-essentials-shell.tsx`.
+    - Identified deep component and action imports across 5 story pages (`app/(app)/stories/page.tsx`, `manage/page.tsx`, `new/page.tsx`, `[slug]/page.tsx`, `[slug]/edit/page.tsx`).
+    - Verified all 7 trip workspace tabs (`overview`, `itinerary`, `accommodations`, `expenses`, `notes`, `checklist`, `links`) cleanly consume canonical `@/features/trip-workspace` barrel.
+  - **Solutions Implemented**:
+    - **`travel-essentials-shell.tsx`**: Pruned unused `TabsContent` from `@/components/ui/tabs`.
+    - **`app/(app)/stories/page.tsx`**: Switched imports to canonical `@/features/blog` barrel (`getAllPublishedStories`, `StoryCard`).
+    - **`app/(app)/stories/manage/page.tsx`**: Switched imports to canonical `@/features/blog` barrel (`getMyBlogPosts`, `MyStoriesList`).
+    - **`app/(app)/stories/new/page.tsx`**: Switched `BlogEditor` import to canonical `@/features/blog` barrel.
+    - **`app/(app)/stories/[slug]/page.tsx`**: Switched imports to canonical `@/features/blog` barrel (`getPublishedStory`, `MarkdownRenderer`, `StoryHeaderActions`).
+    - **`app/(app)/stories/[slug]/edit/page.tsx`**: Switched imports to canonical `@/features/blog` barrel (`BlogEditor`, `getBlogPostForEdit`).
+  - **Verification**:
+    - TypeScript compilation check (`node ./node_modules/typescript/bin/tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors.

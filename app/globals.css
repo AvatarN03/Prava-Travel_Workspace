@@ -209,48 +209,6 @@ html {
   background: rgba(45, 155, 240, 0.75);
 }
 
-/* =========================================================
-   COMFORTABLE SCROLLBAR UTILITY (Not thin, high usability)
-   ========================================================= */
-
-.comfortable-scrollbar {
-  scrollbar-width: auto;
-  scrollbar-color: rgba(45, 155, 240, 0.6) rgba(148, 163, 184, 0.15);
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-}
-
-.dark .comfortable-scrollbar {
-  scrollbar-color: rgba(45, 155, 240, 0.6) rgba(255, 255, 255, 0.08);
-}
-
-.comfortable-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.comfortable-scrollbar::-webkit-scrollbar-track {
-  background: rgba(148, 163, 184, 0.12);
-  border-radius: 9999px;
-  margin: 6px 0;
-}
-
-.dark .comfortable-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.comfortable-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(45, 155, 240, 0.65);
-  border-radius: 9999px;
-  border: 1.5px solid transparent;
-  background-clip: padding-box;
-  transition: background-color 0.2s ease;
-}
-
-.comfortable-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(45, 155, 240, 0.9);
-  background-clip: padding-box;
-}
 
 /* =========================================================
    NO SCROLLBAR UTILITY (Hides scrollbar while preserving scroll)
@@ -341,24 +299,3 @@ html {
 [data-state="closed"][class*="animate-accordion-up"] {
   animation: accordion-up 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
-@keyframes fadeIn {
-  from {
-    opacity: 0.2;
-    transform: scale(1.015);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-

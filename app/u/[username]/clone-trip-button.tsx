@@ -2,8 +2,8 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-
 import { Copy, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 
@@ -11,10 +11,10 @@ import { cloneTripTemplate } from "@/features/templates";
 
 interface CloneTripButtonProps {
   tripId: string;
-  tripTitle: string;
+  tripTitle?: string;
 }
 
-export function CloneTripButton({ tripId }: CloneTripButtonProps) {
+export function CloneTripButton({ tripId, tripTitle }: CloneTripButtonProps) {
   const router = useRouter();
   const [isCloning, startCloning] = useTransition();
 
@@ -22,9 +22,14 @@ export function CloneTripButton({ tripId }: CloneTripButtonProps) {
     startCloning(async () => {
       const res = await cloneTripTemplate(tripId);
       if (res.success && res.tripId) {
+        toast.success(
+          tripTitle
+            ? `Cloned "${tripTitle}" to your workspace!`
+            : "Trip cloned to your workspace!"
+        );
         router.push(`/trips/${res.tripId}/overview`);
       } else {
-        alert(res.error || "Failed to clone trip. Please sign in.");
+        toast.error(res.error || "Failed to clone trip. Please sign in.");
       }
     });
   };
@@ -33,7 +38,7 @@ export function CloneTripButton({ tripId }: CloneTripButtonProps) {
     <Button
       type="button"
       size="sm"
-      className="h-7 px-2.5 text-xs font-semibold gap-1.5 shadow-xs"
+      className="h-7 px-2.5 text-xs font-semibold gap-1.5 shadow-xs cursor-pointer"
       onClick={handleClone}
       disabled={isCloning}
     >

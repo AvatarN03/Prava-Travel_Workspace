@@ -12,11 +12,13 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CloneTripButton } from "@/app/u/[username]/clone-trip-button";
-import { MarkdownRenderer } from "@/features/blog/components/markdown-renderer";
-import { StoryHeaderActions } from "@/features/blog/components/story-header-actions";
 
-import { getPublishedStory } from "@/features/blog/actions";
+import { CloneTripButton } from "@/app/u/[username]/clone-trip-button";
+import {
+  getPublishedStory,
+  MarkdownRenderer,
+  StoryHeaderActions,
+} from "@/features/blog";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";

@@ -4,9 +4,8 @@ import type { Metadata } from "next";
 import { Plus, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { StoryCard } from "@/features/blog/components/story-card";
 
-import { getAllPublishedStories } from "@/features/blog/actions";
+import { getAllPublishedStories, StoryCard } from "@/features/blog";
 
 export const dynamic = "force-dynamic";
 
