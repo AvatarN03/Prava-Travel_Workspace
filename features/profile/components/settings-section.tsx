@@ -1,6 +1,16 @@
 "use client";
 
-import { Shield, LogOut, Loader2, KeyRound, CheckCircle2 } from "lucide-react";
+import { useState } from "react";
+
+import {
+  AlertTriangle,
+  CheckCircle2,
+  KeyRound,
+  Loader2,
+  LogOut,
+  Shield,
+  Trash2,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +22,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 
+import { DeleteAccountDialog } from "./delete-account-dialog";
 import { ProfileWithStats } from "../actions";
 
 interface SettingsSectionProps {
@@ -25,6 +36,8 @@ export function SettingsSection({
   onSignOut,
   isSigningOut,
 }: SettingsSectionProps) {
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   return (
     <div className="space-y-6 w-full">
       {/* 1. Account Security & Verification */}
@@ -121,6 +134,49 @@ export function SettingsSection({
           </div>
         </CardContent>
       </Card>
+
+      {/* 3. Danger Zone */}
+      <Card className="rounded-sm border border-destructive/30 bg-destructive/5 shadow-xs">
+        <CardHeader className="p-4 pb-3">
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-destructive/15 border border-destructive/30 text-destructive">
+              <AlertTriangle className="h-3.5 w-3.5" />
+            </div>
+            <div>
+              <CardTitle className="font-sans text-sm font-semibold text-destructive">Danger Zone</CardTitle>
+              <CardDescription className="font-sans text-xs text-muted-foreground">
+                Irreversible actions affecting your identity and stored traveler workspace data.
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="p-4 pt-0 text-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-1">
+            <div className="space-y-0.5">
+              <p className="font-sans font-semibold text-foreground">Delete Account & Wipe Data</p>
+              <p className="font-sans text-muted-foreground text-[11px]">
+                Permanently purge your account, all trips, itineraries, expenses, stories, and uploads
+              </p>
+            </div>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setIsDeleteDialogOpen(true)}
+              className="h-8 rounded-sm font-sans text-xs gap-1.5 cursor-pointer shrink-0"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Delete Account
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <DeleteAccountDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        userEmail={profile.email || ""}
+      />
     </div>
   );
 }

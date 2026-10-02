@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
-
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Calendar,
+  ChevronDown,
+  ChevronUp,
   Clock,
   Compass,
   Copy,
@@ -46,6 +47,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { AddToCalendarDialog } from "./add-to-calendar-dialog";
+
+import { useWorkspaceAi } from "../context/workspace-ai-context";
+
 import {
   deleteTrip,
   duplicateTrip,
@@ -55,8 +60,6 @@ import {
   type Trip,
   type TripStatus,
 } from "@/features/trips";
-import { useWorkspaceAi } from "../context/workspace-ai-context";
-
 import { formatDateRange } from "@/lib/utils";
 
 interface WorkspaceHeaderProps {
@@ -68,6 +71,8 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
   const { isAiOpen, toggleAi, userQuota } = useWorkspaceAi();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isDescExpanded, setIsDescExpanded] = useState(false);
   const [isPublic, setIsPublic] = useState(Boolean(trip.isPublic));
   const [tripStatus, setTripStatus] = useState<TripStatus>(trip.status);
   const [isPublishing, startPublishing] = useTransition();
@@ -150,10 +155,10 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
       const endMidnight = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()).getTime();
       if (todayMidnight >= startMidnight && todayMidnight <= endMidnight) {
         return (
-          <span className="inline-flex items-center gap-1.5 font-sans text-[10px] font-semibold tracking-wide uppercase text-emerald-700 dark:text-emerald-300 bg-emerald-50/95 dark:bg-emerald-950/90 border border-emerald-200/90 dark:border-emerald-800/80 px-2 py-0.5 rounded-xs shadow-2xs">
+          <span className="inline-flex items-center gap-1.5 font-sans text-[10px] font-semibold tracking-wide uppercase text-white bg-emerald-600/90 border border-emerald-400/40 px-2 py-0.5 rounded-xs shadow-2xs backdrop-blur-xs">
             <span className="relative flex h-1.5 w-1.5 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
             </span>
             Happening now
           </span>
@@ -163,10 +168,10 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
 
     if (diffDays === 0) {
       return (
-        <span className="inline-flex items-center gap-1.5 font-sans text-[10px] font-semibold tracking-wide uppercase text-emerald-700 dark:text-emerald-300 bg-emerald-50/95 dark:bg-emerald-950/90 border border-emerald-200/90 dark:border-emerald-800/80 px-2 py-0.5 rounded-xs shadow-2xs">
+        <span className="inline-flex items-center gap-1.5 font-sans text-[10px] font-semibold tracking-wide uppercase text-white bg-emerald-600/90 border border-emerald-400/40 px-2 py-0.5 rounded-xs shadow-2xs backdrop-blur-xs">
           <span className="relative flex h-1.5 w-1.5 shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
           </span>
           Starts today
         </span>
@@ -176,23 +181,23 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
     if (diffDays > 0) {
       if (diffDays === 1) {
         return (
-          <span className="inline-flex items-center gap-1 font-sans text-[10px] font-medium text-sky-700 dark:text-sky-300 bg-sky-50/95 dark:bg-sky-950/90 border border-sky-200/90 dark:border-sky-800/80 px-2 py-0.5 rounded-xs shadow-2xs">
-            <Clock className="h-3 w-3 text-primary shrink-0" />
+          <span className="inline-flex items-center gap-1 font-sans text-[10px] font-medium text-white bg-sky-600/90 border border-sky-400/40 px-2 py-0.5 rounded-xs shadow-2xs backdrop-blur-xs">
+            <Clock className="h-3 w-3 text-white shrink-0" />
             Starts tomorrow
           </span>
         );
       }
       if (diffDays <= 30) {
         return (
-          <span className="inline-flex items-center gap-1 font-sans text-[10px] font-medium text-sky-700 dark:text-sky-300 bg-sky-50/95 dark:bg-sky-950/90 border border-sky-200/90 dark:border-sky-800/80 px-2 py-0.5 rounded-xs shadow-2xs tabular-nums">
-            <Clock className="h-3 w-3 text-primary shrink-0" />
+          <span className="inline-flex items-center gap-1 font-sans text-[10px] font-medium text-white bg-sky-600/90 border border-sky-400/40 px-2 py-0.5 rounded-xs shadow-2xs tabular-nums backdrop-blur-xs">
+            <Clock className="h-3 w-3 text-white shrink-0" />
             {diffDays} days left
           </span>
         );
       }
       return (
-        <span className="inline-flex items-center gap-1 font-sans text-[10px] font-medium text-slate-700 dark:text-slate-300 bg-slate-100/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800/80 px-2 py-0.5 rounded-xs shadow-2xs tabular-nums">
-          <Clock className="h-3 w-3 text-muted-foreground shrink-0" />
+        <span className="inline-flex items-center gap-1 font-sans text-[10px] font-medium text-white/90 bg-black/50 border border-white/20 px-2 py-0.5 rounded-xs shadow-2xs tabular-nums backdrop-blur-xs">
+          <Clock className="h-3 w-3 text-white/80 shrink-0" />
           In {Math.round(diffDays / 30)} months
         </span>
       );
@@ -201,234 +206,306 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
     return null;
   };
 
+  const isLongDescription = (trip.description?.length || 0) > 130 || (trip.description?.split("\n").length || 0) > 2;
+
   return (
     <>
-      <div className="space-y-4 pb-1">
-        {/* Cover Banner with Supabase Storage upload */}
+      <div className="space-y-3 pb-1">
+        {/* 1. Top Link: Back to Trips (Above the banner image) */}
+        <div className="flex items-center justify-between">
+          <Link
+            href="/trips"
+            className="inline-flex items-center font-sans text-xs font-medium text-muted-foreground hover:text-foreground transition-colors group cursor-pointer"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 mr-1.5 group-hover:-translate-x-0.5 transition-transform" />
+            <span>Back to Trips</span>
+          </Link>
+        </div>
+
+        {/* 2. Cover Banner: Clean Destination & Title ONLY (No icons, no long descriptions) */}
         <CoverImage
           tripId={trip.id}
           coverImageUrl={trip.coverImageUrl}
           title={trip.title}
           destination={trip.destination}
           isEditable={true}
-        />
-
-        {/* Top Control Bar: Back Button, AI Assistant Trigger, Share, Status and 3-Dot Actions */}
-        <div className="flex items-center justify-between gap-3">
-          <Link
-            href="/trips"
-            className="inline-flex items-center font-sans text-xs font-medium text-muted-foreground hover:text-foreground transition-colors group cursor-pointer"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 mr-1 group-hover:-translate-x-0.5 transition-transform" />
-            Back to Trips
-          </Link>
-
-          <div className="flex items-center gap-2">
-            {/* Quick Status Select */}
-            <Select
-              value={tripStatus}
-              onValueChange={(val) => handleStatusChange(val as TripStatus)}
-              disabled={isStatusChanging}
-            >
-              <SelectTrigger className="h-8 font-sans text-xs font-medium w-[125px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="PLANNING" className="font-sans text-xs font-medium cursor-pointer">
-                  Planning
-                </SelectItem>
-                <SelectItem value="ACTIVE" className="font-sans text-xs font-medium cursor-pointer">
-                  Active
-                </SelectItem>
-                <SelectItem value="COMPLETED" className="font-sans text-xs font-medium cursor-pointer">
-                  Completed
-                </SelectItem>
-                <SelectItem value="ARCHIVED" className="font-sans text-xs font-medium cursor-pointer">
-                  Archived
-                </SelectItem>
-              </SelectContent>
-            </Select>
-
-            {/* AI Assistant Button (Ichinose - Prava AI Assistant) */}
-            <TooltipProvider delayDuration={150}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={isAiOpen ? "default" : "outline"}
-                    size="sm"
-                    className={`h-8 gap-1.5 font-sans text-xs font-medium cursor-pointer transition-all rounded-xs ${isAiOpen
-                      ? "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90"
-                      : "border-primary/40 hover:border-primary hover:bg-primary/10 text-primary dark:border-primary/50 dark:hover:bg-primary/20"
-                      }`}
-                    onClick={toggleAi}
-                    aria-label="Ichinose — Prava Travel Assistant"
-                  >
-                    <div className="relative h-4 w-4 shrink-0 rounded-full overflow-hidden ring-1 ring-primary/40 shadow-2xs bg-white">
-                      <Image
-                        src="/avatars/ichinose.png"
-                        alt="Ichinose"
-                        width={16}
-                        height={16}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span>Ichinose</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="bottom"
-                  align="end"
-                  className="w-64 p-3 space-y-2 border border-border/80 bg-popover text-popover-foreground shadow-lg rounded-md z-50 text-left"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="relative h-6 w-6 shrink-0 rounded-full overflow-hidden ring-1 ring-primary/50 shadow-2xs">
-                      <Image
-                        src="/avatars/ichinose.png"
-                        alt="Ichinose"
-                        width={24}
-                        height={24}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                        Ichinose AI
-                        <span className="text-[10px] font-normal text-muted-foreground">· Travel Copilot</span>
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">Prava Workspace Assistant</p>
-                    </div>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground leading-snug">
-                    Interactive travel assistant for multi-day itineraries, stays, live travel data, and structured trip updates.
-                  </p>
-                  {userQuota && (
-                    <div className="pt-1.5 border-t border-border/60 flex items-center justify-between text-[10px]">
-                      <span className="text-muted-foreground font-medium">Monthly AI Credits:</span>
-                      <span
-                        className={`font-semibold tabular-nums ${userQuota.remaining > 0 ? "text-primary" : "text-destructive"
-                          }`}
-                      >
-                        {userQuota.remaining} / {userQuota.quota} remaining
-                      </span>
-                    </div>
-                  )}
-                  <p className="text-[9px] text-muted-foreground/80 text-right pt-0.5">
-                    Click to {isAiOpen ? "close" : "open"} assistant
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            {/* 3-Dot Menu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:text-foreground cursor-pointer"
-                >
-                  <MoreHorizontal className="h-4 w-4" />
-                  <span className="sr-only">Trip Settings</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={handleCopyLink} className="font-sans text-xs font-medium cursor-pointer">
-                  <Share2 className="h-3.5 w-3.5 mr-2" />
-                  Copy Trip Link
-                </DropdownMenuItem>
-
-                <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="font-sans text-xs font-medium cursor-pointer">
-                  <Pencil className="h-3.5 w-3.5 mr-2" />
-                  Edit Details & Cover
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  onClick={handleDuplicate}
-                  disabled={isDuplicating}
-                  className="font-sans text-xs font-medium cursor-pointer"
-                >
-                  {isDuplicating ? (
-                    <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />
-                  ) : (
-                    <Copy className="h-3.5 w-3.5 mr-2" />
-                  )}
-                  Duplicate Workspace
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  onClick={handleTogglePublish}
-                  disabled={isPublishing}
-                  className="font-sans text-xs font-medium cursor-pointer"
-                >
-                  {isPublishing ? (
-                    <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />
-                  ) : isPublic ? (
-                    <Lock className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
-                  ) : (
-                    <Globe className="h-3.5 w-3.5 mr-2 text-primary" />
-                  )}
-                  {isPublic ? "Make Private" : "Share to Community"}
-                </DropdownMenuItem>
-
-                <DropdownMenuSeparator />
-
-                <DropdownMenuItem
-                  onClick={() => setIsDeleteOpen(true)}
-                  className="font-sans text-xs font-medium text-destructive focus:text-destructive cursor-pointer"
-                >
-                  <Trash2 className="h-3.5 w-3.5 mr-2" />
-                  Delete Trip
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-
-        {/* Trip Title & Sub-header Badges */}
-        <div className="space-y-2 pt-1">
-          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
-            Trip Workspace
-          </span>
-          <div className="flex items-center gap-2 flex-wrap">
-            {isPublic && (
-              <Badge
-                variant="outline"
-                className="gap-1 font-sans text-[10px] font-semibold tracking-wide uppercase border-emerald-200/90 bg-emerald-50/80 text-emerald-700 dark:border-emerald-800/70 dark:bg-emerald-950/50 dark:text-emerald-300 shadow-2xs"
-              >
-                <Globe className="w-2.5 h-2.5" /> Public Community Trip
-              </Badge>
-            )}
-            {trip.destination && (
-              <span className="inline-flex items-center gap-1 font-sans text-xs font-medium text-foreground/80">
-                <MapPin className="w-3.5 h-3.5 text-[#2D9BF0] shrink-0" />
-                {trip.destination}
-              </span>
-            )}
-            <span className="inline-flex items-center gap-1 font-sans text-xs text-muted-foreground tabular-nums">
-              <Calendar className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" />
-              {formatDateRange(trip.startDate, trip.endDate)}
-            </span>
-            {getCountdownLabel(trip.startDate, trip.endDate)}
-          </div>
-
-          <div className="space-y-1">
-            <div className="flex items-center gap-2.5">
-              <div className="hidden sm:flex h-8 w-8 items-center justify-center rounded-sm bg-[#2D9BF0]/10 border border-[#2D9BF0]/20 text-[#2D9BF0] shadow-2xs shrink-0">
-                <Compass className="h-4.5 w-4.5" />
-              </div>
-              <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
-                {trip.title}
-              </h1>
+        >
+          <div className="space-y-1.5">
+            {/* Destination Pill & Countdown */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {trip.destination && (
+                <span className="inline-flex items-center gap-1 font-sans text-xs font-medium text-white/95 bg-black/50 backdrop-blur-xs border border-white/15 px-2.5 py-0.5 rounded-xs shadow-2xs">
+                  <MapPin className="w-3 h-3 text-[#2D9BF0] shrink-0" />
+                  {trip.destination}
+                </span>
+              )}
+              {getCountdownLabel(trip.startDate, trip.endDate)}
             </div>
 
-            {trip.description && (
-              <p className="font-serif italic text-sm sm:text-base text-muted-foreground leading-relaxed pt-0.5 max-w-3xl line-clamp-2">
-                {trip.description}
-              </p>
-            )}
+            {/* Clean Trip Title: Pure typography, no icon beside title */}
+            <h1 className="font-sans text-2xl sm:text-4xl font-bold tracking-tight text-white drop-shadow-md">
+              {trip.title}
+            </h1>
+          </div>
+        </CoverImage>
+
+        {/* 3. Action Control Strip & Metadata Below the Banner */}
+        <div className="space-y-2 pt-0.5">
+          {/* Main Controls Row */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            {/* Left: Workspace Eyebrow */}
+            <div className="flex items-center gap-2">
+              <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase flex items-center gap-1.5">
+                <Compass className="w-3.5 h-3.5 text-[#2D9BF0]" />
+                Trip Workspace
+              </span>
+            </div>
+
+            {/* Right: Actions Row (Public badge beside AI Assistant, Status, Calendar, Menu) */}
+            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+              {/* Public Community Trip Badge */}
+              {isPublic && (
+                <Badge
+                  variant="outline"
+                  className="gap-1 font-sans text-[11px] font-semibold tracking-wide border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shadow-2xs h-8 px-2.5 rounded-xs"
+                >
+                  <Globe className="w-3 h-3 text-emerald-500" />
+                  <span>Public</span>
+                </Badge>
+              )}
+
+              {/* Status Select */}
+              <Select
+                value={tripStatus}
+                onValueChange={(val) => handleStatusChange(val as TripStatus)}
+                disabled={isStatusChanging}
+              >
+                <SelectTrigger className="h-8 font-sans text-xs font-medium w-[120px] rounded-xs cursor-pointer">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent className="rounded-sm">
+                  <SelectItem value="PLANNING" className="font-sans text-xs font-medium cursor-pointer">
+                    Planning
+                  </SelectItem>
+                  <SelectItem value="ACTIVE" className="font-sans text-xs font-medium cursor-pointer">
+                    Active
+                  </SelectItem>
+                  <SelectItem value="COMPLETED" className="font-sans text-xs font-medium cursor-pointer">
+                    Completed
+                  </SelectItem>
+                  <SelectItem value="ARCHIVED" className="font-sans text-xs font-medium cursor-pointer">
+                    Archived
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+
+              {/* Calendar Sync Button */}
+              <TooltipProvider delayDuration={150}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 gap-1.5 font-sans text-xs font-medium cursor-pointer transition-all rounded-xs border-border/80 hover:bg-muted text-foreground"
+                      onClick={() => setIsCalendarOpen(true)}
+                      aria-label="Add Trip to Calendar"
+                    >
+                      <Calendar className="h-3.5 w-3.5 text-[#2D9BF0]" />
+                      <span className="hidden sm:inline">Add to Calendar</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="text-xs">
+                    Sync trip to Google Calendar or download .ics
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* AI Assistant Button (Ichinose - Prava AI Assistant) */}
+              <TooltipProvider delayDuration={150}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant={isAiOpen ? "default" : "outline"}
+                      size="sm"
+                      className={`h-8 gap-1.5 font-sans text-xs font-medium cursor-pointer transition-all rounded-xs ${
+                        isAiOpen
+                          ? "bg-[#2D9BF0] text-white shadow-xs hover:bg-[#2587d4]"
+                          : "border-[#2D9BF0]/40 hover:border-[#2D9BF0] hover:bg-[#2D9BF0]/10 text-[#2D9BF0] dark:border-[#2D9BF0]/50 dark:hover:bg-[#2D9BF0]/20"
+                      }`}
+                      onClick={toggleAi}
+                      aria-label="Ichinose — Prava Travel Assistant"
+                    >
+                      <div className="relative h-4 w-4 shrink-0 rounded-full overflow-hidden ring-1 ring-[#2D9BF0]/40 shadow-2xs bg-white">
+                        <Image
+                          src="/avatars/ichinose.png"
+                          alt="Ichinose"
+                          width={16}
+                          height={16}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <span>Ichinose</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="bottom"
+                    align="end"
+                    className="w-64 p-3 space-y-2 border border-border/80 bg-popover text-popover-foreground shadow-lg rounded-md z-50 text-left"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="relative h-6 w-6 shrink-0 rounded-full overflow-hidden ring-1 ring-primary/50 shadow-2xs">
+                        <Image
+                          src="/avatars/ichinose.png"
+                          alt="Ichinose"
+                          width={24}
+                          height={24}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                          Ichinose AI
+                          <span className="text-[10px] font-normal text-muted-foreground">· Travel Copilot</span>
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">Prava Workspace Assistant</p>
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-snug">
+                      Interactive travel assistant for multi-day itineraries, stays, live travel data, and structured trip updates.
+                    </p>
+                    {userQuota && (
+                      <div className="pt-1.5 border-t border-border/60 flex items-center justify-between text-[10px]">
+                        <span className="text-muted-foreground font-medium">Monthly AI Credits:</span>
+                        <span
+                          className={`font-semibold tabular-nums ${
+                            userQuota.remaining > 0 ? "text-primary" : "text-destructive"
+                          }`}
+                        >
+                          {userQuota.remaining} / {userQuota.quota} remaining
+                        </span>
+                      </div>
+                    )}
+                    <p className="text-[9px] text-muted-foreground/80 text-right pt-0.5">
+                      Click to {isAiOpen ? "close" : "open"} assistant
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* 3-Dot Menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground cursor-pointer rounded-xs"
+                  >
+                    <MoreHorizontal className="h-4 w-4" />
+                    <span className="sr-only">Trip Settings</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 rounded-sm">
+                  <DropdownMenuItem onClick={handleCopyLink} className="font-sans text-xs font-medium cursor-pointer">
+                    <Share2 className="h-3.5 w-3.5 mr-2" />
+                    Copy Trip Link
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() => setIsCalendarOpen(true)}
+                    className="font-sans text-xs font-medium cursor-pointer"
+                  >
+                    <Calendar className="h-3.5 w-3.5 mr-2 text-[#2D9BF0]" />
+                    Add to Calendar
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="font-sans text-xs font-medium cursor-pointer">
+                    <Pencil className="h-3.5 w-3.5 mr-2" />
+                    Edit Details & Cover
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={handleDuplicate}
+                    disabled={isDuplicating}
+                    className="font-sans text-xs font-medium cursor-pointer"
+                  >
+                    {isDuplicating ? (
+                      <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5 mr-2" />
+                    )}
+                    Duplicate Workspace
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={handleTogglePublish}
+                    disabled={isPublishing}
+                    className="font-sans text-xs font-medium cursor-pointer"
+                  >
+                    {isPublishing ? (
+                      <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />
+                    ) : isPublic ? (
+                      <Lock className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
+                    ) : (
+                      <Globe className="h-3.5 w-3.5 mr-2 text-primary" />
+                    )}
+                    {isPublic ? "Make Private" : "Share to Community"}
+                  </DropdownMenuItem>
+
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem
+                    onClick={() => setIsDeleteOpen(true)}
+                    className="font-sans text-xs font-medium text-destructive focus:text-destructive cursor-pointer"
+                  >
+                    <Trash2 className="h-3.5 w-3.5 mr-2" />
+                    Delete Trip
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+
+          {/* Sub-row: Date Range & Description with Show More/Less */}
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 pt-1 border-t border-border/50 text-xs">
+            {/* Description (max 2 lines with Show more) */}
+            <div className="flex-1 min-w-0 pr-4">
+              {trip.description ? (
+                <div>
+                  <p className={`font-serif italic text-muted-foreground leading-relaxed ${!isDescExpanded ? "line-clamp-2" : ""}`}>
+                    {trip.description}
+                  </p>
+                  {isLongDescription && (
+                    <button
+                      type="button"
+                      onClick={() => setIsDescExpanded(!isDescExpanded)}
+                      className="text-[11px] text-[#2D9BF0] hover:underline font-sans font-medium mt-0.5 cursor-pointer inline-flex items-center gap-0.5"
+                    >
+                      <span>{isDescExpanded ? "Show less" : "Show more"}</span>
+                      {isDescExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <span className="text-[11px] text-muted-foreground/60 italic">No trip description provided</span>
+              )}
+            </div>
+
+            {/* Date Range on the right below the controls */}
+            <div className="shrink-0 self-start sm:self-auto">
+              <span className="inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground tabular-nums bg-muted/30 px-2 py-0.5 rounded-xs border border-border/50">
+                <Calendar className="w-3.5 h-3.5 text-[#2D9BF0] shrink-0" />
+                <span>{formatDateRange(trip.startDate, trip.endDate)}</span>
+              </span>
+            </div>
           </div>
         </div>
       </div>
+
+      <AddToCalendarDialog
+        trip={trip}
+        open={isCalendarOpen}
+        onOpenChange={setIsCalendarOpen}
+      />
 
       <EditTripDialog
         trip={trip}

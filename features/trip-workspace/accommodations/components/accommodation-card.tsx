@@ -89,25 +89,28 @@ export function AccommodationCard({ item }: AccommodationCardProps) {
 
   return (
     <>
-      <div className="group relative flex flex-col justify-between p-4 rounded-md border border-border bg-card hover:border-primary/40 hover:shadow-2xs transition-all duration-150">
+      <div className="group relative flex flex-col justify-between p-4 sm:p-5 rounded-sm border border-border/80 bg-card hover:border-[#2D9BF0]/50 hover:shadow-xs transition-all duration-200 space-y-4">
         <div className="space-y-3">
-          {/* Header row */}
+          {/* Header Row: Type Badge, Nights Pill & Actions */}
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-1 min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <Badge variant="planning" className="text-[10px]">
+                <Badge
+                  variant="outline"
+                  className="text-[10px] bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 font-semibold px-2 py-0.5 rounded-xs"
+                >
                   {item.type || "Hotel"}
                 </Badge>
 
                 {nightsCount && (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-xs">
-                    <Moon className="w-3 h-3 text-muted-foreground/70" />
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-xs tabular-nums">
+                    <Moon className="w-3 h-3 text-[#2D9BF0]" />
                     {nightsCount} night{nightsCount === 1 ? "" : "s"}
                   </span>
                 )}
 
                 {item.cost !== null && item.cost > 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-xs border border-emerald-500/20">
+                  <span className="inline-flex items-center gap-0.5 text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-xs border border-emerald-500/20 tabular-nums">
                     <DollarSign className="w-3 h-3" />
                     {item.cost.toFixed(2)} {item.currency}
                   </span>
@@ -163,32 +166,32 @@ export function AccommodationCard({ item }: AccommodationCardProps) {
           {/* Address */}
           {item.address && (
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+              <MapPin className="w-3.5 h-3.5 text-[#2D9BF0] shrink-0" />
               <span className="truncate">{item.address}</span>
             </p>
           )}
 
           {/* Dates Strip */}
           {(item.checkIn || item.checkOut) && (
-            <div className="flex items-center gap-4 text-xs text-muted-foreground p-2 rounded-sm bg-muted/30 border border-border/50 font-mono">
+            <div className="flex items-center gap-4 text-xs text-muted-foreground p-2.5 rounded-sm bg-muted/40 border border-border/60 font-mono">
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-sans">In:</span>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-sans font-semibold">In:</span>
                 <span className="font-semibold text-foreground">{formatDate(item.checkIn) || "Unset"}</span>
               </div>
               <span className="text-muted-foreground/40">•</span>
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-sans">Out:</span>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-sans font-semibold">Out:</span>
                 <span className="font-semibold text-foreground">{formatDate(item.checkOut) || "Unset"}</span>
               </div>
             </div>
           )}
 
-          {/* Confirmation Code Pill */}
+          {/* Confirmation Code Pill with 1-Click Copy */}
           {item.confirmationCode && (
-            <div className="flex items-center justify-between gap-2 p-2 rounded-sm bg-muted/40 border border-border/60 text-xs">
+            <div className="flex items-center justify-between gap-2 p-2.5 rounded-sm bg-muted/50 border border-border/70 text-xs">
               <div className="flex items-center gap-1.5 min-w-0">
-                <KeyRound className="w-3.5 h-3.5 text-primary shrink-0" />
-                <span className="text-[11px] text-muted-foreground">Confirmation:</span>
+                <KeyRound className="w-3.5 h-3.5 text-[#2D9BF0] shrink-0" />
+                <span className="text-[11px] text-muted-foreground">Voucher:</span>
                 <span className="font-mono font-bold text-foreground truncate">
                   {item.confirmationCode}
                 </span>
@@ -197,7 +200,7 @@ export function AccommodationCard({ item }: AccommodationCardProps) {
               <button
                 type="button"
                 onClick={handleCopyCode}
-                className="text-[11px] text-primary hover:underline flex items-center gap-1 font-medium cursor-pointer"
+                className="text-[11px] text-[#2D9BF0] hover:underline flex items-center gap-1 font-medium cursor-pointer"
               >
                 <Copy className="w-3 h-3" /> Copy
               </button>
@@ -206,20 +209,20 @@ export function AccommodationCard({ item }: AccommodationCardProps) {
 
           {/* Notes */}
           {item.notes && (
-            <p className="text-xs text-muted-foreground leading-relaxed pt-1 border-t border-border/60">
+            <p className="text-xs text-muted-foreground leading-relaxed pt-1.5 border-t border-border/60">
               {item.notes}
             </p>
           )}
         </div>
 
         {/* Quick Action Links Footer */}
-        <div className="flex items-center justify-end gap-2 pt-3 mt-3 border-t border-border/60 text-xs">
+        <div className="flex items-center justify-end gap-2 pt-3 border-t border-border/60 text-xs">
           {item.contactPhone && (
             <a
               href={`tel:${item.contactPhone}`}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xs border border-border bg-background hover:bg-muted text-foreground transition-colors font-medium text-[11px]"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm border border-border/70 bg-background hover:bg-muted text-foreground transition-colors font-medium text-[11px]"
             >
-              <Phone className="w-3 h-3 text-muted-foreground" />
+              <Phone className="w-3 h-3 text-[#2D9BF0]" />
               Call Stay
             </a>
           )}
@@ -229,9 +232,9 @@ export function AccommodationCard({ item }: AccommodationCardProps) {
               href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xs border border-border bg-background hover:bg-muted text-foreground transition-colors font-medium text-[11px]"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm border border-border/70 bg-background hover:bg-muted text-foreground transition-colors font-medium text-[11px]"
             >
-              <ExternalLink className="w-3 h-3 text-muted-foreground" />
+              <ExternalLink className="w-3 h-3 text-[#2D9BF0]" />
               Open in Maps
             </a>
           )}

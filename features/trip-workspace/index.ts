@@ -1,4 +1,5 @@
 // Common & Shell Components
+export { AddToCalendarDialog } from "./common/add-to-calendar-dialog";
 export { TripWorkspaceContainer } from "./common/trip-workspace-container";
 export { WorkspaceHeader } from "./common/workspace-header";
 export { WorkspaceNav } from "./common/workspace-nav";

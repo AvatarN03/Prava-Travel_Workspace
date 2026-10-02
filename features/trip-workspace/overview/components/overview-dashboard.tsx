@@ -1,30 +1,48 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 
 import {
   ArrowUpRight,
   BedDouble,
   Calendar,
+  Check,
   CheckSquare,
   Clock,
   Compass,
+  Copy,
+  ExternalLink,
   FileText,
+  Link2,
   MapPin,
+  Phone,
   Pin,
   Plus,
   Receipt,
+  Sparkles,
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import { AddAccommodationDialog } from "../../accommodations/components/add-accommodation-dialog";
 import { AddTaskDialog } from "../../checklist/components/add-task-dialog";
 import { TaskItem } from "../../checklist/components/task-item";
+import { AddToCalendarDialog } from "../../common/add-to-calendar-dialog";
 import { AddExpenseDialog } from "../../expenses/components/add-expense-dialog";
 import { AddItineraryDialog } from "../../itinerary/components/add-itinerary-dialog";
+import { AddLinkDialog } from "../../links/components/add-link-dialog";
+import { AddNoteDialog } from "../../notes/components/add-note-dialog";
+
+import { cn } from "@/lib/utils";
 
 import type {
   Accommodation,
@@ -55,10 +73,20 @@ export function OverviewDashboard({
   checklist,
   links,
 }: OverviewDashboardProps) {
-  const totalSpent = expenses.reduce((acc, curr) => acc + curr.amount, 0);
-  const completedTasks = checklist.filter((i) => i.isCompleted).length;
-  const checklistPercent = checklist.length > 0 ? Math.round((completedTasks / checklist.length) * 100) : 0;
-  const pendingTasks = checklist.filter((i) => !i.isCompleted);
+  const totalSpent = useMemo(
+    () => expenses.reduce((acc, curr) => acc + curr.amount, 0),
+    [expenses]
+  );
+  const completedTasks = useMemo(
+    () => checklist.filter((i) => i.isCompleted).length,
+    [checklist]
+  );
+  const checklistPercent =
+    checklist.length > 0 ? Math.round((completedTasks / checklist.length) * 100) : 0;
+  const pendingTasks = useMemo(
+    () => checklist.filter((i) => !i.isCompleted),
+    [checklist]
+  );
 
   // Compute Trip Timeline Context
   const now = new Date();
@@ -97,426 +125,680 @@ export function OverviewDashboard({
     }
   }
 
-  // Filter items for today if active
-  const todayActivities = itinerary.filter((i) => (i.dayNumber || 1) === activeDayNumber);
+  // Budget calculations & category breakdowns for segmented progress bar
+  const budget = trip.budget || (totalSpent > 0 ? totalSpent * 1.4 : 1000);
+  const spentPercent = budget > 0 ? Math.min(100, Math.round((totalSpent / budget) * 100)) : 0;
+  const headroom = Math.max(0, budget - totalSpent);
+
+  const categoryTotals = useMemo(() => {
+    const totals: Record<string, number> = {
+      ACCOMMODATION: 0,
+      TRANSPORT: 0,
+      FOOD: 0,
+      ACTIVITIES: 0,
+      SHOPPING: 0,
+      OTHER: 0,
+    };
+    expenses.forEach((e) => {
+      const cat = (e.category || "OTHER").toUpperCase();
+      if (totals[cat] !== undefined) {
+        totals[cat] += e.amount;
+      } else {
+        totals.OTHER += e.amount;
+      }
+    });
+    return totals;
+  }, [expenses]);
+
+  // Today or Upcoming activities
+  const activeActivities = useMemo(() => {
+    if (itinerary.length === 0) return [];
+    if (tripTimelineStatus === "ACTIVE_TODAY") {
+      const today = itinerary.filter((i) => (i.dayNumber || 1) === activeDayNumber);
+      if (today.length > 0) return today;
+    }
+    return itinerary.slice(0, 4);
+  }, [itinerary, tripTimelineStatus, activeDayNumber]);
+
+  // Current or Next stay
+  const currentStay = useMemo(() => {
+    if (accommodations.length === 0) return null;
+    const future = accommodations.find((a) => a.checkOut && new Date(a.checkOut) >= now);
+    return future || accommodations[0];
+  }, [accommodations, now]);
+
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    toast.success("Confirmation code copied to clipboard!");
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Dynamic Trip Spotlight / Focus Banner */}
-      {tripTimelineStatus === "ACTIVE_TODAY" && (
-        <Card className="rounded-md border-primary/30 bg-gradient-to-r from-primary/5 via-sky-500/5 to-transparent p-4 shadow-2xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-primary/15">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-primary text-primary-foreground">
-                <Compass className="h-4 w-4" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="active" className="text-[10px] font-semibold uppercase">
-                    Happening Today
-                  </Badge>
-                  <span className="text-xs font-semibold text-foreground">
-                    Day {activeDayNumber} of {totalTripDays}
-                  </span>
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-0.5">
-                  {now.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}
-                  {trip.destination ? ` • ${trip.destination}` : ""}
-                </p>
-              </div>
-            </div>
-
-            <Link
-              href={`/trips/${trip.id}/itinerary`}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
-            >
-              Open Day {activeDayNumber} Schedule <ArrowUpRight className="w-3.5 h-3.5" />
-            </Link>
+    <div className="space-y-6 max-w-5xl mx-auto">
+      {/* ── Editorial Workspace Header (Matching Landing Page & Travel Essentials) ── */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-border">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+              Trip Overview
+            </span>
+            {tripTimelineStatus === "ACTIVE_TODAY" && (
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live: Day {activeDayNumber} of {totalTripDays}
+              </span>
+            )}
+            {tripTimelineStatus === "FUTURE" && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#2D9BF0]/10 text-[#2D9BF0] border border-[#2D9BF0]/20">
+                Starts in {daysUntilStart} day{daysUntilStart === 1 ? "" : "s"}
+              </span>
+            )}
+            {tripTimelineStatus === "PAST" && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-muted text-muted-foreground border border-border">
+                Completed Journey
+              </span>
+            )}
           </div>
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
+            Journey{" "}
+            <span className="font-serif italic font-normal text-foreground">
+              Blueprint
+            </span>
+          </h1>
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
+            A high-density workspace summary of your scheduled route, confirmed stays, expense allocations, and preparation checklist.
+          </p>
+        </div>
 
-          {todayActivities.length > 0 ? (
-            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-              {todayActivities.slice(0, 3).map((act) => (
-                <div
-                  key={act.id}
-                  className="p-2.5 rounded-sm border border-border/80 bg-background/80 text-xs space-y-1"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-foreground truncate">{act.title}</span>
-                    {act.time && (
-                      <span className="font-mono text-[10px] text-muted-foreground">{act.time}</span>
-                    )}
-                  </div>
-                  {act.location && (
-                    <div className="flex items-center gap-1 text-[11px] text-muted-foreground truncate">
-                      <MapPin className="h-3 w-3 text-muted-foreground/70 shrink-0" />
-                      <span className="truncate">{act.location}</span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground bg-background/60 p-2.5 rounded-sm border border-border/50">
-              <span>No activities scheduled specifically for Day {activeDayNumber}.</span>
-              <AddItineraryDialog
-                tripId={trip.id}
-                defaultDayNumber={activeDayNumber}
-                trigger={
-                  <Button variant="outline" size="sm" className="h-6 px-2 text-[11px]">
-                    <Plus className="w-3 h-3 mr-1" /> Add Activity
-                  </Button>
-                }
-              />
+        {/* Header Right: Destination & Date context badge */}
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {trip.destination && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-muted/60 border border-border/80 text-xs font-medium text-foreground">
+              <MapPin className="w-3.5 h-3.5 text-[#2D9BF0]" />
+              <span>{trip.destination}</span>
             </div>
           )}
-        </Card>
-      )}
-
-      {tripTimelineStatus === "FUTURE" && daysUntilStart <= 14 && (
-        <Card className="rounded-md border-border bg-gradient-to-r from-sky-500/5 via-primary/5 to-transparent p-4 shadow-2xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-sky-500/10 text-primary">
-                <Clock className="h-4 w-4" />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-foreground">
-                  Departure in {daysUntilStart} day{daysUntilStart === 1 ? "" : "s"}!
-                </p>
-                <p className="text-[11px] text-muted-foreground">
-                  {pendingTasks.length} packing or preparation items remaining on your checklist.
-                </p>
-              </div>
+          {startDate && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-muted/60 border border-border/80 text-xs font-medium text-foreground tabular-nums">
+              <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
+              <span>
+                {startDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                {endDate ? ` – ${endDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}` : ""}
+              </span>
             </div>
+          )}
 
-            <Link
-              href={`/trips/${trip.id}/checklist`}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
-            >
-              Review Checklist ({completedTasks}/{checklist.length}) <ArrowUpRight className="w-3.5 h-3.5" />
-            </Link>
+          <AddToCalendarDialog
+            trip={trip}
+            itinerary={itinerary}
+            accommodations={accommodations}
+            trigger={
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs gap-1.5 px-2.5 font-medium cursor-pointer border-[#2D9BF0]/30 text-[#2D9BF0] hover:bg-[#2D9BF0]/10"
+              >
+                <Calendar className="w-3.5 h-3.5" />
+                <span>Sync to Calendar</span>
+              </Button>
+            }
+          />
+        </div>
+      </div>
+
+      {/* ── 4-Stat Metric Header Strip ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        {/* Metric 1: Itinerary Events */}
+        <div className="p-3.5 rounded-sm border border-border/80 bg-card hover:border-[#2D9BF0]/40 transition-colors shadow-2xs space-y-2">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-[11px] font-medium uppercase tracking-wider">Itinerary</span>
+            <Calendar className="w-3.5 h-3.5 text-[#2D9BF0]" />
           </div>
-        </Card>
-      )}
-
-      {/* 4-Stat Metric Header */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {/* Itinerary Events */}
-        <Card className="border-border bg-card shadow-2xs rounded-md">
-          <CardHeader className="p-3.5 pb-1">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-medium text-muted-foreground">Itinerary</span>
-              <Calendar className="w-3.5 h-3.5 text-primary" />
+          <div className="space-y-0.5">
+            <div className="text-xl font-bold text-foreground tabular-nums">
+              {itinerary.length} <span className="text-xs font-normal text-muted-foreground">events</span>
             </div>
-          </CardHeader>
-          <CardContent className="p-3.5 pt-0.5">
-            <div className="text-lg font-bold text-foreground">{itinerary.length} Events</div>
             <Link
               href={`/trips/${trip.id}/itinerary`}
-              className="text-[10px] text-primary hover:underline inline-flex items-center font-medium mt-0.5"
+              className="text-[11px] text-[#2D9BF0] hover:underline inline-flex items-center gap-0.5 font-medium cursor-pointer"
             >
-              View timeline <ArrowUpRight className="w-2.5 h-2.5 ml-0.5" />
+              View timeline <ArrowUpRight className="w-3 h-3" />
             </Link>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Total Spent */}
-        <Card className="border-border bg-card shadow-2xs rounded-md">
-          <CardHeader className="p-3.5 pb-1">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-medium text-muted-foreground">Total Spent</span>
-              <Receipt className="w-3.5 h-3.5 text-primary" />
+        {/* Metric 2: Total Spent */}
+        <div className="p-3.5 rounded-sm border border-border/80 bg-card hover:border-[#2D9BF0]/40 transition-colors shadow-2xs space-y-2">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-[11px] font-medium uppercase tracking-wider">Total Spent</span>
+            <Receipt className="w-3.5 h-3.5 text-emerald-500" />
+          </div>
+          <div className="space-y-0.5">
+            <div className="text-xl font-bold font-mono text-foreground tabular-nums">
+              ${totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-          </CardHeader>
-          <CardContent className="p-3.5 pt-0.5">
-            <div className="text-lg font-bold font-mono text-foreground">${totalSpent.toFixed(2)}</div>
             <Link
               href={`/trips/${trip.id}/expenses`}
-              className="text-[10px] text-primary hover:underline inline-flex items-center font-medium mt-0.5"
+              className="text-[11px] text-[#2D9BF0] hover:underline inline-flex items-center gap-0.5 font-medium cursor-pointer"
             >
-              {expenses.length} records <ArrowUpRight className="w-2.5 h-2.5 ml-0.5" />
+              {expenses.length} records <ArrowUpRight className="w-3 h-3" />
             </Link>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Preparation / Checklist */}
-        <Card className="border-border bg-card shadow-2xs rounded-md">
-          <CardHeader className="p-3.5 pb-1">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-medium text-muted-foreground">Preparation</span>
-              <CheckSquare className="w-3.5 h-3.5 text-primary" />
+        {/* Metric 3: Preparation Checklist */}
+        <div className="p-3.5 rounded-sm border border-border/80 bg-card hover:border-[#2D9BF0]/40 transition-colors shadow-2xs space-y-2">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-[11px] font-medium uppercase tracking-wider">Preparation</span>
+            <CheckSquare className="w-3.5 h-3.5 text-amber-500" />
+          </div>
+          <div className="space-y-0.5">
+            <div className="text-xl font-bold text-foreground tabular-nums">
+              {checklistPercent}% <span className="text-xs font-normal text-muted-foreground">ready</span>
             </div>
-          </CardHeader>
-          <CardContent className="p-3.5 pt-0.5">
-            <div className="text-lg font-bold text-foreground">{checklistPercent}% Ready</div>
             <Link
               href={`/trips/${trip.id}/checklist`}
-              className="text-[10px] text-primary hover:underline inline-flex items-center font-medium mt-0.5"
+              className="text-[11px] text-[#2D9BF0] hover:underline inline-flex items-center gap-0.5 font-medium cursor-pointer"
             >
-              {completedTasks}/{checklist.length} tasks <ArrowUpRight className="w-2.5 h-2.5 ml-0.5" />
+              {completedTasks}/{checklist.length} tasks <ArrowUpRight className="w-3 h-3" />
             </Link>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Lodging & Links */}
-        <Card className="border-border bg-card shadow-2xs rounded-md">
-          <CardHeader className="p-3.5 pb-1">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-medium text-muted-foreground">Lodging & Links</span>
-              <BedDouble className="w-3.5 h-3.5 text-primary" />
-            </div>
-          </CardHeader>
-          <CardContent className="p-3.5 pt-0.5">
-            <div className="text-lg font-bold text-foreground">
-              {accommodations.length} Stays • {links.length} Links
+        {/* Metric 4: Lodging & Links */}
+        <div className="p-3.5 rounded-sm border border-border/80 bg-card hover:border-[#2D9BF0]/40 transition-colors shadow-2xs space-y-2">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-[11px] font-medium uppercase tracking-wider">Stays & Saves</span>
+            <BedDouble className="w-3.5 h-3.5 text-indigo-500" />
+          </div>
+          <div className="space-y-0.5">
+            <div className="text-xl font-bold text-foreground tabular-nums">
+              {accommodations.length} <span className="text-xs font-normal text-muted-foreground">stays ·</span> {links.length} <span className="text-xs font-normal text-muted-foreground">saves</span>
             </div>
             <Link
               href={`/trips/${trip.id}/accommodations`}
-              className="text-[10px] text-primary hover:underline inline-flex items-center font-medium mt-0.5"
+              className="text-[11px] text-[#2D9BF0] hover:underline inline-flex items-center gap-0.5 font-medium cursor-pointer"
             >
-              View bookings <ArrowUpRight className="w-2.5 h-2.5 ml-0.5" />
+              View bookings <ArrowUpRight className="w-3 h-3" />
             </Link>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
-      {/* Main 2-Column Overview Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Columns: Itinerary & Stays */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Upcoming Itinerary Activities */}
-          <Card className="border-border bg-card shadow-2xs rounded-md">
-            <CardHeader className="p-4 pb-2 border-b border-border/60 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-semibold flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-primary" />
-                  Upcoming Itinerary
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Day-by-day scheduled activities
-                </CardDescription>
-              </div>
-              <div className="flex items-center gap-2">
+      {/* ── 2x2 Elevated Feature Cards Grid (Matching Landing Showcase) ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Card 1: Today's Route / Active Schedule */}
+        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border/60 pb-2">
+              <span className="font-semibold text-foreground flex items-center gap-1.5">
+                <Compass className="w-3.5 h-3.5 text-[#2D9BF0]" />
+                {tripTimelineStatus === "ACTIVE_TODAY" ? `Day ${activeDayNumber} Route` : "Upcoming Schedule"}
+              </span>
+              <Link
+                href={`/trips/${trip.id}/itinerary`}
+                className="text-[#2D9BF0] hover:underline cursor-pointer normal-case font-medium flex items-center gap-0.5"
+              >
+                View all {itinerary.length} events →
+              </Link>
+            </div>
+
+            {activeActivities.length === 0 ? (
+              <div className="py-8 text-center text-xs text-muted-foreground space-y-2">
+                <Calendar className="w-6 h-6 mx-auto opacity-40 text-muted-foreground" />
+                <p>No itinerary events scheduled yet.</p>
                 <AddItineraryDialog
                   tripId={trip.id}
                   trigger={
-                    <Button variant="ghost" size="sm" className="h-7 px-2 text-xs cursor-pointer">
-                      <Plus className="w-3 h-3 mr-1" />
-                      Add Event
+                    <Button variant="outline" size="sm" className="h-7 text-xs cursor-pointer">
+                      <Plus className="w-3 h-3 mr-1" /> Add First Event
                     </Button>
                   }
                 />
-                <Link
-                  href={`/trips/${trip.id}/itinerary`}
-                  className="text-xs text-primary font-medium hover:underline inline-flex items-center"
-                >
-                  All ({itinerary.length}) <ArrowUpRight className="w-3 h-3 ml-0.5" />
-                </Link>
               </div>
-            </CardHeader>
-
-            <CardContent className="p-4">
-              {itinerary.length === 0 ? (
-                <div className="text-center py-6 text-xs text-muted-foreground">
-                  No itinerary events scheduled yet.
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {itinerary.slice(0, 4).map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between gap-3 p-2.5 rounded-sm border border-border bg-background hover:border-primary/40 transition-colors text-xs"
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-primary/10 text-[10px] font-bold text-primary">
-                          D{item.dayNumber || 1}
-                        </span>
-                        <div className="min-w-0">
-                          <div className="font-semibold text-foreground truncate">
-                            {item.title}
-                          </div>
-                          {item.location && (
-                            <div className="text-[11px] text-muted-foreground truncate">
-                              {item.location}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 shrink-0">
-                        {item.time && (
-                          <span className="font-mono text-[11px] text-muted-foreground">
-                            {item.time}
+            ) : (
+              <div className="space-y-3 text-xs">
+                {activeActivities.map((act, idx) => (
+                  <div key={act.id} className="flex items-start gap-3">
+                    <span className="text-[11px] text-muted-foreground shrink-0 font-mono tabular-nums pt-0.5 w-12 text-right">
+                      {act.time || `Stop ${idx + 1}`}
+                    </span>
+                    <div className="border-l-2 border-[#2D9BF0]/60 pl-3 flex-1 min-w-0">
+                      <p className="font-medium text-foreground truncate">{act.title}</p>
+                      <div className="flex items-center gap-2 text-[11px] text-muted-foreground mt-0.5">
+                        {act.category && (
+                          <Badge variant="planning" className="text-[9px] px-1.5 py-0 h-4">
+                            {act.category}
+                          </Badge>
+                        )}
+                        {act.location && (
+                          <span className="truncate flex items-center gap-0.5">
+                            <MapPin className="w-3 h-3 shrink-0" />
+                            {act.location}
                           </span>
                         )}
-                        <Badge variant="planning">{item.category || "Activity"}</Badge>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Stays & Accommodations */}
-          <Card className="border-border bg-card shadow-2xs rounded-md">
-            <CardHeader className="p-4 pb-2 border-b border-border/60 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-semibold flex items-center gap-1.5">
-                  <BedDouble className="w-4 h-4 text-primary" />
-                  Stays & Accommodations
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Lodging reservations & check-in details
-                </CardDescription>
+                  </div>
+                ))}
               </div>
-              <div className="flex items-center gap-2">
+            )}
+          </div>
+
+          <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] text-muted-foreground">
+            <span>{itinerary.length} total activities planned</span>
+            <AddItineraryDialog
+              tripId={trip.id}
+              trigger={
+                <button
+                  type="button"
+                  className="text-[#2D9BF0] hover:underline font-medium cursor-pointer inline-flex items-center gap-1"
+                >
+                  <Plus className="w-3 h-3" /> Add Activity
+                </button>
+              }
+            />
+          </div>
+        </div>
+
+        {/* Card 2: Current Stay / Next Lodging */}
+        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border/60 pb-2">
+              <span className="font-semibold text-foreground flex items-center gap-1.5">
+                <BedDouble className="w-3.5 h-3.5 text-indigo-500" />
+                Current Stay
+              </span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+                {accommodations.length > 0 ? `${accommodations.length} confirmed stay${accommodations.length === 1 ? "" : "s"}` : "No stays"}
+              </span>
+            </div>
+
+            {currentStay ? (
+              <div className="space-y-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-base font-semibold text-foreground truncate">
+                      {currentStay.name}
+                    </h4>
+                    <Badge variant="planning" className="text-[9px]">
+                      {currentStay.type || "Hotel"}
+                    </Badge>
+                  </div>
+                  {currentStay.address && (
+                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                      {currentStay.address}
+                    </p>
+                  )}
+                </div>
+
+                <div className="rounded-xs bg-muted/40 p-2.5 border border-border/60 text-xs space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-foreground">
+                      {currentStay.checkIn
+                        ? `Check-in: ${new Date(currentStay.checkIn).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
+                        : "Flexible Check-in"}
+                    </span>
+                    {currentStay.confirmationCode && (
+                      <button
+                        type="button"
+                        onClick={() => handleCopyCode(currentStay.confirmationCode!)}
+                        className="inline-flex items-center gap-1 text-[11px] font-mono font-medium text-[#2D9BF0] hover:underline cursor-pointer"
+                        title="Copy code"
+                      >
+                        <Copy className="w-3 h-3" />
+                        #{currentStay.confirmationCode}
+                      </button>
+                    )}
+                  </div>
+                  {currentStay.checkOut && (
+                    <p className="text-[11px] text-muted-foreground">
+                      Check-out: {new Date(currentStay.checkOut).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="py-8 text-center text-xs text-muted-foreground space-y-2">
+                <BedDouble className="w-6 h-6 mx-auto opacity-40 text-muted-foreground" />
+                <p>No accommodations booked yet.</p>
                 <AddAccommodationDialog
                   tripId={trip.id}
                   trigger={
-                    <Button variant="ghost" size="sm" className="h-7 px-2 text-xs cursor-pointer">
-                      <Plus className="w-3 h-3 mr-1" />
-                      Add Stay
+                    <Button variant="outline" size="sm" className="h-7 text-xs cursor-pointer">
+                      <Plus className="w-3 h-3 mr-1" /> Add Stay
                     </Button>
                   }
                 />
-                <Link
-                  href={`/trips/${trip.id}/accommodations`}
-                  className="text-xs text-primary font-medium hover:underline inline-flex items-center"
-                >
-                  All ({accommodations.length}) <ArrowUpRight className="w-3 h-3 ml-0.5" />
-                </Link>
               </div>
-            </CardHeader>
+            )}
+          </div>
 
-            <CardContent className="p-4">
-              {accommodations.length === 0 ? (
-                <div className="text-center py-6 text-xs text-muted-foreground">
-                  No accommodations booked yet.
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {accommodations.slice(0, 2).map((acc) => (
-                    <div
-                      key={acc.id}
-                      className="p-3 rounded-sm border border-border bg-background space-y-1.5 text-xs"
-                    >
-                      <div className="flex items-center justify-between">
-                        <Badge variant="planning">{acc.type || "Hotel"}</Badge>
-                        {acc.confirmationCode && (
-                          <span className="font-mono text-[10px] text-muted-foreground">
-                            #{acc.confirmationCode}
-                          </span>
-                        )}
-                      </div>
-                      <div className="font-semibold text-foreground">{acc.name}</div>
-                      {acc.address && (
-                        <div className="text-[11px] text-muted-foreground line-clamp-1">
-                          {acc.address}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] text-muted-foreground">
+            {currentStay?.address ? (
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  `${currentStay.name}, ${currentStay.address}`
+                )}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[#2D9BF0] hover:underline inline-flex items-center gap-1 cursor-pointer"
+              >
+                <ExternalLink className="w-3 h-3" /> Open in Maps
+              </a>
+            ) : (
+              <span>Lodging coordinates saved</span>
+            )}
+            <Link
+              href={`/trips/${trip.id}/accommodations`}
+              className="text-foreground hover:text-[#2D9BF0] font-medium cursor-pointer"
+            >
+              View all stays →
+            </Link>
+          </div>
         </div>
 
-        {/* Right 1 Column: Checklist, Pinned Notes & Quick Links */}
-        <div className="space-y-6">
-          {/* Checklist Snapshot */}
-          <Card className="border-border bg-card shadow-2xs rounded-md">
-            <CardHeader className="p-4 pb-2 border-b border-border/60 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-semibold flex items-center gap-1.5">
-                  <CheckSquare className="w-4 h-4 text-primary" />
-                  Checklist Snapshot
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Pending preparations
-                </CardDescription>
+        {/* Card 3: Expense Ledger & Budget Progress */}
+        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border/60 pb-2">
+              <span className="font-semibold text-foreground flex items-center gap-1.5">
+                <Receipt className="w-3.5 h-3.5 text-emerald-500" />
+                Expense Ledger
+              </span>
+              <span className="font-semibold text-foreground font-mono tabular-nums">
+                ${totalSpent.toLocaleString(undefined, { maximumFractionDigits: 0 })} / ${budget.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              </span>
+            </div>
+
+            {/* Segmented Color Progress Bar (Matching Landing Showcase) */}
+            <div className="space-y-1.5">
+              <TooltipProvider delayDuration={150}>
+                <div className="h-2 w-full bg-muted rounded-full overflow-hidden flex shadow-2xs">
+                  {categoryTotals.ACCOMMODATION > 0 && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className="h-full bg-[#2D9BF0] cursor-pointer transition-opacity hover:opacity-85"
+                          style={{ width: `${Math.min(100, (categoryTotals.ACCOMMODATION / budget) * 100)}%` }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="text-xs">
+                        Lodging · ${categoryTotals.ACCOMMODATION.toLocaleString()}
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  {categoryTotals.TRANSPORT > 0 && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className="h-full bg-sky-500 cursor-pointer transition-opacity hover:opacity-85"
+                          style={{ width: `${Math.min(100, (categoryTotals.TRANSPORT / budget) * 100)}%` }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="text-xs">
+                        Transit · ${categoryTotals.TRANSPORT.toLocaleString()}
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  {categoryTotals.FOOD > 0 && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className="h-full bg-amber-500 cursor-pointer transition-opacity hover:opacity-85"
+                          style={{ width: `${Math.min(100, (categoryTotals.FOOD / budget) * 100)}%` }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="text-xs">
+                        Dining · ${categoryTotals.FOOD.toLocaleString()}
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  {categoryTotals.ACTIVITIES > 0 && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className="h-full bg-emerald-500 cursor-pointer transition-opacity hover:opacity-85"
+                          style={{ width: `${Math.min(100, (categoryTotals.ACTIVITIES / budget) * 100)}%` }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="text-xs">
+                        Activities · ${categoryTotals.ACTIVITIES.toLocaleString()}
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  {categoryTotals.SHOPPING > 0 && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className="h-full bg-pink-500 cursor-pointer transition-opacity hover:opacity-85"
+                          style={{ width: `${Math.min(100, (categoryTotals.SHOPPING / budget) * 100)}%` }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="text-xs">
+                        Shopping · ${categoryTotals.SHOPPING.toLocaleString()}
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  {categoryTotals.OTHER > 0 && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className="h-full bg-slate-400 cursor-pointer transition-opacity hover:opacity-85"
+                          style={{ width: `${Math.min(100, (categoryTotals.OTHER / budget) * 100)}%` }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="text-xs">
+                        Other · ${categoryTotals.OTHER.toLocaleString()}
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                </div>
+              </TooltipProvider>
+
+              <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                <span>{spentPercent}% allocated</span>
+                <span className="font-medium text-foreground tabular-nums">
+                  ${headroom.toLocaleString(undefined, { maximumFractionDigits: 0 })} headroom left
+                </span>
               </div>
-              <div className="flex items-center gap-2">
+            </div>
+
+            {/* Category Breakdown Chips */}
+            <div className="grid grid-cols-2 gap-2 text-[11px]">
+              <div className="p-2 rounded-xs bg-muted/40 border border-border/60 flex justify-between">
+                <span className="text-muted-foreground">Lodging</span>
+                <span className="font-semibold text-foreground font-mono tabular-nums">
+                  ${categoryTotals.ACCOMMODATION.toLocaleString()}
+                </span>
+              </div>
+              <div className="p-2 rounded-xs bg-muted/40 border border-border/60 flex justify-between">
+                <span className="text-muted-foreground">Transit</span>
+                <span className="font-semibold text-foreground font-mono tabular-nums">
+                  ${categoryTotals.TRANSPORT.toLocaleString()}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] text-muted-foreground">
+            <AddExpenseDialog
+              tripId={trip.id}
+              trigger={
+                <button
+                  type="button"
+                  className="text-[#2D9BF0] hover:underline font-medium cursor-pointer inline-flex items-center gap-1"
+                >
+                  <Plus className="w-3 h-3" /> Record Expense
+                </button>
+              }
+            />
+            <Link
+              href={`/trips/${trip.id}/expenses`}
+              className="text-foreground hover:text-[#2D9BF0] font-medium cursor-pointer"
+            >
+              Open expenses →
+            </Link>
+          </div>
+        </div>
+
+        {/* Card 4: Immediate Tasks & Checklist */}
+        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border/60 pb-2">
+              <span className="font-semibold text-foreground flex items-center gap-1.5">
+                <CheckSquare className="w-3.5 h-3.5 text-amber-500" />
+                Immediate Tasks
+              </span>
+              <span className="text-[#2D9BF0] font-semibold">
+                {pendingTasks.length} pending
+              </span>
+            </div>
+
+            {pendingTasks.length === 0 ? (
+              <div className="py-8 text-center text-xs text-muted-foreground space-y-2">
+                <CheckSquare className="w-6 h-6 mx-auto opacity-40 text-muted-foreground" />
+                <p>All checklist tasks are completed! You&apos;re travel ready.</p>
                 <AddTaskDialog
                   tripId={trip.id}
                   trigger={
-                    <Button variant="ghost" size="sm" className="h-7 px-2 text-xs cursor-pointer">
-                      <Plus className="w-3 h-3 mr-1" />
-                      Add Task
+                    <Button variant="outline" size="sm" className="h-7 text-xs cursor-pointer">
+                      <Plus className="w-3 h-3 mr-1" /> Add Task
                     </Button>
                   }
                 />
-                <Link
-                  href={`/trips/${trip.id}/checklist`}
-                  className="text-xs text-primary font-medium hover:underline inline-flex items-center"
-                >
-                  All ({checklist.length}) <ArrowUpRight className="w-3 h-3 ml-0.5" />
-                </Link>
               </div>
-            </CardHeader>
-
-            <CardContent className="p-4 space-y-2">
-              {checklist.length === 0 ? (
-                <div className="text-center py-4 text-xs text-muted-foreground">
-                  No preparation tasks yet.
-                </div>
-              ) : (
-                checklist.slice(0, 4).map((item) => (
+            ) : (
+              <div className="space-y-2 text-xs">
+                {pendingTasks.slice(0, 3).map((item) => (
                   <TaskItem key={item.id} item={item} />
-                ))
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Pinned & Recent Notes */}
-          <Card className="border-border bg-card shadow-2xs rounded-md">
-            <CardHeader className="p-4 pb-2 border-b border-border/60 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-semibold flex items-center gap-1.5">
-                  <FileText className="w-4 h-4 text-primary" />
-                  Notes & Tips
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Important memos and bookmarks
-                </CardDescription>
+                ))}
               </div>
+            )}
+          </div>
+
+          <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] text-muted-foreground">
+            <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+              ✓ {completedTasks} tasks completed
+            </span>
+            <Link
+              href={`/trips/${trip.id}/checklist`}
+              className="text-foreground hover:text-[#2D9BF0] font-medium cursor-pointer"
+            >
+              Open checklist →
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Bottom Section: Pinned Notes & Quick Reference Links ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-2">
+        {/* Pinned Notes Shelf */}
+        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 space-y-3 shadow-xs">
+          <div className="flex items-center justify-between pb-2 border-b border-border/60">
+            <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+              <FileText className="w-3.5 h-3.5 text-[#2D9BF0]" />
+              Notes & Memos
+            </span>
+            <div className="flex items-center gap-2">
+              <AddNoteDialog
+                tripId={trip.id}
+                trigger={
+                  <button
+                    type="button"
+                    className="text-xs text-[#2D9BF0] hover:underline cursor-pointer inline-flex items-center gap-0.5"
+                  >
+                    <Plus className="w-3 h-3" /> Add Note
+                  </button>
+                }
+              />
               <Link
                 href={`/trips/${trip.id}/notes`}
-                className="text-xs text-primary font-medium hover:underline inline-flex items-center"
+                className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-0.5"
               >
-                All ({notes.length}) <ArrowUpRight className="w-3 h-3 ml-0.5" />
+                All ({notes.length}) <ArrowUpRight className="w-3 h-3" />
               </Link>
-            </CardHeader>
+            </div>
+          </div>
 
-            <CardContent className="p-4 space-y-2">
-              {notes.length === 0 ? (
-                <div className="text-center py-4 text-xs text-muted-foreground">
-                  No notes saved yet.
+          {notes.length === 0 ? (
+            <div className="py-4 text-center text-xs text-muted-foreground">
+              No notes saved yet. Jot down directions, packing tips, or reservations.
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {notes.slice(0, 3).map((note) => (
+                <div
+                  key={note.id}
+                  className="p-2.5 rounded-sm border border-border/60 bg-muted/30 text-xs space-y-1 hover:border-border transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-foreground truncate">{note.title}</span>
+                    {note.isPinned && (
+                      <Pin className="w-3 h-3 text-amber-500 fill-amber-500 shrink-0" />
+                    )}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground line-clamp-1">{note.content}</p>
                 </div>
-              ) : (
-                notes.slice(0, 3).map((note) => (
-                  <div
-                    key={note.id}
-                    className="p-2.5 rounded-sm border border-border bg-background space-y-1 text-xs"
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Quick Reference Links */}
+        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 space-y-3 shadow-xs">
+          <div className="flex items-center justify-between pb-2 border-b border-border/60">
+            <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+              <Link2 className="w-3.5 h-3.5 text-blue-500" />
+              Saved Links & Vault
+            </span>
+            <div className="flex items-center gap-2">
+              <AddLinkDialog
+                tripId={trip.id}
+                trigger={
+                  <button
+                    type="button"
+                    className="text-xs text-[#2D9BF0] hover:underline cursor-pointer inline-flex items-center gap-0.5"
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-foreground truncate">
-                        {note.title}
-                      </span>
-                      {note.isPinned && (
-                        <Pin className="w-3 h-3 text-primary fill-primary shrink-0" />
-                      )}
-                    </div>
-                    <p className="text-[11px] text-muted-foreground line-clamp-2">
-                      {note.content}
+                    <Plus className="w-3 h-3" /> Add Link
+                  </button>
+                }
+              />
+              <Link
+                href={`/trips/${trip.id}/links`}
+                className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-0.5"
+              >
+                All ({links.length}) <ArrowUpRight className="w-3 h-3" />
+              </Link>
+            </div>
+          </div>
+
+          {links.length === 0 ? (
+            <div className="py-4 text-center text-xs text-muted-foreground">
+              No bookmarks saved yet. Save travel blogs, Google Maps pins, or tickets.
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {links.slice(0, 3).map((link) => (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-between p-2.5 rounded-sm border border-border/60 bg-muted/30 text-xs hover:border-[#2D9BF0]/40 transition-colors group cursor-pointer"
+                >
+                  <div className="min-w-0 flex-1 pr-2">
+                    <p className="font-semibold text-foreground truncate group-hover:text-[#2D9BF0] transition-colors">
+                      {link.title}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground truncate font-mono">
+                      {link.url}
                     </p>
                   </div>
-                ))
-              )}
-            </CardContent>
-          </Card>
+                  <ExternalLink className="w-3.5 h-3.5 text-muted-foreground group-hover:text-[#2D9BF0] shrink-0" />
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

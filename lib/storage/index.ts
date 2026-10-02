@@ -386,3 +386,50 @@ export async function pruneUnusedUserAvatars(
   }
 }
 
+/**
+ * Permanently deletes all uploaded files belonging to a user across all media folders.
+ * Invoked during complete account deletion.
+ */
+export async function deleteUserStorageFolder(userId: string): Promise<{ success: boolean; deletedCount: number }> {
+  try {
+    const supabase = await getStorageClient();
+    const folders: Array<"avatars" | "trips" | "posts" | "community" | "stories"> = [
+      "avatars",
+      "trips",
+      "posts",
+      "community",
+      "stories",
+    ];
+
+    let totalDeleted = 0;
+
+    for (const folder of folders) {
+      const folderPath = `${folder}/${userId}`;
+      const { data: files, error: listError } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .list(folderPath, { limit: 100 });
+
+      if (!listError && files && files.length > 0) {
+        const filePaths = files
+          .filter((f) => f.name && f.name !== ".emptyFolderPlaceholder")
+          .map((f) => `${folderPath}/${f.name}`);
+
+        if (filePaths.length > 0) {
+          const { error: removeError } = await supabase.storage
+            .from(STORAGE_BUCKET)
+            .remove(filePaths);
+
+          if (!removeError) {
+            totalDeleted += filePaths.length;
+          }
+        }
+      }
+    }
+
+    return { success: true, deletedCount: totalDeleted };
+  } catch (err) {
+    console.warn("Storage folder purge warning:", err);
+    return { success: false, deletedCount: 0 };
+  }
+}
+

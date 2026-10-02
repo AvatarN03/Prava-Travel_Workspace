@@ -3,16 +3,19 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Pin,
-  PinOff,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  Loader2,
-  Copy,
   ChevronDown,
   ChevronUp,
+  Copy,
+  Loader2,
+  MoreHorizontal,
+  Pencil,
+  Pin,
+  PinOff,
+  Trash2,
 } from "lucide-react";
+import { toast } from "sonner";
+
+import { ConfirmDeleteDialog } from "@/components/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,12 +25,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toast } from "sonner";
-
-import { ConfirmDeleteDialog } from "@/components/app-shell";
-import { MarkdownRenderer } from "@/features/blog";
-
 import { EditNoteDialog } from "./edit-note-dialog";
+
+import { MarkdownRenderer } from "@/features/blog";
 import { deleteNote, togglePinNote } from "../actions";
 
 import type { Note } from "@prisma/client";
@@ -88,25 +88,25 @@ export function NoteCard({ item }: NoteCardProps) {
   return (
     <>
       <div
-        className={`group relative flex flex-col justify-between rounded-md border transition-all duration-150 overflow-hidden shadow-2xs ${
+        className={`group relative flex flex-col justify-between rounded-sm border transition-all duration-200 overflow-hidden shadow-2xs ${
           item.isPinned
-            ? "border-primary/50 bg-card"
-            : "border-border bg-card hover:border-primary/40"
+            ? "border-[#2D9BF0]/60 bg-card hover:border-[#2D9BF0]"
+            : "border-border/80 bg-card hover:border-[#2D9BF0]/50"
         }`}
       >
         {/* Pinned top accent */}
         {item.isPinned && (
-          <div className="h-0.5 w-full bg-primary" />
+          <div className="h-1 w-full bg-[#2D9BF0]" />
         )}
 
-        <div className="p-4 space-y-2.5">
+        <div className="p-4 space-y-2.5 flex-1">
           {/* Header row */}
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-1.5 flex-wrap">
               {item.isPinned && (
-                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 border border-primary/20 rounded-xs px-1.5 py-0.5">
-                  <Pin className="w-2.5 h-2.5 fill-primary" />
-                  Pinned
+                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#2D9BF0] bg-[#2D9BF0]/10 border border-[#2D9BF0]/20 rounded-xs px-1.5 py-0.5 font-mono">
+                  <Pin className="w-2.5 h-2.5 fill-[#2D9BF0]" />
+                  PINNED
                 </span>
               )}
               <span
@@ -121,14 +121,14 @@ export function NoteCard({ item }: NoteCardProps) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 text-muted-foreground hover:text-foreground cursor-pointer -mr-1 -mt-1 shrink-0"
+                  className="h-7 w-7 text-muted-foreground hover:text-foreground cursor-pointer -mr-1 -mt-1 shrink-0 rounded-xs"
                 >
                   <MoreHorizontal className="h-3.5 w-3.5" />
                   <span className="sr-only">Note Options</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={handleTogglePin} disabled={isPinning} className="cursor-pointer">
+              <DropdownMenuContent align="end" className="rounded-sm">
+                <DropdownMenuItem onClick={handleTogglePin} disabled={isPinning} className="cursor-pointer text-xs">
                   {isPinning ? (
                     <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />
                   ) : item.isPinned ? (
@@ -138,18 +138,18 @@ export function NoteCard({ item }: NoteCardProps) {
                   )}
                   {item.isPinned ? "Unpin Note" : "Pin to Top"}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleCopyContent} className="cursor-pointer">
+                <DropdownMenuItem onClick={handleCopyContent} className="cursor-pointer text-xs">
                   <Copy className="h-3.5 w-3.5 mr-2" />
                   Copy Note
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="cursor-pointer">
+                <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="cursor-pointer text-xs">
                   <Pencil className="h-3.5 w-3.5 mr-2" />
                   Edit Note
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => setIsDeleteOpen(true)}
-                  className="text-destructive focus:text-destructive cursor-pointer"
+                  className="text-destructive focus:text-destructive cursor-pointer text-xs"
                 >
                   <Trash2 className="h-3.5 w-3.5 mr-2" />
                   Delete Note
@@ -159,12 +159,12 @@ export function NoteCard({ item }: NoteCardProps) {
           </div>
 
           {/* Title */}
-          <h4 className="text-sm font-bold text-foreground leading-snug">
+          <h4 className="text-sm font-bold text-foreground leading-snug tracking-tight">
             {item.title}
           </h4>
 
           {/* Markdown Content */}
-          <div className="relative">
+          <div className="relative pt-0.5">
             <div
               className={`text-xs text-muted-foreground leading-relaxed transition-all ${
                 !isExpanded && isLongNote ? "max-h-28 overflow-hidden" : ""
@@ -179,10 +179,10 @@ export function NoteCard({ item }: NoteCardProps) {
           </div>
         </div>
 
-        {/* Footer with Expand button or Date */}
-        <div className="p-3 px-4 pt-0 flex items-center justify-between text-[11px] text-muted-foreground">
-          <span>
-            {new Date(item.updatedAt).toLocaleDateString("en-US", {
+        {/* Footer with Expand button and Date */}
+        <div className="p-3 px-4 pt-1 flex items-center justify-between text-[11px] text-muted-foreground border-t border-border/40 bg-muted/10">
+          <span className="font-mono text-[10px]">
+            Updated {new Date(item.updatedAt).toLocaleDateString("en-US", {
               month: "short",
               day: "numeric",
             })}
@@ -193,7 +193,7 @@ export function NoteCard({ item }: NoteCardProps) {
               <button
                 type="button"
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="inline-flex items-center gap-0.5 text-primary hover:underline font-medium cursor-pointer"
+                className="inline-flex items-center gap-0.5 text-[#2D9BF0] hover:underline font-medium cursor-pointer text-[11px]"
               >
                 {isExpanded ? (
                   <>
@@ -212,7 +212,7 @@ export function NoteCard({ item }: NoteCardProps) {
             <button
               type="button"
               onClick={handleCopyContent}
-              className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 cursor-pointer"
+              className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 cursor-pointer p-1 rounded-xs hover:bg-muted/60 transition-colors"
               title="Copy note"
             >
               <Copy className="w-3 h-3" />

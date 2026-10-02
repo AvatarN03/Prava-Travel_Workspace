@@ -1,10 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
 import { db } from "@/lib/db";
-import { pruneUnusedUserAvatars } from "@/lib/storage";
+import { pruneUnusedUserAvatars, deleteUserStorageFolder } from "@/lib/storage";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
+
 import { validateUsername } from "./reserved-usernames";
 import { generateSmartUniqueUsername } from "./username-generator";
 import {
@@ -562,6 +565,81 @@ export async function getTopBarUserInfo(): Promise<{ success: boolean; data?: To
   } catch (err) {
     console.error("Error fetching top bar user info:", err);
     return { success: false };
+  }
+}
+
+/**
+ * Permanently deletes the authenticated user's account and all associated data.
+ * Validates the email OTP before cascading deletion across Storage, PostgreSQL, and Supabase Auth.
+ */
+export async function deleteAccountAction(otpToken: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user || !user.email) {
+      return { success: false, error: "Unauthorized. Please sign in again." };
+    }
+
+    if (!otpToken || otpToken.trim().length !== 6) {
+      return { success: false, error: "Please provide a valid 6-digit verification code." };
+    }
+
+    // 1. Verify OTP with Supabase Auth
+    const { error: otpError } = await supabase.auth.verifyOtp({
+      email: user.email,
+      token: otpToken.trim(),
+      type: "email",
+    });
+
+    if (otpError) {
+      return {
+        success: false,
+        error: otpError.message || "Invalid or expired verification code. Please request a new code.",
+      };
+    }
+
+    const userId = user.id;
+
+    // 2. Purge user files from Supabase Storage
+    try {
+      await deleteUserStorageFolder(userId);
+    } catch (storageErr) {
+      console.warn("Storage deletion warning during account delete:", storageErr);
+    }
+
+    // 3. Delete Profile from Prisma database (PostgreSQL cascades and deletes all trips, expenses, stories, posts, etc.)
+    try {
+      await db.profile.delete({
+        where: { id: userId },
+      });
+    } catch (dbErr) {
+      console.error("Prisma profile delete error:", dbErr);
+    }
+
+    // 4. Delete Auth User from Supabase Auth via Admin Client
+    try {
+      const adminClient = createAdminClient();
+      await adminClient.auth.admin.deleteUser(userId);
+    } catch (adminErr) {
+      console.error("Supabase admin deleteUser error:", adminErr);
+    }
+
+    // 5. Sign out of active session
+    await supabase.auth.signOut();
+
+    revalidatePath("/", "layout");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Fatal error during account deletion:", error);
+    return {
+      success: false,
+      error: "An unexpected error occurred while deleting your account. Please try again.",
+    };
   }
 }
 

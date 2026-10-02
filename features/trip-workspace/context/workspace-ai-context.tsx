@@ -4,10 +4,20 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 
 import type { UserAiQuotaDTO } from "../ai/actions";
 
+export interface ActiveTripCounts {
+  itinerary?: number;
+  accommodations?: number;
+  expenses?: number;
+  notes?: number;
+  checklist?: { completed: number; total: number };
+  links?: number;
+}
+
 export interface ActiveTripContext {
   tripId: string;
   tripTitle: string;
   destination?: string | null;
+  counts?: ActiveTripCounts;
 }
 
 interface WorkspaceAiContextType {

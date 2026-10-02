@@ -19,10 +19,13 @@ import {
   Receipt,
   Search,
   ShoppingBag,
+  Sparkles,
   Target,
   Trash2,
   TrendingUp,
   Utensils,
+  Wallet,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -210,7 +213,17 @@ export function ExpenseTracker({
       return;
     }
 
-    const headers = ["Date", "Title", "Category", "Amount", "Currency", "Converted Amount", "Home Currency", "Paid By", "Notes"];
+    const headers = [
+      "Date",
+      "Title",
+      "Category",
+      "Amount",
+      "Currency",
+      "Converted Amount",
+      "Home Currency",
+      "Paid By",
+      "Notes",
+    ];
     const rows = items.map((item) => {
       const converted = convertToUserCurrency(item.amount, item.currency);
       return [
@@ -284,63 +297,92 @@ export function ExpenseTracker({
     }
   };
 
+  const budgetUsedPct = budgetGoal ? Math.round((totalSpentInUserCurrency / budgetGoal) * 100) : 0;
+  const isOverBudget = budgetGoal ? totalSpentInUserCurrency > budgetGoal : false;
+
   return (
     <div className="space-y-6">
-      {/* 3 Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+      {/* Editorial Section Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-1 border-b border-border/50">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+              Financial Ledger
+            </span>
+            <span className="text-muted-foreground/40 text-xs">•</span>
+            <span className="text-[11px] font-mono text-muted-foreground">
+              {items.length} {items.length === 1 ? "expense" : "expenses"} logged
+            </span>
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground font-serif">
+            Trip Expenses · <span className="italic font-normal">Ledger & Burn</span>
+          </h1>
+          <p className="text-xs text-muted-foreground mt-1 max-w-xl">
+            Track daily expenditures, multi-currency receipts, and budget allocations converted automatically to your home currency ({userCurrency}).
+          </p>
+        </div>
+
+        {/* Action Triggers */}
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          {items.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportCsv}
+              className="h-9 gap-1.5 text-xs font-medium rounded-sm border-border cursor-pointer hover:bg-muted/80 shadow-2xs"
+            >
+              <Download className="w-3.5 h-3.5 text-muted-foreground" />
+              <span>Export CSV</span>
+            </Button>
+          )}
+
+          <AddExpenseDialog
+            tripId={tripId}
+            defaultCurrency={userCurrency}
+            trigger={
+              <Button
+                size="sm"
+                className="h-9 gap-1.5 text-xs font-semibold rounded-sm bg-[#2D9BF0] hover:bg-[#2587d4] text-white cursor-pointer shadow-2xs"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Record Expense</span>
+              </Button>
+            }
+          />
+        </div>
+      </div>
+
+      {/* 4-Stat Metric Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
         {/* Total Spent in User Currency */}
-        <Card className="rounded-sm border border-border bg-card p-4 shadow-2xs">
+        <Card className="rounded-sm border border-border/80 bg-card p-4 shadow-2xs hover:border-[#2D9BF0]/40 transition-colors">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-              <Receipt className="w-3.5 h-3.5 text-primary" /> Total Spent
+              <Receipt className="w-3.5 h-3.5 text-[#2D9BF0]" /> Total Spent
             </span>
             {usedCurrencies.length > 1 && (
-              <Badge variant="outline" className="text-[10px] font-mono gap-1 rounded-xs">
-                <Coins className="w-2.5 h-2.5 text-primary" />
-                {usedCurrencies.join(", ")}
+              <Badge variant="outline" className="text-[10px] font-mono gap-1 rounded-xs px-1.5 py-0">
+                <Coins className="w-2.5 h-2.5 text-[#2D9BF0]" />
+                {usedCurrencies.length} FX
               </Badge>
             )}
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono tracking-tight text-foreground">
+          <div className="mt-2.5 flex items-baseline gap-1.5">
+            <span className="text-2xl font-bold font-mono tracking-tight text-foreground tabular-nums">
               {currencySymbol}{totalSpentInUserCurrency.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
             <span className="text-xs font-semibold text-muted-foreground font-mono">{userCurrency}</span>
           </div>
-          <p className="text-[11px] text-muted-foreground mt-1">
-            Converted from {items.length} logged expense{items.length === 1 ? "" : "s"}
-          </p>
-        </Card>
-
-        {/* Top Spending Category */}
-        <Card className="rounded-sm border border-border bg-card p-4 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-              <TrendingUp className="w-3.5 h-3.5 text-primary" /> Top Category
-            </span>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-xl font-bold tracking-tight text-foreground truncate">
-              {topCategory.name}
-            </span>
-            {topCategory.amount > 0 && (
-              <span className="text-xs font-mono font-semibold text-muted-foreground">
-                ({currencySymbol}{topCategory.amount.toLocaleString("en-US", { maximumFractionDigits: 0 })})
-              </span>
-            )}
-          </div>
-          <p className="text-[11px] text-muted-foreground mt-1">
-            {items.length > 0 && totalSpentInUserCurrency > 0
-              ? `${Math.round((topCategory.amount / totalSpentInUserCurrency) * 100)}% of total expenditure`
-              : "No expenditures recorded"}
+          <p className="text-[11px] text-muted-foreground mt-1 truncate">
+            {items.length} receipt{items.length === 1 ? "" : "s"} converted
           </p>
         </Card>
 
         {/* Target Budget Meter */}
-        <Card className="rounded-sm border border-border bg-card p-4 shadow-2xs flex flex-col justify-between">
+        <Card className="rounded-sm border border-border/80 bg-card p-4 shadow-2xs hover:border-[#2D9BF0]/40 transition-colors flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-              <Target className="w-3.5 h-3.5 text-primary" /> Budget Goal
+              <Target className="w-3.5 h-3.5 text-[#2D9BF0]" /> Budget Goal
             </span>
             <div className="flex items-center gap-2">
               {budgetGoal && !isEditingBudget && (
@@ -348,7 +390,7 @@ export function ExpenseTracker({
                   type="button"
                   onClick={handleClearBudget}
                   disabled={isSavingBudget}
-                  className="text-[11px] text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
+                  className="text-[10px] text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
                   title="Remove budget goal"
                 >
                   Clear
@@ -360,9 +402,9 @@ export function ExpenseTracker({
                   setBudgetInput(budgetGoal ? String(budgetGoal) : "");
                   setIsEditingBudget(!isEditingBudget);
                 }}
-                className="text-[11px] text-primary hover:underline font-medium cursor-pointer"
+                className="text-[11px] text-[#2D9BF0] hover:underline font-medium cursor-pointer"
               >
-                {budgetGoal ? (isEditingBudget ? "Cancel" : "Edit Goal") : "+ Set Goal"}
+                {budgetGoal ? (isEditingBudget ? "Cancel" : "Edit") : "+ Set"}
               </button>
             </div>
           </div>
@@ -400,62 +442,190 @@ export function ExpenseTracker({
                 disabled={isSavingBudget}
                 className="h-7 px-2.5 text-xs rounded-xs cursor-pointer shrink-0"
               >
-                {isSavingBudget ? "Saving..." : "Save"}
+                {isSavingBudget ? "..." : "Save"}
               </Button>
             </form>
           ) : budgetGoal ? (
-            <div className="mt-2 space-y-1.5">
+            <div className="mt-2">
               <div className="flex items-baseline justify-between text-xs">
-                <span className="font-bold text-foreground font-mono">
-                  {currencySymbol}{totalSpentInUserCurrency.toLocaleString("en-US", { maximumFractionDigits: 0 })}{" "}
-                  <span className="text-muted-foreground font-normal font-sans">
-                    / {currencySymbol}{budgetGoal.toLocaleString()}
-                  </span>
+                <span className="text-lg font-bold text-foreground font-mono tabular-nums">
+                  {currencySymbol}{budgetGoal.toLocaleString()}
                 </span>
-                <span className="text-[11px] font-semibold text-muted-foreground">
-                  {Math.min(100, Math.round((totalSpentInUserCurrency / budgetGoal) * 100))}%
+                <span className={`text-[11px] font-mono font-semibold ${isOverBudget ? "text-rose-500" : budgetUsedPct >= 85 ? "text-amber-500" : "text-emerald-500"}`}>
+                  {budgetUsedPct}%
                 </span>
               </div>
-              <div className="h-1.5 w-full rounded-xs bg-muted overflow-hidden">
+              <div className="h-1.5 w-full rounded-xs bg-muted overflow-hidden mt-1.5">
                 <div
                   className={`h-full rounded-xs transition-all duration-300 ${
-                    totalSpentInUserCurrency > budgetGoal
-                      ? "bg-destructive"
-                      : totalSpentInUserCurrency >= budgetGoal * 0.85
-                      ? "bg-amber-500"
-                      : "bg-emerald-500"
+                    isOverBudget ? "bg-rose-500" : budgetUsedPct >= 85 ? "bg-amber-500" : "bg-emerald-500"
                   }`}
-                  style={{ width: `${Math.min(100, (totalSpentInUserCurrency / budgetGoal) * 100)}%` }}
+                  style={{ width: `${Math.min(100, budgetUsedPct)}%` }}
                 />
               </div>
+              <p className="text-[10px] text-muted-foreground mt-1 truncate">
+                {isOverBudget
+                  ? `Over budget by ${currencySymbol}${(totalSpentInUserCurrency - budgetGoal).toLocaleString("en-US", { maximumFractionDigits: 0 })}`
+                  : `${currencySymbol}${(budgetGoal - totalSpentInUserCurrency).toLocaleString("en-US", { maximumFractionDigits: 0 })} remaining`}
+              </p>
             </div>
           ) : (
-            <div className="mt-2">
-              <span className="text-sm font-medium text-muted-foreground italic">No budget set</span>
-              <p className="text-[11px] text-muted-foreground/80 mt-0.5">Set a target budget to track burn rate.</p>
+            <div className="mt-2.5">
+              <span className="text-sm font-medium text-muted-foreground italic">No goal set</span>
+              <p className="text-[10px] text-muted-foreground/80 mt-1">Set limit to monitor burn rate.</p>
             </div>
           )}
         </Card>
+
+        {/* Top Category */}
+        <Card className="rounded-sm border border-border/80 bg-card p-4 shadow-2xs hover:border-[#2D9BF0]/40 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+              <TrendingUp className="w-3.5 h-3.5 text-[#2D9BF0]" /> Top Category
+            </span>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-lg font-bold tracking-tight text-foreground truncate">
+              {topCategory.name}
+            </span>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-1 font-mono truncate">
+            {topCategory.amount > 0
+              ? `${currencySymbol}${topCategory.amount.toLocaleString("en-US", { maximumFractionDigits: 0 })} (${totalSpentInUserCurrency > 0 ? Math.round((topCategory.amount / totalSpentInUserCurrency) * 100) : 0}%)`
+              : "No expenditures"}
+          </p>
+        </Card>
+
+        {/* Currencies & Average Spend */}
+        <Card className="rounded-sm border border-border/80 bg-card p-4 shadow-2xs hover:border-[#2D9BF0]/40 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+              <Wallet className="w-3.5 h-3.5 text-[#2D9BF0]" /> Average Spend
+            </span>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-1.5">
+            <span className="text-2xl font-bold font-mono tracking-tight text-foreground tabular-nums">
+              {items.length > 0
+                ? `${currencySymbol}${(totalSpentInUserCurrency / items.length).toLocaleString("en-US", { maximumFractionDigits: 0 })}`
+                : "—"}
+            </span>
+            <span className="text-xs font-semibold text-muted-foreground font-mono">/ item</span>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-1 truncate">
+            {usedCurrencies.length > 0 ? `Currencies: ${usedCurrencies.join(", ")}` : "No currencies recorded"}
+          </p>
+        </Card>
       </div>
 
-      {/* Filter and Action Toolbar */}
+      {/* Multi-Category Segmented Bar Showcase (Linear Style) */}
+      {items.length > 0 && totalSpentInUserCurrency > 0 && (
+        <Card className="rounded-sm border border-border/80 bg-card p-4 shadow-2xs">
+          <div className="flex items-center justify-between mb-2.5">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-foreground">Spend Allocation by Category</span>
+              <span className="text-[11px] text-muted-foreground font-mono">
+                ({sortedCategories.length} active)
+              </span>
+            </div>
+            {activeCategory && (
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveCategory(null);
+                  setCategoryFilter("ALL");
+                }}
+                className="text-[11px] text-[#2D9BF0] hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <span>Reset filter</span>
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+
+          {/* Segmented Color Bar */}
+          <div className="h-3 w-full bg-muted/50 rounded-xs overflow-hidden flex gap-0.5">
+            {sortedCategories.map(([cat, amount]) => {
+              const cfg = CAT_CONFIG[cat] || CAT_CONFIG.OTHER;
+              const pct = (amount / totalSpentInUserCurrency) * 100;
+              const isSelected = categoryFilter === cat || activeCategory === cat;
+
+              return (
+                <div
+                  key={cat}
+                  onClick={() => {
+                    setCategoryFilter(categoryFilter === cat ? "ALL" : cat);
+                    setActiveCategory(activeCategory === cat ? null : cat);
+                  }}
+                  onMouseEnter={() => setActiveCategory(cat)}
+                  onMouseLeave={() => !categoryFilter || categoryFilter === "ALL" ? setActiveCategory(null) : null}
+                  style={{
+                    width: `${pct}%`,
+                    backgroundColor: cfg.hex,
+                    opacity: activeCategory && activeCategory !== cat ? 0.35 : 1,
+                  }}
+                  className="h-full transition-all duration-200 cursor-pointer hover:brightness-110"
+                  title={`${cfg.label}: ${currencySymbol}${amount.toFixed(0)} (${pct.toFixed(1)}%)`}
+                />
+              );
+            })}
+          </div>
+
+          {/* Category Chips Bar */}
+          <div className="flex items-center gap-3 mt-3 flex-wrap">
+            {sortedCategories.map(([cat, amount]) => {
+              const cfg = CAT_CONFIG[cat] || CAT_CONFIG.OTHER;
+              const pct = (amount / totalSpentInUserCurrency) * 100;
+              const isSelected = categoryFilter === cat;
+
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setCategoryFilter(isSelected ? "ALL" : cat)}
+                  onMouseEnter={() => setActiveCategory(cat)}
+                  onMouseLeave={() => setActiveCategory(null)}
+                  className={`flex items-center gap-1.5 text-xs py-1 px-2 rounded-xs border transition-colors cursor-pointer ${
+                    isSelected
+                      ? "border-[#2D9BF0] bg-[#2D9BF0]/10 text-foreground font-semibold"
+                      : "border-border/60 bg-muted/30 text-muted-foreground hover:text-foreground hover:bg-muted/70"
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cfg.hex }} />
+                  <span>{cfg.label}</span>
+                  <span className="font-mono text-[11px] opacity-75">({pct.toFixed(0)}%)</span>
+                </button>
+              );
+            })}
+          </div>
+        </Card>
+      )}
+
+      {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         {/* Left: Search Input */}
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search expenses, notes, payers..."
-            className="pl-8.5 h-9 text-xs rounded-sm"
+            className="pl-8.5 h-9 text-xs rounded-sm bg-background border-border"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
 
-        {/* Right controls: [Category Filter Select] -> [+ Log Expense] -> [Export CSV] */}
+        {/* Right controls: Category Dropdown & Quick Count */}
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          {/* Category Dropdown Filter */}
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="h-9 w-[170px] text-xs rounded-sm bg-background border-border cursor-pointer">
+            <SelectTrigger className="h-9 w-[180px] text-xs rounded-sm bg-background border-border cursor-pointer">
               <Filter className="w-3.5 h-3.5 text-muted-foreground mr-1.5 shrink-0" />
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
@@ -474,61 +644,67 @@ export function ExpenseTracker({
             </SelectContent>
           </Select>
 
-          {/* Log Expense Dialog Trigger */}
-          <AddExpenseDialog
-            tripId={tripId}
-            defaultCurrency={userCurrency}
-            trigger={
-              <Button size="sm" className="h-9 gap-1.5 text-xs font-semibold rounded-sm cursor-pointer shadow-2xs">
-                <Plus className="w-3.5 h-3.5" />
-                Log Expense
-              </Button>
-            }
-          />
-
-          {/* Export CSV (last) */}
-          {items.length > 0 && (
+          {categoryFilter !== "ALL" && (
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
-              onClick={handleExportCsv}
-              className="h-9 gap-1.5 text-xs font-medium rounded-sm border-border cursor-pointer hover:bg-muted/80"
+              onClick={() => setCategoryFilter("ALL")}
+              className="h-9 px-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
             >
-              <Download className="w-3.5 h-3.5 text-muted-foreground" />
-              Export CSV
+              Clear
             </Button>
           )}
         </div>
       </div>
 
-      {/* Expenses Table (Shifted ABOVE the category card, with set height & sticky header) */}
+      {/* Expenses Table */}
       {filteredItems.length === 0 ? (
-        <Card className="rounded-sm border border-dashed p-8 text-center bg-card/50">
-          <p className="text-sm font-semibold text-foreground">No expenses found</p>
-          <p className="text-xs text-muted-foreground mt-1">
+        <Card className="rounded-sm border border-dashed border-border/80 p-10 text-center bg-card/40">
+          <div className="w-10 h-10 rounded-full bg-muted/60 flex items-center justify-center mx-auto mb-3 text-muted-foreground">
+            <Receipt className="w-5 h-5" />
+          </div>
+          <h3 className="text-sm font-semibold text-foreground">
+            {items.length === 0 ? "No expenses recorded yet" : "No matching expenses"}
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
             {items.length === 0
-              ? "Start recording dining, transport, stay, and activity receipts."
-              : "Try adjusting your search query or category filter."}
+              ? "Start logging dining, transit, accommodations, flights, and activities to build your ledger."
+              : "Try adjusting your search query or reset the category filter to see all receipts."}
           </p>
+          {items.length === 0 && (
+            <div className="mt-4">
+              <AddExpenseDialog
+                tripId={tripId}
+                defaultCurrency={userCurrency}
+                trigger={
+                  <Button size="sm" className="h-8 gap-1.5 text-xs font-semibold rounded-sm bg-[#2D9BF0] hover:bg-[#2587d4] text-white cursor-pointer shadow-2xs">
+                    <Plus className="w-3.5 h-3.5" />
+                    Record First Expense
+                  </Button>
+                }
+              />
+            </div>
+          )}
         </Card>
       ) : (
-        <div className="rounded-sm border border-border bg-card shadow-2xs overflow-hidden">
-          <div className="max-h-[460px] overflow-y-auto thin-scrollbar">
+        <div className="rounded-sm border border-border/80 bg-card shadow-2xs overflow-hidden">
+          <div className="max-h-[500px] overflow-y-auto thin-scrollbar">
             <table className="w-full text-left text-xs border-collapse">
               <thead className="sticky top-0 z-10 bg-muted/95 backdrop-blur-xs border-b border-border shadow-2xs">
-                <tr className="text-foreground font-semibold">
-                  <th className="py-3 px-4 font-semibold text-foreground">Date</th>
-                  <th className="py-3 px-3 font-semibold text-foreground">Expense Title</th>
-                  <th className="py-3 px-3 font-semibold text-foreground">Category</th>
-                  <th className="py-3 px-3 font-semibold text-foreground">Native Amount</th>
-                  <th className="py-3 px-3 font-semibold text-foreground">Converted ({userCurrency})</th>
-                  <th className="py-3 px-3 font-semibold text-foreground">Paid By</th>
-                  <th className="py-3 px-4 font-semibold text-foreground text-right">Actions</th>
+                <tr className="text-muted-foreground font-semibold uppercase text-[10px] tracking-wider">
+                  <th className="py-3 px-4">Date</th>
+                  <th className="py-3 px-3">Expense Title</th>
+                  <th className="py-3 px-3">Category</th>
+                  <th className="py-3 px-3">Native Amount</th>
+                  <th className="py-3 px-3">Converted ({userCurrency})</th>
+                  <th className="py-3 px-3">Paid By</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
                 {filteredItems.map((item) => {
                   const cfg = CAT_CONFIG[item.category] || CAT_CONFIG.OTHER;
+                  const Icon = cfg.icon;
                   const convertedAmount = convertToUserCurrency(item.amount, item.currency);
                   const isDifferentCurrency = item.currency.toUpperCase() !== userCurrency.toUpperCase();
 
@@ -537,7 +713,7 @@ export function ExpenseTracker({
                       key={item.id}
                       className="hover:bg-muted/40 transition-colors group"
                     >
-                      {/* Date - crisp and visible */}
+                      {/* Date */}
                       <td className="py-3 px-4 whitespace-nowrap text-foreground font-mono font-medium text-xs">
                         {new Date(item.date).toLocaleDateString("en-US", {
                           month: "short",
@@ -548,7 +724,9 @@ export function ExpenseTracker({
 
                       {/* Title & Notes */}
                       <td className="py-3 px-3">
-                        <div className="font-semibold text-foreground text-sm">{item.title}</div>
+                        <div className="font-semibold text-foreground text-sm flex items-center gap-1.5">
+                          {item.title}
+                        </div>
                         {item.notes && (
                           <div className="text-xs text-muted-foreground truncate max-w-sm mt-0.5">
                             {item.notes}
@@ -558,32 +736,38 @@ export function ExpenseTracker({
 
                       {/* Category */}
                       <td className="py-3 px-3 whitespace-nowrap">
-                        <Badge variant={cfg.badgeVariant} className="text-[11px] font-medium rounded-xs px-2 py-0.5">
-                          {cfg.label}
+                        <Badge
+                          variant={cfg.badgeVariant}
+                          className="text-[11px] font-medium rounded-xs px-2 py-0.5 gap-1 inline-flex items-center"
+                        >
+                          <Icon className="w-3 h-3 opacity-75" />
+                          <span>{cfg.label}</span>
                         </Badge>
                       </td>
 
-                      {/* Native Amount - bold, dark text */}
-                      <td className="py-3 px-3 whitespace-nowrap font-mono font-bold text-foreground text-sm">
+                      {/* Native Amount */}
+                      <td className="py-3 px-3 whitespace-nowrap font-mono font-bold text-foreground text-sm tabular-nums">
                         {item.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}
                         <span className="text-xs font-semibold text-muted-foreground">{item.currency}</span>
                       </td>
 
                       {/* Converted in User Preferred Currency */}
-                      <td className="py-3 px-3 whitespace-nowrap font-mono text-foreground">
+                      <td className="py-3 px-3 whitespace-nowrap font-mono text-foreground tabular-nums">
                         {isDifferentCurrency ? (
                           <span className="font-bold text-foreground text-sm">
                             ≈ {currencySymbol}{convertedAmount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}
-                            <span className="text-[11px] font-medium text-muted-foreground">{userCurrency}</span>
+                            <span className="text-[10px] font-medium text-muted-foreground">{userCurrency}</span>
                           </span>
                         ) : (
                           <span className="text-xs text-muted-foreground/60 font-medium">—</span>
                         )}
                       </td>
 
-                      {/* Paid By - clearly visible */}
+                      {/* Paid By */}
                       <td className="py-3 px-3 whitespace-nowrap text-foreground font-medium text-xs">
-                        {item.paidBy || "Me"}
+                        <span className="px-2 py-0.5 rounded-xs bg-muted/60 text-muted-foreground text-[11px]">
+                          {item.paidBy || "Me"}
+                        </span>
                       </td>
 
                       {/* Actions */}
@@ -627,12 +811,12 @@ export function ExpenseTracker({
         </div>
       )}
 
-      {/* Visual Category Distribution Chart (Shifted to the BOTTOM) */}
-      <Card className="rounded-sm border border-border bg-card p-5 shadow-2xs space-y-5">
+      {/* Visual Category Distribution & Donut Chart */}
+      <Card className="rounded-sm border border-border/80 bg-card p-5 shadow-2xs space-y-5">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <span className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <PieChart className="w-4 h-4 text-primary" /> Category Distribution & Spend Analysis
+              <PieChart className="w-4 h-4 text-[#2D9BF0]" /> Spend Distribution Analysis
             </span>
             <p className="text-xs text-muted-foreground">
               {categoryTotals.size} active categories • All amounts converted to {userCurrency} ({currencySymbol})
@@ -702,16 +886,16 @@ export function ExpenseTracker({
                       <span className="text-xs font-semibold text-foreground truncate max-w-[110px]">
                         {activeSegment.label}
                       </span>
-                      <span className="text-lg font-bold font-mono text-foreground leading-tight mt-0.5">
+                      <span className="text-lg font-bold font-mono text-foreground leading-tight mt-0.5 tabular-nums">
                         {currencySymbol}{activeSegment.amount.toLocaleString("en-US", { maximumFractionDigits: 0 })}
                       </span>
-                      <span className="text-[11px] font-mono font-semibold text-primary mt-0.5">
+                      <span className="text-[11px] font-mono font-semibold text-[#2D9BF0] mt-0.5">
                         {activeSegment.pct.toFixed(1)}% of total
                       </span>
                     </>
                   ) : (
                     <>
-                      <span className="text-lg font-bold font-mono text-foreground leading-tight">
+                      <span className="text-lg font-bold font-mono text-foreground leading-tight tabular-nums">
                         {currencySymbol}{totalSpentInUserCurrency.toLocaleString("en-US", { maximumFractionDigits: 0 })}
                       </span>
                       <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground mt-0.5">
@@ -770,7 +954,7 @@ export function ExpenseTracker({
 
                       {/* Right: Amount and Share */}
                       <div className="flex items-baseline gap-2 shrink-0 text-right">
-                        <span className="text-xs font-bold font-mono text-foreground">
+                        <span className="text-xs font-bold font-mono text-foreground tabular-nums">
                           {currencySymbol}{amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                         <span className="text-[11px] font-mono font-medium text-muted-foreground w-12 text-right">

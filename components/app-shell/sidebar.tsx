@@ -2,10 +2,29 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { X } from "lucide-react";
+import { usePathname, useSearchParams } from "next/navigation";
+
+import {
+  ArrowLeft,
+  BedDouble,
+  Bookmark,
+  BookOpen,
+  CheckSquare,
+  CloudSun,
+  Coins,
+  Compass,
+  FileText,
+  Languages,
+  Link2,
+  ListTodo,
+  Map,
+  Receipt,
+  X,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+
+import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
 
 import { cn } from "@/lib/utils";
 
@@ -23,13 +42,94 @@ interface SidebarProps {
 
 export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { activeTrip } = useWorkspaceAi();
 
-  const renderNavGroup = (items: NavItem[]) => (
+  // Route context detection
+  const tripMatch = pathname.match(/^\/trips\/([^/]+)/);
+  const currentTripId = tripMatch && tripMatch[1] !== "new" ? tripMatch[1] : null;
+  const isTripWorkspace = Boolean(currentTripId);
+  const isTravelEssentials = pathname.startsWith("/travel-essentials");
+
+  // In mobile drawer mode (mobileOpen = true), always render the global navigation groups
+  // so mobile users can jump between primary routes. On desktop (!mobileOpen), render
+  // the contextual navigation when inside a trip or travel essentials.
+  const isContextualMode = !mobileOpen && (isTripWorkspace || isTravelEssentials);
+
+  // Travel Essentials toolkit navigation items
+  const currentTravelTab = searchParams.get("tab") || "currency";
+  const travelEssentialsNavItems: (NavItem & { tabId: string })[] = [
+    { title: "Currency", href: "/travel-essentials?tab=currency", icon: Coins, tabId: "currency" },
+    { title: "Weather", href: "/travel-essentials?tab=weather", icon: CloudSun, tabId: "weather" },
+    { title: "Country Guide", href: "/travel-essentials?tab=guide", icon: BookOpen, tabId: "guide" },
+    { title: "Language", href: "/travel-essentials?tab=language", icon: Languages, tabId: "language" },
+    { title: "Maps", href: "/travel-essentials?tab=maps", icon: Map, tabId: "maps" },
+    { title: "Resource Vault", href: "/travel-essentials?tab=vault", icon: Bookmark, tabId: "vault" },
+  ];
+
+  // Trip Workspace sub-module navigation items with dynamic counts
+  const counts = activeTrip?.counts;
+  const tripNavItems: (NavItem & { segment: string })[] = currentTripId
+    ? [
+        { title: "Overview", href: `/trips/${currentTripId}/overview`, icon: Compass, segment: "overview" },
+        {
+          title: "Itinerary",
+          href: `/trips/${currentTripId}/itinerary`,
+          icon: ListTodo,
+          segment: "itinerary",
+          badge: counts?.itinerary && counts.itinerary > 0 ? String(counts.itinerary) : undefined,
+        },
+        {
+          title: "Accommodation",
+          href: `/trips/${currentTripId}/accommodations`,
+          icon: BedDouble,
+          segment: "accommodations",
+          badge: counts?.accommodations && counts.accommodations > 0 ? String(counts.accommodations) : undefined,
+        },
+        {
+          title: "Expenses",
+          href: `/trips/${currentTripId}/expenses`,
+          icon: Receipt,
+          segment: "expenses",
+          badge: counts?.expenses && counts.expenses > 0 ? `$${Math.round(counts.expenses).toLocaleString()}` : undefined,
+        },
+        {
+          title: "Notes",
+          href: `/trips/${currentTripId}/notes`,
+          icon: FileText,
+          segment: "notes",
+          badge: counts?.notes && counts.notes > 0 ? String(counts.notes) : undefined,
+        },
+        {
+          title: "Checklist",
+          href: `/trips/${currentTripId}/checklist`,
+          icon: CheckSquare,
+          segment: "checklist",
+          badge:
+            counts?.checklist && counts.checklist.total > 0
+              ? `${counts.checklist.completed}/${counts.checklist.total}`
+              : undefined,
+        },
+        {
+          title: "Links",
+          href: `/trips/${currentTripId}/links`,
+          icon: Link2,
+          segment: "links",
+          badge: counts?.links && counts.links > 0 ? String(counts.links) : undefined,
+        },
+      ]
+    : [];
+
+  const renderNavGroup = (
+    items: NavItem[],
+    customIsActive?: (item: NavItem) => boolean
+  ) => (
     <nav className="space-y-1 pl-0 pr-3">
       {items.map((item) => {
-        const isActive =
-          pathname === item.href ||
-          (item.href !== "/dashboard" && pathname.startsWith(`${item.href}/`));
+        const isActive = customIsActive
+          ? customIsActive(item)
+          : pathname === item.href ||
+            (item.href !== "/dashboard" && pathname.startsWith(`${item.href}/`));
         const Icon = item.icon;
 
         return (
@@ -130,26 +230,84 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
         </div>
 
         {/* Scrollable Middle Navigation Groups */}
-        <div className="flex-1 overflow-y-auto py-4 space-y-6 scrollbar-none">
-          {/* Group 1: Workspace */}
-          <div>
-            <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 select-none">
-              Workspace
-            </div>
-            {renderNavGroup(workspaceNavItems)}
-          </div>
+        <div className="flex-1 overflow-y-auto py-4 space-y-5 scrollbar-none">
+          {isContextualMode && isTravelEssentials ? (
+            /* Contextual Mode 1: Travel Essentials */
+            <div className="space-y-3">
+              <div className="px-4">
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 hover:text-white dark:text-slate-500 dark:hover:text-slate-900 transition-colors group cursor-pointer"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+                  <span>Back to Workspace</span>
+                </Link>
+              </div>
 
-          {/* Group 2: Explore */}
-          <div>
-            <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 select-none">
-              Explore
+              <div>
+                <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2D9BF0] select-none">
+                  Travel Toolkit
+                </div>
+                {renderNavGroup(travelEssentialsNavItems, (item) => {
+                  const targetTab = (item as typeof travelEssentialsNavItems[number]).tabId;
+                  return (
+                    (targetTab === "currency" &&
+                      (currentTravelTab === "currency" || currentTravelTab === "emergency")) ||
+                    currentTravelTab === targetTab
+                  );
+                })}
+              </div>
             </div>
-            {renderNavGroup(otherNavItems)}
-          </div>
+          ) : isContextualMode && isTripWorkspace ? (
+            /* Contextual Mode 2: Individual Trip Workspace */
+            <div className="space-y-3">
+              <div className="px-4">
+                <Link
+                  href="/trips"
+                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 hover:text-white dark:text-slate-500 dark:hover:text-slate-900 transition-colors group cursor-pointer"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+                  <span>All Trips</span>
+                </Link>
+              </div>
+
+              <div>
+                <div
+                  className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2D9BF0] select-none truncate"
+                  title={activeTrip?.tripTitle || "Trip Workspace"}
+                >
+                  {activeTrip?.tripTitle || "Trip Workspace"}
+                </div>
+                {renderNavGroup(tripNavItems, (item) => {
+                  const segment = (item as typeof tripNavItems[number]).segment;
+                  return pathname.includes(`/${segment}`);
+                })}
+              </div>
+            </div>
+          ) : (
+            /* Default Global Mode: Workspace + Explore */
+            <>
+              {/* Group 1: Workspace */}
+              <div>
+                <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 select-none">
+                  Workspace
+                </div>
+                {renderNavGroup(workspaceNavItems)}
+              </div>
+
+              {/* Group 2: Explore */}
+              <div>
+                <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 select-none">
+                  Explore
+                </div>
+                {renderNavGroup(otherNavItems)}
+              </div>
+            </>
+          )}
         </div>
 
-        {/* Bottom Area: Account Section */}
-        <div className="shrink-0 pt-2 pb-8 md:pb-10">
+        {/* Bottom Area: Account Section (Preserved across all modes) */}
+        <div className="shrink-0 pt-2 pb-8 md:pb-10 border-t border-[#152033]/60 dark:border-slate-300/60 mt-auto">
           <div>
             <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 select-none">
               Account

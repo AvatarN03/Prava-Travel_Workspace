@@ -26,13 +26,21 @@
 - **Phase 22: Landing Page Smooth Text & Journey Transitions** (Complete)
 - **Phase 23: Profile Avatar Storage Optimization & Orphaned Image Pruning** (Complete)
 - **Phase 24: Authentication Forgot Password Flow & Duplicate Account Detection** (Complete)
+- **Phase 25: Account Deletion Flow with 2-Step Confirmation, Email OTP & Farewell Experience** (Complete)
 
 ## Current Task
-- **Phase 24 Complete**: Authentication Forgot Password Flow & Duplicate Account Detection:
-  - **Forgot Password UI & Service Trigger (`app/auth/page.tsx`)**: Added `authMode: "signin" | "signup" | "forgot"` and `?tab=forgot` query param support. Provided dedicated password recovery view that triggers Supabase's `resetPasswordForEmail` service with redirect to `/auth/callback?next=/auth/reset-password`. Included "Forgot password?" shortcut directly within the Sign In form.
-  - **Duplicate Account Identity Detection (`app/auth/page.tsx`)**: Handled Supabase Auth identity enumeration protection by checking `data.user && (!data.user.identities || data.user.identities.length === 0)` on signup. Alerts existing users that an account already exists and switches them to Sign In with toast feedback.
-  - **Password Recovery Session Exemption (`lib/supabase/middleware.ts`)**: Updated auth route interception to exempt `/auth/reset-password` so authenticated users completing an email recovery flow are not prematurely redirected to `/dashboard`.
-  - **Reset Password Form (`app/auth/reset-password/page.tsx`, `layout.tsx`)**: Created a dedicated reset-password view matching Prava's design system with recovery session validation, new/confirm password inputs with visibility toggles, and atomic `supabase.auth.updateUser({ password })` invocation.
+- **Phase 25 Complete**: Account Deletion Flow with 2-Step Confirmation, Email OTP & Farewell Experience:
+  - **Danger Zone UI (`features/profile/components/settings-section.tsx`)**: Added a dedicated Danger Zone card under the Security tab with destructive styling, warning metadata, and a "Delete Account" button triggering the modal.
+  - **Delete Account Modal (`features/profile/components/delete-account-dialog.tsx`)**: Implemented a 3-step dialog:
+    - *Step 1 (Scope & Warning)*: Full inventory of data being deleted (trips, stays, expenses, stories, notes, checklists, AI histories) with mandatory acknowledgment checkbox.
+    - *Step 2 (Email OTP & "DELETE" Confirmation)*: Sends a 6-digit OTP via `supabase.auth.signInWithOtp` without new user creation. Requires entering the 6-digit OTP + typing `"DELETE"` with a 45s resend cooldown.
+    - *Step 3 (Farewell Experience)*: Displays a warm thank you screen (*"Thank you for traveling with Prava... you are always welcome back whenever you're ready to plan your next journey"*) and an extended farewell toast before returning to home.
+  - **Server-Side Atomic Account Deletion (`features/profile/actions.ts`)**:
+    - Validates active user session and verifies OTP via `supabase.auth.verifyOtp`.
+    - Purges user storage objects across media folders via `deleteUserStorageFolder(userId)` (`lib/storage/index.ts`).
+    - Deletes Prisma `Profile` row (triggering PostgreSQL foreign key cascades across all 10+ tables).
+    - Deletes Supabase Auth record via `createAdminClient().auth.admin.deleteUser(userId)` (`lib/supabase/admin.ts`).
+    - Signs out session cookies.
   - **Production Verification**: Passed `npx tsc --noEmit` with 0 errors and completed Next.js 16 + Turbopack production build (`npm run build`, exit code 0).
 
 ## Completed Work
@@ -2999,5 +3007,130 @@
         ```
       - Styled with subtle Supabase dark theme tokens (`bg-[#121E36]`, `border-[#1E2B45]`, `text-slate-300`) with an amber lightning bolt icon (`Zap`) and full tooltip visibility indicating remaining credits.
       - Preserved the inline keyboard shortcut hint (`↵ to send · Shift+↵ for new line`) next to the credits badge.
+- **Task 199 (Desktop Contextual Sidebar Navigation & In-Page Tab Streamlining)**:
+  - **Context & User Request**:
+    - Previously, both Travel Essentials (`/travel-essentials`) and individual trip workspaces (`/trips/[tripId]/*`) featured horizontal tab strips across the top of the main canvas on desktop, while the desktop sidebar remained static with general global links.
+    - The user requested that on desktop, the sidebar should contextually transform:
+      1. On `/travel-essentials`, the sidebar replaces generic Workspace/Explore groups with the Travel Essentials Toolkit (*Currency, Weather, Country Guide, Language, Maps, Resource Vault*) plus a "← Back to Workspace" return link.
+      2. On `/trips/[tripId]/*`, the sidebar replaces generic groups with the Trip Workspace modules (*Overview, Itinerary, Accommodation, Expenses, Notes, Checklist, Links*) with live entity count badges and an "← All Trips" return link.
+      3. The bottom Account group (*Profile, Subscription, Usage*) remains untouched across all modes.
+      4. In mobile drawer mode (`mobileOpen`), the sidebar retains global navigation so mobile users can always navigate between top-level sections.
+      5. The redundant horizontal tabs on desktop are hidden (`md:hidden`), freeing vertical canvas space, while mobile receives a sleek 1-tap `<Select>` dropdown for switching tabs.
+  - **Implementation Details**:
+    - **Context Counts Extension (`workspace-ai-context.tsx`, `trip-workspace-container.tsx`)**:
+      - Added `ActiveTripCounts` and `counts?: ActiveTripCounts` to `ActiveTripContext` so live entity counts (*itinerary, accommodations, expenses, notes, checklist, links*) are accessible to the sidebar.
+      - Updated `TripWorkspaceContainer` to supply `counts` to `setActiveTrip`.
+    - **Contextual Desktop Sidebar (`components/app-shell/sidebar.tsx`)**:
+      - Implemented route context detection via `usePathname()` and `useSearchParams()` for `isTripWorkspace` and `isTravelEssentials`.
+      - Guarded contextual mode with `!mobileOpen && (isTripWorkspace || isTravelEssentials)` so the mobile drawer retains global navigation.
+      - Rendered Travel Essentials toolkit items with active tab matching `?tab=...` and "← Back to Workspace" anchor.
+      - Rendered Trip Workspace modules with active segment matching, live badge counts, trip title header, and "← All Trips" anchor.
+      - Preserved the Account navigation section at the bottom.
+    - **Travel Essentials Streamlining (`travel-essentials-shell.tsx`)**:
+      - Added `useEffect` listening to `searchParams` so sidebar clicks immediately switch active tool views without full page reloads.
+      - Added active tool indicator badge in the header on desktop.
+      - Hidden in-page tabs on desktop (`md:hidden`), while retaining mobile `<Select>` dropdown (< sm) and tablet tabs (sm to md).
+    - **Trip Workspace Streamlining (`workspace-nav.tsx`)**:
+      - Hidden in-page navigation on desktop (`md:hidden`) to eliminate duplicate horizontal tabs.
+      - Added mobile 1-tap `<Select>` dropdown for phones (< sm) with active module icon, label, and live badge counter.
+- **Task 200 (Trip Workspace Tabs UI Refactor — Phase 1: Overview & Itinerary)**:
+  - **Context & User Request**:
+    - The user requested to refactor the UI for each trip workspace tab page (`/trips/[tripId]/*`) to match the Landing Page showcase and Prava's complete design system.
+    - User approved executing Phase 1 (Overview & Itinerary tabs) first.
+  - **Implementation Details**:
+    - **Tab 1: Overview Dashboard (`overview-dashboard.tsx`)**:
+      - Added editorial workspace header with `"Journey Blueprint"`, destination context, and real-time live/starts-in status pills.
+      - Implemented 4-stat metric strip (`Itinerary Events`, `Total Spent`, `Checklist Readiness`, `Stays & Saves`) with tabular figures, crisp borders (`border-border/80 bg-card hover:border-[#2D9BF0]/40`), and quick-links.
+      - Modeled 2x2 Elevated Feature Cards Grid directly from `workspace-showcase.tsx`:
+        1. **Today's Route / Active Schedule**: Vertical timeline connector line, start times (`font-mono tabular-nums`), category badges, location pins, and "+ Add Activity" shortcut.
+        2. **Current Stay / Next Lodging**: Confirmation code with 1-click clipboard copy, check-in dates, Google Maps direction trigger, and "+ Add Stay".
+        3. **Expense Ledger**: Multi-category segmented color-coded progress bar with tooltips (`Lodging`, `Transit`, `Dining`, `Activities`, `Shopping`, `Other`), `% allocated`, headroom remaining, and category breakdown chips.
+        4. **Immediate Tasks & Checklist**: Pending tasks with priority dots, category badges, instant completion checkboxes (`TaskItem`), and "+ Add Task".
+      - Added bottom section for Pinned Notes and Saved Links with domain badges.
+    - **Tab 2: Itinerary View & Cards (`itinerary-view.tsx`, `itinerary-card.tsx`)**:
+      - Added editorial header `"Curated Timeline"` with stops count and estimated cost chip.
+      - Implemented responsive day selector strip (`All Days`, `Day 1 · Nov 14`, etc.) with daily event counters and cost badges.
+      - Redesigned `ItineraryCard` with circular timeline nodes, monospace start times (`font-mono tabular-nums`), category badges with subtle tints, Google Maps lookup link, and 3-dots actions menu.
+      - Enhanced empty state with dual primary actions: `"✨ Kickstart with AI"` and `"Plan Manually"`.
+
+- **Task 201 (Trip Workspace Tabs UI Refactor — Phase 2: Accommodations & Expenses)**:
+  - **Context & Implementation**:
+    - **Tab 3: Accommodations (`accommodation-list.tsx`, `accommodation-card.tsx`)**:
+      - Added editorial header: `"Confirmed Lodgings · Stays & Bookings"` with date ranges and stays count.
+      - Implemented 4-stat metric strip (`Total Stays`, `Nights Booked`, `Lodging Spend`, `Avg Nightly Rate`) with monospace tabular numbers.
+      - Refactored `AccommodationCard` with elevated Linear/Notion card styling (`rounded-sm border border-border/80 bg-card hover:border-[#2D9BF0]/50 transition-colors shadow-2xs`), property type badge, duration pill (`N nights`), 1-click confirmation code copy button with feedback, direct telephone call link (`tel:`), Google Maps directions trigger, and 3-dots actions menu.
+      - Enhanced empty state with property type icons and direct "+ Add First Stay" action.
+    - **Tab 4: Expenses & Budget Ledger (`expense-tracker.tsx`)**:
+      - Added editorial header: `"Trip Expenses · Ledger & Burn"` with base currency note, CSV Export, and "+ Record Expense" primary button.
+      - Implemented 4-stat metric strip (`Total Spent`, `Budget Goal & Burn`, `Top Category`, `Average Spend / Item`).
+      - Implemented Linear-style multi-category segmented budget progress bar with hover states, tooltips, and interactive category chips that dynamically filter the ledger.
+      - Refactored expenses table with sticky header, font-mono dates, category badges with subtle tints, monospace bold native amounts, user-preferred currency conversion pills (`≈ $X.XX USD`), payer badges, and actions menu.
+      - Polished bottom Spend Distribution Analysis card with interactive SVG ring donut chart and data-dense horizontal progress breakdown.
+
+- **Task 202 (Trip Workspace Tabs UI Refactor — Phase 3: Notes, Checklist & Links)**:
+  - **Context & Implementation**:
+    - **Tab 5: Notes & Markdown Docs (`notes-grid.tsx`, `note-card.tsx`)**:
+      - Added editorial header: `"Trip Notes · Markdown & Advice"` with total notes count and "+ New Note" trigger.
+      - Implemented 3-stat metric strip (`Total Notes`, `Pinned to Top`, `Primary Categories`).
+      - Refactored `NoteCard` with top pinned accent line (`bg-[#2D9BF0]`), pinned badge, subtle category pill tints, markdown rendering preview, 1-click copy content button, expandable read-more toggle, and font-mono updated timestamps.
+    - **Tab 6: Checklist & Tasks (`checklist-view.tsx`, `task-item.tsx`)**:
+      - Added editorial header: `"Checklist & Tasks · Readiness & Packing"` with completed count ratio, "+ Essentials" auto-seeder, and "+ Add Task".
+      - Implemented 3-stat metric strip (`Readiness Score` with status badges, `Tasks Remaining`, `Total Categories`).
+      - Added animated readiness progress meter and filter pills (`All Tasks`, `To Do`, `Completed`) with monospace item count chips.
+      - Refactored `TaskItem` with custom checkbox, strike-through text styling on completion, font-mono due dates, and hover action buttons.
+    - **Tab 7: Reference Links & Bookmarks (`links-grid.tsx`, `link-card.tsx`)**:
+      - Added editorial header: `"Reference Vault · Links & Confirmations"` with bookmark count, "Import from Vault", and "+ Add Link".
+      - Implemented 3-stat metric strip (`Total Bookmarks`, `Unique Domains`, `Categories`).
+      - Refactored `LinkCard` with smart domain badges & colors (Google Maps, Airbnb, Booking.com, TripAdvisor, Flights, External), external link indicators, description snippet, monospace hostname pill, 1-click copy URL button, and direct link navigation.
+  - **Full Production Build Verification**:
+    - Verified compilation with `npm run build` using Turbopack and Prisma 7.10 client generation.
+    - Result: Exit code 0, 0 TypeScript errors across all 32 dynamic and static routes.
+
+- **Task 203 (Workspace Header Overhaul: Hero Banner Overlay & Streamlined Action Strip)**:
+  - **Context & User Request**:
+    - Previously, the workspace header placed the cover image at the top, followed by a separate block containing "Back to Trips", status dropdown, AI assistant, 3-dots menu, trip title ("Checking"), destination, dates, and description.
+    - Immediately below, each tab page rendered its own editorial header (e.g. "Reference Vault"), leading to visual clutter, dual stacked titles, and excessive vertical scrolling.
+    - The user requested reorganizing the header so that:
+      1. `← Back to Trips` is shifted to the very top above the banner image.
+      2. The Trip Title, Destination, Date Range, Status Pills, and Description are overlaid directly over the bottom of the cover banner (Notion/Airbnb editorial hero style).
+      3. The area below the banner becomes a clean, single-line control strip containing Trip Workspace context on the left and the Status dropdown (`Planning`), Calendar Sync, `Ichinose` AI Assistant, and 3-dots menu on the right.
+  - **Implementation Details**:
+    - **`components/storage/cover-image.tsx`**:
+      - Extended `CoverImageProps` with `children?: React.ReactNode`.
+      - Added high-contrast dark vignette gradient overlay (`from-black/90 via-black/45 to-black/15`) ensuring text legibility across all cover photos.
+      - Increased banner height (`h-56 sm:h-64`) and positioned children in `absolute inset-x-0 bottom-0 p-4 sm:p-6 z-10 text-white`.
+      - Styled "Change Cover" with frosted dark glassmorphism (`bg-black/60 hover:bg-black/80 backdrop-blur-md text-white border border-white/20`).
+    - **`features/trip-workspace/common/workspace-header.tsx`**:
+      - Moved `← Back to Trips` above the `CoverImage`.
+      - Overlaid inside `CoverImage`: Public community badge, `MapPin` destination chip, `Calendar` date range chip, real-time departure countdown pills (`Happening now`, `Starts today`, `N days left`), Compass icon + Title in bold tracking-tight white typography with text shadow, and description snippet.
+      - Streamlined the Action Strip below the banner: "Trip Workspace" eyebrow on the left, and Status selector (`Planning`), Calendar Sync (`AddToCalendarDialog`), `Ichinose` assistant button, and 3-dots settings dropdown on the right.
+  - **Verification**:
+    - Verified with `npm run build` (Turbopack, exit code 0, 0 TypeScript errors across all 32 routes).
+
+- **Task 204 (1-Click Google Calendar Integration & Universal RFC 5545 .ics Export Engine)**:
+  - **Context & Architecture Decision**:
+    - Evaluated user request for Google Calendar synchronization against Prava's product vision ("Workspace First, AI Second") and security posture.
+    - Explicitly avoided storing Google OAuth refresh tokens or escalating login scopes (which triggers scary Google unverified app warning screens and requires complex background cron refresh loops).
+    - Implemented a zero-liability, 1-click user-driven synchronization architecture utilizing standard Google Calendar TEMPLATE Web Actions and universal RFC 5545 iCalendar (`.ics`) file generation.
+  - **Implementation Details**:
+    - **`lib/calendar/calendar-utils.ts`**:
+      - `buildGoogleCalendarUrl()`: Sanitizes and encodes event parameters, formatting ISO dates into compact Google Calendar UTC format (`YYYYMMDD` for all-day with exclusive end dates, and `YYYYMMDDTHHmmssZ` for timed events).
+      - `buildTripGoogleCalendarUrl()`: Formats entire trip windows with destination, dates, and Prava workspace link.
+      - `buildItineraryItemGoogleCalendarUrl()`: Computes exact activity datetime based on `trip.startDate`, `dayNumber`, and `startTime`/`endTime`, ready to open single-activity Google Calendar events.
+      - `generateTripIcs()`: Generates RFC 5545 compliant `.ics` calendar content containing the overall trip event, confirmed hotel stays (`VEVENT`), and scheduled day-by-day itinerary stops.
+      - `downloadIcsFile()`: Client-side temporary `Blob` link generator for instant universal `.ics` downloads.
+    - **`features/trip-workspace/common/add-to-calendar-dialog.tsx`**:
+      - Interactive modal with trip preview capsule (Destination, Date Range, Stops count, Stays count).
+      - Primary action: `"Open in Google Calendar"` (1-click opens browser's active Google Calendar pre-filled).
+      - Secondary action: `"Download Universal iCal (.ics)"` (for Apple Calendar, Microsoft Outlook, and bulk import).
+      - Tertiary action: `"Copy Google Calendar URL"` with toast feedback.
+      - Helpful reassurance note explaining zero login permissions or account liabilities are required.
+    - **Integration Touchpoints**:
+      - `workspace-header.tsx`: Added `"Add to Calendar"` button in the action control strip next to status and AI copilot, plus a menu item inside the 3-dot dropdown.
+      - `overview-dashboard.tsx`: Added `"Sync to Calendar"` button in the Journey Blueprint editorial header right next to trip dates.
+      - `itinerary-view.tsx`: Added `"Add to Calendar"` in the Curated Timeline header action strip, and forwarded trip context to `ItineraryCard`.
+      - `itinerary-card.tsx`: Added `"Add to Google Calendar"` inside each activity's 3-dot dropdown menu for single-event scheduling.
+      - `features/trip-workspace/index.ts`: Exported `AddToCalendarDialog`.
+
 
 

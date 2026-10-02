@@ -33,11 +33,12 @@ export function TripWorkspaceContainer({
       tripId: trip.id,
       tripTitle: trip.title,
       destination: trip.destination,
+      counts,
     });
     return () => {
       setActiveTrip(null);
     };
-  }, [trip.id, trip.title, trip.destination, setActiveTrip]);
+  }, [trip.id, trip.title, trip.destination, counts, setActiveTrip]);
 
   return (
     <div className="w-full max-w-5xl mx-auto min-w-0 space-y-4">

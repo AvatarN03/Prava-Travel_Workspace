@@ -189,13 +189,35 @@ export function TravelEssentialsShell({
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  // Synchronize when URL search param ?tab= changes (e.g. from desktop sidebar clicks)
+  useEffect(() => {
+    const rawQueryTab = searchParams.get("tab");
+    const normalized =
+      rawQueryTab === "emergency" ? "guide" : (rawQueryTab as TabType | null);
+    const target: TabType =
+      normalized && TABS.some((t) => t.id === normalized) ? normalized : "currency";
+    setActiveTab(target);
+    setVisitedTabs((prev) => {
+      if (prev.has(target)) return prev;
+      const nextSet = new Set(prev);
+      nextSet.add(target);
+      return nextSet;
+    });
+  }, [searchParams]);
+
   return (
     <div className="w-full max-w-5xl mx-auto space-y-6">
       {/* ── Editorial Workspace Header ── */}
       <div className="flex flex-col gap-1.5 pb-5 border-b border-border">
-        <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
-          Travel Toolkit
-        </span>
+        <div className="flex items-center justify-between gap-2">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+            Travel Toolkit
+          </span>
+          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-[#2D9BF0]/10 border border-[#2D9BF0]/20 text-[#2D9BF0] text-xs font-semibold">
+            <ActiveIcon className="w-3.5 h-3.5" />
+            <span>{activeTabMeta.label}</span>
+          </div>
+        </div>
         <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
           Travel{" "}
           <span className="font-serif italic font-normal text-foreground">
@@ -207,8 +229,8 @@ export function TravelEssentialsShell({
         </p>
       </div>
 
-      {/* Navigation Controls: Mobile Select Dropdown (< sm) & Desktop Tab Strip (>= sm) */}
-      <div className="space-y-3">
+      {/* Navigation Controls: Mobile Select Dropdown (< sm) & Tablet Tab Strip (sm to md) — Hidden on Desktop (md:hidden) as sidebar drives navigation */}
+      <div className="md:hidden space-y-3">
         {/* Mobile Tool Selector (< sm) */}
         <div className="sm:hidden space-y-1.5">
           <div className="flex items-center justify-between px-0.5">
@@ -261,7 +283,7 @@ export function TravelEssentialsShell({
           </Select>
         </div>
 
-        {/* Desktop Tabs (> sm) */}
+        {/* Tablet Tabs (sm to md) */}
         <div className="hidden sm:block overflow-x-auto pb-1 no-scrollbar">
           <Tabs
             value={activeTab}

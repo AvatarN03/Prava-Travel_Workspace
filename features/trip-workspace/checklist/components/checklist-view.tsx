@@ -2,15 +2,28 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-
-import { CheckCircle2, CheckSquare, Loader2, Plus, Sparkles } from "lucide-react";
+import {
+  Calendar,
+  CheckCircle2,
+  CheckSquare,
+  Clock,
+  Filter,
+  ListTodo,
+  Loader2,
+  Plus,
+  Search,
+  Sparkles,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { AddTaskDialog } from "./add-task-dialog";
 import { TaskItem } from "./task-item";
+
 import { seedEssentialChecklist } from "../actions";
 
 import type { ChecklistItem } from "@prisma/client";
@@ -23,6 +36,7 @@ interface ChecklistViewProps {
 export function ChecklistView({ tripId, items }: ChecklistViewProps) {
   const router = useRouter();
   const [filter, setFilter] = useState<"ALL" | "PENDING" | "COMPLETED">("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
   const [isSeeding, startSeeding] = useTransition();
 
   const completedCount = useMemo(() => {
@@ -36,16 +50,34 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
     return Math.round((completedCount / items.length) * 100);
   }, [items, completedCount]);
 
+  const readinessStatus = useMemo(() => {
+    if (percentage === 100) return { label: "Ready for Departure", color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20" };
+    if (percentage >= 80) return { label: "Final Touches", color: "text-sky-500 bg-sky-500/10 border-sky-500/20" };
+    if (percentage >= 40) return { label: "Preparations Underway", color: "text-amber-500 bg-amber-500/10 border-amber-500/20" };
+    return { label: "Getting Started", color: "text-muted-foreground bg-muted/50 border-border" };
+  }, [percentage]);
+
+  const filteredItems = useMemo(() => {
+    return items.filter((item) => {
+      const matchesFilter =
+        filter === "PENDING"
+          ? !item.isCompleted
+          : filter === "COMPLETED"
+          ? item.isCompleted
+          : true;
+      const matchesSearch =
+        searchQuery === ""
+          ? true
+          : item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.category && item.category.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchesFilter && matchesSearch;
+    });
+  }, [items, filter, searchQuery]);
+
   const groupedCategories = useMemo(() => {
     const map = new Map<string, ChecklistItem[]>();
 
-    const filtered = items.filter((item) => {
-      if (filter === "PENDING") return !item.isCompleted;
-      if (filter === "COMPLETED") return item.isCompleted;
-      return true;
-    });
-
-    filtered.forEach((item) => {
+    filteredItems.forEach((item) => {
       const cat = item.category || "General";
       const list = map.get(cat) || [];
       list.push(item);
@@ -53,7 +85,7 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
     });
 
     return Array.from(map.entries());
-  }, [items, filter]);
+  }, [filteredItems]);
 
   const handleSeedEssentials = () => {
     startSeeding(async () => {
@@ -69,95 +101,214 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
 
   if (items.length === 0) {
     return (
-      <Card className="border-dashed rounded-md">
-        <CardHeader className="text-center py-14">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-md bg-primary/10 text-primary mb-3">
-            <CheckSquare className="h-6 w-6" />
-          </div>
-          <CardTitle className="text-lg font-bold">No checklist tasks created</CardTitle>
-          <CardDescription className="max-w-md mx-auto text-xs mt-1">
-            Stay on track with packing lists, visa applications, bookings, and pre-departure preparation.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col sm:flex-row items-center justify-center gap-3 pb-14">
-          <AddTaskDialog
-            tripId={tripId}
-            trigger={
-              <Button size="sm" className="cursor-pointer gap-1.5">
-                <Plus className="w-4 h-4" />
-                Add Custom Task
-              </Button>
-            }
-          />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSeedEssentials}
-            disabled={isSeeding}
-            className="cursor-pointer gap-1.5 border-primary/40 hover:bg-primary/5 text-primary"
-          >
-            {isSeeding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            Add Essential Travel Checklist
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  return (
-    <div className="space-y-6">
-      {/* Progress Header Card */}
-      <Card className="rounded-md border border-border bg-card p-4 shadow-2xs space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="space-y-6">
+        {/* Editorial Section Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-1 border-b border-border/50">
           <div>
-            <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-primary" /> Preparation Progress
-            </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {completedCount} of {items.length} tasks completed ({percentage}%)
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+                Preparation Roadmap
+              </span>
+              <span className="text-muted-foreground/40 text-xs">•</span>
+              <span className="text-[11px] font-mono text-muted-foreground">0 tasks</span>
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground font-serif">
+              Checklist & Tasks · <span className="italic font-normal">Readiness & Packing</span>
+            </h1>
+            <p className="text-xs text-muted-foreground mt-1 max-w-xl">
+              Stay on track with packing lists, visa applications, bookings, and pre-departure preparation.
             </p>
           </div>
-
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
               onClick={handleSeedEssentials}
               disabled={isSeeding}
-              className="h-8 gap-1.5 text-xs text-muted-foreground hover:text-primary cursor-pointer"
+              className="h-9 gap-1.5 text-xs font-semibold rounded-sm border-border cursor-pointer shadow-2xs hover:bg-muted/80"
             >
-              {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-primary" />}
-              <span>+ Travel Essentials</span>
+              {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-[#2D9BF0]" />}
+              <span>Load Travel Essentials</span>
             </Button>
-
             <AddTaskDialog
               tripId={tripId}
               trigger={
-                <Button size="sm" className="h-8 gap-1.5 text-xs cursor-pointer">
+                <Button size="sm" className="h-9 gap-1.5 text-xs font-semibold rounded-sm bg-[#2D9BF0] hover:bg-[#2587d4] text-white cursor-pointer shadow-2xs">
                   <Plus className="w-3.5 h-3.5" />
-                  Add Task
+                  <span>Add Custom Task</span>
                 </Button>
               }
             />
           </div>
         </div>
 
-        {/* Progress Bar */}
-        <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-          <div
-            className={`h-full rounded-full transition-all duration-300 ${
-              percentage === 100
-                ? "bg-emerald-500"
-                : percentage >= 50
-                ? "bg-primary"
-                : "bg-sky-500"
-            }`}
-            style={{ width: `${percentage}%` }}
-          />
+        {/* Empty State Card */}
+        <Card className="rounded-sm border border-dashed border-border/80 p-12 text-center bg-card/40 shadow-2xs">
+          <div className="w-12 h-12 rounded-full bg-muted/60 flex items-center justify-center mx-auto mb-3 text-muted-foreground">
+            <CheckSquare className="w-6 h-6 text-[#2D9BF0]" />
+          </div>
+          <h3 className="text-base font-bold text-foreground">No checklist tasks created</h3>
+          <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto">
+            Stay on track with packing lists, passport validity checks, visa documents, and departure day reminders.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSeedEssentials}
+              disabled={isSeeding}
+              className="h-9 gap-1.5 text-xs font-semibold rounded-sm border-border cursor-pointer hover:bg-muted/80 shadow-2xs"
+            >
+              {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-[#2D9BF0]" />}
+              <span>Load 10 Essential Travel Tasks</span>
+            </Button>
+            <AddTaskDialog
+              tripId={tripId}
+              trigger={
+                <Button size="sm" className="h-9 gap-1.5 text-xs font-semibold rounded-sm bg-[#2D9BF0] hover:bg-[#2587d4] text-white cursor-pointer shadow-2xs">
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Create Custom Task</span>
+                </Button>
+              }
+            />
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Editorial Section Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-1 border-b border-border/50">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+              Preparation Roadmap
+            </span>
+            <span className="text-muted-foreground/40 text-xs">•</span>
+            <span className="text-[11px] font-mono text-muted-foreground">
+              {completedCount} of {items.length} completed ({percentage}%)
+            </span>
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground font-serif">
+            Checklist & Tasks · <span className="italic font-normal">Readiness & Packing</span>
+          </h1>
+          <p className="text-xs text-muted-foreground mt-1 max-w-xl">
+            Keep track of gear packing, visa approvals, transit tickets, and pre-departure duties.
+          </p>
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 pt-1 text-xs">
+        {/* Action Triggers */}
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleSeedEssentials}
+            disabled={isSeeding}
+            className="h-9 gap-1.5 text-xs font-medium rounded-sm border-border cursor-pointer hover:bg-muted/80 shadow-2xs"
+          >
+            {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-[#2D9BF0]" />}
+            <span>+ Essentials</span>
+          </Button>
+
+          <AddTaskDialog
+            tripId={tripId}
+            trigger={
+              <Button
+                size="sm"
+                className="h-9 gap-1.5 text-xs font-semibold rounded-sm bg-[#2D9BF0] hover:bg-[#2587d4] text-white cursor-pointer shadow-2xs"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Task</span>
+              </Button>
+            }
+          />
+        </div>
+      </div>
+
+      {/* 3-Stat Metric Strip */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+        <Card className="rounded-sm border border-border/80 bg-card p-4 shadow-2xs hover:border-[#2D9BF0]/40 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#2D9BF0]" /> Readiness Score
+            </span>
+            <span className={`text-[10px] font-medium border rounded-xs px-1.5 py-0.5 ${readinessStatus.color}`}>
+              {readinessStatus.label}
+            </span>
+          </div>
+          <div className="mt-2.5 flex items-baseline gap-1.5">
+            <span className="text-2xl font-bold font-mono tracking-tight text-foreground tabular-nums">
+              {percentage}%
+            </span>
+            <span className="text-xs text-muted-foreground">completed</span>
+          </div>
+          <div className="h-1.5 w-full rounded-xs bg-muted overflow-hidden mt-2.5">
+            <div
+              className={`h-full rounded-xs transition-all duration-300 ${
+                percentage === 100 ? "bg-emerald-500" : percentage >= 50 ? "bg-[#2D9BF0]" : "bg-sky-500"
+              }`}
+              style={{ width: `${percentage}%` }}
+            />
+          </div>
+        </Card>
+
+        <Card className="rounded-sm border border-border/80 bg-card p-4 shadow-2xs hover:border-[#2D9BF0]/40 transition-colors">
+          <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-[#2D9BF0]" /> Tasks Remaining
+          </span>
+          <div className="mt-2.5 flex items-baseline gap-1.5">
+            <span className="text-2xl font-bold font-mono tracking-tight text-foreground tabular-nums">
+              {pendingCount}
+            </span>
+            <span className="text-xs text-muted-foreground">pending</span>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-1 truncate">
+            {pendingCount === 0 ? "All items checked off!" : "Pending action items before trip"}
+          </p>
+        </Card>
+
+        <Card className="rounded-sm border border-border/80 bg-card p-4 shadow-2xs hover:border-[#2D9BF0]/40 transition-colors">
+          <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+            <ListTodo className="w-3.5 h-3.5 text-[#2D9BF0]" /> Total Categories
+          </span>
+          <div className="mt-2.5 flex items-baseline gap-1.5">
+            <span className="text-2xl font-bold font-mono tracking-tight text-foreground tabular-nums">
+              {groupedCategories.length}
+            </span>
+            <span className="text-xs text-muted-foreground">groups</span>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-1 truncate">
+            {completedCount} total tasks fulfilled
+          </p>
+        </Card>
+      </div>
+
+      {/* Filter and Search Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {/* Left: Search Input */}
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search tasks..."
+            className="pl-8.5 h-9 text-xs rounded-sm bg-background border-border"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+
+        {/* Right: Filter Pills */}
+        <div className="flex items-center gap-1.5">
           {[
             { label: "All Tasks", value: "ALL" as const, count: items.length },
             { label: "To Do", value: "PENDING" as const, count: pendingCount },
@@ -169,15 +320,15 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
                 key={value}
                 type="button"
                 onClick={() => setFilter(value)}
-                className={`px-3 py-1 rounded-sm font-medium transition-colors cursor-pointer flex items-center gap-1.5 text-xs ${
+                className={`px-2.5 py-1 rounded-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 text-xs ${
                   isActive
-                    ? "bg-primary text-primary-foreground font-semibold shadow-2xs"
-                    : "bg-secondary text-secondary-foreground hover:bg-accent hover:text-accent-foreground"
+                    ? "bg-[#2D9BF0] text-white font-semibold shadow-2xs"
+                    : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"
                 }`}
               >
                 <span>{label}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-semibold ${
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-semibold font-mono ${
                     isActive ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"
                   }`}
                 >
@@ -187,33 +338,47 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
             );
           })}
         </div>
-      </Card>
+      </div>
 
       {/* Categorized Tasks Groups */}
       <div className="space-y-6">
         {groupedCategories.length === 0 ? (
-          <div className="text-center py-8 text-xs text-muted-foreground rounded-md border border-dashed p-6">
-            No {filter === "PENDING" ? "pending" : "completed"} tasks found in this view.
-          </div>
+          <Card className="rounded-sm border border-dashed border-border/80 p-8 text-center bg-card/40">
+            <p className="text-sm font-semibold text-foreground">
+              No {filter === "PENDING" ? "pending" : filter === "COMPLETED" ? "completed" : ""} tasks found
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Try adjusting your search query or switch task filters.
+            </p>
+          </Card>
         ) : (
-          groupedCategories.map(([category, catItems]) => (
-            <div key={category} className="space-y-2">
-              <div className="flex items-center justify-between pb-1 border-b border-border/60">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {category} ({catItems.length})
-                </h4>
-                <span className="text-[11px] text-muted-foreground">
-                  {catItems.filter((i) => i.isCompleted).length}/{catItems.length} done
-                </span>
-              </div>
+          groupedCategories.map(([category, catItems]) => {
+            const catCompleted = catItems.filter((i) => i.isCompleted).length;
 
-              <div className="space-y-1.5">
-                {catItems.map((item) => (
-                  <TaskItem key={item.id} item={item} />
-                ))}
+            return (
+              <div key={category} className="space-y-2">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border/60">
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                      {category}
+                    </h4>
+                    <span className="text-[11px] font-mono text-muted-foreground">
+                      ({catItems.length})
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-mono text-muted-foreground">
+                    {catCompleted}/{catItems.length} done
+                  </span>
+                </div>
+
+                <div className="space-y-1.5">
+                  {catItems.map((item) => (
+                    <TaskItem key={item.id} item={item} />
+                  ))}
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
