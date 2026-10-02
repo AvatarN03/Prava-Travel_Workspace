@@ -1,9 +1,9 @@
 // Constants & Types
-export * from "./constants";
-export * from "./types";
+export * from "./forum-data";
+export * from "./forum-types";
 
 // Server Actions
-export * from "./actions";
+export * from "./forum-actions";
 
 // UI Components
 export { CommunityForumView } from "./components/community-forum-view";

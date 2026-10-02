@@ -153,7 +153,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
     if (pathname.startsWith("/travel-essentials")) {
       return { title: "Prava Travel Essentials", icon: ShieldAlert };
     }
-    if (pathname.startsWith("/forum") || pathname.startsWith("/community")) {
+    if (pathname.startsWith("/forum")) {
       return { title: "Forum", icon: MessageSquare };
     }
     if (pathname.startsWith("/stories")) {
@@ -162,13 +162,16 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
     if (pathname.startsWith("/templates")) {
       return { title: "Templates", icon: LayoutTemplate };
     }
+    if (pathname.startsWith("/u/")) {
+      return { title: "Creator Profile", icon: User };
+    }
     if (pathname.startsWith("/profile")) {
       return { title: "Account & Settings", icon: User };
     }
     if (pathname.startsWith("/usage")) {
       return { title: "Usage", icon: Sparkles };
     }
-    if (pathname.startsWith("/subscription") || pathname.startsWith("/pricing")) {
+    if (pathname.startsWith("/subscription")) {
       return { title: "Subscription & Plans", icon: CreditCard };
     }
     return { title: "Prava Workspace", icon: Compass };

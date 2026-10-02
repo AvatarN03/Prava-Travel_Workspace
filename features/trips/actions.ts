@@ -390,7 +390,7 @@ export async function toggleTripPublicStatus(
 
     revalidatePath("/trips");
     revalidatePath(`/trips/${tripId}`);
-    revalidatePath("/community");
+    revalidatePath("/forum");
     revalidatePath("/templates");
 
     return { success: true, data: updated };

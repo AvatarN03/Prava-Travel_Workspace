@@ -2852,3 +2852,66 @@
     - **`app/(app)/stories/[slug]/edit/page.tsx`**: Switched imports to canonical `@/features/blog` barrel (`BlogEditor`, `getBlogPostForEdit`).
   - **Verification**:
     - TypeScript compilation check (`node ./node_modules/typescript/bin/tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors.
+
+- **Task 192 (Dead Code Pruning, Empty Export Unlinking & Forwarder Elimination)**:
+  - **Context & User Request**:
+    - Fully eliminate dead code, irrelevant files, and `export {};` empty stub files that were retained during previous audits.
+    - Validate that all dependencies referencing deleted or pruned files are correctly wired to canonical sources.
+    - Formulate a comprehensive, architectural implementation plan for subsequent codebase folder restructuring to maximize readability and maintainability.
+  - **Pruned Files (15 files removed, 1 empty directory removed)**:
+    - **11 Empty Export Stub Files**:
+      - `components/app-shell/nav-Items.tsx` (superseded by `nav-config.ts` and `sidebar.tsx`)
+      - `components/app-shell/theme-changer.tsx` (superseded by `theme-toggle.tsx`)
+      - `features/dashboard/components/trips-operations-table.tsx` (superseded by `active-trip-workspace-card.tsx`)
+      - `features/landing/components/animated-nav.tsx` (superseded by `landing-header.tsx`)
+      - `features/landing/components/feature-highlights.tsx` (superseded by `thesis-section.tsx`)
+      - `features/landing/components/interactive-mockup.tsx` (superseded by `workspace-showcase.tsx`)
+      - `features/landing/components/travel-network-background.tsx` (superseded by `hero-background-pattern.tsx`)
+      - `features/landing/components/workflow-section.tsx` (superseded by `scattered-vs-unified.tsx`)
+      - `features/profile/components/ai-usage-section.tsx` (superseded by dedicated `/usage` and `/subscription` pages)
+      - `features/travel-essentials/emergency/emergency-view.tsx` (superseded by unified `country-guide-view.tsx`)
+      - `features/trips/components/delete-trip-dialog.tsx` (superseded by shared `confirm-delete-dialog.tsx`)
+    - **4 Redundant Forwarder Files**:
+      - `services/unsplash.ts` (redundant forwarder to `services/unsplash/index.ts`)
+      - `features/community/actions.ts` (forwarder to `features/community/forum-actions.ts`)
+      - `features/community/constants.ts` (forwarder to `features/community/forum-data.ts`)
+      - `features/community/types.ts` (forwarder to `features/community/forum-types.ts`)
+    - **1 Empty Directory**:
+      - `scratch/` (in root directory)
+  - **Dependency Reconciliation**:
+    - Updated `features/community/index.ts` to export directly from `./forum-actions`, `./forum-data`, and `./forum-types`.
+    - Verified all consumers of `@/services/unsplash` automatically resolve directly to canonical `services/unsplash/index.ts`.
+  - **Verification**:
+    - TypeScript compilation check (`node ./node_modules/typescript/bin/tsc --noEmit`) — verified clean with exit code 0 and zero compilation errors.
+    - Next.js production build (`npm run build`) — completed successfully with exit code 0, generating all 32 dynamic and static routes cleanly.
+
+- **Task 193 (Pricing Elimination, Redirect Route Purge & Workspace Restructuring)**:
+  - **Context & User Request**:
+    - Completely delete the redundant `/pricing` page and any leftover pricing redirects (since pricing is already featured on the landing page and managed in development mode via `/subscription`).
+    - Completely remove any redirect-only route files (`app/(app)/community`, `app/(app)/community/[slug]`) to keep route trees clean and unambiguous.
+    - Restructure the application folders: rename `app/(app)` to `app/(workspace)` and relocate creator profiles (`app/u/[username]`) into `app/(workspace)/u/[username]` so logged-in users view creator profiles within the persistent `AppShell`.
+    - Extract shared components cleanly to eliminate cross-route imports, and update documentation in `AGENTS.md` and `memory.md`.
+  - **Deletions Executed**:
+    - Deleted `app/(app)/pricing/page.tsx` & folder `app/(app)/pricing/` (redirected to `/subscription`).
+    - Deleted `app/(app)/community/` route folder (including `page.tsx` and `[slug]/page.tsx` which redirected to `/forum`).
+    - Deleted duplicate `app/(workspace)/u/[username]/clone-trip-button.tsx`.
+  - **Restructuring & Component Extraction**:
+    - Renamed route group folder `app/(app)` $\rightarrow$ `app/(workspace)`.
+    - Relocated public creator profile route from `app/u` $\rightarrow$ `app/(workspace)/u`.
+    - Refactored `app/(workspace)/u/[username]/page.tsx` into a native workspace page: removed duplicate standalone `<header>` and `<footer>` elements (now wrapped by the workspace `AppShell`), fixed profile property accesses (`creator.trips.length`, `creator.stories.length`, and formatted `creator.memberSince`), and aligned CTAs with `/forum` and `/dashboard`.
+    - Extracted shared `CloneTripButton` into `features/templates/components/clone-trip-button.tsx` and exported via `features/templates/index.ts`.
+    - Updated `app/(workspace)/stories/[slug]/page.tsx` to import `CloneTripButton` from canonical `@/features/templates`.
+  - **Route Reconciliation & Path Integrity**:
+    - Updated `features/landing/components/community-stories-section.tsx`: updated CTA link from `/community` $\rightarrow$ `/stories`.
+    - Updated `features/profile/actions.ts` & `features/trips/actions.ts`: updated cache invalidation from `revalidatePath("/community")` $\rightarrow$ `revalidatePath("/forum")`.
+    - Updated `features/community/forum-actions.ts`: updated all `revalidatePath("/community")` $\rightarrow$ `revalidatePath("/forum")`.
+    - Updated `components/app-shell/top-bar.tsx`: added breadcrumb recognition for `pathname.startsWith("/u/")` $\rightarrow$ `"Creator Profile"` and removed `/community` and `/pricing`.
+    - Updated `lib/supabase/middleware.ts`: added `/u/` and `/usage` to protected route matcher, pruned `/community` and `/pricing`.
+    - Updated `AGENTS.md` Section 3 (Route Architecture) and Section 4 (Feature Structure).
+  - **Production Verification**:
+    - Ran full production build (`npm run build` / Turbopack with Prisma 7.10 generation).
+    - Result: Exit code 0, 0 TypeScript errors, successfully generating all 30 clean production routes:
+      - Public: `/`, `/_not-found`, `/auth`, `/auth/callback`, `/api/webhooks/polar`
+      - Workspace: `/dashboard`, `/trips`, `/trips/[tripId]/*` (7 tabs), `/travel-essentials`, `/templates`, `/forum`, `/forum/[slug]`, `/stories`, `/stories/[slug]`, `/stories/[slug]/edit`, `/stories/manage`, `/stories/new`, `/u/[username]`, `/profile`, `/subscription`, `/usage`.
+
+

@@ -13,7 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-import { CloneTripButton } from "@/app/u/[username]/clone-trip-button";
+import { CloneTripButton } from "@/features/templates";
 import {
   getPublishedStory,
   MarkdownRenderer,

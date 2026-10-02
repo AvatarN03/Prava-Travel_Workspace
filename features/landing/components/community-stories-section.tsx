@@ -31,7 +31,7 @@ const ALL_STORIES: Story[] = [
     meta: "14 stops · 3 monastery stays",
     imageUrl:
       "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=800&q=80",
-    href: "/community",
+    href: "/stories",
   },
   {
     id: "rajasthan",
@@ -44,7 +44,7 @@ const ALL_STORIES: Story[] = [
     meta: "11 stops · 2 heritage havelis",
     imageUrl:
       "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=800&q=80",
-    href: "/community",
+    href: "/stories",
   },
   {
     id: "kerala",
@@ -57,7 +57,7 @@ const ALL_STORIES: Story[] = [
     meta: "9 stops · 1 kettuvallam stay",
     imageUrl:
       "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80",
-    href: "/community",
+    href: "/stories",
   },
   {
     id: "varanasi",
@@ -70,7 +70,7 @@ const ALL_STORIES: Story[] = [
     meta: "8 stops · 4 morning rituals",
     imageUrl:
       "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=800&q=80",
-    href: "/community",
+    href: "/stories",
   },
   {
     id: "hampi",
@@ -83,7 +83,7 @@ const ALL_STORIES: Story[] = [
     meta: "12 stops · 2 riverside stays",
     imageUrl:
       "https://images.unsplash.com/photo-1600100397608-f010f444f417?auto=format&fit=crop&w=800&q=80",
-    href: "/community",
+    href: "/stories",
   },
   {
     id: "meghalaya",
@@ -96,7 +96,7 @@ const ALL_STORIES: Story[] = [
     meta: "10 stops · 2 eco-homestays",
     imageUrl:
       "https://images.unsplash.com/photo-1626014303757-646633b3ea59?auto=format&fit=crop&w=800&q=80",
-    href: "/community",
+    href: "/stories",
   },
 ];
 

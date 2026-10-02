@@ -79,12 +79,12 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith("/trips") ||
     pathname.startsWith("/travel-essentials") ||
     pathname.startsWith("/forum") ||
-    pathname.startsWith("/community") ||
     pathname.startsWith("/templates") ||
     pathname.startsWith("/profile") ||
     pathname.startsWith("/settings") ||
-    pathname.startsWith("/pricing") ||
     pathname.startsWith("/subscription") ||
+    pathname.startsWith("/usage") ||
+    pathname.startsWith("/u/") ||
     pathname.startsWith("/stories/new") ||
     pathname.startsWith("/stories/manage") ||
     pathname.includes("/edit");

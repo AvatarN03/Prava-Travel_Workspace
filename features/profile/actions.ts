@@ -283,7 +283,7 @@ export async function updateProfile(input: UpdateProfileInput) {
     if (targetUsername) {
       revalidatePath(`/u/${targetUsername}`);
     }
-    revalidatePath("/community");
+    revalidatePath("/forum");
     revalidatePath("/dashboard");
 
     return { success: true, profile: updated };

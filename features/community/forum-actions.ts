@@ -447,7 +447,7 @@ export async function createForumDiscussion(input: CreateDiscussionInput) {
       input.linkedTripId || null,
     ]);
 
-    revalidatePath("/community");
+    revalidatePath("/forum");
     return { success: true, postId: res.rows[0].id, slug: res.rows[0].slug };
   } catch (error) {
     console.error("Error creating forum discussion:", error);
@@ -513,9 +513,9 @@ export async function updateForumDiscussion(postId: string, input: UpdateDiscuss
       postId,
     ]);
 
-    revalidatePath("/community");
+    revalidatePath("/forum");
     if (res.rows[0]?.slug) {
-      revalidatePath(`/community/${res.rows[0].slug}`);
+      revalidatePath(`/forum/${res.rows[0].slug}`);
     }
 
     return { success: true, slug: res.rows[0]?.slug };
@@ -555,7 +555,7 @@ export async function deleteForumDiscussion(postId: string) {
 
     await pool.query("DELETE FROM community_posts WHERE id = $1;", [postId]);
 
-    revalidatePath("/community");
+    revalidatePath("/forum");
     return { success: true };
   } catch (error) {
     console.error("Error deleting forum discussion:", error);
@@ -591,9 +591,9 @@ export async function postForumReply(postId: string, content: string) {
     await pool.query(sql, [postId, user.id, content.trim()]);
 
     const postRes = await pool.query("SELECT slug FROM community_posts WHERE id = $1;", [postId]);
-    revalidatePath("/community");
+    revalidatePath("/forum");
     if (postRes.rows[0]?.slug) {
-      revalidatePath(`/community/${postRes.rows[0].slug}`);
+      revalidatePath(`/forum/${postRes.rows[0].slug}`);
     }
 
     return { success: true };
@@ -644,9 +644,9 @@ export async function updateForumReply(replyId: string, content: string) {
       checkRes.rows[0].post_id,
     ]);
 
-    revalidatePath("/community");
+    revalidatePath("/forum");
     if (postRes.rows[0]?.slug) {
-      revalidatePath(`/community/${postRes.rows[0].slug}`);
+      revalidatePath(`/forum/${postRes.rows[0].slug}`);
     }
 
     return { success: true };
@@ -690,9 +690,9 @@ export async function deleteForumReply(replyId: string) {
       checkRes.rows[0].post_id,
     ]);
 
-    revalidatePath("/community");
+    revalidatePath("/forum");
     if (postRes.rows[0]?.slug) {
-      revalidatePath(`/community/${postRes.rows[0].slug}`);
+      revalidatePath(`/forum/${postRes.rows[0].slug}`);
     }
 
     return { success: true };
@@ -744,7 +744,7 @@ export async function toggleForumPostUpvote(postId: string) {
       );
     }
 
-    revalidatePath("/community");
+    revalidatePath("/forum");
     return { success: true, hasUpvoted: !alreadyUpvoted };
   } catch (error) {
     console.error("Error toggling upvote:", error);
@@ -785,7 +785,7 @@ export async function toggleSaveDiscussion(postId: string) {
       );
     }
 
-    revalidatePath("/community");
+    revalidatePath("/forum");
     return { success: true, hasSaved: !alreadySaved };
   } catch (error) {
     console.error("Error toggling bookmark:", error);

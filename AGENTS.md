@@ -56,31 +56,37 @@ app/
 ├── auth/
 │   ├── page.tsx                       # Auth Hub: Email/Password & Google OAuth (tab=signin|signup)
 │   └── callback/route.ts              # Server-side PKCE & OTP token exchange endpoint
-├── (app)/                             # Protected Application Route Group
-│   ├── layout.tsx                     # App Shell layout (Fixed Sidebar + Sticky TopBar)
-│   ├── dashboard/page.tsx             # Overview: Cross-trip metrics, upcoming trips, urgent checklists
-│   ├── trips/
-│   │   ├── page.tsx                   # Trips list & management (filter by status)
-│   │   └── [tripId]/                  # Trip Workspace Root (Persistent Header + Tab Router)
-│   │       ├── page.tsx               # Tab 1: Overview
-│   │       ├── itinerary/page.tsx     # Tab 2: Daily Itinerary
-│   │       ├── accommodation/page.tsx # Tab 3: Stays & Bookings
-│   │       ├── expenses/page.tsx      # Tab 4: Expense Tracker & Category Breakdowns
-│   │       ├── notes/page.tsx         # Tab 5: Notes & Markdown Docs
-│   │       ├── checklist/page.tsx     # Tab 6: Packing & Todo Checklist
-│   │       └── links/page.tsx         # Tab 7: Reference Links & Bookmarks
-│   ├── travel-essentials/page.tsx     # Travel Essentials: Weather, FX, Country Guide, Maps, Emergency, Language
-│   ├── community/page.tsx             # Community Hub: Curated Itineraries, 1-Click Clone, Discussion Forum
-│   ├── stories/                       # Travel Stories & Creator Guides (Internal Views)
-│   │   ├── page.tsx                   # Stories Discovery Feed
-│   │   ├── new/page.tsx               # Markdown Story Creator
-│   │   └── manage/page.tsx            # Personal Story Manager
-│   ├── profile/page.tsx               # Account & Settings Hub: Overview, General, AI Usage, Security
-│   └── pricing/page.tsx               # Subscription & Quotas: Free vs Pro tier meters & billing history
-├── stories/[slug]/                    # Public Travel Story Reader
-│   ├── page.tsx                       # Public Reader with linked trip 1-click clone
-│   └── edit/page.tsx                  # Story Editor (Protected)
-└── u/[username]/page.tsx              # Public Creator Profile (Published itineraries & stories showcase)
+├── api/
+│   └── webhooks/polar/route.ts        # Polar billing webhook handler
+└── (workspace)/                       # Protected Workspace Route Group (Persistent AppShell)
+    ├── layout.tsx                     # App Shell layout (Fixed Sidebar + Sticky TopBar)
+    ├── dashboard/page.tsx             # Overview: Cross-trip metrics, active trip, urgent checklist
+    ├── trips/
+    │   ├── page.tsx                   # Trips list & management (filter by status)
+    │   └── [tripId]/                  # Trip Workspace Root (Persistent Header + Tab Router)
+    │       ├── overview/page.tsx      # Tab 1: Overview & AI summary
+    │       ├── itinerary/page.tsx     # Tab 2: Daily Itinerary
+    │       ├── accommodations/page.tsx# Tab 3: Stays & Bookings
+    │       ├── expenses/page.tsx      # Tab 4: Expense Tracker & Category Breakdowns
+    │       ├── notes/page.tsx         # Tab 5: Notes & Markdown Docs
+    │       ├── checklist/page.tsx     # Tab 6: Packing & Todo Checklist
+    │       └── links/page.tsx         # Tab 7: Reference Links & Bookmarks
+    ├── travel-essentials/page.tsx     # Travel Essentials: Weather, FX, Country Guide, Maps, Emergency, Language
+    ├── templates/page.tsx             # Community Hub: Curated Itineraries & 1-Click Clone
+    ├── forum/                         # Discussion Forum
+    │   ├── page.tsx                   # Community Discussions Feed
+    │   └── [slug]/page.tsx            # Discussion Thread Reader & Replies
+    ├── stories/                       # Travel Stories & Creator Guides
+    │   ├── page.tsx                   # Stories Discovery Feed
+    │   ├── new/page.tsx               # Markdown Story Creator
+    │   ├── manage/page.tsx            # Personal Story Manager
+    │   └── [slug]/                    # Travel Story Reader & Editor
+    │       ├── page.tsx               # Story Reader with linked trip 1-click clone
+    │       └── edit/page.tsx          # Story Editor
+    ├── u/[username]/page.tsx          # Creator Profile within AppShell (Published itineraries & stories)
+    ├── profile/page.tsx               # Account & Settings Hub: Overview, General, Security
+    ├── subscription/page.tsx          # Subscription & Plans: Polar Checkout & Billing Portal
+    └── usage/page.tsx                 # AI & Storage Quota Meters, Usage Breakdown & History
 ```
 
 ---
@@ -97,11 +103,12 @@ The repository enforces a **feature-first** modular architecture:
 │   └── ui/               # shadcn/ui primitives (button, card, dialog, select, tabs, etc.)
 ├── features/             # Business domains (self-contained components, actions, schemas, types)
 │   ├── blog/             # Travel Stories, Markdown renderer, Story editor
-│   ├── community/        # Public itineraries, 1-click cloner, forum feeds & upvoting
+│   ├── community/        # Discussion forum feeds, threads, comments & upvoting
 │   ├── dashboard/        # Cross-trip summary aggregations, metrics queries
-│   ├── pricing/          # Tier quotas (Free: 10 trips/30 credits; Pro: 25 trips/150 credits), usage history
 │   ├── profile/          # Account hub, username generator, reserved usernames, general preferences
 │   ├── storage/          # Supabase storage server actions & upload handlers
+│   ├── subscription/     # Polar billing integration, checkout & customer portal sessions
+│   ├── templates/        # Curated trip templates & 1-click clone engine
 │   ├── travel-essentials/# Weather, Currency (FX), Country Guide, Leaflet Maps, Emergency, Language
 │   ├── trip-workspace/   # 7 workspace sub-modules + Workspace AI assistant with proposal mutation engine
 │   └── trips/            # Trips CRUD, Unsplash Tour-Vibe cover picker, shadcn DatePickers
@@ -143,7 +150,7 @@ All database operations run through **Prisma 7** against Supabase PostgreSQL:
 1. **Supabase SSR**: Session verification runs via `@supabase/ssr` in Server Components and Server Actions.
 2. **Proxy / Middleware (`proxy.ts` -> `lib/supabase/middleware.ts`)**:
    - Intercepts incoming requests containing `code` or `token_hash` landing on non-callback routes and forwards them to `/auth/callback`.
-   - Protects private routes (`/dashboard`, `/trips`, `/travel-essentials`, `/community`, `/profile`, `/settings`, `/stories/new`, `/stories/manage`).
+   - Protects private routes (`/dashboard`, `/trips`, `/travel-essentials`, `/templates`, `/forum`, `/stories`, `/profile`, `/subscription`, `/usage`, `/u/`).
    - Redirects logged-in users away from `/auth` to `/dashboard`.
 3. **Server-Side PKCE Callback (`app/auth/callback/route.ts`)**:
    - Exchanges auth codes (`exchangeCodeForSession`) and OTP hashes (`verifyOtp`) for session cookies directly on the server, preventing client-side auth race conditions.
@@ -189,7 +196,7 @@ AI in Prava AI operates under strict structured contracts:
 
 ## 9. Key Integrations & Third-Party APIs
 
-1. **Unsplash Tour-Vibe Imagery (`services/unsplash.ts`)**:
+1. **Unsplash Tour-Vibe Imagery (`services/unsplash/`)**:
    - Server-side search API with destination and travel aesthetic query variations.
    - Debounced on blur in `CreateTripDialog` with a 6-image interactive picker and high-res fallbacks.
 2. **OpenWeather API (`features/travel-essentials/weather/`)**:

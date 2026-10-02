@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 
-import { cloneTripTemplate } from "@/features/templates";
+import { cloneTripTemplate } from "../actions";
 
 interface CloneTripButtonProps {
   tripId: string;
