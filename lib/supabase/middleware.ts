@@ -95,8 +95,13 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Redirect authenticated user away from auth pages
-  if (pathname.startsWith("/auth") && !pathname.startsWith("/auth/callback") && user) {
+  // Redirect authenticated user away from auth pages (except during password reset flow)
+  if (
+    pathname.startsWith("/auth") &&
+    !pathname.startsWith("/auth/callback") &&
+    !pathname.startsWith("/auth/reset-password") &&
+    user
+  ) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);

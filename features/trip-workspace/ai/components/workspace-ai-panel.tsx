@@ -1,38 +1,43 @@
 "use client";
 
 import { useState, useEffect, useRef, useTransition } from "react";
-import Image from "next/image";
 
+import Image from "next/image";
 import {
-  Send,
-  Loader2,
-  Trash2,
-  X,
   AlertCircle,
-  CornerDownLeft,
-  History,
-  Plus,
-  MessageSquare,
+  ArrowLeft,
+  ArrowUp,
+  Calendar,
+  Check,
+  ChevronRight,
   CloudSun,
   Coins,
+  Copy,
+  CornerDownLeft,
   Cpu,
+  History,
+  Loader2,
+  Maximize2,
+  Minimize2,
   Pencil,
-  Check,
-  Calendar,
-  Zap,
-  MoreHorizontal,
+  Plus,
   Sparkles,
+  ThumbsDown,
+  ThumbsUp,
+  Trash2,
+  X,
+  Zap,
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { AiProposalCard } from "./ai-proposal-card";
 import { UpgradeDialog } from "@/features/pricing";
 
@@ -47,7 +52,6 @@ import {
   sendTripMessage,
   clearTripConversation,
 } from "../actions";
-
 import { cn } from "@/lib/utils";
 
 import type { MessageDTO, ConversationThreadDTO } from "../actions";
@@ -76,10 +80,11 @@ function renderInlineSpans(text: string): React.ReactNode {
   while (remaining.length > 0) {
     const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
     const italicMatch = remaining.match(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/);
+    const codeMatch = remaining.match(/`([^`]+)`/);
     const linkMatch = remaining.match(/\[(.+?)\]\((.+?)\)/);
 
     let earliestIdx = Infinity;
-    let type: "bold" | "italic" | "link" | null = null;
+    let type: "bold" | "italic" | "code" | "link" | null = null;
     let match: RegExpMatchArray | null = null;
 
     if (boldMatch && boldMatch.index !== undefined && boldMatch.index < earliestIdx) {
@@ -91,6 +96,11 @@ function renderInlineSpans(text: string): React.ReactNode {
       earliestIdx = italicMatch.index;
       type = "italic";
       match = italicMatch;
+    }
+    if (codeMatch && codeMatch.index !== undefined && codeMatch.index < earliestIdx) {
+      earliestIdx = codeMatch.index;
+      type = "code";
+      match = codeMatch;
     }
     if (linkMatch && linkMatch.index !== undefined && linkMatch.index < earliestIdx) {
       earliestIdx = linkMatch.index;
@@ -109,15 +119,24 @@ function renderInlineSpans(text: string): React.ReactNode {
 
     if (type === "bold") {
       parts.push(
-        <strong key={`b-${key++}`} className="font-semibold text-foreground">
+        <strong key={`b-${key++}`} className="font-semibold text-white">
           {match[1]}
         </strong>
       );
     } else if (type === "italic") {
       parts.push(
-        <em key={`i-${key++}`} className="italic text-muted-foreground">
+        <em key={`i-${key++}`} className="italic text-slate-300">
           {match[1]}
         </em>
+      );
+    } else if (type === "code") {
+      parts.push(
+        <code
+          key={`c-${key++}`}
+          className="rounded px-1.5 py-0.5 text-[11px] font-mono bg-[#1E2B45] text-blue-200 border border-[#2D3F63] font-medium"
+        >
+          {match[1]}
+        </code>
       );
     } else if (type === "link") {
       const label = match[1];
@@ -131,7 +150,7 @@ function renderInlineSpans(text: string): React.ReactNode {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-1 my-1.5 text-xs font-semibold rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-all cursor-pointer no-underline shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1 my-1.5 text-xs font-semibold rounded-md bg-[#2D9BF0] text-white hover:bg-[#2087D6] transition-all cursor-pointer no-underline shadow-xs"
           >
             {label}
             <span aria-hidden="true">&rarr;</span>
@@ -144,7 +163,7 @@ function renderInlineSpans(text: string): React.ReactNode {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary underline hover:text-primary/80 font-medium cursor-pointer"
+            className="text-[#2D9BF0] underline hover:text-[#5ab1f5] font-medium cursor-pointer"
           >
             {label}
           </a>
@@ -187,7 +206,7 @@ function FormattedMessageContent({
   const flushList = () => {
     if (currentList.length > 0) {
       nodes.push(
-        <ul key={`ul-${nodes.length}`} className="my-1.5 space-y-1 pl-4 list-disc list-outside text-foreground/90">
+        <ul key={`ul-${nodes.length}`} className="my-1.5 space-y-1 pl-4 list-disc list-outside text-slate-200">
           {currentList.map((item, i) => (
             <li key={i} className="leading-relaxed">
               {renderInlineSpans(item)}
@@ -218,31 +237,31 @@ function FormattedMessageContent({
     // Headers
     if (line.startsWith("### ")) {
       nodes.push(
-        <h5 key={`h5-${idx}`} className="font-semibold text-xs text-foreground mt-2 mb-1">
+        <h5 key={`h5-${idx}`} className="font-semibold text-xs text-white mt-2 mb-1">
           {renderInlineSpans(line.replace("### ", ""))}
         </h5>
       );
     } else if (line.startsWith("## ")) {
       nodes.push(
-        <h4 key={`h4-${idx}`} className="font-bold text-xs text-foreground mt-2.5 mb-1">
+        <h4 key={`h4-${idx}`} className="font-bold text-xs text-white mt-2.5 mb-1">
           {renderInlineSpans(line.replace("## ", ""))}
         </h4>
       );
     } else if (line.startsWith("# ")) {
       nodes.push(
-        <h3 key={`h3-${idx}`} className="font-bold text-sm text-foreground mt-3 mb-1.5">
+        <h3 key={`h3-${idx}`} className="font-bold text-sm text-white mt-3 mb-1.5">
           {renderInlineSpans(line.replace("# ", ""))}
         </h3>
       );
     } else if (line.startsWith("> ")) {
       nodes.push(
-        <blockquote key={`bq-${idx}`} className="pl-2.5 border-l-2 border-primary/40 italic text-muted-foreground my-1.5">
+        <blockquote key={`bq-${idx}`} className="pl-2.5 border-l-2 border-[#2D9BF0] italic text-slate-300 bg-white/5 py-0.5 rounded-r my-1.5">
           {renderInlineSpans(line.replace(/^>\s*/, ""))}
         </blockquote>
       );
     } else {
       nodes.push(
-        <p key={`p-${idx}`} className="my-1 leading-relaxed">
+        <p key={`p-${idx}`} className="my-1 text-slate-200 leading-relaxed">
           {renderInlineSpans(line)}
         </p>
       );
@@ -287,6 +306,12 @@ export function WorkspaceAiPanel({
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
   const [aiAutoPropose, setAiAutoPropose] = useState<boolean>(true);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [reasoningExpanded, setReasoningExpanded] = useState<Record<string, boolean>>({});
+  const [feedback, setFeedback] = useState<Record<string, "up" | "down">>({});
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const chatScrollContainerRef = useRef<HTMLDivElement>(null);
   const isInitialLoadRef = useRef(true);
 
@@ -353,6 +378,13 @@ export function WorkspaceAiPanel({
   };
 
   const handleNewChat = async () => {
+    // If the currently open chat is already empty, no need to create another new chat
+    if (messages.length === 0) {
+      setActiveTab("chat");
+      textareaRef.current?.focus();
+      return;
+    }
+
     setIsCreatingThread(true);
     setError(null);
     const res = await createTripConversationThread(tripId);
@@ -363,6 +395,7 @@ export function WorkspaceAiPanel({
       setEditingThreadId(null);
       await loadInitialConversation(res.conversationId);
       await loadThreadsList();
+      setTimeout(() => textareaRef.current?.focus(), 50);
     } else {
       setError(res.error || "Failed to create new chat session");
     }
@@ -390,7 +423,6 @@ export function WorkspaceAiPanel({
       setEditingThreadId(null);
       return;
     }
-    // Optimistic update
     setThreads((prev) =>
       prev.map((t) => (t.id === threadId ? { ...t, title: trimmed } : t))
     );
@@ -461,7 +493,6 @@ export function WorkspaceAiPanel({
     setInput("");
     setError(null);
 
-    // Optimistically show user message
     const tempUserMsg: MessageDTO = {
       id: "temp-" + Date.now(),
       role: "user",
@@ -486,7 +517,6 @@ export function WorkspaceAiPanel({
       if (res.userQuota) {
         setUserQuota(res.userQuota);
       }
-      // Reload threads list if this was the first message or title might have generated
       if (messages.length === 0) {
         loadThreadsList();
       }
@@ -507,6 +537,35 @@ export function WorkspaceAiPanel({
     });
   };
 
+  const toggleReasoning = (msgId: string) => {
+    setReasoningExpanded((prev) => ({
+      ...prev,
+      [msgId]: !prev[msgId],
+    }));
+  };
+
+  const handleCopyMessage = (msgId: string, text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedMessageId(msgId);
+    toast.success("Copied to clipboard");
+    setTimeout(() => {
+      setCopiedMessageId(null);
+    }, 2000);
+  };
+
+  const handleFeedback = (msgId: string, type: "up" | "down") => {
+    setFeedback((prev) => {
+      const next = { ...prev };
+      if (next[msgId] === type) {
+        delete next[msgId];
+      } else {
+        next[msgId] = type;
+        toast.success(type === "up" ? "Thanks for your feedback!" : "Feedback recorded");
+      }
+      return next;
+    });
+  };
+
   const quickPrompts = [
     `Check live weather forecast for ${destination || tripTitle}`,
     `Convert 150 USD to INR (live ECB exchange rates)`,
@@ -518,11 +577,11 @@ export function WorkspaceAiPanel({
   const isCreditDepleted = Boolean(userQuota && userQuota.remaining <= 0);
 
   return (
-    <>
+    <TooltipProvider delayDuration={150}>
       {/* Mobile Backdrop */}
       {isOpen && (
         <div
-          className="md:hidden fixed inset-0 z-40 bg-background/80 backdrop-blur-xs animate-in fade-in duration-200"
+          className="md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
           onClick={onClose}
         />
       )}
@@ -534,692 +593,680 @@ export function WorkspaceAiPanel({
         }}
         className={cn(
           "shrink-0 flex flex-col h-full select-none overscroll-contain transition-all duration-300 ease-in-out",
-          // Theme matching the left sidebar: dark in light mode, light in dark mode
-          "bg-[#090E1A] text-slate-200 dark:bg-slate-100 dark:text-slate-900",
+          // Deep dark theme in both modes for a consistent developer workspace experience
+          "bg-[#090E1A] text-slate-200 border-l border-[#152033] md:border-l-0",
           // Mobile fixed overlay drawer:
-          "fixed inset-y-0 right-0 z-40 w-full sm:w-[440px] border-l border-[#152033] dark:border-slate-300 md:border-l-0",
+          "fixed inset-y-0 right-0 z-40 w-full sm:w-[460px]",
           // Desktop: static flex child that smoothly expands from width 0
           "md:static md:z-auto",
           isOpen
-            ? "translate-x-0 md:w-[440px] lg:w-[470px] xl:w-[500px] md:opacity-100"
+            ? isExpanded
+              ? "translate-x-0 md:w-[620px] lg:w-[680px] xl:w-[740px] md:opacity-100"
+              : "translate-x-0 md:w-[440px] lg:w-[470px] xl:w-[500px] md:opacity-100"
             : "translate-x-full md:translate-x-0 md:w-0 md:opacity-0 md:overflow-hidden md:pointer-events-none"
         )}
         style={{ overscrollBehavior: "contain" }}
         aria-hidden={!isOpen}
       >
-        <div className="w-full md:w-[440px] lg:w-[470px] xl:w-[500px] h-full flex flex-col min-w-0">
-          {/* Header */}
-          <div className="flex flex-col border-b border-[#152033] dark:border-slate-300 bg-[#090E1A] dark:bg-slate-100 shrink-0">
-            {/* Top Title & Action Bar */}
-            <div className="flex h-16 items-center justify-between px-3.5 gap-2 min-w-0">
-              {/* Left: Avatar & Title */}
-              <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                <div
-                  className="relative h-8 w-8 shrink-0 rounded-full overflow-hidden ring-1.5 ring-[#2D9BF0]/60 shadow-xs select-none bg-[#0E1729]"
-                  title="Ichinose (Prava Travel Assistant)"
-                >
-                  <Image
-                    src="/avatars/ichinose.png"
-                    alt="Ichinose"
-                    width={32}
-                    height={32}
-                    className="h-full w-full object-cover"
-                    priority
+        <div
+          className={cn(
+            "h-full flex flex-col min-w-0 transition-all duration-300",
+            isExpanded
+              ? "w-full md:w-[620px] lg:w-[680px] xl:w-[740px]"
+              : "w-full md:w-[440px] lg:w-[470px] xl:w-[500px]"
+          )}
+        >
+          {/* Header - Sleek Supabase Style */}
+          <div className="flex h-14 items-center justify-between px-3.5 border-b border-[#152033] bg-[#090E1A] shrink-0 gap-2">
+            {/* Left: Chat Title (Double Click to Rename) */}
+            <div className="flex items-center gap-2.5 min-w-0 flex-1">
+              {isEditingHeaderTitle ? (
+                <div className="min-w-0 flex-1">
+                  <input
+                    type="text"
+                    value={headerTitleInput}
+                    onChange={(e) => setHeaderTitleInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleSaveHeaderTitle();
+                      } else if (e.key === "Escape") {
+                        e.preventDefault();
+                        setIsEditingHeaderTitle(false);
+                        setHeaderTitleInput(activeConversationTitle || "Ichinose");
+                      }
+                    }}
+                    onBlur={handleSaveHeaderTitle}
+                    autoFocus
+                    className="h-7 w-full max-w-[240px] rounded-sm border border-[#2D9BF0] bg-[#0E1729] px-2.5 py-0.5 text-xs font-semibold text-white focus:outline-none focus:ring-1 focus:ring-[#2D9BF0] shadow-xs"
                   />
                 </div>
-
-                <div className="min-w-0 flex-1">
-                  {isEditingHeaderTitle ? (
-                    <div className="flex items-center gap-1 min-w-0 flex-1">
-                      <input
-                        type="text"
-                        value={headerTitleInput}
-                        onChange={(e) => setHeaderTitleInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            handleSaveHeaderTitle();
-                          } else if (e.key === "Escape") {
-                            setIsEditingHeaderTitle(false);
-                          }
-                        }}
-                        onBlur={handleSaveHeaderTitle}
-                        autoFocus
-                        className="h-7 w-full max-w-[170px] rounded-xs border border-[#2D9BF0] bg-[#0E1729] dark:bg-white px-2 py-0.5 text-xs font-semibold text-white dark:text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#2D9BF0]"
-                      />
-                      <button
-                        type="button"
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          handleSaveHeaderTitle();
-                        }}
-                        className="text-[#2D9BF0] hover:text-[#2D9BF0]/80 p-0.5 rounded-xs cursor-pointer shrink-0"
-                        title="Save title"
-                      >
-                        <Check className="h-3.5 w-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          setIsEditingHeaderTitle(false);
-                        }}
-                        className="text-slate-400 hover:text-white dark:text-slate-600 dark:hover:text-slate-900 p-0.5 rounded-xs cursor-pointer shrink-0"
-                        title="Cancel"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 min-w-0 flex-wrap">
-                      <span className="text-sm font-semibold text-white dark:text-slate-900 truncate block">
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div
+                      onDoubleClick={handleStartEditHeader}
+                      className="flex items-center gap-2 min-w-0 cursor-pointer select-none group"
+                    >
+                      <span className="text-sm font-semibold text-white group-hover:text-[#2D9BF0] transition-colors truncate">
                         {activeConversationTitle || "Ichinose"}
                       </span>
-                      {aiAutoPropose ? (
-                        <span
-                          className="inline-flex items-center gap-1 rounded-xs bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-400 border border-emerald-500/30 shrink-0"
-                          title="Structured Proposals Active: Ichinose will generate interactive 1-click workspace action cards"
-                        >
-                          <Sparkles className="h-2.5 w-2.5" />
-                          Proposals Active
-                        </span>
-                      ) : (
-                        <span
-                          className="inline-flex items-center gap-1 rounded-xs bg-slate-800 px-1.5 py-0.5 text-[9px] font-semibold text-slate-400 border border-slate-700 shrink-0"
-                          title="Structured Proposals Disabled in Profile Settings. Ichinose responds in conversational prose only."
-                        >
-                          <MessageSquare className="h-2.5 w-2.5" />
-                          Proposals Off
-                        </span>
-                      )}
                     </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Right Controls: Credit Pill, 3-Dot Menu, and Mobile-Only Close */}
-              <div className="flex items-center gap-1.5 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setUpgradeDialogOpen(true)}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-xs text-[10px] font-semibold transition-colors cursor-pointer border ${
-                    isCreditDepleted
-                      ? "bg-rose-500/20 text-rose-300 dark:text-rose-700 border-rose-500/40 hover:bg-rose-500/30"
-                      : "bg-[#131E33] text-slate-200 border-[#1E2B45] hover:bg-[#1A2845] dark:bg-slate-200 dark:text-slate-800 dark:border-slate-300"
-                  }`}
-                  title="Click to view AI quota and upgrade"
-                >
-                  <Zap className="w-3 h-3 text-amber-400 shrink-0" />
-                  <span>
-                    {userQuota
-                      ? userQuota.remaining > 0
-                        ? `${userQuota.remaining}/${userQuota.quota}`
-                        : `0/${userQuota.quota} (Depleted)`
-                      : "Credits"}
-                  </span>
-                </button>
-
-                {/* 3-Dot Actions Menu (Consolidates Rename & Clear) */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-slate-400 hover:text-white hover:bg-white/10 dark:text-slate-500 dark:hover:text-slate-900 dark:hover:bg-slate-200 shrink-0 cursor-pointer"
-                      title="Chat options"
-                      aria-label="Chat options"
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="w-44 rounded-xs bg-[#0E1729] border-[#1E2B45] text-slate-200 dark:bg-white dark:border-slate-200 dark:text-slate-800"
-                  >
-                    <DropdownMenuItem
-                      onClick={handleStartEditHeader}
-                      className="cursor-pointer text-xs flex items-center gap-2 rounded-xs hover:bg-white/10 dark:hover:bg-slate-100"
-                    >
-                      <Pencil className="h-3.5 w-3.5 text-[#2D9BF0]" />
-                      <span>Rename Chat</span>
-                    </DropdownMenuItem>
-
-                    {activeTab === "chat" && messages.length > 0 && (
-                      <DropdownMenuItem
-                        onClick={handleClear}
-                        disabled={isClearing}
-                        className="cursor-pointer text-xs flex items-center gap-2 rounded-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 dark:text-red-600 dark:hover:bg-red-50"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                        <span>Delete Chat</span>
-                      </DropdownMenuItem>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                {/* Mobile-Only Close (X) button: hidden on desktop for space readability */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="flex md:hidden h-8 w-8 text-slate-400 hover:text-white hover:bg-white/10 dark:text-slate-500 dark:hover:text-slate-900 dark:hover:bg-slate-200 shrink-0 cursor-pointer"
-                  onClick={onClose}
-                  title="Close Ichinose (Prava AI Assistant)"
-                  aria-label="Close Ichinose (Prava AI Assistant)"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" align="start">
+                    Double-click to rename chat
+                  </TooltipContent>
+                </Tooltip>
+              )}
             </div>
 
-            {/* Subheader: Left: Chat tab | Right: + New Chat and Threads */}
-            <div className="flex items-center justify-between px-3.5 py-2 bg-[#0B1222] dark:bg-slate-200/80 border-t border-[#152033] dark:border-slate-300 gap-2">
-              {/* Left: Chat Tab */}
-              <button
-                type="button"
-                onClick={() => setActiveTab("chat")}
-                className={`px-3 py-1 rounded-xs text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === "chat"
-                    ? "bg-[#2D9BF0] text-white shadow-xs font-semibold"
-                    : "text-slate-400 hover:text-white hover:bg-white/5 dark:text-slate-600 dark:hover:text-slate-900 dark:hover:bg-slate-300/60"
-                }`}
-              >
-                <span>Chat</span>
-                <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-xs ${
-                    isThreadLimitReached
-                      ? "bg-red-500/20 text-red-400 font-bold"
-                      : "bg-white/15 text-white dark:bg-slate-300 dark:text-slate-900"
-                  }`}
-                >
-                  {messages.length}/{MAX_MESSAGES_LIMIT}
-                </span>
-              </button>
+            {/* Right: Supabase Action Bar (History, New Chat, Expand, 3-Dots, Close) */}
+            <div className="flex items-center gap-1 shrink-0">
+              {/* History / Threads Toggle Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setActiveTab(activeTab === "history" ? "chat" : "history")}
+                    className={cn(
+                      "h-8 w-8 rounded-md transition-colors cursor-pointer",
+                      activeTab === "history"
+                        ? "bg-[#2D9BF0]/20 text-[#2D9BF0]"
+                        : "text-slate-400 hover:text-white hover:bg-white/10"
+                    )}
+                    aria-label="Chat history"
+                  >
+                    <History className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Chat history ({threads.length})</TooltipContent>
+              </Tooltip>
 
-              {/* Right: + New Chat and Threads (shifted to the right side after New Chat) */}
-              <div className="flex items-center gap-1.5">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-7 px-2.5 text-[11px] gap-1 font-medium text-[#2D9BF0] border-[#1E2B45] hover:bg-[#2D9BF0]/15 dark:border-slate-300 dark:hover:bg-slate-300/60 cursor-pointer bg-transparent rounded-xs"
-                  onClick={handleNewChat}
-                  disabled={isCreatingThread}
-                  title="Start a new conversation thread"
-                >
-                  <Plus className="h-3 w-3" />
-                  <span>New Chat</span>
-                </Button>
+              {/* New Chat Button */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleNewChat}
+                    disabled={isCreatingThread}
+                    className="h-8 w-8 rounded-md text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-colors"
+                    aria-label="New chat"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">New chat</TooltipContent>
+              </Tooltip>
 
-                <button
-                  type="button"
-                  onClick={() => setActiveTab(activeTab === "history" ? "chat" : "history")}
-                  className={`px-2.5 py-1 rounded-xs text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 border ${
-                    activeTab === "history"
-                      ? "bg-[#2D9BF0] text-white border-[#2D9BF0] shadow-xs font-semibold"
-                      : "border-[#1E2B45] text-slate-400 hover:text-white hover:bg-white/5 dark:border-slate-300 dark:text-slate-600 dark:hover:text-slate-900 dark:hover:bg-slate-300/60"
-                  }`}
-                  title="View conversation threads history"
-                >
-                  <History className="h-3 w-3" />
-                  <span>Threads</span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-xs bg-white/15 text-white dark:bg-slate-300 dark:text-slate-900">
-                    {threads.length}
-                  </span>
-                </button>
-              </div>
+              {/* Expand / Maximize Toggle */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="hidden sm:inline-flex h-8 w-8 rounded-md text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-colors"
+                    aria-label={isExpanded ? "Collapse width" : "Expand width"}
+                  >
+                    {isExpanded ? (
+                      <Minimize2 className="h-4 w-4" />
+                    ) : (
+                      <Maximize2 className="h-4 w-4" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  {isExpanded ? "Collapse width" : "Expand width"}
+                </TooltipContent>
+              </Tooltip>
+
+              {/* Close Button (Always visible on all screens like Supabase) */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onClose}
+                    className="h-8 w-8 rounded-md text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-colors"
+                    aria-label="Close assistant"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Close assistant</TooltipContent>
+              </Tooltip>
             </div>
           </div>
 
-        {/* VIEW 1: DEDICATED THREADS / HISTORY PANEL */}
-        {activeTab === "history" && (
-          <div
-            className="flex-1 overflow-y-auto overscroll-contain p-3 space-y-2 bg-[#090E1A] dark:bg-slate-100 thin-scrollbar"
-            style={{ overscrollBehavior: "contain" }}
-          >
-            <div className="flex items-center justify-between px-1 pb-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400/80 dark:text-slate-500/90 select-none">
-                All Threads ({threads.length})
-              </span>
-              <span className="text-[10px] text-slate-400 dark:text-slate-500">
-                Max {MAX_MESSAGES_LIMIT} msgs/thread
-              </span>
-            </div>
-
-            {threads.length === 0 ? (
-              <div className="p-6 text-center border border-dashed border-[#152033] dark:border-slate-300 rounded-xs bg-[#0E1729]/60 dark:bg-white/60 space-y-2">
-                <MessageSquare className="w-6 h-6 text-slate-500/50 mx-auto" />
-                <p className="text-xs text-slate-400 dark:text-slate-600">
-                  No conversation threads yet.
-                </p>
+          {/* VIEW 1: DEDICATED THREADS / HISTORY PANEL */}
+          {activeTab === "history" && (
+            <div
+              className="flex-1 overflow-y-auto overscroll-contain p-3.5 space-y-2 bg-[#090E1A] thin-scrollbar"
+              style={{ overscrollBehavior: "contain" }}
+            >
+              <div className="flex items-center justify-between pb-2 border-b border-[#152033]">
                 <Button
+                  variant="ghost"
                   size="sm"
-                  variant="outline"
-                  className="h-7 text-xs gap-1 border-[#1E2B45] text-[#2D9BF0] hover:bg-[#2D9BF0]/15 dark:border-slate-300 rounded-xs"
-                  onClick={handleNewChat}
-                  disabled={isCreatingThread}
+                  onClick={() => setActiveTab("chat")}
+                  className="h-7 px-2 text-xs gap-1.5 text-slate-300 hover:text-white hover:bg-white/10 cursor-pointer transition-colors"
                 >
-                  <Plus className="h-3 w-3" /> Start First Chat
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  <span>Back to Chat</span>
                 </Button>
+                <span className="text-[10px] text-slate-400 font-mono">
+                  {threads.length} threads · max {MAX_MESSAGES_LIMIT} msgs
+                </span>
               </div>
-            ) : (
-              <div className="space-y-1.5">
-                {threads.map((thread) => {
-                  const isEditing = editingThreadId === thread.id;
-                  const isActive = activeConversationId === thread.id;
 
-                  return (
-                    <div
-                      key={thread.id}
-                      onClick={() => {
-                        if (!isEditing) handleSelectThread(thread.id);
-                      }}
-                      className={`group relative flex flex-col p-2.5 rounded-xs border transition-all cursor-pointer ${
-                        isActive
-                          ? "border-[#2D9BF0] bg-[#2D9BF0]/15 dark:bg-blue-50 dark:border-[#2D9BF0] shadow-xs"
-                          : "border-[#152033] bg-[#0E1729] hover:border-slate-700 hover:bg-[#15223D] dark:border-slate-200 dark:bg-white dark:hover:bg-slate-50"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-2 min-w-0">
-                        <div className="flex items-center gap-2 min-w-0 flex-1">
-                          <MessageSquare
-                            className={`h-3.5 w-3.5 shrink-0 ${
-                              isActive ? "text-[#2D9BF0] font-bold" : "text-slate-400 dark:text-slate-500"
-                            }`}
-                          />
-                          {isEditing ? (
-                            <div
-                              className="flex items-center gap-1 min-w-0 flex-1"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <input
-                                type="text"
-                                value={editingThreadTitle}
-                                onChange={(e) => setEditingThreadTitle(e.target.value)}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter") {
+              {threads.length === 0 ? (
+                <div className="p-8 text-center border border-dashed border-[#152033] rounded-lg bg-[#0E1729]/50 space-y-3">
+                  <History className="w-7 h-7 text-slate-500/60 mx-auto" />
+                  <p className="text-xs text-slate-400">
+                    No conversation threads yet.
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 text-xs gap-1 border-[#1E2B45] text-[#2D9BF0] hover:bg-[#2D9BF0]/15 rounded-md cursor-pointer"
+                    onClick={handleNewChat}
+                    disabled={isCreatingThread}
+                  >
+                    <Plus className="h-3 w-3" /> Start First Chat
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-1.5 pt-1">
+                  {threads.map((thread) => {
+                    const isEditing = editingThreadId === thread.id;
+                    const isActive = activeConversationId === thread.id;
+
+                    return (
+                      <div
+                        key={thread.id}
+                        onClick={() => {
+                          if (!isEditing) handleSelectThread(thread.id);
+                        }}
+                        className={cn(
+                          "group relative flex flex-col p-3 rounded-lg border transition-all cursor-pointer",
+                          isActive
+                            ? "border-[#2D9BF0] bg-[#2D9BF0]/10 shadow-xs"
+                            : "border-[#152033] bg-[#0E1729] hover:border-slate-700 hover:bg-[#15223D]"
+                        )}
+                      >
+                        <div className="flex items-center justify-between gap-2 min-w-0">
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            {isEditing ? (
+                              <div
+                                className="flex items-center gap-1 min-w-0 flex-1"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <input
+                                  type="text"
+                                  value={editingThreadTitle}
+                                  onChange={(e) => setEditingThreadTitle(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      e.preventDefault();
+                                      handleSaveThreadTitle(thread.id);
+                                    } else if (e.key === "Escape") {
+                                      e.preventDefault();
+                                      setEditingThreadId(null);
+                                    }
+                                  }}
+                                  onBlur={() => handleSaveThreadTitle(thread.id)}
+                                  autoFocus
+                                  className="h-6 w-full rounded border border-[#2D9BF0] bg-[#0E1729] px-1.5 text-xs text-white focus:outline-none"
+                                />
+                                <button
+                                  type="button"
+                                  onMouseDown={(e) => {
                                     e.preventDefault();
                                     handleSaveThreadTitle(thread.id);
-                                  } else if (e.key === "Escape") {
+                                  }}
+                                  className="text-[#2D9BF0] p-0.5 rounded cursor-pointer shrink-0"
+                                  title="Save title"
+                                >
+                                  <Check className="h-3.5 w-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
                                     setEditingThreadId(null);
-                                  }
-                                }}
-                                onBlur={() => handleSaveThreadTitle(thread.id)}
-                                autoFocus
-                                className="h-6 w-full rounded-xs border border-[#2D9BF0] bg-[#090E1A] dark:bg-white px-1.5 py-0.5 text-xs text-white dark:text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#2D9BF0]"
-                              />
+                                  }}
+                                  className="text-slate-400 hover:text-white p-0.5 rounded cursor-pointer shrink-0"
+                                  title="Cancel"
+                                >
+                                  <X className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
+                            ) : (
+                              <span
+                                className={cn(
+                                  "text-xs truncate font-medium",
+                                  isActive ? "text-[#2D9BF0] font-semibold" : "text-slate-200"
+                                )}
+                              >
+                                {thread.title}
+                              </span>
+                            )}
+                          </div>
+
+                          {!isEditing && (
+                            <div className="flex items-center gap-1 shrink-0">
+                              {isActive && (
+                                <Badge
+                                  variant="secondary"
+                                  className="text-[9px] px-1.5 py-0 h-4 bg-[#2D9BF0]/20 text-[#2D9BF0] border-[#2D9BF0]/30 font-semibold rounded"
+                                >
+                                  Active
+                                </Badge>
+                              )}
                               <button
                                 type="button"
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  handleSaveThreadTitle(thread.id);
-                                }}
-                                className="text-[#2D9BF0] hover:text-[#2D9BF0]/80 p-0.5 rounded-xs cursor-pointer shrink-0"
-                                title="Save title"
+                                onClick={(e) => handleStartEditThread(e, thread)}
+                                className="text-slate-400 hover:text-[#2D9BF0] p-1 rounded transition-colors opacity-60 group-hover:opacity-100 cursor-pointer"
+                                title="Rename chat"
                               >
-                                <Check className="h-3.5 w-3.5" />
+                                <Pencil className="h-3 w-3" />
                               </button>
                               <button
                                 type="button"
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  setEditingThreadId(null);
-                                }}
-                                className="text-slate-400 hover:text-white dark:text-slate-600 dark:hover:text-slate-900 p-0.5 rounded-xs cursor-pointer shrink-0"
-                                title="Cancel"
+                                onClick={(e) => handleDeleteThread(e, thread.id)}
+                                className="text-slate-400 hover:text-red-400 p-1 rounded transition-colors opacity-60 group-hover:opacity-100 cursor-pointer"
+                                title="Delete thread"
                               >
-                                <X className="h-3.5 w-3.5" />
+                                <Trash2 className="h-3 w-3" />
                               </button>
                             </div>
-                          ) : (
-                            <span
-                              className={`text-xs truncate font-medium ${
-                                isActive ? "text-[#2D9BF0] font-semibold" : "text-slate-200 dark:text-slate-800"
-                              }`}
-                            >
-                              {thread.title}
-                            </span>
                           )}
                         </div>
 
-                        {!isEditing && (
-                          <div className="flex items-center gap-1 shrink-0">
-                            {isActive && (
-                              <Badge
-                                variant="secondary"
-                                className="text-[9px] px-1 py-0 h-4 bg-[#2D9BF0]/20 text-[#2D9BF0] border-[#2D9BF0]/30 font-semibold rounded-xs"
-                              >
-                                Active
-                              </Badge>
+                        <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1.5 border-t border-[#152033] mt-1.5">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-2.5 h-2.5 opacity-70" />
+                            {new Date(thread.updatedAt).toLocaleDateString(undefined, {
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </span>
+                          <span
+                            className={cn(
+                              "font-medium",
+                              thread.messageCount >= MAX_MESSAGES_LIMIT && "text-amber-400 font-semibold"
                             )}
-                            <button
-                              type="button"
-                              onClick={(e) => handleStartEditThread(e, thread)}
-                              className="text-slate-400 hover:text-[#2D9BF0] p-1 rounded-xs transition-colors opacity-60 group-hover:opacity-100 cursor-pointer"
-                              title="Rename chat"
-                            >
-                              <Pencil className="h-3 w-3" />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={(e) => handleDeleteThread(e, thread.id)}
-                              className="text-slate-400 hover:text-red-400 p-1 rounded-xs transition-colors opacity-60 group-hover:opacity-100 cursor-pointer"
-                              title="Delete thread"
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 pt-1.5 border-t border-[#152033] dark:border-slate-200 mt-1.5">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-2.5 h-2.5 opacity-70" />
-                          {new Date(thread.updatedAt).toLocaleDateString(undefined, {
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </span>
-                        <span
-                          className={`font-medium ${
-                            thread.messageCount >= MAX_MESSAGES_LIMIT
-                              ? "text-amber-400 dark:text-amber-600 font-semibold"
-                              : ""
-                          }`}
-                        >
-                          {thread.messageCount}/{MAX_MESSAGES_LIMIT} messages
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* VIEW 2: ACTIVE CHAT FEED & CONVERSATION */}
-        {activeTab === "chat" && (
-          <>
-            {/* Depleted Credits Notice Banner */}
-            {isCreditDepleted && (
-              <div className="mx-3 mt-2.5 p-2 rounded-xs bg-rose-500/15 border border-rose-500/30 text-[11px] text-rose-300 dark:text-rose-800 flex items-start gap-1.5 shrink-0">
-                <AlertCircle className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
-                <div className="flex-1 leading-tight">
-                  <span className="font-semibold">Monthly Credits Depleted: </span>
-                  You have used all {userQuota?.quota}/{userQuota?.quota} AI assistant credits for this month. AI generation is paused until quota renewal on the 1st of next month.
-                  <button
-                    type="button"
-                    onClick={() => setUpgradeDialogOpen(true)}
-                    className="ml-1 font-bold underline hover:text-white dark:hover:text-black cursor-pointer"
-                  >
-                    Upgrade to Pro (150 Credits)
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Messages Feed */}
-            <div
-              ref={chatScrollContainerRef}
-              className="flex-1 overflow-y-auto overscroll-contain p-3 space-y-3.5 text-xs bg-[#090E1A] dark:bg-slate-100 thin-scrollbar"
-              style={{ overscrollBehavior: "contain" }}
-            >
-              {messages.length === 0 ? (
-                <div className="space-y-4 py-6 text-center">
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full overflow-hidden ring-2 ring-[#2D9BF0]/60 shadow-md bg-[#0E1729]">
-                    <Image
-                      src="/avatars/ichinose.png"
-                      alt="Ichinose"
-                      width={56}
-                      height={56}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <div className="space-y-1.5 text-center">
-                    <div className="flex items-center justify-center gap-1.5">
-                      <h4 className="text-base font-bold text-white dark:text-slate-900 tracking-tight">
-                        Ichinose
-                      </h4>
-                      <Badge
-                        variant="outline"
-                        className="text-[10px] px-2 py-0.5 font-semibold text-[#2D9BF0] border-[#2D9BF0]/30 bg-[#2D9BF0]/15 rounded-xs"
-                      >
-                        Prava Assistant
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-slate-400 dark:text-slate-600 max-w-xs mx-auto leading-relaxed">
-                      Your Prava workspace assistant. Ask questions, explore live weather and exchange rates, or request <span className="font-semibold text-white dark:text-slate-900">structured proposals</span> to update your trip.
-                    </p>
-                  </div>
-
-                  {/* Quick Prompt Chips */}
-                  <div className="pt-2 space-y-1.5 text-left">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400/80 dark:text-slate-500/90 block px-1 select-none">
-                      Suggested prompts:
-                    </span>
-                    {quickPrompts.map((prompt, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => handleSend(prompt)}
-                        className="w-full text-left p-2.5 rounded-xs border border-[#152033] bg-[#0E1729] hover:border-[#2D9BF0]/50 hover:bg-[#15223D] text-slate-300 hover:text-white dark:border-slate-300 dark:bg-white dark:hover:bg-slate-50 dark:text-slate-700 dark:hover:text-slate-950 transition-colors text-xs flex items-center justify-between group cursor-pointer shadow-xs"
-                      >
-                        <span className="line-clamp-1">{prompt}</span>
-                        <CornerDownLeft className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                messages.map((msg) => (
-                  <div key={msg.id} className="space-y-2">
-                    <div
-                      className={`flex gap-2 ${
-                        msg.role === "user" ? "justify-end" : "justify-start"
-                      }`}
-                    >
-                      {msg.role !== "user" && (
-                        <div
-                          className="flex h-6 w-6 shrink-0 select-none items-center justify-center rounded-full overflow-hidden ring-1 ring-[#2D9BF0]/50 mt-0.5 shadow-xs bg-[#0E1729]"
-                          title="Ichinose (Prava Travel Assistant)"
-                        >
-                          <Image
-                            src="/avatars/ichinose.png"
-                            alt="Ichinose"
-                            width={24}
-                            height={24}
-                            className="h-full w-full object-cover"
-                          />
+                          >
+                            {thread.messageCount}/{MAX_MESSAGES_LIMIT} messages
+                          </span>
                         </div>
-                      )}
-
-                      <div
-                        className={`rounded-xs p-3 max-w-[88%] text-xs leading-relaxed space-y-1.5 break-words [overflow-wrap:anywhere] overflow-hidden ${
-                          msg.role === "user"
-                            ? "bg-[#2D9BF0] text-white font-medium shadow-xs"
-                            : "bg-[#0E1729] border border-[#1E2B45] text-slate-100 dark:bg-white dark:border-slate-200 dark:text-slate-900 shadow-xs"
-                        }`}
-                      >
-                        {/* Live Travel Essential Tool Badge */}
-                        {msg.toolBadge && (
-                          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-xs bg-[#152542] dark:bg-blue-100 border border-[#1E3A6B] dark:border-blue-200 text-blue-300 dark:text-blue-900 text-[10px] font-medium w-fit mb-1 not-italic">
-                            {msg.toolBadge.toLowerCase().includes("weather") ? (
-                              <CloudSun className="w-3 h-3 text-blue-400 dark:text-blue-600 shrink-0" />
-                            ) : msg.toolBadge.toLowerCase().includes("free") ? (
-                              <Zap className="w-3 h-3 text-amber-400 dark:text-amber-600 shrink-0" />
-                            ) : (
-                              <Coins className="w-3 h-3 text-amber-400 dark:text-amber-600 shrink-0" />
-                            )}
-                            <span>{msg.toolBadge}</span>
-                          </div>
-                        )}
-
-                        <FormattedMessageContent
-                          content={msg.content}
-                          isUser={msg.role === "user"}
-                        />
-
-                        {/* Model attribution badge */}
-                        {msg.role === "model" && msg.modelUsed && (
-                          <div className="pt-1 flex items-center gap-1 text-[9px] text-slate-400 dark:text-slate-500 font-mono select-none">
-                            <Cpu className="w-2.5 h-2.5" />
-                            <span>{formatModelName(msg.modelUsed)}</span>
-                          </div>
-                        )}
                       </div>
-
-                      {msg.role === "user" && (
-                        <div
-                          className="relative flex h-6 w-6 shrink-0 select-none items-center justify-center rounded-full overflow-hidden ring-1 ring-[#1E2B45] dark:ring-slate-300 mt-0.5 shadow-xs bg-[#0E1729]"
-                          title="You"
-                        >
-                          <Image
-                            src={userAvatarUrl || "/avatars/default-avatar.jpg"}
-                            alt="You"
-                            width={24}
-                            height={24}
-                            className="h-full w-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = "/avatars/default-avatar.jpg";
-                            }}
-                          />
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Render Structured Proposal Card if attached */}
-                    {msg.proposal && (
-                      <div className="pl-8 pr-1">
-                        <AiProposalCard
-                          proposal={msg.proposal}
-                          tripId={tripId}
-                          onProposalResolved={handleProposalResolved}
-                        />
-                      </div>
-                    )}
-                  </div>
-                ))
-              )}
-
-              {isLoading && (
-                <div className="flex gap-2 items-center text-xs text-slate-400 dark:text-slate-600 py-1.5">
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full overflow-hidden ring-1 ring-[#2D9BF0]/40">
-                    <Image
-                      src="/avatars/ichinose.png"
-                      alt="Ichinose"
-                      width={24}
-                      height={24}
-                      className="h-full w-full object-cover opacity-80 animate-pulse"
-                    />
-                  </div>
-                  <span>Ichinose is analyzing trip data...</span>
+                    );
+                  })}
                 </div>
               )}
+            </div>
+          )}
 
-              {error && (
-                <div className="rounded-xs bg-red-500/10 border border-red-500/20 p-2.5 text-xs text-red-400 dark:text-red-700 flex flex-col gap-1.5">
-                  <div className="flex items-start gap-1.5">
-                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                    <span className="leading-snug">{error}</span>
-                  </div>
-                  {(error.includes("limit") || error.includes("quota") || error.includes("depleted")) && (
+          {/* VIEW 2: ACTIVE CHAT FEED & CONVERSATION */}
+          {activeTab === "chat" && (
+            <>
+              {/* Depleted Credits Notice Banner */}
+              {isCreditDepleted && (
+                <div className="mx-3.5 mt-2 p-2.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-[11px] text-rose-300 flex items-start gap-1.5 shrink-0">
+                  <AlertCircle className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
+                  <div className="flex-1 leading-tight">
+                    <span className="font-semibold">Monthly Credits Depleted: </span>
+                    You have used all {userQuota?.quota}/{userQuota?.quota} AI assistant credits for this month.
                     <button
                       type="button"
                       onClick={() => setUpgradeDialogOpen(true)}
-                      className="text-xs font-bold text-[#2D9BF0] hover:underline text-left pl-5 cursor-pointer"
+                      className="ml-1 font-bold underline hover:text-white cursor-pointer"
                     >
-                      Upgrade to Pro Wanderer for unlimited AI messages &rarr;
+                      Upgrade to Pro (150 Credits)
                     </button>
-                  )}
+                  </div>
                 </div>
               )}
-            </div>
 
-            {/* Ceiling Warning & Start New Chat prompt */}
-            {isThreadLimitReached && (
-              <div className="mx-3 mb-2 p-2 rounded-xs bg-amber-500/15 border border-amber-500/30 text-xs text-amber-300 dark:text-amber-800 flex items-center justify-between gap-2 shrink-0">
-                <div className="flex items-center gap-1.5 min-w-0">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0 text-amber-400" />
-                  <span className="text-[11px] font-medium truncate">
-                    Chat limit reached ({MAX_MESSAGES_LIMIT}/{MAX_MESSAGES_LIMIT} msgs).
-                  </span>
-                </div>
-                <Button
-                  size="sm"
-                  variant="default"
-                  className="h-6 text-[11px] px-2 gap-1 cursor-pointer shrink-0 bg-[#2D9BF0] text-white hover:bg-[#2087D6] rounded-xs"
-                  onClick={handleNewChat}
-                  disabled={isCreatingThread}
-                >
-                  <Plus className="w-3 h-3" />
-                  New Chat
-                </Button>
-              </div>
-            )}
-
-            {/* Input Form & AI Disclaimer */}
-            <div className="p-3 border-t border-[#152033] dark:border-slate-300 bg-[#090E1A] dark:bg-slate-100 shrink-0 space-y-1.5">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSend();
-                }}
-                className="flex items-center gap-2"
+              {/* Messages Feed */}
+              <div
+                ref={chatScrollContainerRef}
+                className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-4 text-xs bg-[#090E1A] thin-scrollbar"
+                style={{ overscrollBehavior: "contain" }}
               >
-                <input
-                  type="text"
-                  placeholder={
-                    isCreditDepleted
-                      ? `Monthly credits exhausted (${userQuota?.quota}/${userQuota?.quota}). Upgrade to Pro.`
-                      : isThreadLimitReached
-                      ? "Thread limit reached. Start a new chat session."
-                      : "Ask Ichinose or request changes (e.g. 'Add dinner at 7 PM')..."
-                  }
-                  className="flex-1 h-9 rounded-xs border border-[#1E2B45] bg-[#0E1729] px-3 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-[#2D9BF0] focus:border-[#2D9BF0] dark:border-slate-300 dark:bg-white dark:text-slate-900 dark:placeholder:text-slate-400 disabled:opacity-50"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  disabled={isLoading || isThreadLimitReached || isCreditDepleted}
-                />
-                {isCreditDepleted ? (
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={() => setUpgradeDialogOpen(true)}
-                    className="h-9 px-3 shrink-0 cursor-pointer bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xs shadow-xs gap-1"
-                  >
-                    <Zap className="w-3.5 h-3.5 fill-current" />
-                    Upgrade
-                  </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    size="sm"
-                    className="h-9 px-3 shrink-0 cursor-pointer bg-[#2D9BF0] text-white hover:bg-[#2087D6] rounded-xs shadow-xs"
-                    disabled={isLoading || !input.trim() || isThreadLimitReached}
-                  >
-                    {isLoading ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    ) : (
-                      <Send className="w-3.5 h-3.5" />
-                    )}
-                  </Button>
-                )}
-              </form>
-              <p className="text-[10px] text-center text-slate-400/80 dark:text-slate-500/80 select-none leading-none">
-                AI can make mistakes. Cross-verify important travel details.
-              </p>
-            </div>
-          </>
-        )}
+                {messages.length === 0 ? (
+                  <div className="space-y-4 py-8 text-center">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full overflow-hidden ring-2 ring-[#2D9BF0]/60 shadow-md bg-[#0E1729]">
+                      <Image
+                        src="/avatars/ichinose.png"
+                        alt="Ichinose"
+                        width={56}
+                        height={56}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="space-y-1.5 text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <h4 className="text-base font-bold text-white tracking-tight">
+                          Ichinose
+                        </h4>
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] px-2 py-0.5 font-semibold text-[#2D9BF0] border-[#2D9BF0]/30 bg-[#2D9BF0]/15 rounded-md"
+                        >
+                          Prava Assistant
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
+                        Your Prava workspace assistant. Ask questions, explore live weather and exchange rates, or request <span className="font-semibold text-white">structured proposals</span> to update your trip.
+                      </p>
+                    </div>
 
-        {/* Upgrade Dialog */}
-        <UpgradeDialog
-          open={upgradeDialogOpen}
-          onOpenChange={setUpgradeDialogOpen}
-          title="Upgrade for Unlimited Ichinose AI Assistant"
-          description="Free Explorer accounts include 30 AI credits per month. Upgrade to Pro Wanderer for 150 AI credits, priority Gemini generation, and unlimited workspace planning."
-        />
+                    {/* Quick Prompt Chips */}
+                    <div className="pt-3 space-y-1.5 text-left max-w-sm mx-auto">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400/80 block px-1 select-none">
+                        Suggested prompts:
+                      </span>
+                      {quickPrompts.map((prompt, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => handleSend(prompt)}
+                          className="w-full text-left p-2.5 rounded-lg border border-[#152033] bg-[#0E1729] hover:border-[#2D9BF0]/50 hover:bg-[#15223D] text-slate-300 hover:text-white transition-colors text-xs flex items-center justify-between group cursor-pointer shadow-xs"
+                        >
+                          <span className="line-clamp-1">{prompt}</span>
+                          <CornerDownLeft className="w-3.5 h-3.5 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1.5" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  messages.map((msg) => (
+                    <div key={msg.id} className="space-y-2">
+                      {msg.role === "user" ? (
+                        /* User Message (Right-aligned bubble) */
+                        <div className="flex justify-end">
+                          <div className="rounded-xl px-3.5 py-2.5 max-w-[85%] text-xs leading-relaxed bg-[#2D9BF0] text-white font-medium shadow-xs break-words [overflow-wrap:anywhere]">
+                            {msg.content}
+                          </div>
+                        </div>
+                      ) : (
+                        /* Assistant Message (Supabase Clean Style) */
+                        <div className="space-y-2 max-w-[95%]">
+                          {/* Supabase Execution Status & Reasoning Toggle */}
+                          <div className="space-y-1">
+                            <div className="text-[11px] text-slate-400 font-mono flex items-center gap-2">
+                              <span>0 rows · Limit 100 rows</span>
+                              <span className="flex items-center gap-1 text-emerald-400 font-medium">
+                                <Check className="h-3 w-3" />
+                                {msg.toolBadge ? `${msg.toolBadge} executed` : "Query executed"}
+                              </span>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => toggleReasoning(msg.id)}
+                              className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-200 font-mono transition-colors cursor-pointer select-none py-0.5"
+                            >
+                              <ChevronRight
+                                className={cn(
+                                  "h-3 w-3 transition-transform",
+                                  reasoningExpanded[msg.id] && "rotate-90"
+                                )}
+                              />
+                              <span>Reasoned</span>
+                            </button>
+
+                            {reasoningExpanded[msg.id] && (
+                              <div className="p-2.5 rounded-md border border-[#1E2B45] bg-[#0E1729]/80 text-[11px] text-slate-400 font-mono leading-relaxed space-y-1">
+                                <div>• Evaluated user intent against active trip schedule and budget</div>
+                                <div>• Grounded response in persisted workspace entities</div>
+                                <div>• Formatted structured output for workspace planning</div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Live Travel Essential Tool Badge if present */}
+                          {msg.toolBadge && (
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#152542] border border-[#1E3A6B] text-blue-300 text-[10px] font-medium w-fit not-italic">
+                              {msg.toolBadge.toLowerCase().includes("weather") ? (
+                                <CloudSun className="w-3 h-3 text-blue-400 shrink-0" />
+                              ) : msg.toolBadge.toLowerCase().includes("free") ? (
+                                <Zap className="w-3 h-3 text-amber-400 shrink-0" />
+                              ) : (
+                                <Coins className="w-3 h-3 text-amber-400 shrink-0" />
+                              )}
+                              <span>{msg.toolBadge}</span>
+                            </div>
+                          )}
+
+                          {/* Message Content */}
+                          <div className="text-slate-200 text-xs sm:text-[13px] leading-relaxed break-words [overflow-wrap:anywhere]">
+                            <FormattedMessageContent
+                              content={msg.content}
+                              isUser={false}
+                            />
+                          </div>
+
+                          {/* Model attribution badge */}
+                          {msg.modelUsed && (
+                            <div className="pt-0.5 flex items-center gap-1 text-[9px] text-slate-500 font-mono select-none">
+                              <Cpu className="w-2.5 h-2.5" />
+                              <span>{formatModelName(msg.modelUsed)}</span>
+                            </div>
+                          )}
+
+                          {/* Supabase Action Toolbar (Thumbs Up, Thumbs Down, Copy) */}
+                          <div className="flex items-center gap-1 pt-1 text-slate-400">
+                            <button
+                              type="button"
+                              onClick={() => handleFeedback(msg.id, "up")}
+                              className={cn(
+                                "p-1 rounded hover:bg-white/10 hover:text-white transition-colors cursor-pointer",
+                                feedback[msg.id] === "up" && "text-[#2D9BF0] bg-[#2D9BF0]/15"
+                              )}
+                              title="Helpful response"
+                              aria-label="Helpful response"
+                            >
+                              <ThumbsUp className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleFeedback(msg.id, "down")}
+                              className={cn(
+                                "p-1 rounded hover:bg-white/10 hover:text-white transition-colors cursor-pointer",
+                                feedback[msg.id] === "down" && "text-rose-400 bg-rose-500/15"
+                              )}
+                              title="Unhelpful response"
+                              aria-label="Unhelpful response"
+                            >
+                              <ThumbsDown className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyMessage(msg.id, msg.content)}
+                              className="p-1 rounded hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                              title="Copy response"
+                              aria-label="Copy response"
+                            >
+                              {copiedMessageId === msg.id ? (
+                                <Check className="h-3.5 w-3.5 text-emerald-400" />
+                              ) : (
+                                <Copy className="h-3.5 w-3.5" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Render Structured Proposal Card if attached */}
+                      {msg.proposal && (
+                        <div className="pl-1 pr-1 pt-1">
+                          <AiProposalCard
+                            proposal={msg.proposal}
+                            tripId={tripId}
+                            onProposalResolved={handleProposalResolved}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
+
+                {isLoading && (
+                  <div className="flex gap-2 items-center text-xs text-slate-400 py-1.5">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full overflow-hidden ring-1 ring-[#2D9BF0]/40">
+                      <Image
+                        src="/avatars/ichinose.png"
+                        alt="Ichinose"
+                        width={24}
+                        height={24}
+                        className="h-full w-full object-cover opacity-80 animate-pulse"
+                      />
+                    </div>
+                    <span>Ichinose is analyzing trip data...</span>
+                  </div>
+                )}
+
+                {error && (
+                  <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-2.5 text-xs text-red-400 flex flex-col gap-1.5">
+                    <div className="flex items-start gap-1.5">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                      <span className="leading-snug">{error}</span>
+                    </div>
+                    {(error.includes("limit") || error.includes("quota") || error.includes("depleted")) && (
+                      <button
+                        type="button"
+                        onClick={() => setUpgradeDialogOpen(true)}
+                        className="text-xs font-bold text-[#2D9BF0] hover:underline text-left pl-5 cursor-pointer"
+                      >
+                        Upgrade to Pro Wanderer for unlimited AI messages &rarr;
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Ceiling Warning & Start New Chat prompt */}
+              {isThreadLimitReached && (
+                <div className="mx-3.5 mb-2 p-2 rounded-lg bg-amber-500/15 border border-amber-500/30 text-xs text-amber-300 flex items-center justify-between gap-2 shrink-0">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0 text-amber-400" />
+                    <span className="text-[11px] font-medium truncate">
+                      Chat limit reached ({MAX_MESSAGES_LIMIT}/{MAX_MESSAGES_LIMIT} msgs).
+                    </span>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="default"
+                    className="h-6 text-[11px] px-2 gap-1 cursor-pointer shrink-0 bg-[#2D9BF0] text-white hover:bg-[#2087D6] rounded-md"
+                    onClick={handleNewChat}
+                    disabled={isCreatingThread}
+                  >
+                    <Plus className="w-3 h-3" />
+                    New Chat
+                  </Button>
+                </div>
+              )}
+
+              {/* Input Form & AI Disclaimer (Large Input Box Supabase Style) */}
+              <div className="p-3.5 border-t border-[#152033] bg-[#090E1A] shrink-0 space-y-2">
+                {/* Supabase Disclaimer right above the input box */}
+                <p className="text-[11px] text-center text-slate-400/80 select-none leading-none">
+                  The Assistant can make mistakes. Double check responses.
+                </p>
+
+                {/* Large Rounded Input Box */}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSend();
+                  }}
+                  className="rounded-xl border border-[#1E2B45] bg-[#0E1729] focus-within:border-[#2D9BF0] focus-within:ring-1 focus-within:ring-[#2D9BF0]/40 transition-all p-3 shadow-xs space-y-2"
+                >
+                  <textarea
+                    ref={textareaRef}
+                    rows={3}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend();
+                      }
+                    }}
+                    placeholder={
+                      isCreditDepleted
+                        ? `Monthly credits exhausted (${userQuota?.quota}/${userQuota?.quota}). Upgrade to Pro.`
+                        : isThreadLimitReached
+                        ? "Thread limit reached. Start a new chat session."
+                        : "Ask a follow up question..."
+                    }
+                    disabled={isLoading || isThreadLimitReached || isCreditDepleted}
+                    className="w-full resize-none border-0 bg-transparent p-0 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-0 leading-relaxed min-h-[72px] max-h-[160px] disabled:opacity-50"
+                  />
+
+                  {/* Bottom Controls Row inside input box */}
+                  <div className="flex items-center justify-between pt-1">
+                    <div className="flex items-center gap-2 select-none min-w-0">
+                      {userQuota && (
+                        <div
+                          className="flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#121E36] border border-[#1E2B45] text-slate-300 font-sans text-[10px] font-medium shadow-2xs shrink-0"
+                          title={`${userQuota.remaining} credits remaining out of ${userQuota.quota}`}
+                        >
+                          <Zap className="h-2.5 w-2.5 text-amber-400 fill-amber-400 shrink-0" />
+                          <span>
+                            {userQuota.used}/{userQuota.quota} used
+                          </span>
+                        </div>
+                      )}
+                      <span className="hidden sm:inline text-[10px] text-slate-500 truncate">
+                        ↵ to send · Shift+↵ for new line
+                      </span>
+                    </div>
+
+                    {isCreditDepleted ? (
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => setUpgradeDialogOpen(true)}
+                        className="h-7 px-2.5 text-xs font-semibold rounded-md bg-amber-500 hover:bg-amber-600 text-slate-950 cursor-pointer shadow-xs gap-1"
+                      >
+                        <Zap className="h-3 w-3 fill-current" />
+                        Upgrade
+                      </Button>
+                    ) : (
+                      <button
+                        type="submit"
+                        disabled={isLoading || !input.trim() || isThreadLimitReached}
+                        className="h-7 w-7 rounded-full bg-slate-800 text-slate-400 hover:bg-[#2D9BF0] hover:text-white disabled:opacity-20 disabled:pointer-events-none flex items-center justify-center transition-all cursor-pointer shadow-xs shrink-0"
+                        aria-label="Send message"
+                      >
+                        {isLoading ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <ArrowUp className="h-4 w-4" />
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </div>
+            </>
+          )}
+
+          {/* Upgrade Dialog (Only displayed when credits are actually exhausted) */}
+          <UpgradeDialog
+            open={upgradeDialogOpen}
+            onOpenChange={setUpgradeDialogOpen}
+            title="Upgrade for Unlimited Ichinose AI Assistant"
+            description="Free Explorer accounts include 30 AI credits per month. Upgrade to Pro Wanderer for 150 AI credits, priority Gemini generation, and unlimited workspace planning."
+          />
         </div>
       </aside>
-    </>
+    </TooltipProvider>
   );
 }

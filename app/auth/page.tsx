@@ -9,6 +9,7 @@ import {
   AlertTriangle,
   ArrowLeft,
   Check,
+  CheckCircle2,
   Compass,
   Eye,
   EyeOff,
@@ -31,8 +32,10 @@ import { cn } from "@/lib/utils";
 function AuthForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const initialTab = searchParams.get("tab") === "signup";
-  const [isSignUp, setIsSignUp] = useState(initialTab);
+  const initialTab = searchParams.get("tab");
+  const [authMode, setAuthMode] = useState<"signin" | "signup" | "forgot">(
+    initialTab === "signup" ? "signup" : initialTab === "forgot" ? "forgot" : "signin"
+  );
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -42,12 +45,16 @@ function AuthForm() {
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [forgotSent, setForgotSent] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get("tab") === "signup") {
-      setIsSignUp(true);
-    } else if (searchParams.get("tab") === "signin") {
-      setIsSignUp(false);
+    const tab = searchParams.get("tab");
+    if (tab === "signup") {
+      setAuthMode("signup");
+    } else if (tab === "forgot") {
+      setAuthMode("forgot");
+    } else if (tab === "signin") {
+      setAuthMode("signin");
     }
 
     const errorParam = searchParams.get("error");
@@ -86,13 +93,43 @@ function AuthForm() {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) {
+      toast.error("Please enter your registered email address.");
+      return;
+    }
+
+    setErrorMessage(null);
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset-password`,
+      });
+
+      if (error) {
+        toast.error(error.message);
+        setErrorMessage(error.message);
+      } else {
+        setForgotSent(true);
+        toast.success("Password reset link sent! Please check your inbox.");
+      }
+    } catch {
+      toast.error("Failed to send password reset email. Please try again.");
+      setErrorMessage("Failed to send password reset email. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
     setLoading(true);
 
     try {
-      if (isSignUp) {
+      if (authMode === "signup") {
         if (!fullName.trim()) {
           toast.error("Please enter your full name.");
           setLoading(false);
@@ -134,6 +171,16 @@ function AuthForm() {
         if (signUpError) {
           toast.error(signUpError.message);
           setErrorMessage(signUpError.message);
+        } else if (
+          data?.user &&
+          (!data.user.identities || data.user.identities.length === 0)
+        ) {
+          // Supabase duplicate email detection when email confirmation is active
+          toast.error("An account with this email already exists. Please sign in instead.", {
+            duration: 6000,
+          });
+          setErrorMessage("An account with this email already exists. Please sign in instead.");
+          setAuthMode("signin");
         } else if (data?.session) {
           toast.success("Account created successfully!");
           router.push("/dashboard");
@@ -149,7 +196,7 @@ function AuthForm() {
           setEmail("");
           setPassword("");
           setShowPassword(false);
-          setIsSignUp(false);
+          setAuthMode("signin");
         }
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -317,50 +364,74 @@ function AuthForm() {
               {/* Form Header */}
               <div className="space-y-1.5">
                 <h1 className="text-2xl font-light tracking-tight text-zinc-950 dark:text-zinc-50">
-                  {isSignUp ? "Create your workspace account" : "Welcome back"}
+                  {authMode === "signup"
+                    ? "Create your workspace account"
+                    : authMode === "forgot"
+                    ? "Reset your password"
+                    : "Welcome back"}
                 </h1>
                 <p className="text-xs text-zinc-600 dark:text-zinc-400 font-normal">
-                  {isSignUp
+                  {authMode === "signup"
                     ? "Sign up to start organizing trips with structured AI assistance."
+                    : authMode === "forgot"
+                    ? "Enter your registered email address and we'll send you a recovery link."
                     : "Sign in to access your trips, workspaces, and custom itineraries."}
                 </p>
               </div>
 
-              {/* Segment Tab Switcher */}
-              <div className="grid grid-cols-2 p-1 rounded-sm bg-zinc-100 dark:bg-zinc-800/70 border border-zinc-200/60 dark:border-zinc-700/60 text-xs">
-                <button
-                  type="button"
-                  disabled={isActionDisabled}
-                  onClick={() => {
-                    setIsSignUp(false);
-                    setErrorMessage(null);
-                  }}
-                  className={cn(
-                    "py-1.5 text-xs font-medium rounded-xs transition-all cursor-pointer",
-                    !isSignUp
-                      ? "bg-white dark:bg-zinc-900 text-zinc-950 dark:text-zinc-50 shadow-2xs font-semibold"
-                      : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-200"
-                  )}
-                >
-                  Sign In
-                </button>
-                <button
-                  type="button"
-                  disabled={isActionDisabled}
-                  onClick={() => {
-                    setIsSignUp(true);
-                    setErrorMessage(null);
-                  }}
-                  className={cn(
-                    "py-1.5 text-xs font-medium rounded-xs transition-all cursor-pointer",
-                    isSignUp
-                      ? "bg-white dark:bg-zinc-900 text-zinc-950 dark:text-zinc-50 shadow-2xs font-semibold"
-                      : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-200"
-                  )}
-                >
-                  Create Account
-                </button>
-              </div>
+              {/* Top Navigation / Segment Tab Switcher */}
+              {authMode === "forgot" ? (
+                <div className="flex items-center justify-between pb-0.5">
+                  <button
+                    type="button"
+                    disabled={isActionDisabled}
+                    onClick={() => {
+                      setAuthMode("signin");
+                      setErrorMessage(null);
+                      setForgotSent(false);
+                    }}
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
+                  >
+                    <ArrowLeft className="h-3.5 w-3.5" />
+                    <span>Back to Sign In</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 p-1 rounded-sm bg-zinc-100 dark:bg-zinc-800/70 border border-zinc-200/60 dark:border-zinc-700/60 text-xs">
+                  <button
+                    type="button"
+                    disabled={isActionDisabled}
+                    onClick={() => {
+                      setAuthMode("signin");
+                      setErrorMessage(null);
+                    }}
+                    className={cn(
+                      "py-1.5 text-xs font-medium rounded-xs transition-all cursor-pointer",
+                      authMode === "signin"
+                        ? "bg-white dark:bg-zinc-900 text-zinc-950 dark:text-zinc-50 shadow-2xs font-semibold"
+                        : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-200"
+                    )}
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isActionDisabled}
+                    onClick={() => {
+                      setAuthMode("signup");
+                      setErrorMessage(null);
+                    }}
+                    className={cn(
+                      "py-1.5 text-xs font-medium rounded-xs transition-all cursor-pointer",
+                      authMode === "signup"
+                        ? "bg-white dark:bg-zinc-900 text-zinc-950 dark:text-zinc-50 shadow-2xs font-semibold"
+                        : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-200"
+                    )}
+                  >
+                    Create Account
+                  </button>
+                </div>
+              )}
 
               {/* Error banner if URL parameter or action contains error */}
               {errorMessage && (
@@ -370,149 +441,250 @@ function AuthForm() {
                 </div>
               )}
 
-              {/* Google OAuth Button */}
-              <Button
-                type="button"
-                variant="outline"
-                disabled={isActionDisabled}
-                onClick={handleGoogleSignIn}
-                className="w-full h-10 font-medium text-xs rounded-sm border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-800/40 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 shadow-2xs flex items-center justify-center gap-2.5 cursor-pointer transition-colors"
-              >
-                {oauthLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin text-zinc-500" />
+              {/* Forgot Password Flow */}
+              {authMode === "forgot" ? (
+                forgotSent ? (
+                  <div className="space-y-4 py-2 text-center">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#2D9BF0]/10 text-[#2D9BF0]">
+                      <Mail className="h-6 w-6" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <h3 className="text-base font-medium text-zinc-900 dark:text-zinc-100">
+                        Check your email
+                      </h3>
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-xs mx-auto">
+                        We sent a password reset link to{" "}
+                        <span className="font-semibold text-zinc-900 dark:text-zinc-100">{email}</span>.
+                        Click the link in the email to set a new password.
+                      </p>
+                    </div>
+                    <div className="pt-2 flex flex-col gap-2">
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          setAuthMode("signin");
+                          setForgotSent(false);
+                          setErrorMessage(null);
+                        }}
+                        className="w-full h-10 font-medium text-xs rounded-sm shadow-xs bg-zinc-950 hover:bg-black text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 transition-all cursor-pointer"
+                      >
+                        Return to Sign In
+                      </Button>
+                      <button
+                        type="button"
+                        disabled={loading}
+                        onClick={handleForgotPassword}
+                        className="text-xs text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors cursor-pointer py-1"
+                      >
+                        {loading ? "Sending..." : "Didn't receive the email? Resend"}
+                      </button>
+                    </div>
+                  </div>
                 ) : (
-                  <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
-                    <path
-                      fill="#4285F4"
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                    />
-                    <path
-                      fill="#34A853"
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                    />
-                    <path
-                      fill="#FBBC05"
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                    />
-                    <path
-                      fill="#EA4335"
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                    />
-                  </svg>
-                )}
-                <span>
-                  {oauthLoading
-                    ? "Connecting to Google..."
-                    : isSignUp
-                    ? "Sign up with Google"
-                    : "Continue with Google"}
-                </span>
-              </Button>
+                  <div className="space-y-4">
+                    <form onSubmit={handleForgotPassword} className="space-y-4">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
+                          <Mail className="h-3.5 w-3.5 text-zinc-400" /> Email address
+                        </label>
+                        <Input
+                          type="email"
+                          required
+                          disabled={isActionDisabled}
+                          autoFocus
+                          placeholder="you@example.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="h-10 rounded-sm border-zinc-200 dark:border-zinc-800 bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-zinc-950 dark:focus-visible:ring-zinc-200 placeholder:text-zinc-400"
+                        />
+                      </div>
 
-              {/* Minimalist Divider */}
-              <div className="relative flex items-center justify-center my-1">
-                <div className="border-t border-zinc-200 dark:border-zinc-800 w-full" />
-                <span className="bg-white dark:bg-zinc-900 px-3 text-[10px] font-sans font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-widest shrink-0">
-                  Or continue with email
-                </span>
-                <div className="border-t border-zinc-200 dark:border-zinc-800 w-full" />
-              </div>
+                      <Button
+                        type="submit"
+                        className="w-full h-10 font-medium text-xs rounded-sm shadow-xs bg-zinc-950 hover:bg-black text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 transition-all cursor-pointer flex items-center justify-center gap-2"
+                        disabled={isActionDisabled}
+                      >
+                        {loading && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
+                        Send Reset Link
+                      </Button>
+                    </form>
 
-              {/* Credentials Form */}
-              <form onSubmit={handleAuth} className="space-y-4">
-                {isSignUp && (
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
-                      <User className="h-3.5 w-3.5 text-zinc-400" /> Full Name
-                    </label>
-                    <Input
-                      type="text"
-                      required
-                      disabled={isActionDisabled}
-                      autoFocus
-                      placeholder="e.g. Maya Lin"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="h-10 rounded-sm border-zinc-200 dark:border-zinc-800 bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-zinc-950 dark:focus-visible:ring-zinc-200 placeholder:text-zinc-400"
-                    />
+                    <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 text-center text-xs text-zinc-500 dark:text-zinc-400">
+                      Remembered your password?{" "}
+                      <button
+                        type="button"
+                        disabled={isActionDisabled}
+                        onClick={() => {
+                          setAuthMode("signin");
+                          setErrorMessage(null);
+                        }}
+                        className="font-medium text-zinc-950 dark:text-zinc-50 hover:underline underline-offset-4 cursor-pointer ml-1"
+                      >
+                        Sign In
+                      </button>
+                    </div>
                   </div>
-                )}
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
-                    <Mail className="h-3.5 w-3.5 text-zinc-400" /> Email address
-                  </label>
-                  <Input
-                    type="email"
-                    required
+                )
+              ) : (
+                <>
+                  {/* Google OAuth Button */}
+                  <Button
+                    type="button"
+                    variant="outline"
                     disabled={isActionDisabled}
-                    autoFocus={!isSignUp}
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-10 rounded-sm border-zinc-200 dark:border-zinc-800 bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-zinc-950 dark:focus-visible:ring-zinc-200 placeholder:text-zinc-400"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
-                      <KeyRound className="h-3.5 w-3.5 text-zinc-400" /> Password
-                    </label>
-                    {isSignUp && (
-                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500">Min. 6 characters</span>
+                    onClick={handleGoogleSignIn}
+                    className="w-full h-10 font-medium text-xs rounded-sm border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-800/40 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 shadow-2xs flex items-center justify-center gap-2.5 cursor-pointer transition-colors"
+                  >
+                    {oauthLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-zinc-500" />
+                    ) : (
+                      <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
+                        <path
+                          fill="#4285F4"
+                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                        />
+                        <path
+                          fill="#34A853"
+                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                        />
+                        <path
+                          fill="#FBBC05"
+                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                        />
+                        <path
+                          fill="#EA4335"
+                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                        />
+                      </svg>
                     )}
+                    <span>
+                      {oauthLoading
+                        ? "Connecting to Google..."
+                        : authMode === "signup"
+                        ? "Sign up with Google"
+                        : "Continue with Google"}
+                    </span>
+                  </Button>
+
+                  {/* Minimalist Divider */}
+                  <div className="relative flex items-center justify-center my-1">
+                    <div className="border-t border-zinc-200 dark:border-zinc-800 w-full" />
+                    <span className="bg-white dark:bg-zinc-900 px-3 text-[10px] font-sans font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-widest shrink-0">
+                      Or continue with email
+                    </span>
+                    <div className="border-t border-zinc-200 dark:border-zinc-800 w-full" />
                   </div>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      required
+
+                  {/* Credentials Form */}
+                  <form onSubmit={handleAuth} className="space-y-4">
+                    {authMode === "signup" && (
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
+                          <User className="h-3.5 w-3.5 text-zinc-400" /> Full Name
+                        </label>
+                        <Input
+                          type="text"
+                          required
+                          disabled={isActionDisabled}
+                          autoFocus
+                          placeholder="e.g. Maya Lin"
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          className="h-10 rounded-sm border-zinc-200 dark:border-zinc-800 bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-zinc-950 dark:focus-visible:ring-zinc-200 placeholder:text-zinc-400"
+                        />
+                      </div>
+                    )}
+
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
+                        <Mail className="h-3.5 w-3.5 text-zinc-400" /> Email address
+                      </label>
+                      <Input
+                        type="email"
+                        required
+                        disabled={isActionDisabled}
+                        autoFocus={authMode === "signin"}
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="h-10 rounded-sm border-zinc-200 dark:border-zinc-800 bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-zinc-950 dark:focus-visible:ring-zinc-200 placeholder:text-zinc-400"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
+                          <KeyRound className="h-3.5 w-3.5 text-zinc-400" /> Password
+                        </label>
+                        {authMode === "signup" ? (
+                          <span className="text-[11px] text-zinc-400 dark:text-zinc-500">Min. 6 characters</span>
+                        ) : (
+                          <button
+                            type="button"
+                            tabIndex={-1}
+                            onClick={() => {
+                              setAuthMode("forgot");
+                              setErrorMessage(null);
+                              setForgotSent(false);
+                            }}
+                            className="text-[11px] text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:underline underline-offset-4 cursor-pointer transition-colors"
+                          >
+                            Forgot password?
+                          </button>
+                        )}
+                      </div>
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          required
+                          disabled={isActionDisabled}
+                          placeholder="••••••••"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="h-10 pr-10 rounded-sm border-zinc-200 dark:border-zinc-800 bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-zinc-950 dark:focus-visible:ring-zinc-200 placeholder:text-zinc-400"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 focus:outline-none cursor-pointer p-0.5"
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      className="w-full h-10 font-medium text-xs rounded-sm shadow-xs bg-zinc-950 hover:bg-black text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 transition-all cursor-pointer flex items-center justify-center gap-2"
                       disabled={isActionDisabled}
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="h-10 pr-10 rounded-sm border-zinc-200 dark:border-zinc-800 bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-zinc-950 dark:focus-visible:ring-zinc-200 placeholder:text-zinc-400"
-                    />
+                    >
+                      {loading && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
+                      {authMode === "signup" ? "Create Workspace Account" : "Sign In to Workspace"}
+                    </Button>
+                  </form>
+
+                  {/* Inline Switcher Footer */}
+                  <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 text-center text-xs text-zinc-500 dark:text-zinc-400">
+                    {authMode === "signup" ? "Already have an account?" : "Don't have an account yet?"}{" "}
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 focus:outline-none cursor-pointer p-0.5"
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      disabled={isActionDisabled}
+                      onClick={() => {
+                        setAuthMode(authMode === "signup" ? "signin" : "signup");
+                        setErrorMessage(null);
+                      }}
+                      className="font-medium text-zinc-950 dark:text-zinc-50 hover:underline underline-offset-4 cursor-pointer ml-1"
                     >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
+                      {authMode === "signup" ? "Sign In instead" : "Create one free"}
                     </button>
                   </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full h-10 font-medium text-xs rounded-sm shadow-xs bg-zinc-950 hover:bg-black text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 transition-all cursor-pointer flex items-center justify-center gap-2"
-                  disabled={isActionDisabled}
-                >
-                  {loading && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
-                  {isSignUp ? "Create Workspace Account" : "Sign In to Workspace"}
-                </Button>
-              </form>
-
-              {/* Inline Switcher Footer */}
-              <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 text-center text-xs text-zinc-500 dark:text-zinc-400">
-                {isSignUp ? "Already have an account?" : "Don't have an account yet?"}{" "}
-                <button
-                  type="button"
-                  disabled={isActionDisabled}
-                  onClick={() => {
-                    setIsSignUp(!isSignUp);
-                    setErrorMessage(null);
-                  }}
-                  className="font-medium text-zinc-950 dark:text-zinc-50 hover:underline underline-offset-4 cursor-pointer ml-1"
-                >
-                  {isSignUp ? "Sign In instead" : "Create one free"}
-                </button>
-              </div>
+                </>
+              )}
             </div>
           </div>
         </div>

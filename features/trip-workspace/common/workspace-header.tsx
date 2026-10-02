@@ -41,6 +41,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   deleteTrip,
   duplicateTrip,
   EditTripDialog,
@@ -244,42 +250,74 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
             </Select>
 
             {/* AI Assistant Button (Ichinose - Prava AI Assistant) */}
-            <Button
-              variant={isAiOpen ? "default" : "outline"}
-              size="sm"
-              className={`h-8 gap-1.5 font-sans text-xs font-medium cursor-pointer transition-all rounded-xs ${
-                isAiOpen
-                  ? "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90"
-                  : "border-primary/30 hover:border-primary hover:bg-primary/5 text-primary"
-              }`}
-              onClick={toggleAi}
-              title="Ichinose — Prava Travel Assistant"
-              aria-label="Ichinose — Prava Travel Assistant"
-            >
-              <div className="relative h-4 w-4 shrink-0 rounded-full overflow-hidden ring-1 ring-primary/40 shadow-2xs">
-                <Image
-                  src="/avatars/ichinose.png"
-                  alt="Ichinose"
-                  width={16}
-                  height={16}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <span>Ichinose</span>
-              {userQuota && (
-                <span
-                  className={`ml-1 px-1.5 py-0.5 rounded-xs font-sans text-[10px] font-semibold tabular-nums leading-none ${
-                    userQuota.remaining > 0
-                      ? isAiOpen
-                        ? "bg-primary-foreground/20 text-primary-foreground"
-                        : "bg-primary/10 text-primary"
-                      : "bg-rose-500/20 text-rose-600 dark:text-rose-400"
-                  }`}
+            <TooltipProvider delayDuration={150}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={isAiOpen ? "default" : "outline"}
+                    size="sm"
+                    className={`h-8 gap-1.5 font-sans text-xs font-medium cursor-pointer transition-all rounded-xs ${isAiOpen
+                      ? "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90"
+                      : "border-primary/40 hover:border-primary hover:bg-primary/10 text-primary dark:border-primary/50 dark:hover:bg-primary/20"
+                      }`}
+                    onClick={toggleAi}
+                    aria-label="Ichinose — Prava Travel Assistant"
+                  >
+                    <div className="relative h-4 w-4 shrink-0 rounded-full overflow-hidden ring-1 ring-primary/40 shadow-2xs bg-white">
+                      <Image
+                        src="/avatars/ichinose.png"
+                        alt="Ichinose"
+                        width={16}
+                        height={16}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <span>Ichinose</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="bottom"
+                  align="end"
+                  className="w-64 p-3 space-y-2 border border-border/80 bg-popover text-popover-foreground shadow-lg rounded-md z-50 text-left"
                 >
-                  {userQuota.remaining}
-                </span>
-              )}
-            </Button>
+                  <div className="flex items-center gap-2">
+                    <div className="relative h-6 w-6 shrink-0 rounded-full overflow-hidden ring-1 ring-primary/50 shadow-2xs">
+                      <Image
+                        src="/avatars/ichinose.png"
+                        alt="Ichinose"
+                        width={24}
+                        height={24}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                        Ichinose AI
+                        <span className="text-[10px] font-normal text-muted-foreground">· Travel Copilot</span>
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">Prava Workspace Assistant</p>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-snug">
+                    Interactive travel assistant for multi-day itineraries, stays, live travel data, and structured trip updates.
+                  </p>
+                  {userQuota && (
+                    <div className="pt-1.5 border-t border-border/60 flex items-center justify-between text-[10px]">
+                      <span className="text-muted-foreground font-medium">Monthly AI Credits:</span>
+                      <span
+                        className={`font-semibold tabular-nums ${userQuota.remaining > 0 ? "text-primary" : "text-destructive"
+                          }`}
+                      >
+                        {userQuota.remaining} / {userQuota.quota} remaining
+                      </span>
+                    </div>
+                  )}
+                  <p className="text-[9px] text-muted-foreground/80 text-right pt-0.5">
+                    Click to {isAiOpen ? "close" : "open"} assistant
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
             {/* 3-Dot Menu */}
             <DropdownMenu>

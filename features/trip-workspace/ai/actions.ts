@@ -54,8 +54,35 @@ export async function getTripConversationThreads(tripId: string): Promise<{ succ
       return { success: false, error: "Unauthorized", threads: [] };
     }
 
+    // Prune redundant empty conversations with 0 messages
+    const emptyConversations = await db.aiConversation.findMany({
+      where: {
+        tripId,
+        profileId: user.id,
+        messages: { none: {} },
+      },
+      orderBy: { updatedAt: "desc" },
+      select: { id: true },
+    });
+
+    if (emptyConversations.length > 1) {
+      // Keep only the newest empty conversation, delete any older redundant empty ones
+      const extraEmptyIds = emptyConversations.slice(1).map((c) => c.id);
+      await db.aiConversation.deleteMany({
+        where: { id: { in: extraEmptyIds } },
+      });
+    }
+
+    // History threads only include conversations that have actually been used (have messages or proposals)
     const conversations = await db.aiConversation.findMany({
-      where: { tripId, profileId: user.id },
+      where: {
+        tripId,
+        profileId: user.id,
+        OR: [
+          { messages: { some: {} } },
+          { proposals: { some: {} } },
+        ],
+      },
       include: {
         _count: {
           select: {
@@ -86,6 +113,8 @@ export async function getTripConversationThreads(tripId: string): Promise<{ succ
 
 /**
  * Create a new conversation thread for a trip.
+ * Only creates a new thread in the database if the previous one was used;
+ * reuses any existing empty unused conversation.
  */
 export async function createTripConversationThread(tripId: string, title?: string) {
   try {
@@ -105,6 +134,34 @@ export async function createTripConversationThread(tripId: string, title?: strin
 
     if (!trip) {
       return { success: false, error: "Trip not found" };
+    }
+
+    // Check if an empty, unused conversation already exists for this trip
+    const existingEmptyThread = await db.aiConversation.findFirst({
+      where: {
+        tripId,
+        profileId: user.id,
+        messages: { none: {} },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+
+    if (existingEmptyThread) {
+      // Clean up any extra empty ones if they exist
+      await db.aiConversation.deleteMany({
+        where: {
+          tripId,
+          profileId: user.id,
+          id: { not: existingEmptyThread.id },
+          messages: { none: {} },
+        },
+      });
+
+      return {
+        success: true,
+        conversationId: existingEmptyThread.id,
+        thread: existingEmptyThread,
+      };
     }
 
     const newThread = await db.aiConversation.create({

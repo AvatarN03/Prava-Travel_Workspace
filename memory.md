@@ -25,16 +25,15 @@
 - **Phase 21: Authentication Page Minimalist Redesign** (Complete)
 - **Phase 22: Landing Page Smooth Text & Journey Transitions** (Complete)
 - **Phase 23: Profile Avatar Storage Optimization & Orphaned Image Pruning** (Complete)
+- **Phase 24: Authentication Forgot Password Flow & Duplicate Account Detection** (Complete)
 
 ## Current Task
-- **Phase 22 Complete**: Landing Page Smooth Text & Journey Transitions:
-  - **Hero Section Kinetic Typography (`features/landing/components/hero-section.tsx`)**: Implemented word-by-word staggered reveal for `"Your"` $\rightarrow$ `"journey,"` $\rightarrow$ `"in"` $\rightarrow$ `"one"` $\rightarrow$ `"place."` using `motion/react` with custom cubic-bezier deceleration curve (`[0.16, 1, 0.3, 1]`) and blur-to-clear dissipation (`filter: blur(6px) -> blur(0px)`). Staggered narrative elements (eyebrow badge $\rightarrow$ headline $\rightarrow$ description $\rightarrow$ CTAs $\rightarrow$ Indian journeys selector chips $\rightarrow$ micro-pillars).
-  - **Hero Interactive Journey Switcher**: Added `layoutId="active-journey-indicator"` sliding pill and `AnimatePresence mode="wait"` for seamless crossfading of destination name, coordinates, archival photos, itinerary items, budget progress bar, and checklist items.
-  - **Thesis Section Animations (`features/landing/components/thesis-section.tsx`)**: Added word-by-word headline reveal on scroll into view (`"Travel planning gets complicated..."`), staggered reveal of the 3 Architecture cards (`Multi-Day Itineraries`, `Accommodations & Passes`, `Expenses & Travel Tools`), and the 4 capability stats.
-  - **Scattered vs. Unified Interactive Section (`features/landing/components/scattered-vs-unified.tsx`)**: Added kinetic word reveal for the headline, spring-animated sliding toggle pill (`layoutId="scattered-mode-pill"`), and `AnimatePresence mode="wait"` staggered card crossfading between chaotic notes/tickets and the organized workspace.
-  - **Workspace Showcase Hardware Chassis & Tabs (`features/landing/components/workspace-showcase.tsx`)**: Added word reveal for `"Your trip has a home."`, smooth scroll entrance for the MacBook Retina enclosure, spring-animated active tab indicator (`layoutId="workspace-active-tab-pill"`), and animated tab view transitions across all 7 workspace modules.
-  - **Client/Server Module Boundary Hardening**: Decoupled server-only Prisma database utilities (`verifyTripOwnership` and `generateSmartUniqueUsername`) from client-consumed barrel files (`features/trip-workspace/index.ts` and `features/profile/index.ts`), ensuring pure client bundles for browser components (`top-bar.tsx`, `create-trip-dialog.tsx`).
-  - **Production Verification**: Passed `npx tsc --noEmit` with 0 errors and completed clean Next.js 16 + Turbopack production build (`npm run build`, exit code 0).
+- **Phase 24 Complete**: Authentication Forgot Password Flow & Duplicate Account Detection:
+  - **Forgot Password UI & Service Trigger (`app/auth/page.tsx`)**: Added `authMode: "signin" | "signup" | "forgot"` and `?tab=forgot` query param support. Provided dedicated password recovery view that triggers Supabase's `resetPasswordForEmail` service with redirect to `/auth/callback?next=/auth/reset-password`. Included "Forgot password?" shortcut directly within the Sign In form.
+  - **Duplicate Account Identity Detection (`app/auth/page.tsx`)**: Handled Supabase Auth identity enumeration protection by checking `data.user && (!data.user.identities || data.user.identities.length === 0)` on signup. Alerts existing users that an account already exists and switches them to Sign In with toast feedback.
+  - **Password Recovery Session Exemption (`lib/supabase/middleware.ts`)**: Updated auth route interception to exempt `/auth/reset-password` so authenticated users completing an email recovery flow are not prematurely redirected to `/dashboard`.
+  - **Reset Password Form (`app/auth/reset-password/page.tsx`, `layout.tsx`)**: Created a dedicated reset-password view matching Prava's design system with recovery session validation, new/confirm password inputs with visibility toggles, and atomic `supabase.auth.updateUser({ password })` invocation.
+  - **Production Verification**: Passed `npx tsc --noEmit` with 0 errors and completed Next.js 16 + Turbopack production build (`npm run build`, exit code 0).
 
 ## Completed Work
 - Inspected repository state and validated Next.js 16.3.0, React 19.2.8, Tailwind CSS v4, and ESLint 9 configuration.
@@ -2907,11 +2906,98 @@
     - Updated `features/community/forum-actions.ts`: updated all `revalidatePath("/community")` $\rightarrow$ `revalidatePath("/forum")`.
     - Updated `components/app-shell/top-bar.tsx`: added breadcrumb recognition for `pathname.startsWith("/u/")` $\rightarrow$ `"Creator Profile"` and removed `/community` and `/pricing`.
     - Updated `lib/supabase/middleware.ts`: added `/u/` and `/usage` to protected route matcher, pruned `/community` and `/pricing`.
-    - Updated `AGENTS.md` Section 3 (Route Architecture) and Section 4 (Feature Structure).
-  - **Production Verification**:
+- **Task 194 (Ichinose AI Assistant Supabase-Style Redesign & Header Button Tooltip Polish)**:
+  - **Context & User Request**:
+    - In the trip individual page (`features/trip-workspace/common/workspace-header.tsx`), the AI Assistant trigger button ("Ichinose") previously rendered a visible credit badge number (`{userQuota.remaining}`) and relied on a native browser HTML `title` attribute. The user requested:
+      1. Remove the visible credit number from the button so only the name is shown.
+      2. Remove the native HTML `title` element and replace it with a catchy, styled Radix/shadcn `Tooltip` explaining what Ichinose is, with remaining credits and guidance.
+      3. Align the Workspace AI panel UI (`features/trip-workspace/ai/components/workspace-ai-panel.tsx`) with the Supabase AI Assistant interface provided in the user reference image, featuring a large multi-line input box, top action icons, informational banner, execution status, reasoned accordion, message feedback actions, and disclaimer.
+  - **Implementation Details**:
+    - **Header Button (`workspace-header.tsx`)**:
+      - Wrapped the button in `TooltipProvider` and `Tooltip`.
+      - Removed the native `title="Ichinose — Prava Travel Assistant"` attribute.
+      - Removed the inline credit counter badge from the button text so it renders clean `[Avatar] Ichinose`.
+      - Added rich `TooltipContent` displaying avatar, "Ichinose AI · Travel Copilot", descriptive summary, remaining monthly credits indicator, and click affordance hint.
+    - **AI Assistant Panel UI (`workspace-ai-panel.tsx`)**:
+      - **Header Toolbar**: Clean single-row header with editable chat title, inline pencil button, and right-aligned icon buttons (`History`, `New Chat`, `Expand / Collapse Width`, `3-Dots More Options`, and persistent `Close X` button).
+      - **Expandable Width**: Added responsive expand toggle (`isExpanded`) allowing seamless expansion from 480px to 740px.
+      - **Context Banner**: Added Supabase-style informational card (`Limited metadata is shared to the Assistant`) explaining workspace context sharing and credit meter status.
+      - **Execution & Reasoning Bar**: Added execution details (`0 rows · Limit 100 rows`, `Query executed`) and an interactive `> Reasoned` collapsible toggle.
+      - **Response Action Toolbar**: Added Thumbs Up, Thumbs Down, and 1-click Copy-to-clipboard buttons below assistant messages with instant toast notifications.
+      - **Markdown Typography**: Enhanced `renderInlineSpans` with inline code formatting (`` `code` ``) to match monospace tag styling in technical assistant responses.
+      - **Large Rounded Input Box**: Replaced single-line 36px text input with a prominent `rounded-xl` multi-line textarea container (`min-h-[72px] max-h-[160px]`), keyboard shortcuts (`↵ Enter to send · Shift + ↵ for new line`), and a bottom-right circular up-arrow send button (`ArrowUp`).
+- **Task 195 (Double-Click Chat Title Rename, AI Quota Popup Decoupling & Dark Mode Hover Polish)**:
+  - **Context & User Request**:
+    - The user provided targeted feedback on the AI assistant panel:
+      1. Remove "View AI quota" and "Rename Chat" from the 3-dots menu; remove the premature subscription/pricing popup trigger for users who still have active credits (only prompt for upgrade when credits are actually exhausted).
+      2. Support double-click on the chat title to rename: double-clicking exchanges the text into an `<input>` element; pressing `Enter` saves the new name; pressing `Escape` cancels and leaves it untouched.
+      3. Resolve a dark mode hover color problem where inverted classes (`dark:bg-slate-100`, `dark:bg-white`, `dark:hover:bg-slate-200`) caused glaring color clashes and white-on-white text in dark mode.
+  - **Implementation Details**:
+    - **Double-Click Title Rename (`workspace-ai-panel.tsx`)**:
+      - Converted header title to trigger `handleStartEditHeader` on `onDoubleClick`.
+      - Removed inline pencil button to keep the header minimal and uncluttered.
+      - Attached keyboard listeners: `Enter` triggers atomic `handleSaveHeaderTitle()`, `Escape` restores original title and closes editing immediately.
+      - Added tooltip: `"Double-click to rename chat"`.
+    - **Menu & Credit Indicator Decoupling (`workspace-ai-panel.tsx`)**:
+      - Removed "Rename Chat" and "View AI quota" from the 3-dot dropdown menu.
+      - In the 3-dot menu, only show "Upgrade to Pro" if `isCreditDepleted` is true; otherwise keep only conversation maintenance actions ("Clear Chat" / "Delete Chat").
+      - Converted the credit indicator pill in the metadata banner into an informative meter (`X / Y credits remaining`) that does not trigger unwanted upgrade modal popups.
+    - **Dark Mode & Hover Color Bug Fixes (`workspace-ai-panel.tsx`, `workspace-header.tsx`)**:
+      - Completely purged inverted `dark:` classes (`dark:bg-slate-100`, `dark:bg-white`, `dark:text-slate-900`, `dark:border-slate-300`, `dark:hover:bg-slate-200`).
+      - Grounded panel styling in a consistent dark navy/slate palette (`bg-[#090E1A]`, `border-[#152033]`, `bg-[#0E1729]`, `border-[#1E2B45]`) matching the Supabase dark theme reference.
+      - Replaced ambiguous theme variables in `FormattedMessageContent` with solid, high-contrast colors (`text-white`, `text-slate-200`, `text-slate-300`, `bg-[#1E2B45]`).
+- **Task 196 (Header Menu Elimination & Streamlined Title Edit Input)**:
+  - **Context & User Request**:
+    - The user requested to completely remove the 3-dots menu icon from the AI assistant header (which previously housed secondary options).
+    - When double-clicking the chat title, render ONLY the `<input>` element without any checkmark or cross action buttons, and style the border with `rounded-sm border border-[#2D9BF0]`.
+  - **Implementation Details**:
+    - **Header 3-Dot Menu Removal (`workspace-ai-panel.tsx`)**:
+      - Completely removed the 3-dots `DropdownMenu` and `MoreHorizontal` trigger from the top right action bar.
+      - Removed unused `DropdownMenu` and `MoreHorizontal` imports.
+      - The header right action bar now contains only the 4 canonical Supabase actions: `History`, `New Chat`, `Expand / Minimize Width`, and `Close X`.
+    - **Streamlined Title Input (`workspace-ai-panel.tsx`)**:
+- **Task 197 (Empty Chat Redundancy Elimination & Active Thread Reuse Engine)**:
+  - **Context & User Request**:
+    - Previously, clicking "+ New Chat" repeatedly created multiple empty conversation rows in PostgreSQL even when the user had not sent any messages in the current session. This caused the history drawer to clutter with duplicate empty chats.
+    - The user requested that a new thread should ONLY be created when the current chat has actually been used (has messages). If the active chat is already empty, clicking "+ New Chat" should not create another empty thread.
+  - **Implementation Details**:
+    - **Client-Side Guard (`workspace-ai-panel.tsx`)**:
+      - Updated `handleNewChat`: Added an immediate check `if (messages.length === 0) { setActiveTab("chat"); textareaRef.current?.focus(); return; }`.
+      - If the user is already looking at an empty chat session, clicking "New Chat" merely ensures the chat tab is active and focuses the input textarea without creating any database records or network calls.
+    - **Server-Side Thread Reuse & Pruning (`features/trip-workspace/ai/actions.ts`)**:
+      - Updated `createTripConversationThread`: Before creating a new `aiConversation` row, queries for any existing empty conversation for the active trip and user (`messages: { none: {} }`). If found, reuses that conversation ID and safely deletes any surplus empty duplicates.
+      - Updated `getTripConversationThreads`:
+        1. Automatically prunes redundant older empty conversations with 0 messages (`messages: { none: {} }`).
+        2. Filters the history thread list to ONLY include threads that have actually been used (i.e. `OR: [{ messages: { some: {} } }, { proposals: { some: {} } }]`).
+        3. Completely prevents empty, unused draft conversations from polluting the conversation history view.
+  - **Verification**:
     - Ran full production build (`npm run build` / Turbopack with Prisma 7.10 generation).
-    - Result: Exit code 0, 0 TypeScript errors, successfully generating all 30 clean production routes:
-      - Public: `/`, `/_not-found`, `/auth`, `/auth/callback`, `/api/webhooks/polar`
-      - Workspace: `/dashboard`, `/trips`, `/trips/[tripId]/*` (7 tabs), `/travel-essentials`, `/templates`, `/forum`, `/forum/[slug]`, `/stories`, `/stories/[slug]`, `/stories/[slug]/edit`, `/stories/manage`, `/stories/new`, `/u/[username]`, `/profile`, `/subscription`, `/usage`.
+    - Result: Exit code 0, 0 TypeScript errors, successfully generating all 32 dynamic and static production routes.
+- **Task 198 (AI Panel Metadata Card Removal & Bottom-Left Credits Meter Shift)**:
+  - **Context & User Request**:
+    - The user requested to remove the informational Card UI at the top of the AI assistant view (which displayed "Limited metadata is shared to the Assistant" and credit metrics).
+    - Shift the AI credit usage indicator (`{used}/{quota} used`) into the bottom-left corner of the input session card alongside the keyboard shortcut hints.
+  - **Implementation Details**:
+    - **Metadata Card Elimination (`workspace-ai-panel.tsx`)**:
+      - Completely removed the informational card banner container (`<div className="mx-3.5 mt-3 p-3 rounded-lg border border-[#1E2B45] bg-[#0E1729]/70...">`).
+      - Removed unused `Info` icon import.
+      - Maximized available chat history vertical viewport space by removing redundant clutter above the message list.
+    - **Bottom-Left Credits Meter Placement (`workspace-ai-panel.tsx`)**:
+      - Positioned the credit usage indicator in the bottom controls row inside the input form:
+        ```tsx
+        {userQuota && (
+          <div
+            className="flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#121E36] border border-[#1E2B45] text-slate-300 font-sans text-[10px] font-medium shadow-2xs shrink-0"
+            title={`${userQuota.remaining} credits remaining out of ${userQuota.quota}`}
+          >
+            <Zap className="h-2.5 w-2.5 text-amber-400 fill-amber-400 shrink-0" />
+            <span>
+              {userQuota.used}/{userQuota.quota} used
+            </span>
+          </div>
+        )}
+        ```
+      - Styled with subtle Supabase dark theme tokens (`bg-[#121E36]`, `border-[#1E2B45]`, `text-slate-300`) with an amber lightning bolt icon (`Zap`) and full tooltip visibility indicating remaining credits.
+      - Preserved the inline keyboard shortcut hint (`↵ to send · Shift+↵ for new line`) next to the credits badge.
 
 
