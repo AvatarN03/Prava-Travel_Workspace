@@ -3132,5 +3132,58 @@
       - `itinerary-card.tsx`: Added `"Add to Google Calendar"` inside each activity's 3-dot dropdown menu for single-event scheduling.
       - `features/trip-workspace/index.ts`: Exported `AddToCalendarDialog`.
 
+- **Task 205 (Workspace Header Streamlining: Clean Title, Public Badge Shift & Expandable Description)**:
+  - **Context & User Request**:
+    - The user provided targeted feedback on the initial overlay header design:
+      1. Remove the icon beside the trip title on the banner (pure text title is cleaner).
+      2. Move the long "Public Community Trip" badge out of the banner overlay to beside the AI assistant in the action bar.
+      3. Move the date range out of the banner and place it cleanly below the controls.
+      4. Remove the description from the banner entirely so multi-line text never pushes the title upwards or causes banner overflow.
+      5. Place the description below the controls clamped to 2 lines with a `"Show more"` / `"Show less"` toggle.
+  - **Implementation Details (`features/trip-workspace/common/workspace-header.tsx`)**:
+    - **Cleaned Cover Banner**:
+      - Inside the banner overlay, retained only the clean destination badge (`MapPin` + destination) and countdown pill, along with the title `<h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-white drop-shadow-md">{trip.title}</h1>`.
+      - Completely removed the Compass icon box from the title.
+      - Removed public badge, dates, and description from the banner overlay, keeping the cover photo unobstructed.
+    - **Action Bar & Metadata Strip**:
+      - Shifted the `Public` badge into the action strip directly beside the Status dropdown, Calendar sync, and `Ichinose` AI Assistant.
+      - Added a clean sub-row below the controls:
+        - Left: Trip description with `line-clamp-2` and a responsive `"Show more"` / `"Show less"` toggle (`ChevronDown` / `ChevronUp`).
+        - Right: Date range chip with `Calendar` icon and monospace tabular formatting (`formatDateRange`).
+  - **Verification**:
+    - Verified compilation with `npm run build` using Turbopack and Prisma 7.10 generation.
+    - Result: Exit code 0, 0 TypeScript errors across all 32 dynamic and static routes.
 
+- **Task 206 (AI Credit Complexity Tier Architecture, Deduplication & AI Packing Checklist)**:
+  - **Context & User Request**:
+    1. AI Assistant credits were previously flat: every single user query deducted exactly 1 credit (`db.aiMessage.count()`), whether it was a 2-word weather check or a 10-day comprehensive itinerary generation with 25 workspace proposal items.
+    2. Design and implement a deterministic planning mode evaluation that categorizes queries into complexity tiers and deducts credits accordingly.
+    3. Resolve two bugs in the Trip Checklist view:
+       - The checklist seeding button ("Load Travel Essentials") was static and never called AI or updated credits in UI.
+       - Clicking the button repeatedly added duplicate items to the user's checklist.
+    4. Adhere to code minification, avoid dead code, and ensure zero regressions.
+  - **Solutions Implemented**:
+    - **Database Schema & Prisma Migration (`prisma/schema.prisma`)**:
+      - Added `creditsCost Int @default(1) @map("credits_cost")` to `AiMessage` model.
+      - Synchronized schema to PostgreSQL via `npx prisma db push` and regenerated Prisma Client via `npx prisma generate`.
+    - **Complexity Evaluation Engine (`services/ai/credit-evaluator.ts`)**:
+      - Created deterministic `evaluatePromptComplexity(prompt, options)` evaluating 4 tiers:
+        - **Tier 1: Quick Tools & Fact Q&A (1 Credit)**: Weather lookups, currency FX conversions, quick factual questions (< 12 words, emergency numbers, timezone, visa info).
+        - **Tier 2: Contextual Advisory & Scoped Suggestions (2 Credits)**: Neighborhood ideas, cafe suggestions, general destination tips.
+        - **Tier 3: Specialized Generation (3 Credits)**: Tailored travel packing and preparation lists, comprehensive notes, single-day schedules.
+        - **Tier 4: Heavy Multi-Day Itinerary Generation (5 Credits)**: Full multi-day itinerary generation (>= 3 days, "kickstart", "day-by-day", full workspace proposals).
+    - **Variable Credit Aggregation & Quota Enforcement (`features/trip-workspace/ai/actions.ts`, `features/pricing/actions.ts`, `features/profile/actions.ts`)**:
+      - Updated `getUserAiCredits(userId)` to use `db.aiMessage.aggregate({ _sum: { creditsCost: true } })`.
+      - Updated `getUserUsage()` and `getUserAccountUsage()` in `features/pricing/actions.ts` to aggregate `creditsCost`.
+      - Updated profile stats in `features/profile/actions.ts` to aggregate `creditsCost`.
+      - In `sendTripMessage`: evaluated prompt complexity before calling LLM, checked `userQuota.remaining < evaluation.creditsCost` with descriptive threshold error message, stored `creditsCost` on `AiMessage`, and returned `creditsDeducted`.
+      - In `workspace-ai-panel.tsx`: displayed `-{creditsCost} credits` under user messages and dynamic query credits status in assistant bubbles.
+    - **Checklist Deduplication & AI Packing List Generator (`features/trip-workspace/checklist/`)**:
+      - In `seedEssentialChecklist(tripId)`: added deduplication by checking existing titles; only inserts missing items and notifies user when already seeded.
+      - Added `generateAiChecklist(tripId)`: calls Gemini with trip destination and dates, generates 8–12 smart categorized tasks, deduplicates against existing items, records a 3-credit deduction in `AiMessage`, and returns updated quota.
+      - In `checklist-view.tsx`: separated buttons into **"AI Packing List (-3 credits)"** (with Sparkles and badge) and **"Starter Essentials (Free)"**, immediately updating `userQuota` context upon generation.
+      - Exported `generateAiChecklist` from `features/trip-workspace/index.ts`.
+  - **Verification**:
+    - Verified compilation with `npm run build` using Turbopack and Prisma 7.10 generation.
+    - Result: Exit code 0, 0 TypeScript errors across all 28 dynamic and static routes.
 

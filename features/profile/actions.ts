@@ -111,12 +111,15 @@ export async function getCurrentProfile(): Promise<{ success: boolean; profile?:
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 
-    const [rawAiCredits, publishedStoriesCount, communityDiscussionsCount] = await Promise.all([
-      db.aiMessage.count({
+    const [aiCreditsAgg, publishedStoriesCount, communityDiscussionsCount] = await Promise.all([
+      db.aiMessage.aggregate({
         where: {
           role: "user",
           conversation: { profileId: user.id },
           createdAt: { gte: startOfMonth, lte: endOfMonth },
+        },
+        _sum: {
+          creditsCost: true,
         },
       }),
       db.blogPost.count({
@@ -127,6 +130,7 @@ export async function getCurrentProfile(): Promise<{ success: boolean; profile?:
       }),
     ]);
 
+    const rawAiCredits = aiCreditsAgg._sum.creditsCost ?? 0;
     const aiCreditsUsed = Math.min(aiCreditsQuota, rawAiCredits);
     const tripsRemaining = Math.max(0, tripsQuota - profile._count.trips);
     const aiCreditsRemaining = Math.max(0, aiCreditsQuota - aiCreditsUsed);

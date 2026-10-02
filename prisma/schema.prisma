@@ -210,6 +210,7 @@ model AiMessage {
   conversationId String   @map("conversation_id") @db.Uuid
   role           String   // "user", "model", "system"
   content        String
+  creditsCost    Int      @default(1) @map("credits_cost")
   createdAt      DateTime @default(now()) @map("created_at")
 
   conversation AiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)

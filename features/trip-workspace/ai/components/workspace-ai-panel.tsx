@@ -988,10 +988,15 @@ export function WorkspaceAiPanel({
                     <div key={msg.id} className="space-y-2">
                       {msg.role === "user" ? (
                         /* User Message (Right-aligned bubble) */
-                        <div className="flex justify-end">
+                        <div className="flex flex-col items-end gap-1">
                           <div className="rounded-xl px-3.5 py-2.5 max-w-[85%] text-xs leading-relaxed bg-[#2D9BF0] text-white font-medium shadow-xs break-words [overflow-wrap:anywhere]">
                             {msg.content}
                           </div>
+                          {msg.creditsCost !== undefined && msg.creditsCost > 0 && (
+                            <span className="text-[10px] text-slate-400 font-mono pr-1 select-none">
+                              -{msg.creditsCost} {msg.creditsCost === 1 ? "credit" : "credits"}
+                            </span>
+                          )}
                         </div>
                       ) : (
                         /* Assistant Message (Supabase Clean Style) */
@@ -999,7 +1004,7 @@ export function WorkspaceAiPanel({
                           {/* Supabase Execution Status & Reasoning Toggle */}
                           <div className="space-y-1">
                             <div className="text-[11px] text-slate-400 font-mono flex items-center gap-2">
-                              <span>0 rows · Limit 100 rows</span>
+                              <span>{msg.creditsCost ? `${msg.creditsCost} credits consumed` : "AI query"}</span>
                               <span className="flex items-center gap-1 text-emerald-400 font-medium">
                                 <Check className="h-3 w-3" />
                                 {msg.toolBadge ? `${msg.toolBadge} executed` : "Query executed"}

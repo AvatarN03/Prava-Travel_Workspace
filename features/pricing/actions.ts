@@ -153,15 +153,19 @@ export async function getAccountUsage(): Promise<{
       where: { profileId: user.id },
     });
 
-    // Real-time AI user messages in active billing cycle
-    const rawAiCredits = await db.aiMessage.count({
+    // Real-time AI credits consumed in active billing cycle
+    const aggAi = await db.aiMessage.aggregate({
       where: {
         role: "user",
         conversation: { profileId: user.id },
         createdAt: { gte: activeCycle.start, lte: activeCycle.end },
       },
+      _sum: {
+        creditsCost: true,
+      },
     });
 
+    const rawAiCredits = aggAi._sum.creditsCost ?? 0;
     const aiCreditsUsed = Math.min(aiCreditsQuota, rawAiCredits);
 
     // Real-time published stories count
@@ -201,13 +205,17 @@ export async function getAccountUsage(): Promise<{
         });
       } else {
         try {
-          const rawPastAi = await db.aiMessage.count({
+          const aggPastAi = await db.aiMessage.aggregate({
             where: {
               role: "user",
               conversation: { profileId: user.id },
               createdAt: { gte: cycle.start, lte: cycle.end },
             },
+            _sum: {
+              creditsCost: true,
+            },
           });
+          const rawPastAi = aggPastAi._sum.creditsCost ?? 0;
           mAiUsed = Math.min(cycleQuota, rawPastAi);
 
           mTripsCreated = await db.trip.count({

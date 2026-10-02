@@ -110,6 +110,7 @@ export { TaskItem } from "./checklist/components/task-item";
 export {
   createChecklistItem,
   deleteChecklistItem,
+  generateAiChecklist,
   seedEssentialChecklist,
   toggleChecklistItem,
   updateChecklistItem,

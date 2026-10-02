@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 import { buildTripContext } from "@/services/ai/context-builder";
+import { evaluatePromptComplexity } from "@/services/ai/credit-evaluator";
 import { isItineraryPlanningIntent, runTripAgentGraph } from "@/services/ai/trip-agent-graph";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
 
@@ -27,6 +28,7 @@ export interface MessageDTO {
   proposal?: AiProposalDTO | null;
   modelUsed?: string;
   toolBadge?: string | null;
+  creditsCost?: number;
 }
 
 export interface ConversationThreadDTO {
@@ -265,7 +267,7 @@ export async function getUserAiCredits(userId: string): Promise<UserAiQuotaDTO> 
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
 
-    const rawUsed = await db.aiMessage.count({
+    const agg = await db.aiMessage.aggregate({
       where: {
         role: "user",
         createdAt: { gte: startOfMonth },
@@ -273,8 +275,12 @@ export async function getUserAiCredits(userId: string): Promise<UserAiQuotaDTO> 
           profileId: userId,
         },
       },
+      _sum: {
+        creditsCost: true,
+      },
     });
 
+    const rawUsed = agg._sum.creditsCost ?? 0;
     const used = Math.min(quota, rawUsed);
 
     return {
@@ -373,6 +379,7 @@ export async function getTripConversation(tripId: string, conversationId?: strin
         id: m.id,
         role: m.role as "user" | "model" | "system",
         content: m.content,
+        creditsCost: m.creditsCost || 1,
         createdAt: m.createdAt.toISOString(),
         proposal: activeProposal
           ? {
@@ -484,24 +491,47 @@ export async function sendTripMessage(tripId: string, prompt: string, conversati
       };
     }
 
+    // Build chat history for graph
+    const history = conversation.messages.map((m) => ({
+      role: m.role as "user" | "model" | "system",
+      content: m.content,
+    }));
+
+    // Calculate trip duration if dates exist
+    const tripDurationDays =
+      contextResult?.startDate && contextResult?.endDate
+        ? Math.ceil(
+            (new Date(contextResult.endDate).getTime() - new Date(contextResult.startDate).getTime()) /
+              (1000 * 60 * 60 * 24)
+          ) + 1
+        : null;
+
+    // Evaluate prompt complexity to determine credit requirement
+    const evaluation = evaluatePromptComplexity(trimmedPrompt, {
+      tripDurationDays,
+      history,
+    });
+    const requiredCredits = evaluation.creditsCost;
+
     // Monthly AI Credits Check
     const userQuota = await getUserAiCredits(user.id);
 
-    if (userQuota.remaining <= 0) {
+    if (userQuota.remaining < requiredCredits) {
       return {
         success: false,
-        error: `⚠️ **Monthly AI Credits Depleted (0/${userQuota.quota})**\nYou have used all your AI assistant credits for this month (${userQuota.quota}/${userQuota.quota}). Upgrade to Pro Wanderer for 150 credits/month, or wait until your quota renews on the 1st of next month.`,
+        error: `⚠️ **Insufficient AI Credits (${userQuota.remaining}/${userQuota.quota})**\nThis **${evaluation.label}** task requires **${requiredCredits} AI credits**, but you have **${userQuota.remaining}** remaining this month. Upgrade to Pro Wanderer for 150 credits/month, or wait until your quota renews on the 1st of next month.`,
         creditDepleted: true,
         userQuota,
       };
     }
 
-    // Persist user's message
+    // Persist user's message with evaluated creditsCost
     const userMsg = await db.aiMessage.create({
       data: {
         conversationId: conversation.id,
         role: "user",
         content: trimmedPrompt,
+        creditsCost: requiredCredits,
       },
     });
 
@@ -512,12 +542,6 @@ export async function sendTripMessage(tripId: string, prompt: string, conversati
     });
     const userCurrency = profile?.defaultCurrency || "INR";
     const aiAutoPropose = profile?.aiAutoPropose ?? true;
-
-    // Build chat history for graph
-    const history = conversation.messages.map((m) => ({
-      role: m.role as "user" | "model" | "system",
-      content: m.content,
-    }));
 
     // Execute Trip Agent Graph: Tools (Weather/Currency) -> Gemini Flash Lite / OpenRouter Free Cascade
     const agentResult = await runTripAgentGraph({
@@ -576,6 +600,7 @@ export async function sendTripMessage(tripId: string, prompt: string, conversati
         id: userMsg.id,
         role: "user" as const,
         content: userMsg.content,
+        creditsCost: requiredCredits,
         createdAt: userMsg.createdAt.toISOString(),
       },
       assistantMessage: {
@@ -586,8 +611,10 @@ export async function sendTripMessage(tripId: string, prompt: string, conversati
         proposal: savedProposalDTO,
         modelUsed: agentResult.modelUsed,
         toolBadge: agentResult.toolBadge,
+        creditsCost: requiredCredits,
       },
       proposal: savedProposalDTO,
+      creditsDeducted: requiredCredits,
       userQuota: await getUserAiCredits(user.id),
     };
   } catch (error) {

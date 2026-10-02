@@ -24,7 +24,8 @@ import { Input } from "@/components/ui/input";
 import { AddTaskDialog } from "./add-task-dialog";
 import { TaskItem } from "./task-item";
 
-import { seedEssentialChecklist } from "../actions";
+import { useWorkspaceAi } from "../../context/workspace-ai-context";
+import { generateAiChecklist, seedEssentialChecklist } from "../actions";
 
 import type { ChecklistItem } from "@prisma/client";
 
@@ -35,9 +36,11 @@ interface ChecklistViewProps {
 
 export function ChecklistView({ tripId, items }: ChecklistViewProps) {
   const router = useRouter();
+  const { setUserQuota } = useWorkspaceAi();
   const [filter, setFilter] = useState<"ALL" | "PENDING" | "COMPLETED">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSeeding, startSeeding] = useTransition();
+  const [isAiGenerating, startAiGenerating] = useTransition();
 
   const completedCount = useMemo(() => {
     return items.filter((i) => i.isCompleted).length;
@@ -91,10 +94,33 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
     startSeeding(async () => {
       const res = await seedEssentialChecklist(tripId);
       if (res.success) {
-        toast.success(`Added ${res.count} essential travel tasks!`);
+        if (res.count && res.count > 0) {
+          toast.success(`Added ${res.count} essential travel tasks!`);
+        } else {
+          toast.info(res.message || "All starter essentials are already in your checklist.");
+        }
         router.refresh();
       } else {
         toast.error(res.error || "Failed to add starter checklist");
+      }
+    });
+  };
+
+  const handleGenerateAi = () => {
+    startAiGenerating(async () => {
+      const res = await generateAiChecklist(tripId);
+      if (res.success) {
+        if (res.userQuota) {
+          setUserQuota(res.userQuota);
+        }
+        if (res.count && res.count > 0) {
+          toast.success(`Generated ${res.count} travel items (-${res.creditsCost || 3} credits)`);
+        } else {
+          toast.info(res.message || "All suggested items are already in your checklist.");
+        }
+        router.refresh();
+      } else {
+        toast.error(res.error || "Failed to generate AI checklist");
       }
     });
   };
@@ -119,23 +145,36 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
               Stay on track with packing lists, visa applications, bookings, and pre-departure preparation.
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleGenerateAi}
+              disabled={isAiGenerating}
+              className="h-9 gap-1.5 text-xs font-semibold rounded-sm border-[#2D9BF0]/40 text-[#2D9BF0] hover:bg-[#2D9BF0]/10 cursor-pointer shadow-2xs"
+            >
+              {isAiGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-[#2D9BF0]" />}
+              <span>AI Packing List</span>
+              <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 bg-[#2D9BF0]/15 text-[#2D9BF0] font-mono">
+                -3
+              </Badge>
+            </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={handleSeedEssentials}
               disabled={isSeeding}
-              className="h-9 gap-1.5 text-xs font-semibold rounded-sm border-border cursor-pointer shadow-2xs hover:bg-muted/80"
+              className="h-9 gap-1.5 text-xs font-medium rounded-sm border-border cursor-pointer shadow-2xs hover:bg-muted/80"
             >
-              {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-[#2D9BF0]" />}
-              <span>Load Travel Essentials</span>
+              {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckSquare className="w-3.5 h-3.5 text-muted-foreground" />}
+              <span>Starter Essentials</span>
             </Button>
             <AddTaskDialog
               tripId={tripId}
               trigger={
                 <Button size="sm" className="h-9 gap-1.5 text-xs font-semibold rounded-sm bg-[#2D9BF0] hover:bg-[#2587d4] text-white cursor-pointer shadow-2xs">
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Add Custom Task</span>
+                  <span>Add Task</span>
                 </Button>
               }
             />
@@ -200,7 +239,21 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
         </div>
 
         {/* Action Triggers */}
-        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 flex-wrap sm:flex-nowrap">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleGenerateAi}
+            disabled={isAiGenerating}
+            className="h-9 gap-1.5 text-xs font-semibold rounded-sm border-[#2D9BF0]/40 text-[#2D9BF0] hover:bg-[#2D9BF0]/10 cursor-pointer shadow-2xs"
+          >
+            {isAiGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-[#2D9BF0]" />}
+            <span>AI Packing List</span>
+            <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 bg-[#2D9BF0]/15 text-[#2D9BF0] font-mono">
+              -3
+            </Badge>
+          </Button>
+
           <Button
             variant="outline"
             size="sm"
@@ -208,7 +261,7 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
             disabled={isSeeding}
             className="h-9 gap-1.5 text-xs font-medium rounded-sm border-border cursor-pointer hover:bg-muted/80 shadow-2xs"
           >
-            {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-[#2D9BF0]" />}
+            {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckSquare className="w-3.5 h-3.5 text-muted-foreground" />}
             <span>+ Essentials</span>
           </Button>
 
