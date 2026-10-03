@@ -4,11 +4,11 @@ import {
   CreditCard,
   LayoutDashboard,
   LayoutTemplate,
+  type LucideIcon,
   MessageSquare,
   ShieldAlert,
   Sparkles,
   User,
-  type LucideIcon,
 } from "lucide-react";
 
 export interface NavItem {

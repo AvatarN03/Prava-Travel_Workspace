@@ -23,6 +23,12 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
 
@@ -30,9 +36,9 @@ import { cn } from "@/lib/utils";
 
 import {
   accountNavItems,
+  type NavItem,
   otherNavItems,
   workspaceNavItems,
-  type NavItem,
 } from "./nav-config";
 
 interface SidebarProps {
@@ -195,26 +201,40 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
       >
         {/* Brand / Logo Header */}
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-[#152033] dark:border-slate-300 px-4">
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-2 group cursor-pointer"
-          >
-            <div className="relative flex h-8 w-8 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-105">
-              <Image
-                src="/logo.png"
-                alt="Prava AI Logo"
-                width={26}
-                height={26}
-                className="h-6 w-6 object-contain filter drop-shadow-xs"
-              />
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-brand font-medium tracking-[0.24em] text-base uppercase text-white dark:text-slate-900 group-hover:text-[#2D9BF0] transition-colors">
-                Prava
-              </span>
-              <span className="h-1.5 w-1.5 rounded-full bg-[#2D9BF0] animate-pulse shadow-xs" />
-            </div>
-          </Link>
+          <TooltipProvider delayDuration={150}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href="/dashboard"
+                  className="flex items-center gap-2 group cursor-pointer"
+                >
+                  <div className="relative flex h-8 w-8 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-105">
+                    <Image
+                      src="/logo.png"
+                      alt="Prava Travel Workspace Logo"
+                      width={26}
+                      height={26}
+                      className="h-6 w-6 object-contain filter drop-shadow-xs"
+                    />
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-brand font-medium tracking-[0.24em] text-base uppercase text-white dark:text-slate-900 group-hover:text-[#2D9BF0] transition-colors">
+                      Prava
+                    </span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#2D9BF0] animate-pulse shadow-xs" />
+                  </div>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent
+                side="bottom"
+                align="start"
+                sideOffset={8}
+                className="text-xs font-sans font-medium"
+              >
+                Prava — The Travel Workspace
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
           {onMobileClose && (
             <Button

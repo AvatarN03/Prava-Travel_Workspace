@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
 import {
   ArrowRight,
   Bell,
@@ -36,7 +36,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
 import { ThemeToggle } from "./theme-toggle";
 import { TopBarWeather } from "./top-bar-weather";
 

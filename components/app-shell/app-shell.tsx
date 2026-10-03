@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
+import { WorkspaceAiPanel } from "@/features/trip-workspace/ai/components/workspace-ai-panel";
 
-import { useWorkspaceAi, WorkspaceAiPanel } from "@/features/trip-workspace";
-
-import { cn } from "@/lib/utils";
+import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
 
 import type { TopBarUserInfo } from "@/features/profile";
 
