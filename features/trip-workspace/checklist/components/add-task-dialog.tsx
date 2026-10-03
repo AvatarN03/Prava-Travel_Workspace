@@ -1,20 +1,24 @@
 "use client";
 
+import type * as React from "react";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Loader2 } from "lucide-react";
+
+import { Loader2, Plus } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 import { createChecklistItem } from "../actions";
 
 interface AddTaskDialogProps {

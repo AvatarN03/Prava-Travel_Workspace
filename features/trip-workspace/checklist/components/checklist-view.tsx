@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+
 import {
   Calendar,
   CheckCircle2,
@@ -25,6 +26,7 @@ import { AddTaskDialog } from "./add-task-dialog";
 import { TaskItem } from "./task-item";
 
 import { useWorkspaceAi } from "../../context/workspace-ai-context";
+
 import { generateAiChecklist, seedEssentialChecklist } from "../actions";
 
 import type { ChecklistItem } from "@prisma/client";

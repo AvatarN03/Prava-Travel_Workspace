@@ -2,23 +2,21 @@
 
 import { revalidatePath } from "next/cache";
 
+import { GEMINI_TRIPS_MODELS, getGeminiClient } from "@/lib/ai";
 import { db } from "@/lib/db";
-import { getGeminiClient, GEMINI_TRIPS_MODELS } from "@/lib/ai";
-
+import { getUserAiCredits } from "../ai/actions";
 import { verifyTripOwnership } from "../common/auth-check";
-import { getUserAiCredits, type UserAiQuotaDTO } from "../ai/actions";
+
+import type { UserAiQuotaDTO } from "../ai/actions";
 import {
   createChecklistItemSchema,
   deleteChecklistItemSchema,
   toggleChecklistItemSchema,
   updateChecklistItemSchema,
-} from "./schema";
-
-import type {
-  CreateChecklistItemInput,
-  DeleteChecklistItemInput,
-  ToggleChecklistItemInput,
-  UpdateChecklistItemInput,
+  type CreateChecklistItemInput,
+  type DeleteChecklistItemInput,
+  type ToggleChecklistItemInput,
+  type UpdateChecklistItemInput,
 } from "./schema";
 
 export async function createChecklistItem(input: CreateChecklistItemInput) {

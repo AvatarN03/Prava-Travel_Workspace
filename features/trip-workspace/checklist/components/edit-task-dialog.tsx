@@ -1,21 +1,25 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+
 import { Loader2 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 import { updateChecklistItem } from "../actions";
-import { ChecklistItem } from "@prisma/client";
+
+import type { ChecklistItem } from "@prisma/client";
 
 interface EditTaskDialogProps {
   item: ChecklistItem;
