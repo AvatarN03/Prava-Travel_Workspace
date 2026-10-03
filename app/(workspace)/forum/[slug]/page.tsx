@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 
+import { ForumThreadView } from "@/features/community/components/forum-thread-view";
+
 import {
-  ForumThreadView,
   getForumPostBySlug,
   getUserTripsForDiscussion,
-} from "@/features/community";
+} from "@/features/community/forum-actions";
 
 interface ForumThreadPageProps {
   params: Promise<{ slug: string }>;

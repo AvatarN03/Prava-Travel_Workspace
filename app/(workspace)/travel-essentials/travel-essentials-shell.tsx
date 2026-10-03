@@ -206,25 +206,25 @@ export function TravelEssentialsShell({
   }, [searchParams]);
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6">
+    <div className="w-full max-w-7xl mx-auto space-y-6">
       {/* ── Editorial Workspace Header ── */}
-      <div className="flex flex-col gap-1.5 pb-5 border-b border-border">
+      <div className="flex flex-col gap-1.5 pb-5 border-b border-border dark:border-[#1E293B]/70">
         <div className="flex items-center justify-between gap-2">
           <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
             Travel Toolkit
           </span>
-          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-[#2D9BF0]/10 border border-[#2D9BF0]/20 text-[#2D9BF0] text-xs font-semibold">
+          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-[#2D9BF0]/10 border border-[#2D9BF0]/20 text-[#2D9BF0] text-xs font-semibold dark:bg-[#2D9BF0]/15 dark:border-[#2D9BF0]/30 dark:shadow-[0_0_12px_rgba(45,155,240,0.15)]">
             <ActiveIcon className="w-3.5 h-3.5" />
             <span>{activeTabMeta.label}</span>
           </div>
         </div>
-        <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
+        <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
           Travel{" "}
-          <span className="font-serif italic font-normal text-foreground">
+          <span className="font-serif italic font-normal text-foreground dark:text-zinc-200">
             Essentials
           </span>
         </h1>
-        <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
+        <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-slate-400 font-normal leading-relaxed max-w-3xl">
           A dedicated toolkit for smooth journeys. Check live forecasts, convert currencies, explore maps, and access emergency contacts and phrasebooks.
         </p>
       </div>
@@ -243,37 +243,37 @@ export function TravelEssentialsShell({
           </div>
 
           <Select value={activeTab} onValueChange={handleTabChange}>
-            <SelectTrigger className="w-full h-12 bg-card border-border shadow-xs px-3 rounded-sm text-left cursor-pointer focus:ring-[#2D9BF0]">
+            <SelectTrigger className="w-full h-12 bg-card dark:bg-[#0C1322] border-border dark:border-[#1E293B] shadow-xs px-3 rounded-sm text-left cursor-pointer focus:ring-[#2D9BF0]">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-muted/60 shrink-0">
+                <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-muted/60 dark:bg-slate-800/60 shrink-0">
                   <ActiveIcon className={`w-4 h-4 ${activeTabMeta.iconColor}`} />
                 </div>
                 <div className="flex flex-col min-w-0 text-left">
-                  <span className="truncate font-sans text-xs font-bold text-foreground">
+                  <span className="truncate font-sans text-xs font-bold text-foreground dark:text-zinc-100">
                     {activeTabMeta.label}
                   </span>
-                  <span className="truncate font-sans text-[10px] text-muted-foreground font-normal">
+                  <span className="truncate font-sans text-[10px] text-muted-foreground dark:text-slate-400 font-normal">
                     {activeTabMeta.description}
                   </span>
                 </div>
               </div>
             </SelectTrigger>
-            <SelectContent className="w-[calc(100vw-2rem)] max-w-sm">
+            <SelectContent className="w-[calc(100vw-2rem)] max-w-sm dark:bg-[#0C1322] dark:border-[#1E293B]">
               {TABS.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <SelectItem
                     key={tab.id}
                     value={tab.id}
-                    className="cursor-pointer py-2.5 font-sans text-xs font-medium"
+                    className="cursor-pointer py-2.5 font-sans text-xs font-medium dark:focus:bg-[#131F35]"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-muted/50 shrink-0">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-muted/50 dark:bg-slate-800/50 shrink-0">
                         <Icon className={`w-3.5 h-3.5 ${tab.iconColor}`} />
                       </div>
                       <div className="flex flex-col text-left">
-                        <span className="font-sans font-semibold text-foreground text-xs">{tab.label}</span>
-                        <span className="font-sans text-[10px] text-muted-foreground">{tab.description}</span>
+                        <span className="font-sans font-semibold text-foreground dark:text-zinc-100 text-xs">{tab.label}</span>
+                        <span className="font-sans text-[10px] text-muted-foreground dark:text-slate-400">{tab.description}</span>
                       </div>
                     </div>
                   </SelectItem>
@@ -290,14 +290,14 @@ export function TravelEssentialsShell({
             onValueChange={handleTabChange}
             className="w-full"
           >
-            <TabsList className="h-10 bg-muted/70 p-1 rounded-sm border border-border/60 inline-flex items-center gap-1 w-auto min-w-full sm:min-w-0 justify-start">
+            <TabsList className="h-10 bg-muted/70 dark:bg-[#0C1322] p-1 rounded-sm border border-border/60 dark:border-[#1E293B] inline-flex items-center gap-1 w-auto min-w-full sm:min-w-0 justify-start">
               {TABS.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <TabsTrigger
                     key={tab.id}
                     value={tab.id}
-                    className="flex items-center gap-2 rounded-sm px-3.5 py-1.5 font-sans text-xs font-medium transition-all duration-150 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs cursor-pointer select-none"
+                    className="flex items-center gap-2 rounded-sm px-3.5 py-1.5 font-sans text-xs font-medium transition-all duration-150 data-[state=active]:bg-background dark:data-[state=active]:bg-[#131F35] data-[state=active]:text-foreground dark:data-[state=active]:text-white dark:data-[state=active]:border dark:data-[state=active]:border-[#2D9BF0]/40 dark:data-[state=active]:shadow-[0_0_12px_rgba(45,155,240,0.2)] dark:text-slate-400 dark:hover:text-white cursor-pointer select-none"
                   >
                     <Icon className={`w-3.5 h-3.5 ${tab.iconColor} shrink-0`} />
                     <span>{tab.label}</span>
