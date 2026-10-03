@@ -104,11 +104,11 @@ export function EditAccommodationDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent className="sm:max-w-[480px] bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800">
         <form onSubmit={handleSubmit} className="space-y-3.5">
           <DialogHeader>
-            <DialogTitle>Edit Accommodation</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-foreground dark:text-zinc-50">Edit Accommodation</DialogTitle>
+            <DialogDescription className="text-muted-foreground dark:text-zinc-400">
               Update booking details, check-in dates, and contact numbers.
             </DialogDescription>
           </DialogHeader>
@@ -121,22 +121,23 @@ export function EditAccommodationDialog({
 
           <div className="space-y-3">
             <div className="space-y-1">
-              <Label htmlFor="edit-acc-name">Accommodation Name *</Label>
+              <Label htmlFor="edit-acc-name" className="text-foreground dark:text-zinc-200">Accommodation Name *</Label>
               <Input
                 id="edit-acc-name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="edit-acc-type">Type</Label>
+                <Label htmlFor="edit-acc-type" className="text-foreground dark:text-zinc-200">Type</Label>
                 <select
                   id="edit-acc-type"
-                  className="flex h-9 w-full rounded-sm border border-border bg-background px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
+                  className="flex h-9 w-full rounded-sm border border-border dark:border-zinc-800 bg-background dark:bg-[#121622] px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 text-foreground dark:text-zinc-100"
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                   disabled={isPending}
@@ -151,7 +152,7 @@ export function EditAccommodationDialog({
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="edit-acc-cost">Total Cost ($)</Label>
+                <Label htmlFor="edit-acc-cost" className="text-foreground dark:text-zinc-200">Total Cost ($)</Label>
                 <Input
                   id="edit-acc-cost"
                   type="number"
@@ -160,72 +161,79 @@ export function EditAccommodationDialog({
                   value={formData.cost}
                   onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="edit-acc-checkin">Check-in Date</Label>
+                <Label htmlFor="edit-acc-checkin" className="text-foreground dark:text-zinc-200">Check-in Date</Label>
                 <Input
                   id="edit-acc-checkin"
                   type="date"
                   value={formData.checkIn}
                   onChange={(e) => setFormData({ ...formData, checkIn: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="edit-acc-checkout">Check-out Date</Label>
+                <Label htmlFor="edit-acc-checkout" className="text-foreground dark:text-zinc-200">Check-out Date</Label>
                 <Input
                   id="edit-acc-checkout"
                   type="date"
                   value={formData.checkOut}
                   onChange={(e) => setFormData({ ...formData, checkOut: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="edit-acc-address">Address</Label>
+              <Label htmlFor="edit-acc-address" className="text-foreground dark:text-zinc-200">Address</Label>
               <Input
                 id="edit-acc-address"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="edit-acc-code">Confirmation Code</Label>
+                <Label htmlFor="edit-acc-code" className="text-foreground dark:text-zinc-200">Confirmation Code</Label>
                 <Input
                   id="edit-acc-code"
                   value={formData.confirmationCode}
                   onChange={(e) => setFormData({ ...formData, confirmationCode: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="edit-acc-phone">Contact Phone</Label>
+                <Label htmlFor="edit-acc-phone" className="text-foreground dark:text-zinc-200">Contact Phone</Label>
                 <Input
                   id="edit-acc-phone"
                   value={formData.contactPhone}
                   onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="edit-acc-notes">Notes & Instructions</Label>
+              <Label htmlFor="edit-acc-notes" className="text-foreground dark:text-zinc-200">Notes & Instructions</Label>
               <Textarea
                 id="edit-acc-notes"
                 rows={2}
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
           </div>
@@ -237,10 +245,11 @@ export function EditAccommodationDialog({
               size="sm"
               onClick={() => onOpenChange(false)}
               disabled={isPending}
+              className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-300"
             >
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={isPending}>
+            <Button type="submit" size="sm" disabled={isPending} className="bg-[#2D9BF0] hover:bg-[#2087D6] text-white">
               {isPending && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               Save Changes
             </Button>

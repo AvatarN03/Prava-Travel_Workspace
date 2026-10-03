@@ -108,11 +108,11 @@ export function AddAccommodationDialog({
         </DialogTrigger>
       )}
 
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent className="sm:max-w-[480px] bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800">
         <form onSubmit={handleSubmit} className="space-y-3.5">
           <DialogHeader>
-            <DialogTitle>Add Accommodation</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-foreground dark:text-zinc-50">Add Accommodation</DialogTitle>
+            <DialogDescription className="text-muted-foreground dark:text-zinc-400">
               Record your hotel, Airbnb, hostel, or resort booking.
             </DialogDescription>
           </DialogHeader>
@@ -125,7 +125,7 @@ export function AddAccommodationDialog({
 
           <div className="space-y-3">
             <div className="space-y-1">
-              <Label htmlFor="acc-name">Accommodation Name *</Label>
+              <Label htmlFor="acc-name" className="text-foreground dark:text-zinc-200">Accommodation Name *</Label>
               <Input
                 id="acc-name"
                 placeholder="e.g. Park Hyatt Tokyo, Ryokan Gion"
@@ -133,15 +133,16 @@ export function AddAccommodationDialog({
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="acc-type">Type</Label>
+                <Label htmlFor="acc-type" className="text-foreground dark:text-zinc-200">Type</Label>
                 <select
                   id="acc-type"
-                  className="flex h-9 w-full rounded-sm border border-border bg-background px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
+                  className="flex h-9 w-full rounded-sm border border-border dark:border-zinc-800 bg-background dark:bg-[#121622] px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 text-foreground dark:text-zinc-100"
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                   disabled={isPending}
@@ -156,7 +157,7 @@ export function AddAccommodationDialog({
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="acc-cost">Total Cost ($)</Label>
+                <Label htmlFor="acc-cost" className="text-foreground dark:text-zinc-200">Total Cost ($)</Label>
                 <Input
                   id="acc-cost"
                   type="number"
@@ -166,69 +167,75 @@ export function AddAccommodationDialog({
                   value={formData.cost}
                   onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="acc-checkin">Check-in Date</Label>
+                <Label htmlFor="acc-checkin" className="text-foreground dark:text-zinc-200">Check-in Date</Label>
                 <Input
                   id="acc-checkin"
                   type="date"
                   value={formData.checkIn}
                   onChange={(e) => setFormData({ ...formData, checkIn: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="acc-checkout">Check-out Date</Label>
+                <Label htmlFor="acc-checkout" className="text-foreground dark:text-zinc-200">Check-out Date</Label>
                 <Input
                   id="acc-checkout"
                   type="date"
                   value={formData.checkOut}
                   onChange={(e) => setFormData({ ...formData, checkOut: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="acc-address">Address</Label>
+              <Label htmlFor="acc-address" className="text-foreground dark:text-zinc-200">Address</Label>
               <Input
                 id="acc-address"
                 placeholder="e.g. 3-7-1-2 Nishishinjuku, Shinjuku City, Tokyo"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="acc-code">Confirmation Code</Label>
+                <Label htmlFor="acc-code" className="text-foreground dark:text-zinc-200">Confirmation Code</Label>
                 <Input
                   id="acc-code"
                   placeholder="e.g. #HM-982137"
                   value={formData.confirmationCode}
                   onChange={(e) => setFormData({ ...formData, confirmationCode: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="acc-phone">Contact Phone</Label>
+                <Label htmlFor="acc-phone" className="text-foreground dark:text-zinc-200">Contact Phone</Label>
                 <Input
                   id="acc-phone"
                   placeholder="e.g. +81 3-5322-1234"
                   value={formData.contactPhone}
                   onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="acc-notes">Notes & Instructions</Label>
+              <Label htmlFor="acc-notes" className="text-foreground dark:text-zinc-200">Notes & Instructions</Label>
               <Textarea
                 id="acc-notes"
                 placeholder="Key lockbox code, check-in window, amenities..."
@@ -236,6 +243,7 @@ export function AddAccommodationDialog({
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
           </div>
@@ -247,10 +255,11 @@ export function AddAccommodationDialog({
               size="sm"
               onClick={() => setOpen(false)}
               disabled={isPending}
+              className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-300"
             >
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={isPending}>
+            <Button type="submit" size="sm" disabled={isPending} className="bg-[#2D9BF0] hover:bg-[#2087D6] text-white">
               {isPending && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               Save Stay
             </Button>
