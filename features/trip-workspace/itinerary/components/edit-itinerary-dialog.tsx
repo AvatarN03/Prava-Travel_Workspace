@@ -90,11 +90,11 @@ export function EditItineraryDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent className="sm:max-w-[480px] bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800">
         <form onSubmit={handleSubmit} className="space-y-3.5">
           <DialogHeader>
-            <DialogTitle>Edit Itinerary Item</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-foreground dark:text-zinc-50">Edit Itinerary Item</DialogTitle>
+            <DialogDescription className="text-muted-foreground dark:text-zinc-400">
               Update timing, location, or details for this event.
             </DialogDescription>
           </DialogHeader>
@@ -107,19 +107,20 @@ export function EditItineraryDialog({
 
           <div className="space-y-3">
             <div className="space-y-1">
-              <Label htmlFor="edit-item-title">Title / Activity *</Label>
+              <Label htmlFor="edit-item-title" className="text-foreground dark:text-zinc-200">Title / Activity *</Label>
               <Input
                 id="edit-item-title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="edit-item-day">Day #</Label>
+                <Label htmlFor="edit-item-day" className="text-foreground dark:text-zinc-200">Day #</Label>
                 <Input
                   id="edit-item-day"
                   type="number"
@@ -127,25 +128,27 @@ export function EditItineraryDialog({
                   value={formData.dayNumber}
                   onChange={(e) => setFormData({ ...formData, dayNumber: parseInt(e.target.value) || 1 })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="edit-item-time">Time</Label>
+                <Label htmlFor="edit-item-time" className="text-foreground dark:text-zinc-200">Time</Label>
                 <Input
                   id="edit-item-time"
                   value={formData.time}
                   onChange={(e) => setFormData({ ...formData, time: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="edit-item-category">Category</Label>
+                <Label htmlFor="edit-item-category" className="text-foreground dark:text-zinc-200">Category</Label>
                 <select
                   id="edit-item-category"
-                  className="flex h-9 w-full rounded-sm border border-border bg-background px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
+                  className="flex h-9 w-full rounded-sm border border-border dark:border-zinc-800 bg-background dark:bg-[#121622] px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 text-foreground dark:text-zinc-100"
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   disabled={isPending}
@@ -159,7 +162,7 @@ export function EditItineraryDialog({
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="edit-item-cost">Estimated Cost ($)</Label>
+                <Label htmlFor="edit-item-cost" className="text-foreground dark:text-zinc-200">Estimated Cost ($)</Label>
                 <Input
                   id="edit-item-cost"
                   type="number"
@@ -168,28 +171,31 @@ export function EditItineraryDialog({
                   value={formData.cost}
                   onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="edit-item-location">Location / Address</Label>
+              <Label htmlFor="edit-item-location" className="text-foreground dark:text-zinc-200">Location / Address</Label>
               <Input
                 id="edit-item-location"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="edit-item-desc">Notes & Details</Label>
+              <Label htmlFor="edit-item-desc" className="text-foreground dark:text-zinc-200">Notes & Details</Label>
               <Textarea
                 id="edit-item-desc"
                 rows={2}
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
           </div>
@@ -201,10 +207,11 @@ export function EditItineraryDialog({
               size="sm"
               onClick={() => onOpenChange(false)}
               disabled={isPending}
+              className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-300"
             >
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={isPending}>
+            <Button type="submit" size="sm" disabled={isPending} className="bg-[#2D9BF0] hover:bg-[#2087D6] text-white">
               {isPending && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               Save Changes
             </Button>

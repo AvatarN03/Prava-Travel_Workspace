@@ -102,11 +102,11 @@ export function AddItineraryDialog({
         </DialogTrigger>
       )}
 
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent className="sm:max-w-[480px] bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800">
         <form onSubmit={handleSubmit} className="space-y-3.5">
           <DialogHeader>
-            <DialogTitle>Add Itinerary Item</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-foreground dark:text-zinc-50">Add Itinerary Item</DialogTitle>
+            <DialogDescription className="text-muted-foreground dark:text-zinc-400">
               Schedule an activity, tour, meal, or transport.
             </DialogDescription>
           </DialogHeader>
@@ -119,7 +119,7 @@ export function AddItineraryDialog({
 
           <div className="space-y-3">
             <div className="space-y-1">
-              <Label htmlFor="item-title">Title / Activity *</Label>
+              <Label htmlFor="item-title" className="text-foreground dark:text-zinc-200">Title / Activity *</Label>
               <Input
                 id="item-title"
                 placeholder="e.g. Visit Fushimi Inari Shrine"
@@ -127,12 +127,13 @@ export function AddItineraryDialog({
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="item-day">Day #</Label>
+                <Label htmlFor="item-day" className="text-foreground dark:text-zinc-200">Day #</Label>
                 <Input
                   id="item-day"
                   type="number"
@@ -140,26 +141,28 @@ export function AddItineraryDialog({
                   value={formData.dayNumber}
                   onChange={(e) => setFormData({ ...formData, dayNumber: parseInt(e.target.value) || 1 })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="item-time">Time (Optional)</Label>
+                <Label htmlFor="item-time" className="text-foreground dark:text-zinc-200">Time (Optional)</Label>
                 <Input
                   id="item-time"
                   placeholder="e.g. 09:30 AM"
                   value={formData.time}
                   onChange={(e) => setFormData({ ...formData, time: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="item-category">Category</Label>
+                <Label htmlFor="item-category" className="text-foreground dark:text-zinc-200">Category</Label>
                 <select
                   id="item-category"
-                  className="flex h-9 w-full rounded-sm border border-border bg-background px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
+                  className="flex h-9 w-full rounded-sm border border-border dark:border-zinc-800 bg-background dark:bg-[#121622] px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 text-foreground dark:text-zinc-100"
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   disabled={isPending}
@@ -173,7 +176,7 @@ export function AddItineraryDialog({
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="item-cost">Estimated Cost ($)</Label>
+                <Label htmlFor="item-cost" className="text-foreground dark:text-zinc-200">Estimated Cost ($)</Label>
                 <Input
                   id="item-cost"
                   type="number"
@@ -183,23 +186,25 @@ export function AddItineraryDialog({
                   value={formData.cost}
                   onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="item-location">Location / Address</Label>
+              <Label htmlFor="item-location" className="text-foreground dark:text-zinc-200">Location / Address</Label>
               <Input
                 id="item-location"
                 placeholder="e.g. 68 Fukakusa Yabunouchicho, Fushimi Ward"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="item-desc">Notes & Details</Label>
+              <Label htmlFor="item-desc" className="text-foreground dark:text-zinc-200">Notes & Details</Label>
               <Textarea
                 id="item-desc"
                 placeholder="Tips, booking references, ticket details..."
@@ -207,6 +212,7 @@ export function AddItineraryDialog({
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
           </div>
@@ -218,10 +224,11 @@ export function AddItineraryDialog({
               size="sm"
               onClick={() => setOpen(false)}
               disabled={isPending}
+              className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-300"
             >
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={isPending}>
+            <Button type="submit" size="sm" disabled={isPending} className="bg-[#2D9BF0] hover:bg-[#2087D6] text-white">
               {isPending && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               Save Event
             </Button>

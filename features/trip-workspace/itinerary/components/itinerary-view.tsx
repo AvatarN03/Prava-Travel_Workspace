@@ -121,35 +121,35 @@ export function ItineraryView({
     const destName = destination || tripTitle || "your destination";
 
     return (
-      <div className="space-y-6 max-w-5xl mx-auto">
+      <div className="space-y-6 max-w-7xl mx-auto">
         {/* Editorial Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-border">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-border dark:border-zinc-800">
           <div className="space-y-1.5">
             <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
               Daily Itinerary
             </span>
-            <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
+            <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
               Curated{" "}
-              <span className="font-serif italic font-normal text-foreground">
+              <span className="font-serif italic font-normal text-foreground dark:text-zinc-100">
                 Timeline
               </span>
             </h1>
-            <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
+            <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 font-normal leading-relaxed max-w-2xl">
               Organize your journey day by day with museum timings, transit legs, restaurant reservations, and activities.
             </p>
           </div>
         </div>
 
         {/* Actionable Empty State */}
-        <div className="rounded-sm border border-dashed border-border/80 bg-card/60 p-8 sm:p-12 text-center space-y-4">
+        <div className="rounded-sm border border-dashed border-border/80 dark:border-zinc-800 bg-card/60 dark:bg-[#0F131C] p-8 sm:p-12 text-center space-y-4">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-sm bg-[#2D9BF0]/10 text-[#2D9BF0] border border-[#2D9BF0]/20">
             <Compass className="h-6 w-6" />
           </div>
           <div className="space-y-1.5 max-w-md mx-auto">
-            <h3 className="text-base font-semibold text-foreground">
+            <h3 className="text-base font-semibold text-foreground dark:text-zinc-100">
               Ready to plan your days in {destName}?
             </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
+            <p className="text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed">
               Your itinerary is currently empty. You can kickstart a full{" "}
               {tripDurationDays ? `${tripDurationDays}-day ` : ""}day-by-day draft with Ichinose AI, or craft your schedule manually.
             </p>
@@ -174,7 +174,7 @@ export function ItineraryView({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full sm:w-auto cursor-pointer gap-1.5 border-border hover:bg-muted"
+                  className="w-full sm:w-auto cursor-pointer gap-1.5 border-border dark:border-zinc-800 dark:bg-[#121622] hover:bg-muted dark:hover:bg-zinc-800 text-foreground dark:text-zinc-100"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Plan Manually</span>
@@ -183,7 +183,7 @@ export function ItineraryView({
             />
           </div>
 
-          <p className="text-[11px] text-muted-foreground pt-1">
+          <p className="text-[11px] text-muted-foreground dark:text-zinc-500 pt-1">
             AI proposals are structured suggestions that you can review and selectively approve.
           </p>
         </div>
@@ -192,9 +192,9 @@ export function ItineraryView({
   }
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto">
       {/* ── Editorial Workspace Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-border">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-border dark:border-zinc-800">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
@@ -204,13 +204,13 @@ export function ItineraryView({
               {daysList.length} Days · {items.length} Stops
             </span>
           </div>
-          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
             Curated{" "}
-            <span className="font-serif italic font-normal text-foreground">
+            <span className="font-serif italic font-normal text-foreground dark:text-zinc-100">
               Timeline
             </span>
           </h1>
-          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 font-normal leading-relaxed max-w-2xl">
             A chronological timeline of activities, meal stops, transit coordinates, and reservations for every day of your trip.
           </p>
         </div>
@@ -218,9 +218,9 @@ export function ItineraryView({
         {/* Header Right Actions */}
         <div className="flex flex-wrap items-center gap-2.5">
           {totalCost > 0 && (
-            <div className="hidden sm:inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 px-2.5 py-1.5 rounded-sm border border-border/80">
+            <div className="hidden sm:inline-flex items-center gap-1.5 text-xs text-muted-foreground dark:text-zinc-400 bg-muted/50 dark:bg-[#121622] px-2.5 py-1.5 rounded-sm border border-border/80 dark:border-zinc-800">
               <span>Est. Cost:</span>
-              <span className="text-foreground font-mono font-bold tabular-nums">
+              <span className="text-foreground dark:text-zinc-100 font-mono font-bold tabular-nums">
                 ${totalCost.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
               </span>
             </div>
@@ -230,7 +230,7 @@ export function ItineraryView({
             size="sm"
             variant="outline"
             onClick={handleKickstartWithAi}
-            className="h-8 gap-1.5 text-xs font-medium cursor-pointer border-[#2D9BF0]/30 text-[#2D9BF0] hover:bg-[#2D9BF0]/10"
+            className="h-8 gap-1.5 text-xs font-medium cursor-pointer border-[#2D9BF0]/30 text-[#2D9BF0] hover:bg-[#2D9BF0]/10 dark:bg-[#121622]"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             <span>AI Assist</span>
@@ -249,7 +249,7 @@ export function ItineraryView({
               <Button
                 size="sm"
                 variant="outline"
-                className="h-8 gap-1.5 text-xs font-medium cursor-pointer border-border hover:bg-muted text-foreground"
+                className="h-8 gap-1.5 text-xs font-medium cursor-pointer border-border dark:border-zinc-800 dark:bg-[#121622] hover:bg-muted dark:hover:bg-zinc-800 text-foreground dark:text-zinc-100"
               >
                 <Calendar className="w-3.5 h-3.5 text-[#2D9BF0]" />
                 <span className="hidden sm:inline">Add to Calendar</span>
@@ -271,7 +271,7 @@ export function ItineraryView({
       </div>
 
       {/* ── Day Filter Navigation Strip ── */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar border-b border-border/60">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar border-b border-border/60 dark:border-zinc-800">
         <button
           type="button"
           onClick={() => setSelectedDay("ALL")}
@@ -279,7 +279,7 @@ export function ItineraryView({
             "px-3 py-1.5 text-xs rounded-sm font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5",
             selectedDay === "ALL"
               ? "bg-[#2D9BF0] text-white font-semibold shadow-xs"
-              : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60"
+              : "bg-muted/50 dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 hover:bg-muted dark:hover:bg-zinc-800 border border-border/60 dark:border-zinc-800"
           )}
         >
           <span>All Days</span>
@@ -300,7 +300,7 @@ export function ItineraryView({
                 "px-3 py-1.5 text-xs rounded-sm font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5",
                 isSelected
                   ? "bg-[#2D9BF0] text-white font-semibold shadow-xs"
-                  : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60"
+                  : "bg-muted/50 dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 hover:bg-muted dark:hover:bg-zinc-800 border border-border/60 dark:border-zinc-800"
               )}
             >
               <span>Day {day}</span>
@@ -322,15 +322,15 @@ export function ItineraryView({
             return (
               <div key={day} className="space-y-3.5">
                 {/* Day Header Bar */}
-                <div className="flex items-center justify-between pb-2 border-b border-border/70">
+                <div className="flex items-center justify-between pb-2 border-b border-border/70 dark:border-zinc-800">
                   <div className="flex items-center gap-2.5">
                     <span className="flex h-6 w-6 items-center justify-center rounded-sm bg-[#2D9BF0]/15 text-[#2D9BF0] text-xs font-bold font-mono">
                       {day}
                     </span>
-                    <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-foreground dark:text-zinc-100 flex items-center gap-2">
                       <span>Day {day}</span>
                       {dateLabel && (
-                        <span className="text-xs font-normal text-muted-foreground">
+                        <span className="text-xs font-normal text-muted-foreground dark:text-zinc-400">
                           · {dateLabel}
                         </span>
                       )}
@@ -343,14 +343,14 @@ export function ItineraryView({
                         ${costForDay.toFixed(2)} est.
                       </span>
                     )}
-                    <span className="text-[11px] text-muted-foreground tabular-nums">
+                    <span className="text-[11px] text-muted-foreground dark:text-zinc-400 tabular-nums">
                       {dayItems.length} {dayItems.length === 1 ? "activity" : "activities"}
                     </span>
                   </div>
                 </div>
 
                 {/* Day Items Timeline List with continuous vertical accent */}
-                <div className="space-y-3 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-border/70">
+                <div className="space-y-3 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-border/70 dark:before:bg-zinc-800">
                   {dayItems.map((item) => (
                     <ItineraryCard
                       key={item.id}
