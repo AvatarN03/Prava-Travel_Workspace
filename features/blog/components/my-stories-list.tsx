@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
+import { useMemo, useState, useTransition } from "react";
 
 import {
   ArrowLeft,
@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/card";
 
 import { deleteBlogPost, toggleStoryPublishStatus } from "../actions";
+
 import { DEFAULT_STORY_COVER } from "../constants";
 import type { StoryItem } from "../types";
 
@@ -115,21 +116,21 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
       </Link>
 
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border dark:border-zinc-800 pb-5">
         <div className="space-y-1">
           <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
             Creator Dashboard
           </span>
-          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
             My{" "}
-            <span className="font-serif italic font-normal text-foreground">
+            <span className="font-serif italic font-normal text-foreground dark:text-zinc-100">
               Stories
             </span>{" "}
-            <span className="font-mono text-base font-normal text-muted-foreground tabular-nums">
+            <span className="font-mono text-base font-normal text-muted-foreground dark:text-zinc-500 tabular-nums">
               ({posts.length})
             </span>
           </h1>
-          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-xl">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 font-normal leading-relaxed max-w-xl">
             Manage your written guides, review draft itineraries, and publish narratives for the community.
           </p>
         </div>
@@ -144,14 +145,14 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
       </div>
 
       {/* Filter Tabs Strip */}
-      <div className="flex items-center gap-1 border-b border-border/60 pb-3">
+      <div className="flex items-center gap-1 border-b border-border/60 dark:border-zinc-800/60 pb-3">
         <button
           type="button"
           onClick={() => setFilter("ALL")}
           className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition-colors cursor-pointer ${
             filter === "ALL"
               ? "bg-primary text-primary-foreground shadow-xs"
-              : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+              : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 hover:bg-muted/40 dark:hover:bg-zinc-800/40"
           }`}
         >
           All ({posts.length})
@@ -163,7 +164,7 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
           className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition-colors cursor-pointer ${
             filter === "PUBLISHED"
               ? "bg-primary text-primary-foreground shadow-xs"
-              : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+              : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 hover:bg-muted/40 dark:hover:bg-zinc-800/40"
           }`}
         >
           Published ({publishedCount})
@@ -175,7 +176,7 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
           className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition-colors cursor-pointer ${
             filter === "DRAFT"
               ? "bg-primary text-primary-foreground shadow-xs"
-              : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+              : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 hover:bg-muted/40 dark:hover:bg-zinc-800/40"
           }`}
         >
           Drafts ({draftCount})
@@ -184,22 +185,22 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
 
       {/* Grid of Story Cards */}
       {filteredPosts.length === 0 ? (
-        <div className="rounded-md border border-dashed border-border p-12 text-center space-y-3 bg-card/40">
+        <div className="rounded-md border border-dashed border-border dark:border-zinc-800 p-12 text-center space-y-3 bg-card/40 dark:bg-[#0F131C]/60">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
             <BookOpen className="h-6 w-6" />
           </div>
-          <h3 className="text-sm font-semibold">
+          <h3 className="text-sm font-semibold text-foreground dark:text-zinc-100">
             {filter === "ALL"
               ? "No stories written yet"
               : filter === "PUBLISHED"
               ? "No published stories found"
               : "No draft stories found"}
           </h3>
-          <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+          <p className="text-xs text-muted-foreground dark:text-zinc-400 max-w-sm mx-auto">
             Inspire other travelers by sharing your journey, itineraries, travel hacks, and destination reviews.
           </p>
           <Link href="/stories/new">
-            <Button size="sm" className="gap-1.5 text-xs mt-2 shadow-xs cursor-pointer">
+            <Button size="sm" className="gap-1.5 text-xs mt-2 shadow-xs cursor-pointer bg-[#2D9BF0] hover:bg-[#2085d3] text-white">
               <Plus className="h-3.5 w-3.5" /> Write Story
             </Button>
           </Link>
@@ -214,10 +215,10 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
             return (
               <Card
                 key={post.id}
-                className="group relative flex flex-col justify-between overflow-hidden border border-border bg-card hover:border-primary/50 transition-all duration-200 shadow-2xs hover:shadow-xs rounded-md"
+                className="group relative flex flex-col justify-between overflow-hidden border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200 shadow-2xs hover:shadow-xs rounded-md"
               >
                 {/* Story Cover Image with Badges */}
-                <div className="relative h-44 w-full overflow-hidden bg-muted border-b border-border/60">
+                <div className="relative h-44 w-full overflow-hidden bg-muted dark:bg-zinc-900 border-b border-border/60 dark:border-zinc-800/80">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={coverUrl}
@@ -235,14 +236,14 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
                     ) : post.status === "DRAFT" ? (
                       <Badge
                         variant="secondary"
-                        className="bg-background/90 text-foreground text-[10px] font-bold uppercase tracking-wider shadow-xs backdrop-blur-xs border border-border"
+                        className="bg-background/90 dark:bg-[#121622]/90 text-foreground dark:text-zinc-200 text-[10px] font-bold uppercase tracking-wider shadow-xs backdrop-blur-xs border border-border dark:border-zinc-800"
                       >
                         Draft
                       </Badge>
                     ) : (
                       <Badge
                         variant="outline"
-                        className="bg-background/80 text-[10px] font-bold uppercase tracking-wider"
+                        className="bg-background/80 dark:bg-[#121622]/80 text-[10px] font-bold uppercase tracking-wider border-border dark:border-zinc-800"
                       >
                         Archived
                       </Badge>
@@ -282,7 +283,7 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
                         : `/stories/${post.slug}/edit`
                     }
                   >
-                    <h3 className="text-sm font-bold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors cursor-pointer">
+                    <h3 className="text-sm font-bold text-foreground dark:text-zinc-100 leading-snug line-clamp-2 group-hover:text-primary transition-colors cursor-pointer">
                       {post.title}
                     </h3>
                   </Link>
@@ -291,11 +292,11 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
                 {/* Card Content Excerpt & Linked Trip */}
                 <CardContent className="p-4 pt-0 pb-3 space-y-2.5 flex-1 flex flex-col justify-between">
                   {post.excerpt ? (
-                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-muted-foreground dark:text-zinc-400 line-clamp-2 leading-relaxed">
                       {post.excerpt}
                     </p>
                   ) : (
-                    <p className="text-xs text-muted-foreground/60 italic">
+                    <p className="text-xs text-muted-foreground/60 dark:text-zinc-500 italic">
                       No excerpt provided.
                     </p>
                   )}
@@ -303,13 +304,13 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
                   <div className="space-y-2 pt-1">
                     {/* Attached Workspace Trip Badge */}
                     {post.linkedTrip && (
-                      <div className="flex items-center gap-1.5 rounded-md bg-primary/10 border border-primary/20 px-2 py-1 text-[11px] text-primary">
+                      <div className="flex items-center gap-1.5 rounded-md bg-primary/10 dark:bg-primary/15 border border-primary/20 dark:border-primary/30 px-2 py-1 text-[11px] text-primary">
                         <Compass className="h-3 w-3 shrink-0" />
                         <span className="font-semibold truncate max-w-[140px]">
                           {post.linkedTrip.title}
                         </span>
                         {post.linkedTrip.destination && (
-                          <span className="text-muted-foreground text-[10px] ml-auto truncate max-w-[90px]">
+                          <span className="text-muted-foreground dark:text-zinc-400 text-[10px] ml-auto truncate max-w-[90px]">
                             {post.linkedTrip.destination}
                           </span>
                         )}
@@ -317,7 +318,7 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
                     )}
 
                     {/* Date Metadata */}
-                    <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                    <div className="flex items-center gap-3 text-[10px] text-muted-foreground dark:text-zinc-400">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" /> Updated {new Date(post.updatedAt).toLocaleDateString()}
                       </span>
@@ -331,14 +332,14 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
                 </CardContent>
 
                 {/* Card Footer Action Bar */}
-                <CardFooter className="border-t border-border/60 p-2.5 flex items-center justify-between gap-1.5 bg-muted/10">
+                <CardFooter className="border-t border-border/60 dark:border-zinc-800/80 p-2.5 flex items-center justify-between gap-1.5 bg-muted/10 dark:bg-[#121622]/60">
                   <div className="flex items-center gap-1">
                     {post.status === "PUBLISHED" && (
                       <Link href={`/stories/${post.slug}`}>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+                          className="h-7 px-2 text-xs text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 cursor-pointer"
                         >
                           <ExternalLink className="h-3.5 w-3.5 mr-1" /> View
                         </Button>
@@ -349,7 +350,7 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="h-7 px-2.5 text-xs cursor-pointer"
+                        className="h-7 px-2.5 text-xs cursor-pointer border-border dark:border-zinc-800 dark:hover:bg-zinc-800/60"
                       >
                         <Edit className="h-3.5 w-3.5 mr-1" /> Edit
                       </Button>
@@ -361,7 +362,7 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="h-7 px-2 text-xs cursor-pointer"
+                      className="h-7 px-2 text-xs cursor-pointer border-border dark:border-zinc-800 dark:hover:bg-zinc-800/60"
                       onClick={() => handleStatusToggle(post)}
                       disabled={togglingId === post.id}
                       title={
@@ -375,7 +376,7 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
                       ) : post.status === "PUBLISHED" ? (
                         <Radio className="h-3 w-3 text-emerald-500 mr-1" />
                       ) : (
-                        <CheckCircle2 className="h-3 w-3 text-muted-foreground mr-1" />
+                        <CheckCircle2 className="h-3 w-3 text-muted-foreground dark:text-zinc-400 mr-1" />
                       )}
                       <span>
                         {post.status === "PUBLISHED" ? "Unpublish" : "Publish"}
@@ -386,7 +387,7 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer"
+                      className="h-7 w-7 text-muted-foreground dark:text-zinc-400 hover:text-destructive hover:bg-destructive/10 cursor-pointer"
                       onClick={() => handleDelete(post.id, post.title)}
                       disabled={deletingId === post.id}
                       title="Delete story"

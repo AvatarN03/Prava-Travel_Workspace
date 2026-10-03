@@ -1,9 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
+import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
-import { blogPostSchema, BlogPostInput, generateSlug } from "./schema";
+import { generateSlug } from "@/lib/utils";
+
+import { blogPostSchema, type BlogPostInput } from "./schema";
+import type { StoryItem } from "./types";
 
 /**
  * Internal helper to authenticate the current user.
@@ -47,6 +52,8 @@ export async function createBlogPost(input: BlogPostInput) {
     const user = await getAuthUser();
     if (!user) return { success: false, error: "Unauthorized" };
 
+    const profile = await syncUserProfile(user);
+
     const parsed = blogPostSchema.safeParse(input);
     if (!parsed.success) {
       return {
@@ -56,19 +63,20 @@ export async function createBlogPost(input: BlogPostInput) {
       };
     }
 
-    const { title, excerpt, content, coverImageUrl, tags, status, linkedTripId } = parsed.data;
+    const { title, excerpt, content, coverImageUrl, images, tags, status, linkedTripId } = parsed.data;
     const baseSlug = parsed.data.slug || generateSlug(title);
     const slug = await resolveUniqueSlug(baseSlug);
     const isPublishing = status === "PUBLISHED";
 
     const post = await db.blogPost.create({
       data: {
-        profileId: user.id,
+        profileId: profile.id,
         slug,
         title: title.trim(),
         excerpt: excerpt?.trim() || null,
         content,
-        coverImageUrl: coverImageUrl || null,
+        coverImageUrl: coverImageUrl || (images && images[0]) || null,
+        images: images || [],
         tags: tags || [],
         status: status || "DRAFT",
         linkedTripId: linkedTripId || null,
@@ -94,8 +102,10 @@ export async function updateBlogPost(postId: string, input: BlogPostInput) {
     const user = await getAuthUser();
     if (!user) return { success: false, error: "Unauthorized" };
 
+    const profile = await syncUserProfile(user);
+
     const existing = await db.blogPost.findFirst({
-      where: { id: postId, profileId: user.id },
+      where: { id: postId, profileId: profile.id },
     });
 
     if (!existing) {
@@ -107,7 +117,7 @@ export async function updateBlogPost(postId: string, input: BlogPostInput) {
       return { success: false, error: "Invalid blog post data" };
     }
 
-    const { title, excerpt, content, coverImageUrl, tags, status, linkedTripId } = parsed.data;
+    const { title, excerpt, content, coverImageUrl, images, tags, status, linkedTripId } = parsed.data;
 
     let slug = existing.slug;
     if (parsed.data.slug && parsed.data.slug !== existing.slug) {
@@ -124,7 +134,8 @@ export async function updateBlogPost(postId: string, input: BlogPostInput) {
         title: title.trim(),
         excerpt: excerpt?.trim() || null,
         content,
-        coverImageUrl: coverImageUrl || null,
+        coverImageUrl: coverImageUrl || (images && images[0]) || null,
+        images: images || [],
         tags: tags || [],
         status: status || existing.status,
         linkedTripId: linkedTripId || null,
@@ -264,9 +275,11 @@ export async function getPublishedStory(slugOrId: string) {
       include: {
         profile: {
           select: {
+            id: true,
             fullName: true,
             username: true,
             avatarUrl: true,
+            bio: true,
             isPublic: true,
           },
         },
@@ -286,7 +299,27 @@ export async function getPublishedStory(slugOrId: string) {
       return { success: false, error: "Story not found" };
     }
 
-    return { success: true, story: post };
+    let hasLiked = false;
+    if (user) {
+      const like = await db.blogPostLike.findUnique({
+        where: {
+          profileId_postId: {
+            profileId: user.id,
+            postId: post.id,
+          },
+        },
+      });
+      hasLiked = Boolean(like);
+    }
+
+    return {
+      success: true,
+      story: {
+        ...post,
+        upvotes: post.upvotes ?? 0,
+        hasLiked,
+      },
+    };
   } catch (error) {
     console.error("Error fetching published story:", error);
     return { success: false, error: "Failed to load story" };
@@ -298,14 +331,17 @@ export async function getPublishedStory(slugOrId: string) {
  */
 export async function getAllPublishedStories() {
   try {
+    const user = await getAuthUser();
     const posts = await db.blogPost.findMany({
       where: { status: "PUBLISHED" },
       include: {
         profile: {
           select: {
+            id: true,
             fullName: true,
             username: true,
             avatarUrl: true,
+            bio: true,
             isPublic: true,
           },
         },
@@ -320,7 +356,58 @@ export async function getAllPublishedStories() {
       orderBy: { publishedAt: "desc" },
     });
 
-    return { success: true, stories: posts };
+    let likedPostIds = new Set<string>();
+    if (user && posts.length > 0) {
+      try {
+        const likes = await db.blogPostLike.findMany({
+          where: {
+            profileId: user.id,
+            postId: { in: posts.map((p) => p.id) },
+          },
+          select: { postId: true },
+        });
+        likedPostIds = new Set(likes.map((l) => l.postId));
+      } catch (err) {
+        console.warn("Could not query user story likes:", err);
+      }
+    }
+
+    const stories: StoryItem[] = posts.map((post) => {
+      const hasLiked = likedPostIds.has(post.id);
+      return {
+        id: post.id,
+        slug: post.slug,
+        title: post.title,
+        excerpt: post.excerpt,
+        content: post.content,
+        coverImageUrl: post.coverImageUrl,
+        images: post.images || [],
+        tags: post.tags,
+        status: post.status,
+        upvotes: post.upvotes ?? 0,
+        hasLiked,
+        publishedAt: post.publishedAt,
+        updatedAt: post.updatedAt,
+        profile: post.profile
+          ? {
+              fullName: post.profile.fullName,
+              username: post.profile.username,
+              avatarUrl: post.profile.avatarUrl,
+              isPublic: post.profile.isPublic,
+              bio: post.profile.bio,
+            }
+          : null,
+        linkedTrip: post.linkedTrip
+          ? {
+              id: post.linkedTrip.id,
+              title: post.linkedTrip.title,
+              destination: post.linkedTrip.destination,
+            }
+          : null,
+      };
+    });
+
+    return { success: true, stories };
   } catch (error) {
     console.error("Error fetching published stories:", error);
     return { success: false, error: "Failed to load stories", stories: [] };
@@ -361,5 +448,82 @@ export async function toggleStoryPublishStatus(postId: string) {
   } catch (error) {
     console.error("Error toggling story status:", error);
     return { success: false, error: "Failed to update story status" };
+  }
+}
+
+/**
+ * Toggle like / upvote on a published story.
+ */
+export async function toggleStoryLike(postId: string) {
+  try {
+    const user = await getAuthUser();
+    if (!user) return { success: false, error: "Please sign in to like this story." };
+
+    const profile = await syncUserProfile(user);
+
+    const post = await db.blogPost.findUnique({
+      where: { id: postId },
+      select: { id: true, slug: true, upvotes: true },
+    });
+
+    if (!post) {
+      return { success: false, error: "Story not found." };
+    }
+
+    const existingLike = await db.blogPostLike.findUnique({
+      where: {
+        profileId_postId: {
+          profileId: profile.id,
+          postId,
+        },
+      },
+    });
+
+    if (existingLike) {
+      const [, updatedPost] = await db.$transaction([
+        db.blogPostLike.delete({
+          where: {
+            profileId_postId: {
+              profileId: profile.id,
+              postId,
+            },
+          },
+        }),
+        db.blogPost.update({
+          where: { id: postId },
+          data: {
+            upvotes: { decrement: 1 },
+          },
+          select: { upvotes: true },
+        }),
+      ]);
+
+      revalidatePath("/stories");
+      revalidatePath(`/stories/${post.slug}`);
+      return { success: true, hasLiked: false, upvotes: Math.max(0, updatedPost.upvotes ?? 0) };
+    } else {
+      const [, updatedPost] = await db.$transaction([
+        db.blogPostLike.create({
+          data: {
+            profileId: profile.id,
+            postId,
+          },
+        }),
+        db.blogPost.update({
+          where: { id: postId },
+          data: {
+            upvotes: { increment: 1 },
+          },
+          select: { upvotes: true },
+        }),
+      ]);
+
+      revalidatePath("/stories");
+      revalidatePath(`/stories/${post.slug}`);
+      return { success: true, hasLiked: true, upvotes: updatedPost.upvotes ?? 1 };
+    }
+  } catch (error) {
+    console.error("Error toggling story like:", error);
+    return { success: false, error: "Failed to update like." };
   }
 }

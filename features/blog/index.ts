@@ -12,3 +12,5 @@ export { MarkdownRenderer } from "./components/markdown-renderer";
 export { MyStoriesList } from "./components/my-stories-list";
 export { StoryCard } from "./components/story-card";
 export { StoryHeaderActions } from "./components/story-header-actions";
+export { StoryLikeButton } from "./components/story-like-button";
+export { StoryPhotoGallery } from "./components/story-photo-gallery";

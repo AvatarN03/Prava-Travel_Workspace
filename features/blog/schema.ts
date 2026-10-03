@@ -6,6 +6,7 @@ export const blogPostSchema = z.object({
   excerpt: z.string().max(500).optional().nullable(),
   content: z.string().min(10, "Content must be at least 10 characters"),
   coverImageUrl: z.string().url().optional().nullable(),
+  images: z.array(z.string()).optional(),
   tags: z.array(z.string().max(50)).max(10).optional(),
   status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).optional(),
   linkedTripId: z.string().uuid().optional().nullable(),

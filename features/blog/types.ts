@@ -15,6 +15,7 @@ export interface StoryAuthorProfile {
   username: string | null;
   avatarUrl: string | null;
   isPublic: boolean;
+  bio?: string | null;
 }
 
 export interface StoryItem {
@@ -24,8 +25,11 @@ export interface StoryItem {
   excerpt: string | null;
   content?: string;
   coverImageUrl: string | null;
+  images?: string[];
   tags: string[];
   status?: StoryStatus;
+  upvotes?: number | null;
+  hasLiked?: boolean;
   publishedAt: Date | string | null;
   updatedAt?: Date | string;
   profile?: StoryAuthorProfile | null;

@@ -51,19 +51,19 @@ export function MarkdownRenderer({ content }: { content: string }) {
     // Headings
     if (line.startsWith("### ")) {
       elements.push(
-        <h3 key={index} className="text-lg font-bold text-foreground mt-6 mb-2 tracking-tight">
+        <h3 key={index} className="text-lg font-bold text-foreground dark:text-zinc-100 mt-6 mb-2 tracking-tight">
           {formatInline(line.replace(/^###\s+/, ""))}
         </h3>
       );
     } else if (line.startsWith("## ")) {
       elements.push(
-        <h2 key={index} className="text-xl font-bold text-foreground mt-8 mb-3 pb-1 border-b border-border tracking-tight">
+        <h2 key={index} className="text-xl font-bold text-foreground dark:text-zinc-50 mt-8 mb-3 pb-1 border-b border-border dark:border-zinc-800 tracking-tight">
           {formatInline(line.replace(/^##\s+/, ""))}
         </h2>
       );
     } else if (line.startsWith("# ")) {
       elements.push(
-        <h1 key={index} className="text-2xl font-extrabold text-foreground mt-8 mb-4 tracking-tight">
+        <h1 key={index} className="text-2xl font-extrabold text-foreground dark:text-zinc-50 mt-8 mb-4 tracking-tight">
           {formatInline(line.replace(/^#\s+/, ""))}
         </h1>
       );
@@ -73,7 +73,7 @@ export function MarkdownRenderer({ content }: { content: string }) {
       elements.push(
         <blockquote
           key={index}
-          className="my-4 border-l-4 border-primary pl-4 italic text-muted-foreground bg-muted/20 py-2 rounded-r-sm"
+          className="my-4 border-l-4 border-primary pl-4 italic text-muted-foreground dark:text-zinc-300 bg-muted/20 dark:bg-zinc-900/40 py-2 rounded-r-sm"
         >
           {formatInline(line.replace(/^>\s+/, ""))}
         </blockquote>
@@ -84,11 +84,11 @@ export function MarkdownRenderer({ content }: { content: string }) {
       const match = line.trim().match(/^!\[(.*?)\]\((.*?)\)$/);
       if (match) {
         elements.push(
-          <div key={index} className="my-6 rounded-md overflow-hidden border border-border">
+          <div key={index} className="my-6 rounded-md overflow-hidden border border-border dark:border-zinc-800">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={match[2]} alt={match[1] || "Story image"} className="w-full h-auto max-h-[480px] object-cover" />
             {match[1] && (
-              <p className="text-center text-[11px] text-muted-foreground py-1.5 bg-muted/30">{match[1]}</p>
+              <p className="text-center text-[11px] text-muted-foreground dark:text-zinc-400 py-1.5 bg-muted/30 dark:bg-zinc-900/60">{match[1]}</p>
             )}
           </div>
         );
@@ -97,7 +97,7 @@ export function MarkdownRenderer({ content }: { content: string }) {
     // Standard Paragraph
     else {
       elements.push(
-        <p key={index} className="my-3 text-sm text-foreground/90 leading-relaxed">
+        <p key={index} className="my-3 text-sm text-foreground/90 dark:text-zinc-200 leading-relaxed">
           {formatInline(line)}
         </p>
       );
@@ -188,7 +188,7 @@ function formatInline(text: string): React.ReactNode {
       remaining = remaining.substring(earliestIndex + italicMatch[0].length);
     } else if (earliestType === "code" && codeMatch) {
       parts.push(
-        <code key={`inline-${keyIdx++}`} className="px-1 py-0.5 rounded bg-muted text-[11px] font-mono text-foreground">
+        <code key={`inline-${keyIdx++}`} className="px-1 py-0.5 rounded bg-muted dark:bg-zinc-800 text-[11px] font-mono text-foreground dark:text-zinc-200">
           {codeMatch[1]}
         </code>
       );
