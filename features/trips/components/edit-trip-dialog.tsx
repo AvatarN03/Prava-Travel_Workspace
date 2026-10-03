@@ -185,11 +185,11 @@ export function EditTripDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-2rem)] sm:w-full sm:max-w-[560px] h-[75vh] max-h-[75vh] sm:h-auto sm:max-h-[80vh] flex flex-col p-0 gap-0 overflow-hidden shadow-2xl border-border/80">
+      <DialogContent className="w-[calc(100vw-2rem)] sm:w-full sm:max-w-[560px] h-[75vh] max-h-[75vh] sm:h-auto sm:max-h-[80vh] flex flex-col p-0 gap-0 overflow-hidden shadow-2xl border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C]">
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
-          <DialogHeader className="p-4 sm:p-6 pb-3 sm:pb-4 pr-12 border-b border-border/60 shrink-0 text-left bg-card">
-            <DialogTitle className="text-lg sm:text-xl font-bold tracking-tight">Edit Trip Details</DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
+          <DialogHeader className="p-4 sm:p-6 pb-3 sm:pb-4 pr-12 border-b border-border/60 dark:border-zinc-800 shrink-0 text-left bg-card dark:bg-[#0F131C]">
+            <DialogTitle className="text-lg sm:text-xl font-bold tracking-tight text-foreground dark:text-zinc-50">Edit Trip Details</DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground dark:text-zinc-400">
               Update destination, scheduled dates, cover photo, and workspace settings.
             </DialogDescription>
           </DialogHeader>
@@ -204,14 +204,14 @@ export function EditTripDialog({
             <div className="space-y-3.5">
             {/* Title */}
             <div className="space-y-1">
-              <Label htmlFor="edit-title" className="text-xs font-medium">Trip Title *</Label>
+              <Label htmlFor="edit-title" className="text-xs font-medium text-foreground dark:text-zinc-200">Trip Title *</Label>
               <Input
                 id="edit-title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
                 disabled={isPending}
-                className="h-9 text-sm"
+                className="h-9 text-sm dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
               {fieldErrors.title && (
                 <p className="text-[11px] text-destructive">{fieldErrors.title[0]}</p>
@@ -220,8 +220,8 @@ export function EditTripDialog({
 
             {/* Destination */}
             <div className="space-y-1">
-              <Label htmlFor="edit-destination" className="text-xs font-medium flex items-center gap-1.5">
-                <MapPin className="h-3 w-3 text-muted-foreground" /> Destination
+              <Label htmlFor="edit-destination" className="text-xs font-medium text-foreground dark:text-zinc-200 flex items-center gap-1.5">
+                <MapPin className="h-3 w-3 text-muted-foreground dark:text-zinc-400" /> Destination
               </Label>
               <Input
                 id="edit-destination"
@@ -235,7 +235,7 @@ export function EditTripDialog({
                   }
                 }}
                 disabled={isPending}
-                className="h-9 text-sm"
+                className="h-9 text-sm dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
               {fieldErrors.destination && (
                 <p className="text-[11px] text-destructive">{fieldErrors.destination[0]}</p>
@@ -245,8 +245,8 @@ export function EditTripDialog({
             {/* Dates Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="edit-startDate" className="text-xs font-medium flex items-center gap-1.5">
-                  <CalendarIcon className="h-3 w-3 text-muted-foreground" /> Start Date
+                <Label htmlFor="edit-startDate" className="text-xs font-medium text-foreground dark:text-zinc-200 flex items-center gap-1.5">
+                  <CalendarIcon className="h-3 w-3 text-muted-foreground dark:text-zinc-400" /> Start Date
                 </Label>
                 <DatePicker
                   date={formData.startDate ? new Date(formData.startDate) : null}
@@ -260,8 +260,8 @@ export function EditTripDialog({
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="edit-endDate" className="text-xs font-medium flex items-center gap-1.5">
-                  <CalendarIcon className="h-3 w-3 text-muted-foreground" /> End Date
+                <Label htmlFor="edit-endDate" className="text-xs font-medium text-foreground dark:text-zinc-200 flex items-center gap-1.5">
+                  <CalendarIcon className="h-3 w-3 text-muted-foreground dark:text-zinc-400" /> End Date
                 </Label>
                 <DatePicker
                   date={formData.endDate ? new Date(formData.endDate) : null}
@@ -281,16 +281,16 @@ export function EditTripDialog({
 
             {/* Status */}
             <div className="space-y-1">
-              <Label htmlFor="edit-status" className="text-xs font-medium">Status</Label>
+              <Label htmlFor="edit-status" className="text-xs font-medium text-foreground dark:text-zinc-200">Status</Label>
               <Select
                 value={formData.status}
                 onValueChange={(val) => setFormData({ ...formData, status: val as TripStatus })}
                 disabled={isPending}
               >
-                <SelectTrigger id="edit-status" className="h-9 text-sm">
+                <SelectTrigger id="edit-status" className="h-9 text-sm dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="dark:bg-[#0F131C] dark:border-zinc-800">
                   <SelectItem value="PLANNING">Planning</SelectItem>
                   <SelectItem value="ACTIVE">Active (In Progress)</SelectItem>
                   <SelectItem value="COMPLETED">Completed</SelectItem>
@@ -440,7 +440,7 @@ export function EditTripDialog({
 
             {/* Description */}
             <div className="space-y-1">
-              <Label htmlFor="edit-description" className="text-xs font-medium">
+              <Label htmlFor="edit-description" className="text-xs font-medium text-foreground dark:text-zinc-200">
                 Description & Notes
               </Label>
               <Textarea
@@ -449,20 +449,20 @@ export function EditTripDialog({
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 disabled={isPending}
-                className="text-sm resize-none"
+                className="text-sm resize-none dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
           </div>
         </div>
 
-        <DialogFooter className="p-3 sm:p-4 sm:px-6 border-t border-border/60 shrink-0 bg-muted/15 sm:bg-card flex flex-row items-center justify-end gap-2">
+        <DialogFooter className="p-3 sm:p-4 sm:px-6 border-t border-border/60 dark:border-zinc-800 shrink-0 bg-muted/15 sm:bg-card dark:bg-[#0F131C] flex flex-row items-center justify-end gap-2">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={() => onOpenChange(false)}
             disabled={isPending}
-            className="cursor-pointer"
+            className="cursor-pointer dark:border-zinc-800 dark:hover:bg-[#121622]"
           >
             Cancel
           </Button>
