@@ -11,7 +11,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
@@ -79,39 +78,39 @@ export function UpgradeDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md p-0 overflow-hidden border border-border/80 bg-card rounded-md shadow-xl gap-0 font-sans">
+      <DialogContent className="sm:max-w-md p-0 overflow-hidden border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] rounded-md shadow-xl gap-0 font-sans">
         {/* Sleek Top Header */}
-        <div className="bg-muted/30 border-b border-border/80 p-5 space-y-3">
+        <div className="bg-muted/30 dark:bg-[#121622]/60 border-b border-border/80 dark:border-zinc-800 p-5 space-y-3">
           <div className="flex items-center justify-between">
             <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-xs bg-primary/10 border border-primary/20 text-[10px] font-semibold uppercase tracking-wider text-primary">
               <Sparkles className="h-3 w-3" />
               <span>Pro Wanderer</span>
             </div>
 
-            <Badge variant="outline" className="text-[10px] font-medium tabular-nums text-muted-foreground border-border/80 bg-card px-2 py-0.5 rounded-xs">
+            <Badge variant="outline" className="text-[10px] font-medium tabular-nums text-muted-foreground dark:text-zinc-400 border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] px-2 py-0.5 rounded-xs">
               {pricing ? `${pricing.currencyCode} (${pricing.currencySymbol}) Pricing` : "INR (₹) Pricing"}
             </Badge>
           </div>
 
           <div className="space-y-1">
-            <DialogTitle className="font-sans text-base sm:text-lg font-semibold tracking-tight text-foreground">
+            <DialogTitle className="font-sans text-base sm:text-lg font-semibold tracking-tight text-foreground dark:text-zinc-100">
               {title}
             </DialogTitle>
-            <DialogDescription className="font-sans text-xs text-muted-foreground leading-relaxed">
+            <DialogDescription className="font-sans text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed">
               {description}
             </DialogDescription>
           </div>
 
           {/* Stable Segmented Billing Switcher (No layout shift or glitch) */}
           <div className="pt-1">
-            <div className="grid grid-cols-2 p-1 bg-muted/60 rounded-xs border border-border/80 text-xs select-none">
+            <div className="grid grid-cols-2 p-1 bg-muted/60 dark:bg-[#0F131C] rounded-xs border border-border/80 dark:border-zinc-800 text-xs select-none">
               <button
                 type="button"
                 onClick={() => setBillingCycle("annual")}
                 className={`py-1.5 px-2 rounded-xs font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer border ${
                   isAnnual
-                    ? "bg-card text-foreground shadow-2xs border-border/80"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
+                    ? "bg-card dark:bg-[#121622] text-foreground dark:text-zinc-100 shadow-2xs border-border/80 dark:border-zinc-800"
+                    : "border-transparent text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
                 }`}
               >
                 <span>Yearly</span>
@@ -125,8 +124,8 @@ export function UpgradeDialog({
                 onClick={() => setBillingCycle("monthly")}
                 className={`py-1.5 px-2 rounded-xs font-semibold text-xs transition-colors flex items-center justify-center cursor-pointer border ${
                   !isAnnual
-                    ? "bg-card text-foreground shadow-2xs border-border/80"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
+                    ? "bg-card dark:bg-[#121622] text-foreground dark:text-zinc-100 shadow-2xs border-border/80 dark:border-zinc-800"
+                    : "border-transparent text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
                 }`}
               >
                 <span>Monthly</span>
@@ -136,13 +135,13 @@ export function UpgradeDialog({
         </div>
 
         {/* Pricing Highlight Row (Emphasizes lower monthly equivalent) */}
-        <div className="px-5 py-4 border-b border-border/60 bg-muted/15 flex items-baseline justify-between min-h-[72px]">
+        <div className="px-5 py-4 border-b border-border/60 dark:border-zinc-800 bg-muted/15 dark:bg-[#121622]/30 flex items-baseline justify-between min-h-[72px]">
           <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="font-sans text-2xl font-light tracking-tight tabular-nums text-foreground">
+              <span className="font-sans text-2xl font-light tracking-tight tabular-nums text-foreground dark:text-zinc-50">
                 {isAnnual ? annualMonthlyEquivalentDisplay : monthlyRateDisplay}
               </span>
-              <span className="font-sans text-xs text-muted-foreground font-medium">
+              <span className="font-sans text-xs text-muted-foreground dark:text-zinc-400 font-medium">
                 / month
               </span>
               {isAnnual && (
@@ -151,14 +150,14 @@ export function UpgradeDialog({
                 </Badge>
               )}
             </div>
-            <p className="font-sans text-[11px] text-muted-foreground mt-0.5 tabular-nums">
+            <p className="font-sans text-[11px] text-muted-foreground dark:text-zinc-400 mt-0.5 tabular-nums">
               {isAnnual
                 ? `Total ${annualTotalDisplay} / year • Save ₹400 discount • Billed annually`
                 : `Total ${monthlyRateDisplay} / month • Renews on 1st of month • Cancel anytime`}
             </p>
           </div>
 
-          <span className="text-[10px] font-medium tabular-nums text-muted-foreground bg-muted px-1.5 py-0.5 rounded-xs border border-border/80 shrink-0">
+          <span className="text-[10px] font-medium tabular-nums text-muted-foreground dark:text-zinc-400 bg-muted dark:bg-[#121622] px-1.5 py-0.5 rounded-xs border border-border/80 dark:border-zinc-800 shrink-0">
             {isAnnual ? `${annualMonthlyEquivalentDisplay}/mo` : `${monthlyRateDisplay}/mo`}
           </span>
         </div>
@@ -166,10 +165,10 @@ export function UpgradeDialog({
         {/* Feature List */}
         <div className="p-5 space-y-4 font-sans">
           <div className="space-y-2">
-            <h4 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <h4 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground dark:text-zinc-400">
               What you unlock with Pro:
             </h4>
-            <div className="grid grid-cols-1 gap-2.5 text-xs text-foreground/90">
+            <div className="grid grid-cols-1 gap-2.5 text-xs text-foreground/90 dark:text-zinc-200">
               <div className="flex items-start gap-2.5">
                 <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-xs bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 mt-0.5 border border-emerald-500/20">
                   <Check className="h-2.5 w-2.5 stroke-[3]" />
@@ -208,7 +207,7 @@ export function UpgradeDialog({
             </div>
           </div>
 
-          <Separator className="border-border/60" />
+          <Separator className="border-border/60 dark:border-zinc-800" />
 
           {/* Action Button: Routes directly to subscription page */}
           <div className="pt-0.5 flex flex-col gap-2.5">
@@ -225,7 +224,7 @@ export function UpgradeDialog({
               </span>
             </Button>
 
-            <div className="flex items-center justify-center text-[11px] text-muted-foreground pt-0.5">
+            <div className="flex items-center justify-center text-[11px] text-muted-foreground dark:text-zinc-400 pt-0.5">
               <span className="flex items-center gap-1.5">
                 <ShieldCheck className="h-3.5 w-3.5 text-primary" /> Cancel anytime • Billed securely via Polar
               </span>

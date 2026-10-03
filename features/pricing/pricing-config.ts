@@ -1,10 +1,11 @@
+import type { PricingPlan } from "./types";
+
+export type { PricingPlan };
+
 export const MAX_FREE_TRIPS = 10;
 export const MAX_PRO_TRIPS = 25;
 export const MAX_FREE_AI_MESSAGES = 30;
 export const MAX_PRO_AI_MESSAGES = 150;
-
-import type { PricingPlan } from "./types";
-export type { PricingPlan };
 
 export const PRICING_PLANS: PricingPlan[] = [
   {

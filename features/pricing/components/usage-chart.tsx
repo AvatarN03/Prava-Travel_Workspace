@@ -33,34 +33,34 @@ export function UsageChart({ history, quota, tierName }: UsageChartProps) {
   }, [chronologicalData]);
 
   return (
-    <div className="rounded-md border border-border/80 bg-card p-4 sm:p-5 shadow-xs space-y-4 font-sans">
+    <div className="rounded-md border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 shadow-xs space-y-4 font-sans">
       {/* ── Header & KPI Summaries ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/60 pb-3.5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/60 dark:border-zinc-800 pb-3.5">
         <div>
           <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-xs bg-primary/10 text-primary">
+            <span className="flex h-6 w-6 items-center justify-center rounded-xs bg-primary/10 dark:bg-primary/15 text-primary">
               <BarChart3 className="h-3.5 w-3.5" />
             </span>
-            <h3 className="font-sans text-sm sm:text-base font-semibold tracking-tight text-foreground">
+            <h3 className="font-sans text-sm sm:text-base font-semibold tracking-tight text-foreground dark:text-zinc-100">
               AI Credit Expense (6 Months)
             </h3>
           </div>
-          <p className="font-sans text-[11px] text-muted-foreground mt-0.5">
+          <p className="font-sans text-[11px] text-muted-foreground dark:text-zinc-400 mt-0.5">
             Credit consumption and quota utilization across your recent 6 billing cycles
           </p>
         </div>
 
         {/* Aggregate KPI Badges */}
         <div className="flex flex-wrap items-center gap-2 text-xs">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xs bg-muted/60 border border-border/80 text-muted-foreground">
-            <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">6-Mo Total:</span>
-            <span className="font-sans font-semibold tabular-nums text-foreground">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xs bg-muted/60 dark:bg-[#121622] border border-border/80 dark:border-zinc-800 text-muted-foreground dark:text-zinc-400">
+            <span className="text-[10px] uppercase font-semibold text-muted-foreground dark:text-zinc-400 tracking-wider">6-Mo Total:</span>
+            <span className="font-sans font-semibold tabular-nums text-foreground dark:text-zinc-100">
               {stats.totalCredits} Credits
             </span>
           </div>
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xs bg-muted/60 border border-border/80 text-muted-foreground">
-            <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">Monthly Avg:</span>
-            <span className="font-sans font-semibold tabular-nums text-foreground">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xs bg-muted/60 dark:bg-[#121622] border border-border/80 dark:border-zinc-800 text-muted-foreground dark:text-zinc-400">
+            <span className="text-[10px] uppercase font-semibold text-muted-foreground dark:text-zinc-400 tracking-wider">Monthly Avg:</span>
+            <span className="font-sans font-semibold tabular-nums text-foreground dark:text-zinc-100">
               {stats.avgCredits} / mo
             </span>
           </div>
@@ -98,35 +98,35 @@ export function UsageChart({ history, quota, tierName }: UsageChartProps) {
                       isHovered
                         ? "font-bold text-primary"
                         : isCurrentCycle
-                          ? "font-semibold text-foreground"
-                          : "font-medium text-muted-foreground"
+                          ? "font-semibold text-foreground dark:text-zinc-100"
+                          : "font-medium text-muted-foreground dark:text-zinc-400"
                     }`}
                   >
                     {used}
                   </span>
-                  <span className="hidden sm:inline text-[10px] text-muted-foreground/60 block -mt-0.5 tabular-nums">
+                  <span className="hidden sm:inline text-[10px] text-muted-foreground/60 dark:text-zinc-500 block -mt-0.5 tabular-nums">
                     / {cycleQuota}
                   </span>
                 </div>
 
                 {/* Vertical Bar Track Container */}
                 <div
-                  className={`w-full max-w-[38px] sm:max-w-[48px] h-24 sm:h-28 rounded-xs bg-muted/40 border transition-all duration-200 relative overflow-hidden flex flex-col justify-end ${
+                  className={`w-full max-w-[38px] sm:max-w-[48px] h-24 sm:h-28 rounded-xs bg-muted/40 dark:bg-[#121622] border transition-all duration-200 relative overflow-hidden flex flex-col justify-end ${
                     isHovered
-                      ? "border-primary/60 bg-muted/70 ring-2 ring-primary/20 shadow-xs"
+                      ? "border-primary/60 dark:border-primary/70 bg-muted/70 dark:bg-[#161B2A] ring-2 ring-primary/20 shadow-xs"
                       : isCurrentCycle
-                        ? "border-primary/40 bg-muted/50"
-                        : "border-border/60 hover:border-border"
+                        ? "border-primary/40 dark:border-primary/50 bg-muted/50 dark:bg-[#161B2A]/70"
+                        : "border-border/60 dark:border-zinc-800 hover:border-border dark:hover:border-zinc-700"
                   }`}
                 >
                   {/* Quota Reference Line (at 100% capacity) */}
-                  <div className="absolute top-0 inset-x-0 h-px bg-border/80 border-t border-dashed border-border/80" />
+                  <div className="absolute top-0 inset-x-0 h-px bg-border/80 dark:bg-zinc-800 border-t border-dashed border-border/80 dark:border-zinc-800" />
 
                   {/* Dynamic Progress Bar Fill */}
                   <div
                     className={`w-full transition-all duration-300 rounded-t-2xs ${
                       used === 0
-                        ? "h-1 bg-muted-foreground/20"
+                        ? "h-1 bg-muted-foreground/20 dark:bg-zinc-800"
                         : pct >= 100
                           ? "bg-rose-600"
                           : pct > 75
@@ -144,10 +144,10 @@ export function UsageChart({ history, quota, tierName }: UsageChartProps) {
                   <span
                     className={`text-[11px] transition-colors ${
                       isCurrentCycle
-                        ? "font-semibold text-foreground"
+                        ? "font-semibold text-foreground dark:text-zinc-100"
                         : isHovered
-                          ? "font-semibold text-foreground"
-                          : "text-muted-foreground"
+                          ? "font-semibold text-foreground dark:text-zinc-100"
+                          : "text-muted-foreground dark:text-zinc-400"
                     }`}
                   >
                     {shortMonth}
@@ -158,7 +158,7 @@ export function UsageChart({ history, quota, tierName }: UsageChartProps) {
                       Active
                     </span>
                   ) : (
-                    <span className="text-[9px] text-muted-foreground/60 hidden sm:inline">
+                    <span className="text-[9px] text-muted-foreground/60 dark:text-zinc-500 hidden sm:inline">
                       {isProCycle ? "Pro" : "Free"}
                     </span>
                   )}
@@ -166,9 +166,9 @@ export function UsageChart({ history, quota, tierName }: UsageChartProps) {
 
                 {/* Floating Tooltip on Hover */}
                 {isHovered && (
-                  <div className="absolute -top-16 z-30 pointer-events-none rounded-sm border border-border/80 bg-popover/98 p-2.5 text-xs text-popover-foreground shadow-lg backdrop-blur-xs whitespace-nowrap min-w-[140px] text-left animate-in fade-in-50 zoom-in-95 font-sans">
-                    <div className="flex items-center justify-between gap-2 border-b border-border/50 pb-1 mb-1">
-                      <span className="font-semibold text-[11px] text-foreground">
+                  <div className="absolute -top-16 z-30 pointer-events-none rounded-sm border border-border/80 dark:border-zinc-800 bg-popover/98 dark:bg-[#121622] p-2.5 text-xs text-popover-foreground dark:text-zinc-100 shadow-lg backdrop-blur-xs whitespace-nowrap min-w-[140px] text-left animate-in fade-in-50 zoom-in-95 font-sans">
+                    <div className="flex items-center justify-between gap-2 border-b border-border/50 dark:border-zinc-800 pb-1 mb-1">
+                      <span className="font-semibold text-[11px] text-foreground dark:text-zinc-100">
                         {item.month}
                       </span>
                       <Badge
@@ -176,26 +176,26 @@ export function UsageChart({ history, quota, tierName }: UsageChartProps) {
                         className={`text-[9px] px-1 py-0 h-4 rounded-xs ${
                           isProCycle
                             ? "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20 font-semibold"
-                            : "border-border/80 text-muted-foreground font-normal"
+                            : "border-border/80 dark:border-zinc-800 text-muted-foreground dark:text-zinc-400 font-normal"
                         }`}
                       >
                         {isProCycle ? "Pro" : "Free"}
                       </Badge>
                     </div>
                     <div className="space-y-0.5 text-[10px]">
-                      <div className="flex justify-between text-muted-foreground">
+                      <div className="flex justify-between text-muted-foreground dark:text-zinc-400">
                         <span>Period:</span>
-                        <span className="font-medium text-foreground tabular-nums">{item.period}</span>
+                        <span className="font-medium text-foreground dark:text-zinc-200 tabular-nums">{item.period}</span>
                       </div>
-                      <div className="flex justify-between text-muted-foreground">
+                      <div className="flex justify-between text-muted-foreground dark:text-zinc-400">
                         <span>Credits Used:</span>
-                        <span className="font-semibold tabular-nums text-foreground">
+                        <span className="font-semibold tabular-nums text-foreground dark:text-zinc-100">
                           {used} / {cycleQuota} ({pct}%)
                         </span>
                       </div>
-                      <div className="flex justify-between text-muted-foreground">
+                      <div className="flex justify-between text-muted-foreground dark:text-zinc-400">
                         <span>Remaining:</span>
-                        <span className="font-medium tabular-nums text-foreground">
+                        <span className="font-medium tabular-nums text-foreground dark:text-zinc-200">
                           {item.aiCreditsRemaining}
                         </span>
                       </div>
@@ -209,12 +209,12 @@ export function UsageChart({ history, quota, tierName }: UsageChartProps) {
       </div>
 
       {/* ── Footer Insight & Legend ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-sm bg-muted/40 p-2.5 text-[11px] text-muted-foreground border border-border/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-sm bg-muted/40 dark:bg-[#121622]/70 p-2.5 text-[11px] text-muted-foreground dark:text-zinc-400 border border-border/60 dark:border-zinc-800/80">
         <div className="flex items-center gap-1.5">
           <Info className="h-3.5 w-3.5 text-primary shrink-0" />
           <span>
             Discrete AI credit expenses across recent 6 monthly cycles. Current tier:{" "}
-            <strong className="text-foreground font-semibold">{tierName}</strong> ({quota} credits/mo).
+            <strong className="text-foreground dark:text-zinc-100 font-semibold">{tierName}</strong> ({quota} credits/mo).
           </span>
         </div>
 
@@ -225,7 +225,7 @@ export function UsageChart({ history, quota, tierName }: UsageChartProps) {
             <span>Used</span>
           </div>
           <div className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-2xs bg-muted-foreground/30 border border-border/80" />
+            <span className="h-2 w-2 rounded-2xs bg-muted-foreground/30 dark:bg-zinc-800 border border-border/80 dark:border-zinc-700" />
             <span>Capacity</span>
           </div>
         </div>

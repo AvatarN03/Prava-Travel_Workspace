@@ -1,17 +1,16 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { createClient } from "@/lib/supabase/server";
 import { getPolarClient } from "@/lib/polar";
+import { createClient } from "@/lib/supabase/server";
+import { fetchFxRates } from "@/features/travel-essentials/currency/currency-service";
 import {
-  getUserTierAndQuotas,
   getUserSubscription,
+  getUserTierAndQuotas,
   hasActiveProSubscription,
 } from "@/services/subscription/subscription-service";
-import {
-  fetchFxRates,
-  SUPPORTED_CURRENCIES,
-} from "@/features/travel-essentials";
+
+import { SUPPORTED_CURRENCIES } from "@/features/travel-essentials/currency/currency-service";
 import type {
   AccountUsageData,
   ConvertedPricingDTO,
