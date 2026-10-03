@@ -9,9 +9,11 @@ import { evaluatePromptComplexity } from "@/services/ai/credit-evaluator";
 import { isItineraryPlanningIntent, runTripAgentGraph } from "@/services/ai/trip-agent-graph";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
 
-import { aiProposalPayloadSchema } from "./schema";
-
-import type { AiProposalDTO, AiProposalPayload } from "./schema";
+import {
+  aiProposalPayloadSchema,
+  type AiProposalDTO,
+  type AiProposalPayload,
+} from "./schema";
 
 export interface UserAiQuotaDTO {
   used: number;

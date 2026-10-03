@@ -4,6 +4,7 @@ import { useEffect, type ReactNode } from "react";
 
 import { WorkspaceHeader } from "./workspace-header";
 import { WorkspaceNav } from "./workspace-nav";
+
 import { useWorkspaceAi } from "../context/workspace-ai-context";
 
 import type { Trip } from "@prisma/client";

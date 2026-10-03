@@ -29,11 +29,14 @@ import {
   buildTripGoogleCalendarUrl,
   downloadIcsFile,
   generateTripIcs,
-  type MinimalAccommodation,
-  type MinimalItineraryItem,
-  type MinimalTrip,
 } from "@/lib/calendar/calendar-utils";
 import { formatDateRange } from "@/lib/utils";
+
+import type {
+  MinimalAccommodation,
+  MinimalItineraryItem,
+  MinimalTrip,
+} from "@/lib/calendar/calendar-utils";
 
 interface AddToCalendarDialogProps {
   trip: MinimalTrip;

@@ -4,7 +4,9 @@ import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
 import {
+  AlertTriangle,
   ArrowLeft,
   Calendar,
   ChevronDown,
@@ -20,6 +22,7 @@ import {
   Pencil,
   Share2,
   Trash2,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -47,6 +50,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { EditTripDialog } from "@/features/trips";
 import { AddToCalendarDialog } from "./add-to-calendar-dialog";
 
 import { useWorkspaceAi } from "../context/workspace-ai-context";
@@ -54,13 +58,12 @@ import { useWorkspaceAi } from "../context/workspace-ai-context";
 import {
   deleteTrip,
   duplicateTrip,
-  EditTripDialog,
   toggleTripPublicStatus,
   updateTrip,
-  type Trip,
-  type TripStatus,
 } from "@/features/trips";
-import { formatDateRange } from "@/lib/utils";
+import { formatDateRange, isTripDatesPassed } from "@/lib/utils";
+
+import type { Trip, TripStatus } from "@/features/trips";
 
 interface WorkspaceHeaderProps {
   trip: Trip & { isPublic?: boolean };
@@ -75,9 +78,13 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
   const [isDescExpanded, setIsDescExpanded] = useState(false);
   const [isPublic, setIsPublic] = useState(Boolean(trip.isPublic));
   const [tripStatus, setTripStatus] = useState<TripStatus>(trip.status);
+  const [isBannerDismissed, setIsBannerDismissed] = useState(false);
   const [isPublishing, startPublishing] = useTransition();
   const [isDuplicating, startDuplicating] = useTransition();
   const [isStatusChanging, startStatusChange] = useTransition();
+
+  const isPastDates = isTripDatesPassed(trip.startDate, trip.endDate);
+  const isPastPlanning = tripStatus === "PLANNING" && isPastDates;
 
   const handleTogglePublish = () => {
     startPublishing(async () => {
@@ -203,6 +210,15 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
       );
     }
 
+    if (tripStatus === "PLANNING" && isTripDatesPassed(start, end)) {
+      return (
+        <span className="inline-flex items-center gap-1 font-sans text-[10px] font-semibold text-amber-200 bg-amber-950/80 border border-amber-500/50 px-2 py-0.5 rounded-xs shadow-2xs backdrop-blur-xs">
+          <AlertTriangle className="h-3 w-3 text-amber-400 shrink-0" />
+          Planned dates passed
+        </span>
+      );
+    }
+
     return null;
   };
 
@@ -248,6 +264,81 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
             </h1>
           </div>
         </CoverImage>
+
+        {/* Interactive Banner: Trip Passed Planned Dates in Planning Mode */}
+        {isPastPlanning && !isBannerDismissed && (
+          <div className="relative overflow-hidden rounded-md border border-amber-500/35 bg-amber-500/10 dark:bg-amber-950/30 dark:border-amber-700/50 p-3 sm:p-3.5 text-amber-950 dark:text-amber-100 shadow-2xs transition-all animate-in fade-in duration-200">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="flex items-start gap-2.5 min-w-0">
+                <div className="p-1.5 rounded-xs bg-amber-500/20 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5 md:mt-0">
+                  <AlertTriangle className="w-4 h-4" />
+                </div>
+                <div className="space-y-0.5 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h4 className="font-sans text-xs sm:text-sm font-semibold text-amber-950 dark:text-amber-100">
+                      This trip has passed its planned dates
+                    </h4>
+                    <span className="font-sans text-[10px] font-medium tracking-wide uppercase px-1.5 py-0.2 rounded-2xs bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30">
+                      Still in Planning
+                    </span>
+                  </div>
+                  <p className="text-[11px] sm:text-xs text-amber-800/90 dark:text-amber-300/80 leading-relaxed">
+                    Scheduled for {formatDateRange(trip.startDate, trip.endDate)}, which is now in the past. Update its status, choose new dates, or delete this trip.
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-1.5 flex-wrap shrink-0 pl-7 md:pl-0">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleStatusChange("ACTIVE")}
+                  disabled={isStatusChanging}
+                  className="h-7 px-2.5 text-[11px] font-medium border-amber-500/40 hover:bg-amber-500/20 text-amber-950 dark:text-amber-100 cursor-pointer rounded-xs"
+                >
+                  Set to Active
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleStatusChange("COMPLETED")}
+                  disabled={isStatusChanging}
+                  className="h-7 px-2.5 text-[11px] font-medium border-amber-500/40 hover:bg-amber-500/20 text-amber-950 dark:text-amber-100 cursor-pointer rounded-xs"
+                >
+                  Mark Completed
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setIsEditOpen(true)}
+                  className="h-7 px-2.5 text-[11px] font-medium border-amber-500/40 hover:bg-amber-500/20 text-amber-950 dark:text-amber-100 cursor-pointer rounded-xs gap-1"
+                >
+                  <Pencil className="w-3 h-3" />
+                  Edit Dates
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setIsDeleteOpen(true)}
+                  className="h-7 px-2 text-[11px] font-medium border-destructive/30 text-destructive hover:bg-destructive/10 cursor-pointer rounded-xs gap-1"
+                >
+                  <Trash2 className="w-3 h-3" />
+                  Delete
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setIsBannerDismissed(true)}
+                  aria-label="Dismiss banner"
+                  className="h-7 w-7 p-0 text-amber-800 dark:text-amber-400 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-500/20 cursor-pointer rounded-xs"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 3. Action Control Strip & Metadata Below the Banner */}
         <div className="space-y-2 pt-0.5">

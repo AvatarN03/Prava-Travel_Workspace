@@ -32,7 +32,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
 import { AddAccommodationDialog } from "../../accommodations/components/add-accommodation-dialog";
 import { AddTaskDialog } from "../../checklist/components/add-task-dialog";
 import { TaskItem } from "../../checklist/components/task-item";

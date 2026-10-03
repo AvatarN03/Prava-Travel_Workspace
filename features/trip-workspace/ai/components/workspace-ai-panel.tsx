@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, useTransition } from "react";
-
+import { useEffect, useRef, useState, useTransition } from "react";
 import Image from "next/image";
+
 import {
   AlertCircle,
   ArrowLeft,
@@ -38,23 +38,23 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { AiProposalCard } from "./ai-proposal-card";
 import { UpgradeDialog } from "@/features/pricing";
+import { AiProposalCard } from "./ai-proposal-card";
 
 import { useWorkspaceAi } from "../../context/workspace-ai-context";
 
+import { cn } from "@/lib/utils";
 import {
-  getTripConversation,
-  getTripConversationThreads,
+  clearTripConversation,
   createTripConversationThread,
   deleteTripConversationThread,
-  updateTripConversationTitle,
+  getTripConversation,
+  getTripConversationThreads,
   sendTripMessage,
-  clearTripConversation,
+  updateTripConversationTitle,
 } from "../actions";
-import { cn } from "@/lib/utils";
 
-import type { MessageDTO, ConversationThreadDTO } from "../actions";
+import type { ConversationThreadDTO, MessageDTO } from "../actions";
 import type { AiProposalDTO } from "../schema";
 
 const MAX_MESSAGES_LIMIT = 15;
@@ -119,13 +119,13 @@ function renderInlineSpans(text: string): React.ReactNode {
 
     if (type === "bold") {
       parts.push(
-        <strong key={`b-${key++}`} className="font-semibold text-white">
+        <strong key={`b-${key++}`} className="font-semibold text-white dark:text-slate-900">
           {match[1]}
         </strong>
       );
     } else if (type === "italic") {
       parts.push(
-        <em key={`i-${key++}`} className="italic text-slate-300">
+        <em key={`i-${key++}`} className="italic text-slate-300 dark:text-slate-600">
           {match[1]}
         </em>
       );
@@ -133,7 +133,7 @@ function renderInlineSpans(text: string): React.ReactNode {
       parts.push(
         <code
           key={`c-${key++}`}
-          className="rounded px-1.5 py-0.5 text-[11px] font-mono bg-[#1E2B45] text-blue-200 border border-[#2D3F63] font-medium"
+          className="rounded px-1.5 py-0.5 text-[11px] font-mono bg-[#1E2B45] text-blue-200 border border-[#2D3F63] dark:bg-slate-200 dark:text-blue-800 dark:border-slate-300 font-medium"
         >
           {match[1]}
         </code>
@@ -206,7 +206,7 @@ function FormattedMessageContent({
   const flushList = () => {
     if (currentList.length > 0) {
       nodes.push(
-        <ul key={`ul-${nodes.length}`} className="my-1.5 space-y-1 pl-4 list-disc list-outside text-slate-200">
+        <ul key={`ul-${nodes.length}`} className="my-1.5 space-y-1 pl-4 list-disc list-outside text-slate-200 dark:text-slate-800">
           {currentList.map((item, i) => (
             <li key={i} className="leading-relaxed">
               {renderInlineSpans(item)}
@@ -237,31 +237,31 @@ function FormattedMessageContent({
     // Headers
     if (line.startsWith("### ")) {
       nodes.push(
-        <h5 key={`h5-${idx}`} className="font-semibold text-xs text-white mt-2 mb-1">
+        <h5 key={`h5-${idx}`} className="font-semibold text-xs text-white dark:text-slate-900 mt-2 mb-1">
           {renderInlineSpans(line.replace("### ", ""))}
         </h5>
       );
     } else if (line.startsWith("## ")) {
       nodes.push(
-        <h4 key={`h4-${idx}`} className="font-bold text-xs text-white mt-2.5 mb-1">
+        <h4 key={`h4-${idx}`} className="font-bold text-xs text-white dark:text-slate-900 mt-2.5 mb-1">
           {renderInlineSpans(line.replace("## ", ""))}
         </h4>
       );
     } else if (line.startsWith("# ")) {
       nodes.push(
-        <h3 key={`h3-${idx}`} className="font-bold text-sm text-white mt-3 mb-1.5">
+        <h3 key={`h3-${idx}`} className="font-bold text-sm text-white dark:text-slate-900 mt-3 mb-1.5">
           {renderInlineSpans(line.replace("# ", ""))}
         </h3>
       );
     } else if (line.startsWith("> ")) {
       nodes.push(
-        <blockquote key={`bq-${idx}`} className="pl-2.5 border-l-2 border-[#2D9BF0] italic text-slate-300 bg-white/5 py-0.5 rounded-r my-1.5">
+        <blockquote key={`bq-${idx}`} className="pl-2.5 border-l-2 border-[#2D9BF0] italic text-slate-300 dark:text-slate-700 bg-white/5 dark:bg-slate-200/50 py-0.5 rounded-r my-1.5">
           {renderInlineSpans(line.replace(/^>\s*/, ""))}
         </blockquote>
       );
     } else {
       nodes.push(
-        <p key={`p-${idx}`} className="my-1 text-slate-200 leading-relaxed">
+        <p key={`p-${idx}`} className="my-1 text-slate-200 dark:text-slate-800 leading-relaxed">
           {renderInlineSpans(line)}
         </p>
       );
@@ -593,8 +593,8 @@ export function WorkspaceAiPanel({
         }}
         className={cn(
           "shrink-0 flex flex-col h-full select-none overscroll-contain transition-all duration-300 ease-in-out",
-          // Deep dark theme in both modes for a consistent developer workspace experience
-          "bg-[#090E1A] text-slate-200 border-l border-[#152033] md:border-l-0",
+          // Opposite-theme styling: In light mode, panel is dark; in dark mode, panel is light (strictly matching Sidebar)
+          "bg-[#090E1A] text-slate-200 border-l border-[#152033] dark:bg-slate-100 dark:text-slate-900 dark:border-slate-300 md:border-l md:border-[#152033] dark:md:border-slate-300",
           // Mobile fixed overlay drawer:
           "fixed inset-y-0 right-0 z-40 w-full sm:w-[460px]",
           // Desktop: static flex child that smoothly expands from width 0
@@ -616,8 +616,8 @@ export function WorkspaceAiPanel({
               : "w-full md:w-[440px] lg:w-[470px] xl:w-[500px]"
           )}
         >
-          {/* Header - Sleek Supabase Style */}
-          <div className="flex h-14 items-center justify-between px-3.5 border-b border-[#152033] bg-[#090E1A] shrink-0 gap-2">
+          {/* Header - Sleek Supabase Style (Opposite-theme synchronized) */}
+          <div className="flex h-14 items-center justify-between px-3.5 border-b border-[#152033] bg-[#090E1A] dark:border-slate-300 dark:bg-slate-100 shrink-0 gap-2">
             {/* Left: Chat Title (Double Click to Rename) */}
             <div className="flex items-center gap-2.5 min-w-0 flex-1">
               {isEditingHeaderTitle ? (
@@ -638,7 +638,7 @@ export function WorkspaceAiPanel({
                     }}
                     onBlur={handleSaveHeaderTitle}
                     autoFocus
-                    className="h-7 w-full max-w-[240px] rounded-sm border border-[#2D9BF0] bg-[#0E1729] px-2.5 py-0.5 text-xs font-semibold text-white focus:outline-none focus:ring-1 focus:ring-[#2D9BF0] shadow-xs"
+                    className="h-7 w-full max-w-[240px] rounded-sm border border-[#2D9BF0] bg-[#0E1729] dark:bg-white px-2.5 py-0.5 text-xs font-semibold text-white dark:text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#2D9BF0] shadow-xs"
                   />
                 </div>
               ) : (
@@ -648,7 +648,7 @@ export function WorkspaceAiPanel({
                       onDoubleClick={handleStartEditHeader}
                       className="flex items-center gap-2 min-w-0 cursor-pointer select-none group"
                     >
-                      <span className="text-sm font-semibold text-white group-hover:text-[#2D9BF0] transition-colors truncate">
+                      <span className="text-sm font-semibold text-white dark:text-slate-900 group-hover:text-[#2D9BF0] transition-colors truncate">
                         {activeConversationTitle || "Ichinose"}
                       </span>
                     </div>
@@ -673,7 +673,7 @@ export function WorkspaceAiPanel({
                       "h-8 w-8 rounded-md transition-colors cursor-pointer",
                       activeTab === "history"
                         ? "bg-[#2D9BF0]/20 text-[#2D9BF0]"
-                        : "text-slate-400 hover:text-white hover:bg-white/10"
+                        : "text-slate-400 hover:text-white hover:bg-white/10 dark:text-slate-600 dark:hover:text-slate-950 dark:hover:bg-slate-200"
                     )}
                     aria-label="Chat history"
                   >
@@ -691,7 +691,7 @@ export function WorkspaceAiPanel({
                     size="icon"
                     onClick={handleNewChat}
                     disabled={isCreatingThread}
-                    className="h-8 w-8 rounded-md text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-colors"
+                    className="h-8 w-8 rounded-md text-slate-400 hover:text-white hover:bg-white/10 dark:text-slate-600 dark:hover:text-slate-950 dark:hover:bg-slate-200 cursor-pointer transition-colors"
                     aria-label="New chat"
                   >
                     <Plus className="h-4 w-4" />
@@ -707,7 +707,7 @@ export function WorkspaceAiPanel({
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="hidden sm:inline-flex h-8 w-8 rounded-md text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-colors"
+                    className="hidden sm:inline-flex h-8 w-8 rounded-md text-slate-400 hover:text-white hover:bg-white/10 dark:text-slate-600 dark:hover:text-slate-950 dark:hover:bg-slate-200 cursor-pointer transition-colors"
                     aria-label={isExpanded ? "Collapse width" : "Expand width"}
                   >
                     {isExpanded ? (
@@ -729,7 +729,7 @@ export function WorkspaceAiPanel({
                     variant="ghost"
                     size="icon"
                     onClick={onClose}
-                    className="h-8 w-8 rounded-md text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-colors"
+                    className="h-8 w-8 rounded-md text-slate-400 hover:text-white hover:bg-white/10 dark:text-slate-600 dark:hover:text-slate-950 dark:hover:bg-slate-200 cursor-pointer transition-colors"
                     aria-label="Close assistant"
                   >
                     <X className="h-4 w-4" />
@@ -743,34 +743,34 @@ export function WorkspaceAiPanel({
           {/* VIEW 1: DEDICATED THREADS / HISTORY PANEL */}
           {activeTab === "history" && (
             <div
-              className="flex-1 overflow-y-auto overscroll-contain p-3.5 space-y-2 bg-[#090E1A] thin-scrollbar"
+              className="flex-1 overflow-y-auto overscroll-contain p-3.5 space-y-2 bg-[#090E1A] dark:bg-slate-100 thin-scrollbar"
               style={{ overscrollBehavior: "contain" }}
             >
-              <div className="flex items-center justify-between pb-2 border-b border-[#152033]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#152033] dark:border-slate-300">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setActiveTab("chat")}
-                  className="h-7 px-2 text-xs gap-1.5 text-slate-300 hover:text-white hover:bg-white/10 cursor-pointer transition-colors"
+                  className="h-7 px-2 text-xs gap-1.5 text-slate-300 hover:text-white hover:bg-white/10 dark:text-slate-600 dark:hover:text-slate-900 dark:hover:bg-slate-200 cursor-pointer transition-colors"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
                   <span>Back to Chat</span>
                 </Button>
-                <span className="text-[10px] text-slate-400 font-mono">
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">
                   {threads.length} threads · max {MAX_MESSAGES_LIMIT} msgs
                 </span>
               </div>
 
               {threads.length === 0 ? (
-                <div className="p-8 text-center border border-dashed border-[#152033] rounded-lg bg-[#0E1729]/50 space-y-3">
-                  <History className="w-7 h-7 text-slate-500/60 mx-auto" />
-                  <p className="text-xs text-slate-400">
+                <div className="p-8 text-center border border-dashed border-[#152033] dark:border-slate-300 rounded-lg bg-[#0E1729]/50 dark:bg-white/70 space-y-3">
+                  <History className="w-7 h-7 text-slate-500/60 dark:text-slate-400 mx-auto" />
+                  <p className="text-xs text-slate-400 dark:text-slate-600">
                     No conversation threads yet.
                   </p>
                   <Button
                     size="sm"
                     variant="outline"
-                    className="h-7 text-xs gap-1 border-[#1E2B45] text-[#2D9BF0] hover:bg-[#2D9BF0]/15 rounded-md cursor-pointer"
+                    className="h-7 text-xs gap-1 border-[#1E2B45] text-[#2D9BF0] hover:bg-[#2D9BF0]/15 dark:border-slate-300 dark:hover:bg-blue-50 rounded-md cursor-pointer"
                     onClick={handleNewChat}
                     disabled={isCreatingThread}
                   >
@@ -792,8 +792,8 @@ export function WorkspaceAiPanel({
                         className={cn(
                           "group relative flex flex-col p-3 rounded-lg border transition-all cursor-pointer",
                           isActive
-                            ? "border-[#2D9BF0] bg-[#2D9BF0]/10 shadow-xs"
-                            : "border-[#152033] bg-[#0E1729] hover:border-slate-700 hover:bg-[#15223D]"
+                            ? "border-[#2D9BF0] bg-[#2D9BF0]/10 shadow-xs dark:bg-blue-50/80 dark:border-blue-400"
+                            : "border-[#152033] bg-[#0E1729] hover:border-slate-700 hover:bg-[#15223D] dark:border-slate-200 dark:bg-white dark:hover:border-slate-300 dark:hover:bg-slate-50"
                         )}
                       >
                         <div className="flex items-center justify-between gap-2 min-w-0">
@@ -818,7 +818,7 @@ export function WorkspaceAiPanel({
                                   }}
                                   onBlur={() => handleSaveThreadTitle(thread.id)}
                                   autoFocus
-                                  className="h-6 w-full rounded border border-[#2D9BF0] bg-[#0E1729] px-1.5 text-xs text-white focus:outline-none"
+                                  className="h-6 w-full rounded border border-[#2D9BF0] bg-[#0E1729] dark:bg-white px-1.5 text-xs text-white dark:text-slate-900 focus:outline-none"
                                 />
                                 <button
                                   type="button"
@@ -837,7 +837,7 @@ export function WorkspaceAiPanel({
                                     e.preventDefault();
                                     setEditingThreadId(null);
                                   }}
-                                  className="text-slate-400 hover:text-white p-0.5 rounded cursor-pointer shrink-0"
+                                  className="text-slate-400 hover:text-white dark:text-slate-500 dark:hover:text-slate-900 p-0.5 rounded cursor-pointer shrink-0"
                                   title="Cancel"
                                 >
                                   <X className="h-3.5 w-3.5" />
@@ -847,7 +847,9 @@ export function WorkspaceAiPanel({
                               <span
                                 className={cn(
                                   "text-xs truncate font-medium",
-                                  isActive ? "text-[#2D9BF0] font-semibold" : "text-slate-200"
+                                  isActive
+                                    ? "text-[#2D9BF0] font-semibold"
+                                    : "text-slate-200 dark:text-slate-800"
                                 )}
                               >
                                 {thread.title}
@@ -868,7 +870,7 @@ export function WorkspaceAiPanel({
                               <button
                                 type="button"
                                 onClick={(e) => handleStartEditThread(e, thread)}
-                                className="text-slate-400 hover:text-[#2D9BF0] p-1 rounded transition-colors opacity-60 group-hover:opacity-100 cursor-pointer"
+                                className="text-slate-400 hover:text-[#2D9BF0] dark:text-slate-500 dark:hover:text-blue-600 p-1 rounded transition-colors opacity-60 group-hover:opacity-100 cursor-pointer"
                                 title="Rename chat"
                               >
                                 <Pencil className="h-3 w-3" />
@@ -876,7 +878,7 @@ export function WorkspaceAiPanel({
                               <button
                                 type="button"
                                 onClick={(e) => handleDeleteThread(e, thread.id)}
-                                className="text-slate-400 hover:text-red-400 p-1 rounded transition-colors opacity-60 group-hover:opacity-100 cursor-pointer"
+                                className="text-slate-400 hover:text-red-400 dark:text-slate-500 dark:hover:text-red-600 p-1 rounded transition-colors opacity-60 group-hover:opacity-100 cursor-pointer"
                                 title="Delete thread"
                               >
                                 <Trash2 className="h-3 w-3" />
@@ -885,7 +887,7 @@ export function WorkspaceAiPanel({
                           )}
                         </div>
 
-                        <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1.5 border-t border-[#152033] mt-1.5">
+                        <div className="flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 pt-1.5 border-t border-[#152033] dark:border-slate-100 mt-1.5">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-2.5 h-2.5 opacity-70" />
                             {new Date(thread.updatedAt).toLocaleDateString(undefined, {
@@ -915,7 +917,7 @@ export function WorkspaceAiPanel({
             <>
               {/* Depleted Credits Notice Banner */}
               {isCreditDepleted && (
-                <div className="mx-3.5 mt-2 p-2.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-[11px] text-rose-300 flex items-start gap-1.5 shrink-0">
+                <div className="mx-3.5 mt-2 p-2.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-[11px] text-rose-300 dark:bg-rose-50 dark:border-rose-200 dark:text-rose-800 flex items-start gap-1.5 shrink-0">
                   <AlertCircle className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
                   <div className="flex-1 leading-tight">
                     <span className="font-semibold">Monthly Credits Depleted: </span>
@@ -923,7 +925,7 @@ export function WorkspaceAiPanel({
                     <button
                       type="button"
                       onClick={() => setUpgradeDialogOpen(true)}
-                      className="ml-1 font-bold underline hover:text-white cursor-pointer"
+                      className="ml-1 font-bold underline hover:text-white dark:hover:text-rose-950 cursor-pointer"
                     >
                       Upgrade to Pro (150 Credits)
                     </button>
@@ -934,12 +936,12 @@ export function WorkspaceAiPanel({
               {/* Messages Feed */}
               <div
                 ref={chatScrollContainerRef}
-                className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-4 text-xs bg-[#090E1A] thin-scrollbar"
+                className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-4 text-xs bg-[#090E1A] dark:bg-slate-100 thin-scrollbar"
                 style={{ overscrollBehavior: "contain" }}
               >
                 {messages.length === 0 ? (
                   <div className="space-y-4 py-8 text-center">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full overflow-hidden ring-2 ring-[#2D9BF0]/60 shadow-md bg-[#0E1729]">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full overflow-hidden ring-2 ring-[#2D9BF0]/60 shadow-md bg-[#0E1729] dark:bg-white">
                       <Image
                         src="/avatars/ichinose.png"
                         alt="Ichinose"
@@ -950,7 +952,7 @@ export function WorkspaceAiPanel({
                     </div>
                     <div className="space-y-1.5 text-center">
                       <div className="flex items-center justify-center gap-1.5">
-                        <h4 className="text-base font-bold text-white tracking-tight">
+                        <h4 className="text-base font-bold text-white dark:text-slate-900 tracking-tight">
                           Ichinose
                         </h4>
                         <Badge
@@ -960,14 +962,14 @@ export function WorkspaceAiPanel({
                           Prava Assistant
                         </Badge>
                       </div>
-                      <p className="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
-                        Your Prava workspace assistant. Ask questions, explore live weather and exchange rates, or request <span className="font-semibold text-white">structured proposals</span> to update your trip.
+                      <p className="text-xs text-slate-400 dark:text-slate-600 max-w-xs mx-auto leading-relaxed">
+                        Your Prava workspace assistant. Ask questions, explore live weather and exchange rates, or request <span className="font-semibold text-white dark:text-slate-900">structured proposals</span> to update your trip.
                       </p>
                     </div>
 
                     {/* Quick Prompt Chips */}
                     <div className="pt-3 space-y-1.5 text-left max-w-sm mx-auto">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400/80 block px-1 select-none">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400/80 dark:text-slate-500 block px-1 select-none">
                         Suggested prompts:
                       </span>
                       {quickPrompts.map((prompt, i) => (
@@ -975,7 +977,7 @@ export function WorkspaceAiPanel({
                           key={i}
                           type="button"
                           onClick={() => handleSend(prompt)}
-                          className="w-full text-left p-2.5 rounded-lg border border-[#152033] bg-[#0E1729] hover:border-[#2D9BF0]/50 hover:bg-[#15223D] text-slate-300 hover:text-white transition-colors text-xs flex items-center justify-between group cursor-pointer shadow-xs"
+                          className="w-full text-left p-2.5 rounded-lg border border-[#152033] bg-[#0E1729] hover:border-[#2D9BF0]/50 hover:bg-[#15223D] text-slate-300 hover:text-white dark:border-slate-200 dark:bg-white dark:hover:border-blue-400 dark:hover:bg-blue-50/50 dark:text-slate-700 dark:hover:text-slate-950 transition-colors text-xs flex items-center justify-between group cursor-pointer shadow-xs"
                         >
                           <span className="line-clamp-1">{prompt}</span>
                           <CornerDownLeft className="w-3.5 h-3.5 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1.5" />
@@ -993,7 +995,7 @@ export function WorkspaceAiPanel({
                             {msg.content}
                           </div>
                           {msg.creditsCost !== undefined && msg.creditsCost > 0 && (
-                            <span className="text-[10px] text-slate-400 font-mono pr-1 select-none">
+                            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono pr-1 select-none">
                               -{msg.creditsCost} {msg.creditsCost === 1 ? "credit" : "credits"}
                             </span>
                           )}
@@ -1003,9 +1005,9 @@ export function WorkspaceAiPanel({
                         <div className="space-y-2 max-w-[95%]">
                           {/* Supabase Execution Status & Reasoning Toggle */}
                           <div className="space-y-1">
-                            <div className="text-[11px] text-slate-400 font-mono flex items-center gap-2">
+                            <div className="text-[11px] text-slate-400 dark:text-slate-500 font-mono flex items-center gap-2">
                               <span>{msg.creditsCost ? `${msg.creditsCost} credits consumed` : "AI query"}</span>
-                              <span className="flex items-center gap-1 text-emerald-400 font-medium">
+                              <span className="flex items-center gap-1 text-emerald-400 dark:text-emerald-600 font-medium">
                                 <Check className="h-3 w-3" />
                                 {msg.toolBadge ? `${msg.toolBadge} executed` : "Query executed"}
                               </span>
@@ -1014,7 +1016,7 @@ export function WorkspaceAiPanel({
                             <button
                               type="button"
                               onClick={() => toggleReasoning(msg.id)}
-                              className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-200 font-mono transition-colors cursor-pointer select-none py-0.5"
+                              className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-200 dark:text-slate-500 dark:hover:text-slate-800 font-mono transition-colors cursor-pointer select-none py-0.5"
                             >
                               <ChevronRight
                                 className={cn(
@@ -1026,7 +1028,7 @@ export function WorkspaceAiPanel({
                             </button>
 
                             {reasoningExpanded[msg.id] && (
-                              <div className="p-2.5 rounded-md border border-[#1E2B45] bg-[#0E1729]/80 text-[11px] text-slate-400 font-mono leading-relaxed space-y-1">
+                              <div className="p-2.5 rounded-md border border-[#1E2B45] bg-[#0E1729]/80 text-[11px] text-slate-400 font-mono leading-relaxed space-y-1 dark:border-slate-200 dark:bg-white dark:text-slate-600">
                                 <div>• Evaluated user intent against active trip schedule and budget</div>
                                 <div>• Grounded response in persisted workspace entities</div>
                                 <div>• Formatted structured output for workspace planning</div>
@@ -1036,7 +1038,7 @@ export function WorkspaceAiPanel({
 
                           {/* Live Travel Essential Tool Badge if present */}
                           {msg.toolBadge && (
-                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#152542] border border-[#1E3A6B] text-blue-300 text-[10px] font-medium w-fit not-italic">
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#152542] border border-[#1E3A6B] text-blue-300 dark:bg-blue-50 dark:border-blue-200 dark:text-blue-800 text-[10px] font-medium w-fit not-italic">
                               {msg.toolBadge.toLowerCase().includes("weather") ? (
                                 <CloudSun className="w-3 h-3 text-blue-400 shrink-0" />
                               ) : msg.toolBadge.toLowerCase().includes("free") ? (
@@ -1049,7 +1051,7 @@ export function WorkspaceAiPanel({
                           )}
 
                           {/* Message Content */}
-                          <div className="text-slate-200 text-xs sm:text-[13px] leading-relaxed break-words [overflow-wrap:anywhere]">
+                          <div className="text-slate-200 dark:text-slate-800 text-xs sm:text-[13px] leading-relaxed break-words [overflow-wrap:anywhere]">
                             <FormattedMessageContent
                               content={msg.content}
                               isUser={false}
@@ -1058,20 +1060,20 @@ export function WorkspaceAiPanel({
 
                           {/* Model attribution badge */}
                           {msg.modelUsed && (
-                            <div className="pt-0.5 flex items-center gap-1 text-[9px] text-slate-500 font-mono select-none">
+                            <div className="pt-0.5 flex items-center gap-1 text-[9px] text-slate-500 dark:text-slate-400 font-mono select-none">
                               <Cpu className="w-2.5 h-2.5" />
                               <span>{formatModelName(msg.modelUsed)}</span>
                             </div>
                           )}
 
                           {/* Supabase Action Toolbar (Thumbs Up, Thumbs Down, Copy) */}
-                          <div className="flex items-center gap-1 pt-1 text-slate-400">
+                          <div className="flex items-center gap-1 pt-1 text-slate-400 dark:text-slate-500">
                             <button
                               type="button"
                               onClick={() => handleFeedback(msg.id, "up")}
                               className={cn(
-                                "p-1 rounded hover:bg-white/10 hover:text-white transition-colors cursor-pointer",
-                                feedback[msg.id] === "up" && "text-[#2D9BF0] bg-[#2D9BF0]/15"
+                                "p-1 rounded hover:bg-white/10 hover:text-white dark:hover:bg-slate-200 dark:hover:text-slate-900 transition-colors cursor-pointer",
+                                feedback[msg.id] === "up" && "text-[#2D9BF0] bg-[#2D9BF0]/15 dark:bg-blue-50"
                               )}
                               title="Helpful response"
                               aria-label="Helpful response"
@@ -1082,8 +1084,8 @@ export function WorkspaceAiPanel({
                               type="button"
                               onClick={() => handleFeedback(msg.id, "down")}
                               className={cn(
-                                "p-1 rounded hover:bg-white/10 hover:text-white transition-colors cursor-pointer",
-                                feedback[msg.id] === "down" && "text-rose-400 bg-rose-500/15"
+                                "p-1 rounded hover:bg-white/10 hover:text-white dark:hover:bg-slate-200 dark:hover:text-slate-900 transition-colors cursor-pointer",
+                                feedback[msg.id] === "down" && "text-rose-400 bg-rose-500/15 dark:bg-rose-50"
                               )}
                               title="Unhelpful response"
                               aria-label="Unhelpful response"
@@ -1093,12 +1095,12 @@ export function WorkspaceAiPanel({
                             <button
                               type="button"
                               onClick={() => handleCopyMessage(msg.id, msg.content)}
-                              className="p-1 rounded hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                              className="p-1 rounded hover:bg-white/10 hover:text-white dark:hover:bg-slate-200 dark:hover:text-slate-900 transition-colors cursor-pointer"
                               title="Copy response"
                               aria-label="Copy response"
                             >
                               {copiedMessageId === msg.id ? (
-                                <Check className="h-3.5 w-3.5 text-emerald-400" />
+                                <Check className="h-3.5 w-3.5 text-emerald-400 dark:text-emerald-600" />
                               ) : (
                                 <Copy className="h-3.5 w-3.5" />
                               )}
@@ -1122,22 +1124,33 @@ export function WorkspaceAiPanel({
                 )}
 
                 {isLoading && (
-                  <div className="flex gap-2 items-center text-xs text-slate-400 py-1.5">
-                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full overflow-hidden ring-1 ring-[#2D9BF0]/40">
+                  <div className="flex items-start gap-2.5 text-xs py-2 animate-in fade-in duration-150">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full overflow-hidden ring-1 ring-[#2D9BF0]/40 bg-[#0E1729] dark:bg-white mt-0.5">
                       <Image
                         src="/avatars/ichinose.png"
                         alt="Ichinose"
                         width={24}
                         height={24}
-                        className="h-full w-full object-cover opacity-80 animate-pulse"
+                        className="h-full w-full object-cover"
                       />
                     </div>
-                    <span>Ichinose is analyzing trip data...</span>
+                    <div className="flex flex-col gap-0.5 min-w-0">
+                      <span className="text-xs text-slate-300 dark:text-slate-700 font-medium">
+                        Analyzing trip details...
+                      </span>
+                      <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#2D9BF0] animate-pulse">
+                        <span className="relative flex h-1.5 w-1.5">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2D9BF0] opacity-75" />
+                          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#2D9BF0]" />
+                        </span>
+                        <span>Thinking...</span>
+                      </div>
+                    </div>
                   </div>
                 )}
 
                 {error && (
-                  <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-2.5 text-xs text-red-400 flex flex-col gap-1.5">
+                  <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-2.5 text-xs text-red-400 dark:text-red-700 dark:bg-red-50 dark:border-red-200 flex flex-col gap-1.5">
                     <div className="flex items-start gap-1.5">
                       <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                       <span className="leading-snug">{error}</span>
@@ -1157,9 +1170,9 @@ export function WorkspaceAiPanel({
 
               {/* Ceiling Warning & Start New Chat prompt */}
               {isThreadLimitReached && (
-                <div className="mx-3.5 mb-2 p-2 rounded-lg bg-amber-500/15 border border-amber-500/30 text-xs text-amber-300 flex items-center justify-between gap-2 shrink-0">
+                <div className="mx-3.5 mb-2 p-2 rounded-lg bg-amber-500/15 border border-amber-500/30 text-xs text-amber-300 dark:bg-amber-50 dark:border-amber-200 dark:text-amber-800 flex items-center justify-between gap-2 shrink-0">
                   <div className="flex items-center gap-1.5 min-w-0">
-                    <AlertCircle className="w-3.5 h-3.5 shrink-0 text-amber-400" />
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0 text-amber-400 dark:text-amber-600" />
                     <span className="text-[11px] font-medium truncate">
                       Chat limit reached ({MAX_MESSAGES_LIMIT}/{MAX_MESSAGES_LIMIT} msgs).
                     </span>
@@ -1178,9 +1191,9 @@ export function WorkspaceAiPanel({
               )}
 
               {/* Input Form & AI Disclaimer (Large Input Box Supabase Style) */}
-              <div className="p-3.5 border-t border-[#152033] bg-[#090E1A] shrink-0 space-y-2">
+              <div className="p-3.5 border-t border-[#152033] bg-[#090E1A] dark:border-slate-300 dark:bg-slate-100 shrink-0 space-y-2">
                 {/* Supabase Disclaimer right above the input box */}
-                <p className="text-[11px] text-center text-slate-400/80 select-none leading-none">
+                <p className="text-[11px] text-center text-slate-400/80 dark:text-slate-500 select-none leading-none">
                   The Assistant can make mistakes. Double check responses.
                 </p>
 
@@ -1190,7 +1203,7 @@ export function WorkspaceAiPanel({
                     e.preventDefault();
                     handleSend();
                   }}
-                  className="rounded-xl border border-[#1E2B45] bg-[#0E1729] focus-within:border-[#2D9BF0] focus-within:ring-1 focus-within:ring-[#2D9BF0]/40 transition-all p-3 shadow-xs space-y-2"
+                  className="rounded-xl border border-[#1E2B45] bg-[#0E1729] focus-within:border-[#2D9BF0] focus-within:ring-1 focus-within:ring-[#2D9BF0]/40 dark:border-slate-300 dark:bg-white dark:focus-within:border-[#2D9BF0] transition-all p-3 shadow-xs space-y-2"
                 >
                   <textarea
                     ref={textareaRef}
@@ -1211,7 +1224,7 @@ export function WorkspaceAiPanel({
                         : "Ask a follow up question..."
                     }
                     disabled={isLoading || isThreadLimitReached || isCreditDepleted}
-                    className="w-full resize-none border-0 bg-transparent p-0 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-0 leading-relaxed min-h-[72px] max-h-[160px] disabled:opacity-50"
+                    className="w-full resize-none border-0 bg-transparent p-0 text-xs sm:text-sm text-white dark:text-slate-900 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:ring-0 leading-relaxed min-h-[72px] max-h-[160px] disabled:opacity-50"
                   />
 
                   {/* Bottom Controls Row inside input box */}
@@ -1219,7 +1232,7 @@ export function WorkspaceAiPanel({
                     <div className="flex items-center gap-2 select-none min-w-0">
                       {userQuota && (
                         <div
-                          className="flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#121E36] border border-[#1E2B45] text-slate-300 font-sans text-[10px] font-medium shadow-2xs shrink-0"
+                          className="flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#121E36] border border-[#1E2B45] text-slate-300 dark:bg-slate-100 dark:border-slate-200 dark:text-slate-700 font-sans text-[10px] font-medium shadow-2xs shrink-0"
                           title={`${userQuota.remaining} credits remaining out of ${userQuota.quota}`}
                         >
                           <Zap className="h-2.5 w-2.5 text-amber-400 fill-amber-400 shrink-0" />
@@ -1228,7 +1241,7 @@ export function WorkspaceAiPanel({
                           </span>
                         </div>
                       )}
-                      <span className="hidden sm:inline text-[10px] text-slate-500 truncate">
+                      <span className="hidden sm:inline text-[10px] text-slate-500 dark:text-slate-400 truncate">
                         ↵ to send · Shift+↵ for new line
                       </span>
                     </div>
@@ -1247,7 +1260,7 @@ export function WorkspaceAiPanel({
                       <button
                         type="submit"
                         disabled={isLoading || !input.trim() || isThreadLimitReached}
-                        className="h-7 w-7 rounded-full bg-slate-800 text-slate-400 hover:bg-[#2D9BF0] hover:text-white disabled:opacity-20 disabled:pointer-events-none flex items-center justify-center transition-all cursor-pointer shadow-xs shrink-0"
+                        className="h-7 w-7 rounded-full bg-slate-800 text-slate-400 hover:bg-[#2D9BF0] hover:text-white dark:bg-slate-200 dark:text-slate-600 dark:hover:bg-[#2D9BF0] dark:hover:text-white disabled:opacity-20 disabled:pointer-events-none flex items-center justify-center transition-all cursor-pointer shadow-xs shrink-0"
                         aria-label="Send message"
                       >
                         {isLoading ? (

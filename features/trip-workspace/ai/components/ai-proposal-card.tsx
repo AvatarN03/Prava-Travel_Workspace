@@ -3,31 +3,30 @@
 import { useState } from "react";
 
 import {
-  Sparkles,
+  AlertCircle,
+  Calendar,
   Check,
   CheckCheck,
-  X,
-  Plus,
-  RefreshCw,
-  Trash2,
-  Calendar,
+  CheckCircle2,
   Clock,
-  MapPin,
   DollarSign,
   Hotel,
-  AlertCircle,
   Loader2,
-  CheckCircle2,
+  MapPin,
+  Plus,
+  RefreshCw,
+  Sparkles,
+  Trash2,
+  X,
 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
-import { acceptAiProposal, rejectAiProposal } from "../actions";
+import { Button } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
+import { acceptAiProposal, rejectAiProposal } from "../actions";
 
-import type { AiProposalDTO, AiProposalChange } from "../schema";
+import type { AiProposalChange, AiProposalDTO } from "../schema";
 
 interface AiProposalCardProps {
   proposal: AiProposalDTO;
@@ -117,63 +116,63 @@ export function AiProposalCard({
     switch (action) {
       case "create":
         return (
-          <span className="inline-flex items-center gap-1 rounded-xs bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300 border border-emerald-500/30 dark:bg-emerald-50 dark:text-emerald-700 dark:border-emerald-200">
-            <Plus className="h-2.5 w-2.5" /> ADD
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-400 border border-emerald-500/30 dark:bg-emerald-50 dark:text-emerald-700 dark:border-emerald-200 shrink-0">
+            <Plus className="h-2.5 w-2.5" /> Add
           </span>
         );
       case "update":
         return (
-          <span className="inline-flex items-center gap-1 rounded-xs bg-sky-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-sky-300 border border-sky-500/30 dark:bg-blue-50 dark:text-blue-700 dark:border-blue-200">
-            <RefreshCw className="h-2.5 w-2.5" /> UPDATE
+          <span className="inline-flex items-center gap-1 rounded-full bg-sky-500/15 px-2 py-0.5 text-[10px] font-semibold text-sky-400 border border-sky-500/30 dark:bg-blue-50 dark:text-blue-700 dark:border-blue-200 shrink-0">
+            <RefreshCw className="h-2.5 w-2.5" /> Update
           </span>
         );
       case "delete":
         return (
-          <span className="inline-flex items-center gap-1 rounded-xs bg-rose-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-rose-300 border border-rose-500/30 dark:bg-rose-50 dark:text-rose-700 dark:border-rose-200">
-            <Trash2 className="h-2.5 w-2.5" /> REMOVE
+          <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/15 px-2 py-0.5 text-[10px] font-semibold text-rose-400 border border-rose-500/30 dark:bg-rose-50 dark:text-rose-700 dark:border-rose-200 shrink-0">
+            <Trash2 className="h-2.5 w-2.5" /> Remove
           </span>
         );
     }
   };
 
   return (
-    <div className="my-3 rounded-xs border border-[#1E2B45] bg-[#0E1729] text-slate-200 dark:border-slate-200 dark:bg-white dark:text-slate-900 p-3 space-y-3 text-xs shadow-xs">
+    <div className="my-3 rounded-xl border border-[#1E2B45] bg-[#0B1322] text-slate-200 dark:border-slate-200/90 dark:bg-white dark:text-slate-900 p-3.5 space-y-3 text-xs shadow-sm transition-colors">
       {/* Header */}
-      <div className="flex items-center justify-between gap-2 border-b border-[#152033] dark:border-slate-100 pb-2">
-        <div className="flex items-center gap-1.5 font-bold text-[#2D9BF0] dark:text-blue-600">
+      <div className="flex items-center justify-between gap-2 border-b border-[#152033] dark:border-slate-100 pb-2.5">
+        <div className="flex items-center gap-1.5 font-bold text-[#2D9BF0] dark:text-[#1e82cc]">
           <Sparkles className="h-3.5 w-3.5 text-[#2D9BF0]" />
           <span>Workspace Action Proposal</span>
         </div>
 
         {status === "PENDING" && (
-          <Badge variant="outline" className="text-[10px] px-1.5 py-0 rounded-xs bg-amber-500/15 text-amber-300 border-amber-500/30 dark:bg-amber-50 dark:text-amber-800 dark:border-amber-200">
+          <Badge variant="outline" className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border-amber-500/30 dark:bg-amber-50 dark:text-amber-800 dark:border-amber-200">
             Pending Review
           </Badge>
         )}
         {status === "ACCEPTED" && (
-          <Badge variant="outline" className="text-[10px] px-1.5 py-0 rounded-xs bg-emerald-500/15 text-emerald-300 border-emerald-500/30 dark:bg-emerald-50 dark:text-emerald-800 dark:border-emerald-200 flex items-center gap-1">
+          <Badge variant="outline" className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border-emerald-500/30 dark:bg-emerald-50 dark:text-emerald-800 dark:border-emerald-200 flex items-center gap-1">
             <CheckCircle2 className="h-2.5 w-2.5" /> Accepted
           </Badge>
         )}
         {status === "PARTIAL" && (
-          <Badge variant="outline" className="text-[10px] px-1.5 py-0 rounded-xs bg-sky-500/15 text-sky-300 border-sky-500/30 dark:bg-blue-50 dark:text-blue-800 dark:border-blue-200">
+          <Badge variant="outline" className="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border-sky-500/30 dark:bg-blue-50 dark:text-blue-800 dark:border-blue-200">
             Partially Applied
           </Badge>
         )}
         {status === "REJECTED" && (
-          <Badge variant="outline" className="text-[10px] px-1.5 py-0 rounded-xs bg-rose-500/15 text-rose-300 border-rose-500/30 dark:bg-rose-50 dark:text-rose-800 dark:border-rose-200">
+          <Badge variant="outline" className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border-rose-500/30 dark:bg-rose-50 dark:text-rose-800 dark:border-rose-200">
             Rejected
           </Badge>
         )}
       </div>
 
       {/* Proposal Summary */}
-      <p className="font-medium text-slate-200 dark:text-slate-800 leading-snug">
+      <p className="font-medium text-slate-100 dark:text-slate-800 leading-snug text-xs sm:text-[13px]">
         {proposal.summary}
       </p>
 
       {error && (
-        <div className="flex items-center gap-1.5 rounded-xs bg-destructive/10 border border-destructive/20 p-2 text-xs text-destructive">
+        <div className="flex items-center gap-1.5 rounded-lg bg-destructive/10 border border-destructive/20 p-2 text-xs text-destructive">
           <AlertCircle className="h-3.5 w-3.5 shrink-0" />
           <span>{error}</span>
         </div>
@@ -188,11 +187,11 @@ export function AiProposalCard({
               key={change.id}
               onClick={() => toggleSelect(change.id)}
               className={cn(
-                "flex items-start gap-2.5 p-2.5 rounded-xs border transition-colors",
+                "group flex items-start gap-2.5 p-3 rounded-lg border transition-all duration-150",
                 status === "PENDING" ? "cursor-pointer" : "",
                 isSelected
-                  ? "bg-[#131F37] border-[#2D9BF0]/70 text-slate-100 dark:bg-blue-50/70 dark:border-blue-500 dark:text-slate-900 shadow-2xs"
-                  : "bg-[#090E1A]/80 border-[#152033] text-slate-300 dark:bg-slate-50 dark:border-slate-200 dark:text-slate-700 opacity-70"
+                  ? "bg-[#131F37]/90 border-[#2D9BF0]/50 text-slate-100 shadow-2xs ring-1 ring-[#2D9BF0]/30 dark:bg-blue-50/70 dark:border-blue-300 dark:text-slate-900 dark:ring-1 dark:ring-blue-400/20"
+                  : "bg-[#090E1A]/60 border-[#152033] text-slate-400 opacity-60 hover:opacity-90 dark:bg-slate-50/70 dark:border-slate-200 dark:text-slate-500 dark:opacity-60 dark:hover:opacity-90"
               )}
             >
               {status === "PENDING" && (
@@ -200,80 +199,85 @@ export function AiProposalCard({
                   type="checkbox"
                   checked={isSelected}
                   onChange={() => toggleSelect(change.id)}
-                  className="mt-0.5 h-3.5 w-3.5 rounded-xs border-[#1E2B45] text-[#2D9BF0] focus:ring-[#2D9BF0] bg-[#0E1729] dark:bg-white dark:border-slate-300 cursor-pointer"
+                  aria-label={`Select ${change.data.title || change.data.name || "item"}`}
+                  className="mt-0.5 h-3.5 w-3.5 rounded-xs border-slate-600 dark:border-slate-300 text-[#2D9BF0] focus:ring-[#2D9BF0] bg-[#0E1729] dark:bg-white cursor-pointer shrink-0"
                 />
               )}
 
-              <div className="flex-1 space-y-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  {renderActionBadge(change.action)}
-                  <span className="font-bold text-white dark:text-slate-900">
-                    {change.data.title || change.data.name || (change.action === "delete" ? "Target Item" : "New Item")}
-                  </span>
-                  <span className="text-[10px] uppercase font-mono text-slate-400 dark:text-slate-500">
-                    [{change.domain}]
+              <div className="flex-1 space-y-1.5 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap justify-between">
+                  <div className="flex items-center gap-2 flex-wrap min-w-0">
+                    {renderActionBadge(change.action)}
+                    <span className="font-semibold text-xs text-white dark:text-slate-900 break-words">
+                      {change.data.title || change.data.name || (change.action === "delete" ? "Target Item" : "New Item")}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
+                    {change.domain === "itinerary" ? "Activity" : "Stay"}
                   </span>
                 </div>
 
-                {/* Itinerary Details */}
+                {/* Itinerary Details Chips */}
                 {change.domain === "itinerary" && (
-                  <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-slate-400 dark:text-slate-600 pt-0.5">
+                  <div className="flex flex-wrap gap-1.5 text-[11px] pt-0.5">
                     {change.data.dayNumber && (
-                      <span className="flex items-center gap-1">
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700">
                         <Calendar className="h-3 w-3 text-[#2D9BF0]" /> Day {change.data.dayNumber}
                       </span>
                     )}
                     {change.data.time && (
-                      <span className="flex items-center gap-1">
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700">
                         <Clock className="h-3 w-3 text-[#2D9BF0]" /> {change.data.time}
                       </span>
                     )}
                     {change.data.location && (
-                      <span className="flex items-center gap-1">
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700">
                         <MapPin className="h-3 w-3 text-[#2D9BF0]" /> {change.data.location}
                       </span>
                     )}
                     {change.data.cost !== undefined && change.data.cost !== null && (
-                      <span className="flex items-center gap-1">
-                        <DollarSign className="h-3 w-3 text-[#2D9BF0]" /> ${change.data.cost}
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700 font-mono">
+                        <DollarSign className="h-3 w-3 text-[#2D9BF0]" />
+                        {Number(change.data.cost) === 0 ? "Free" : `$${change.data.cost}`}
                       </span>
                     )}
                   </div>
                 )}
 
-                {/* Accommodation Details */}
+                {/* Accommodation Details Chips */}
                 {change.domain === "accommodation" && (
-                  <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-slate-400 dark:text-slate-600 pt-0.5">
+                  <div className="flex flex-wrap gap-1.5 text-[11px] pt-0.5">
                     {change.data.type && (
-                      <span className="flex items-center gap-1">
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700">
                         <Hotel className="h-3 w-3 text-[#2D9BF0]" /> {change.data.type}
                       </span>
                     )}
                     {change.data.address && (
-                      <span className="flex items-center gap-1">
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700">
                         <MapPin className="h-3 w-3 text-[#2D9BF0]" /> {change.data.address}
                       </span>
                     )}
                     {change.data.checkIn && (
-                      <span className="flex items-center gap-1">
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700">
                         <Calendar className="h-3 w-3 text-[#2D9BF0]" /> In: {change.data.checkIn}
                       </span>
                     )}
                     {change.data.checkOut && (
-                      <span className="flex items-center gap-1">
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700">
                         <Calendar className="h-3 w-3 text-[#2D9BF0]" /> Out: {change.data.checkOut}
                       </span>
                     )}
                     {change.data.cost !== undefined && change.data.cost !== null && (
-                      <span className="flex items-center gap-1">
-                        <DollarSign className="h-3 w-3 text-[#2D9BF0]" /> ${change.data.cost} {change.data.currency || "USD"}
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700 font-mono">
+                        <DollarSign className="h-3 w-3 text-[#2D9BF0]" />
+                        {Number(change.data.cost) === 0 ? "Free" : `$${change.data.cost} ${change.data.currency || "USD"}`}
                       </span>
                     )}
                   </div>
                 )}
 
                 {change.data.description && (
-                  <p className="text-[11px] text-slate-300 dark:text-slate-600 leading-normal pt-0.5">
+                  <p className="text-[11px] text-slate-300/90 dark:text-slate-600 leading-relaxed pt-0.5">
                     {change.data.description}
                   </p>
                 )}
@@ -285,13 +289,13 @@ export function AiProposalCard({
 
       {/* Action Buttons for Pending Proposals */}
       {status === "PENDING" && (
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-[#152033] dark:border-slate-200">
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-[#152033] dark:border-slate-100">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleReject}
             disabled={loading}
-            className="h-7 px-2 text-xs rounded-xs text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 dark:text-slate-500 dark:hover:text-rose-600 dark:hover:bg-rose-50 cursor-pointer shrink-0"
+            className="h-7 px-2.5 text-xs rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 dark:text-slate-500 dark:hover:text-rose-600 dark:hover:bg-rose-50 cursor-pointer shrink-0 transition-colors"
           >
             <X className="h-3.5 w-3.5 mr-1" />
             Reject
@@ -304,7 +308,7 @@ export function AiProposalCard({
                 size="sm"
                 onClick={() => handleAccept(false)}
                 disabled={loading}
-                className="h-7 px-2 text-xs rounded-xs border-[#1E2B45] text-slate-200 hover:bg-white/5 dark:border-slate-300 dark:text-slate-800 dark:hover:bg-slate-100 cursor-pointer shrink-0"
+                className="h-7 px-2.5 text-xs rounded-lg border-[#1E2B45] text-slate-200 hover:bg-white/5 dark:border-slate-300 dark:text-slate-800 dark:hover:bg-slate-100 cursor-pointer shrink-0"
               >
                 {loading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Check className="h-3 w-3 mr-1 text-[#2D9BF0]" />}
                 Apply ({selectedIds.length})
@@ -315,7 +319,7 @@ export function AiProposalCard({
               size="sm"
               onClick={() => handleAccept(true)}
               disabled={loading}
-              className="h-7 px-2.5 text-xs font-semibold rounded-xs bg-[#2D9BF0] hover:bg-[#2389d7] text-white shadow-xs cursor-pointer shrink-0"
+              className="h-7 px-3 text-xs font-semibold rounded-lg bg-[#2D9BF0] hover:bg-[#2087D6] text-white shadow-xs cursor-pointer shrink-0 transition-colors"
             >
               {loading ? (
                 <Loader2 className="h-3 w-3 animate-spin mr-1" />
