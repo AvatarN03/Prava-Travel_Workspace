@@ -4,14 +4,14 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import {
-  ALLOWED_IMAGE_TYPES,
-  MAX_FILE_SIZE_BYTES,
+  deleteImageFromStorage,
   normalizeMimeType,
-  uploadImageToStorage,
   pruneUnusedUserAvatars,
+  uploadImageToStorage,
 } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
 
+import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE_BYTES } from "@/lib/storage";
 import type { StorageFolder } from "./types";
 
 /**
@@ -65,7 +65,30 @@ export async function uploadImageAction(formData: FormData) {
 }
 
 /**
+ * Safely deletes an unreferenced trip cover image from Supabase Storage if no other trip uses it.
+ */
+export async function deleteUnusedTripCoverImage(
+  coverImageUrl: string | null | undefined,
+  userId: string
+) {
+  if (!coverImageUrl) return;
+
+  try {
+    const inUseCount = await db.trip.count({
+      where: { coverImageUrl },
+    });
+
+    if (inUseCount === 0) {
+      await deleteImageFromStorage(coverImageUrl, userId);
+    }
+  } catch (err) {
+    console.warn("[Storage] Non-fatal error cleaning up unreferenced trip cover image:", err);
+  }
+}
+
+/**
  * Server action to update or clear a Trip's cover image.
+ * Automatically deletes the old custom cover image from Supabase Storage if no longer referenced.
  */
 export async function updateTripCoverImage(tripId: string, coverImageUrl: string | null) {
   try {
@@ -88,10 +111,17 @@ export async function updateTripCoverImage(tripId: string, coverImageUrl: string
       return { success: false, error: "Trip not found or unauthorized" };
     }
 
+    const previousCoverImageUrl = trip.coverImageUrl;
+
     await db.trip.update({
       where: { id: tripId },
       data: { coverImageUrl },
     });
+
+    // If the trip had a previous custom cover image and it changed/was removed, delete the old file from Supabase Storage
+    if (previousCoverImageUrl && previousCoverImageUrl !== coverImageUrl) {
+      await deleteUnusedTripCoverImage(previousCoverImageUrl, user.id);
+    }
 
     revalidatePath(`/trips/${tripId}`);
     revalidatePath(`/trips/${tripId}/overview`);
