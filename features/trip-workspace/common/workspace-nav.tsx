@@ -89,14 +89,14 @@ export function WorkspaceNav({ tripId, counts }: WorkspaceNavProps) {
 
   return (
     // Hidden on Desktop (md:hidden) because the left Desktop Sidebar contextually drives trip module navigation
-    <div className="md:hidden border-b border-border bg-background">
+    <div className="md:hidden border-b border-border/80 dark:border-zinc-800 bg-background dark:bg-[#0F131C]">
       {/* Mobile Phones (< sm): 1-Tap Select Dropdown */}
       <div className="sm:hidden p-2">
         <Select value={activeTab} onValueChange={handleTabChange}>
-          <SelectTrigger className="w-full h-10 bg-card border-border shadow-xs px-3 rounded-sm text-left cursor-pointer focus:ring-[#2D9BF0]">
+          <SelectTrigger className="w-full h-10 bg-card dark:bg-[#121622] border-border dark:border-zinc-800 shadow-xs px-3 rounded-sm text-left cursor-pointer focus:ring-[#2D9BF0]">
             <div className="flex items-center gap-2.5 min-w-0">
               <ActiveIcon className="w-4 h-4 text-[#2D9BF0] shrink-0" />
-              <span className="truncate font-sans text-xs font-semibold text-foreground">
+              <span className="truncate font-sans text-xs font-semibold text-foreground dark:text-zinc-100">
                 {activeNavItem.label}
               </span>
               {getBadgeContent(activeTab) && (
@@ -106,7 +106,7 @@ export function WorkspaceNav({ tripId, counts }: WorkspaceNavProps) {
               )}
             </div>
           </SelectTrigger>
-          <SelectContent className="w-[calc(100vw-2rem)] max-w-sm">
+          <SelectContent className="w-[calc(100vw-2rem)] max-w-sm dark:bg-[#0F131C] dark:border-zinc-800">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
               const badge = getBadgeContent(item.value);
@@ -114,13 +114,13 @@ export function WorkspaceNav({ tripId, counts }: WorkspaceNavProps) {
                 <SelectItem
                   key={item.value}
                   value={item.value}
-                  className="cursor-pointer py-2 font-sans text-xs font-medium"
+                  className="cursor-pointer py-2 font-sans text-xs font-medium dark:text-zinc-200"
                 >
                   <div className="flex items-center gap-2.5 w-full">
-                    <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                    <span className="font-sans font-medium text-foreground text-xs">{item.label}</span>
+                    <Icon className="w-3.5 h-3.5 text-muted-foreground dark:text-zinc-400 shrink-0" />
+                    <span className="font-sans font-medium text-foreground dark:text-zinc-200 text-xs">{item.label}</span>
                     {badge && (
-                      <span className="ml-auto font-sans text-[10px] px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground font-semibold">
+                      <span className="ml-auto font-sans text-[10px] px-1.5 py-0.5 rounded-sm bg-muted dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 font-semibold">
                         {badge}
                       </span>
                     )}
@@ -152,7 +152,7 @@ export function WorkspaceNav({ tripId, counts }: WorkspaceNavProps) {
                   className={cn(
                     "group inline-flex items-center gap-1.5 px-3 py-2 font-sans text-xs font-medium whitespace-nowrap cursor-pointer",
                     "rounded-none border-b-2 transition-colors duration-150",
-                    "border-transparent text-muted-foreground hover:text-foreground hover:border-border",
+                    "border-transparent text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 hover:border-border dark:hover:border-zinc-700",
                     "data-[state=active]:bg-transparent data-[state=active]:shadow-none",
                     "data-[state=active]:text-[#2D9BF0] data-[state=active]:border-[#2D9BF0]",
                     "data-[state=active]:font-semibold"
@@ -161,7 +161,7 @@ export function WorkspaceNav({ tripId, counts }: WorkspaceNavProps) {
                   <Icon
                     className={cn(
                       "w-3.5 h-3.5 shrink-0",
-                      isActive ? "text-[#2D9BF0]" : "text-muted-foreground group-hover:text-foreground"
+                      isActive ? "text-[#2D9BF0]" : "text-muted-foreground dark:text-zinc-400 group-hover:text-foreground dark:group-hover:text-zinc-100"
                     )}
                   />
                   <span>{item.label}</span>
@@ -171,7 +171,7 @@ export function WorkspaceNav({ tripId, counts }: WorkspaceNavProps) {
                         "ml-1 font-sans text-[10px] px-1.5 py-0.5 rounded-sm font-semibold tabular-nums transition-colors",
                         isActive
                           ? "bg-[#2D9BF0]/10 text-[#2D9BF0]"
-                          : "bg-muted text-muted-foreground group-hover:text-foreground"
+                          : "bg-muted dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 group-hover:text-foreground dark:group-hover:text-zinc-100"
                       )}
                     >
                       {badge}

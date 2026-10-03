@@ -42,7 +42,7 @@ export function TripWorkspaceContainer({
   }, [trip.id, trip.title, trip.destination, counts, setActiveTrip]);
 
   return (
-    <div className="w-full max-w-5xl mx-auto min-w-0 space-y-4">
+    <div className="w-full max-w-7xl mx-auto min-w-0 space-y-4">
       <WorkspaceHeader trip={trip} />
       <WorkspaceNav tripId={trip.id} counts={counts} />
       <div className="pt-2">{children}</div>

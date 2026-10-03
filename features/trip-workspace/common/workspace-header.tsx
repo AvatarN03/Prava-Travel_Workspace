@@ -231,7 +231,7 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
         <div className="flex items-center justify-between">
           <Link
             href="/trips"
-            className="inline-flex items-center font-sans text-xs font-medium text-muted-foreground hover:text-foreground transition-colors group cursor-pointer"
+            className="inline-flex items-center font-sans text-xs font-medium text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 transition-colors group cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-1.5 group-hover:-translate-x-0.5 transition-transform" />
             <span>Back to Trips</span>
@@ -371,20 +371,20 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                 onValueChange={(val) => handleStatusChange(val as TripStatus)}
                 disabled={isStatusChanging}
               >
-                <SelectTrigger className="h-8 font-sans text-xs font-medium w-[120px] rounded-xs cursor-pointer">
+                <SelectTrigger className="h-8 font-sans text-xs font-medium w-[120px] rounded-xs cursor-pointer dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-200">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
-                <SelectContent className="rounded-sm">
-                  <SelectItem value="PLANNING" className="font-sans text-xs font-medium cursor-pointer">
+                <SelectContent className="rounded-sm dark:bg-[#0F131C] dark:border-zinc-800">
+                  <SelectItem value="PLANNING" className="font-sans text-xs font-medium cursor-pointer dark:text-zinc-200">
                     Planning
                   </SelectItem>
-                  <SelectItem value="ACTIVE" className="font-sans text-xs font-medium cursor-pointer">
+                  <SelectItem value="ACTIVE" className="font-sans text-xs font-medium cursor-pointer dark:text-zinc-200">
                     Active
                   </SelectItem>
-                  <SelectItem value="COMPLETED" className="font-sans text-xs font-medium cursor-pointer">
+                  <SelectItem value="COMPLETED" className="font-sans text-xs font-medium cursor-pointer dark:text-zinc-200">
                     Completed
                   </SelectItem>
-                  <SelectItem value="ARCHIVED" className="font-sans text-xs font-medium cursor-pointer">
+                  <SelectItem value="ARCHIVED" className="font-sans text-xs font-medium cursor-pointer dark:text-zinc-200">
                     Archived
                   </SelectItem>
                 </SelectContent>
@@ -397,7 +397,7 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="h-8 gap-1.5 font-sans text-xs font-medium cursor-pointer transition-all rounded-xs border-border/80 hover:bg-muted text-foreground"
+                      className="h-8 gap-1.5 font-sans text-xs font-medium cursor-pointer transition-all rounded-xs border-border/80 dark:border-zinc-800 hover:bg-muted dark:hover:bg-[#121622] text-foreground dark:text-zinc-200 dark:bg-[#0F131C]"
                       onClick={() => setIsCalendarOpen(true)}
                       aria-label="Add Trip to Calendar"
                     >
@@ -405,7 +405,7 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                       <span className="hidden sm:inline">Add to Calendar</span>
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent side="bottom" className="text-xs">
+                  <TooltipContent side="bottom" className="text-xs dark:bg-[#0F131C] dark:border-zinc-800 dark:text-zinc-200">
                     Sync trip to Google Calendar or download .ics
                   </TooltipContent>
                 </Tooltip>
@@ -421,7 +421,7 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                       className={`h-8 gap-1.5 font-sans text-xs font-medium cursor-pointer transition-all rounded-xs ${
                         isAiOpen
                           ? "bg-[#2D9BF0] text-white shadow-xs hover:bg-[#2587d4]"
-                          : "border-[#2D9BF0]/40 hover:border-[#2D9BF0] hover:bg-[#2D9BF0]/10 text-[#2D9BF0] dark:border-[#2D9BF0]/50 dark:hover:bg-[#2D9BF0]/20"
+                          : "border-[#2D9BF0]/40 hover:border-[#2D9BF0] hover:bg-[#2D9BF0]/10 text-[#2D9BF0] dark:border-[#2D9BF0]/50 dark:hover:bg-[#2D9BF0]/20 dark:bg-[#0F131C]"
                       }`}
                       onClick={toggleAi}
                       aria-label="Ichinose — Prava Travel Assistant"
@@ -441,7 +441,7 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                   <TooltipContent
                     side="bottom"
                     align="end"
-                    className="w-64 p-3 space-y-2 border border-border/80 bg-popover text-popover-foreground shadow-lg rounded-md z-50 text-left"
+                    className="w-64 p-3 space-y-2 border border-border/80 dark:border-zinc-800 bg-popover dark:bg-[#0F131C] text-popover-foreground dark:text-zinc-100 shadow-lg rounded-md z-50 text-left"
                   >
                     <div className="flex items-center gap-2">
                       <div className="relative h-6 w-6 shrink-0 rounded-full overflow-hidden ring-1 ring-primary/50 shadow-2xs">
@@ -454,19 +454,19 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                         />
                       </div>
                       <div>
-                        <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                        <p className="text-xs font-semibold text-foreground dark:text-zinc-100 flex items-center gap-1.5">
                           Ichinose AI
-                          <span className="text-[10px] font-normal text-muted-foreground">· Travel Copilot</span>
+                          <span className="text-[10px] font-normal text-muted-foreground dark:text-zinc-400">· Travel Copilot</span>
                         </p>
-                        <p className="text-[10px] text-muted-foreground">Prava Workspace Assistant</p>
+                        <p className="text-[10px] text-muted-foreground dark:text-zinc-400">Prava Workspace Assistant</p>
                       </div>
                     </div>
-                    <p className="text-[11px] text-muted-foreground leading-snug">
+                    <p className="text-[11px] text-muted-foreground dark:text-zinc-400 leading-snug">
                       Interactive travel assistant for multi-day itineraries, stays, live travel data, and structured trip updates.
                     </p>
                     {userQuota && (
-                      <div className="pt-1.5 border-t border-border/60 flex items-center justify-between text-[10px]">
-                        <span className="text-muted-foreground font-medium">Monthly AI Credits:</span>
+                      <div className="pt-1.5 border-t border-border/60 dark:border-zinc-800 flex items-center justify-between text-[10px]">
+                        <span className="text-muted-foreground dark:text-zinc-400 font-medium">Monthly AI Credits:</span>
                         <span
                           className={`font-semibold tabular-nums ${
                             userQuota.remaining > 0 ? "text-primary" : "text-destructive"
@@ -476,7 +476,7 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                         </span>
                       </div>
                     )}
-                    <p className="text-[9px] text-muted-foreground/80 text-right pt-0.5">
+                    <p className="text-[9px] text-muted-foreground/80 dark:text-zinc-500 text-right pt-0.5">
                       Click to {isAiOpen ? "close" : "open"} assistant
                     </p>
                   </TooltipContent>
@@ -489,27 +489,27 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground cursor-pointer rounded-xs"
+                    className="h-8 w-8 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 cursor-pointer rounded-xs"
                   >
                     <MoreHorizontal className="h-4 w-4" />
                     <span className="sr-only">Trip Settings</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 rounded-sm">
-                  <DropdownMenuItem onClick={handleCopyLink} className="font-sans text-xs font-medium cursor-pointer">
+                <DropdownMenuContent align="end" className="w-48 rounded-sm dark:bg-[#0F131C] dark:border-zinc-800">
+                  <DropdownMenuItem onClick={handleCopyLink} className="font-sans text-xs font-medium cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200">
                     <Share2 className="h-3.5 w-3.5 mr-2" />
                     Copy Trip Link
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
                     onClick={() => setIsCalendarOpen(true)}
-                    className="font-sans text-xs font-medium cursor-pointer"
+                    className="font-sans text-xs font-medium cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200"
                   >
                     <Calendar className="h-3.5 w-3.5 mr-2 text-[#2D9BF0]" />
                     Add to Calendar
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="font-sans text-xs font-medium cursor-pointer">
+                  <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="font-sans text-xs font-medium cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200">
                     <Pencil className="h-3.5 w-3.5 mr-2" />
                     Edit Details & Cover
                   </DropdownMenuItem>
@@ -517,7 +517,7 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                   <DropdownMenuItem
                     onClick={handleDuplicate}
                     disabled={isDuplicating}
-                    className="font-sans text-xs font-medium cursor-pointer"
+                    className="font-sans text-xs font-medium cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200"
                   >
                     {isDuplicating ? (
                       <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />
@@ -530,23 +530,23 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                   <DropdownMenuItem
                     onClick={handleTogglePublish}
                     disabled={isPublishing}
-                    className="font-sans text-xs font-medium cursor-pointer"
+                    className="font-sans text-xs font-medium cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200"
                   >
                     {isPublishing ? (
                       <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />
                     ) : isPublic ? (
-                      <Lock className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
+                      <Lock className="h-3.5 w-3.5 mr-2 text-muted-foreground dark:text-zinc-400" />
                     ) : (
                       <Globe className="h-3.5 w-3.5 mr-2 text-primary" />
                     )}
                     {isPublic ? "Make Private" : "Share to Community"}
                   </DropdownMenuItem>
 
-                  <DropdownMenuSeparator />
+                  <DropdownMenuSeparator className="dark:bg-zinc-800" />
 
                   <DropdownMenuItem
                     onClick={() => setIsDeleteOpen(true)}
-                    className="font-sans text-xs font-medium text-destructive focus:text-destructive cursor-pointer"
+                    className="font-sans text-xs font-medium text-destructive focus:text-destructive cursor-pointer dark:hover:bg-destructive/10"
                   >
                     <Trash2 className="h-3.5 w-3.5 mr-2" />
                     Delete Trip
@@ -557,12 +557,12 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
           </div>
 
           {/* Sub-row: Date Range & Description with Show More/Less */}
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 pt-1 border-t border-border/50 text-xs">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 pt-1 border-t border-border/50 dark:border-zinc-800/80 text-xs">
             {/* Description (max 2 lines with Show more) */}
             <div className="flex-1 min-w-0 pr-4">
               {trip.description ? (
                 <div>
-                  <p className={`font-serif italic text-muted-foreground leading-relaxed ${!isDescExpanded ? "line-clamp-2" : ""}`}>
+                  <p className={`font-serif italic text-muted-foreground dark:text-zinc-300 leading-relaxed ${!isDescExpanded ? "line-clamp-2" : ""}`}>
                     {trip.description}
                   </p>
                   {isLongDescription && (
@@ -577,13 +577,13 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                   )}
                 </div>
               ) : (
-                <span className="text-[11px] text-muted-foreground/60 italic">No trip description provided</span>
+                <span className="text-[11px] text-muted-foreground/60 dark:text-zinc-500 italic">No trip description provided</span>
               )}
             </div>
 
             {/* Date Range on the right below the controls */}
             <div className="shrink-0 self-start sm:self-auto">
-              <span className="inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground tabular-nums bg-muted/30 px-2 py-0.5 rounded-xs border border-border/50">
+              <span className="inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground dark:text-zinc-300 tabular-nums bg-muted/30 dark:bg-[#121622] px-2 py-0.5 rounded-xs border border-border/50 dark:border-zinc-800">
                 <Calendar className="w-3.5 h-3.5 text-[#2D9BF0] shrink-0" />
                 <span>{formatDateRange(trip.startDate, trip.endDate)}</span>
               </span>

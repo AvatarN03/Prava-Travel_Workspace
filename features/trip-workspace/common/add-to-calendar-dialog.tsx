@@ -95,7 +95,7 @@ export function AddToCalendarDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent className="sm:max-w-[480px] p-6 gap-5">
+      <DialogContent className="sm:max-w-[480px] p-6 gap-5 bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800">
         <DialogHeader className="space-y-1.5 text-left">
           <div className="flex items-center gap-2">
             <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
@@ -108,18 +108,18 @@ export function AddToCalendarDialog({
               1-Click
             </Badge>
           </div>
-          <DialogTitle className="font-sans text-xl font-semibold tracking-tight text-foreground flex items-center gap-2">
+          <DialogTitle className="font-sans text-xl font-semibold tracking-tight text-foreground dark:text-zinc-50 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-[#2D9BF0]" />
             Add Trip to Calendar
           </DialogTitle>
-          <DialogDescription className="font-sans text-xs text-muted-foreground leading-relaxed">
+          <DialogDescription className="font-sans text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed">
             Sync your travel dates and scheduled stops with Google Calendar, Apple Calendar, or Microsoft Outlook.
           </DialogDescription>
         </DialogHeader>
 
         {/* Trip Summary Capsule */}
-        <div className="rounded-md border border-border/80 bg-muted/30 p-3.5 space-y-2">
-          <div className="font-medium text-sm text-foreground truncate">
+        <div className="rounded-md border border-border/80 dark:border-zinc-800 bg-muted/30 dark:bg-[#121622] p-3.5 space-y-2">
+          <div className="font-medium text-sm text-foreground dark:text-zinc-100 truncate">
             {trip.title}
           </div>
           <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
@@ -171,13 +171,13 @@ export function AddToCalendarDialog({
             type="button"
             variant="outline"
             onClick={handleDownloadIcs}
-            className="w-full h-11 justify-between px-4 border-border/80 hover:bg-muted font-medium text-foreground cursor-pointer"
+            className="w-full h-11 justify-between px-4 border-border/80 dark:border-zinc-800 bg-background dark:bg-[#121622] hover:bg-muted dark:hover:bg-zinc-800/60 font-medium text-foreground dark:text-zinc-100 cursor-pointer"
           >
             <span className="flex items-center gap-2.5 text-sm">
               <Download className="w-4 h-4 text-[#2D9BF0]" />
               <span>Download Universal iCal (.ics)</span>
             </span>
-            <span className="text-[10px] text-muted-foreground uppercase font-mono tracking-wider">
+            <span className="text-[10px] text-muted-foreground dark:text-zinc-400 uppercase font-mono tracking-wider">
               Apple / Outlook
             </span>
           </Button>
@@ -187,7 +187,7 @@ export function AddToCalendarDialog({
             type="button"
             variant="ghost"
             onClick={handleCopyLink}
-            className="w-full h-9 text-xs text-muted-foreground hover:text-foreground cursor-pointer gap-2"
+            className="w-full h-9 text-xs text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 cursor-pointer gap-2"
           >
             {isCopied ? (
               <>
@@ -204,8 +204,8 @@ export function AddToCalendarDialog({
         </div>
 
         {/* Explanatory footer note */}
-        <div className="pt-2 border-t border-border/60">
-          <p className="text-[11px] text-muted-foreground/90 leading-relaxed flex items-start gap-1.5">
+        <div className="pt-2 border-t border-border/60 dark:border-zinc-800">
+          <p className="text-[11px] text-muted-foreground/90 dark:text-zinc-400 leading-relaxed flex items-start gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
             <span>
               <strong>Zero-friction sync:</strong> Opens directly in your browser without requiring calendar account permissions or sensitive OAuth tokens.
