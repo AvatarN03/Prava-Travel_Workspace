@@ -1,10 +1,10 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
 import {
   AlertTriangle,
   ArrowLeft,
@@ -20,8 +20,8 @@ import { toast } from "sonner";
 import { ThemeToggle } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import { AuthBackgroundPattern } from "../auth-background-pattern";
+
 import { createClient } from "@/lib/supabase/client";
 
 function ResetPasswordForm() {

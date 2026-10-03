@@ -1,7 +1,6 @@
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-
 import { ActiveTripWorkspaceCard } from "@/features/dashboard/components/active-trip-workspace-card";
 import { AiAssistantCard } from "@/features/dashboard/components/ai-assistant-card";
 import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
@@ -55,16 +54,16 @@ export default async function DashboardPage() {
       {/* Workspace Header with Editorial Typography */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
-          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] dark:text-[#38BDF8] uppercase block select-none">
             Travel Workspace
           </span>
-          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
             {greeting},{" "}
-            <span className="font-serif italic font-normal text-foreground">
+            <span className="font-serif italic font-normal text-foreground dark:text-zinc-200">
               {firstName}
             </span>
           </h1>
-          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 font-normal leading-relaxed max-w-2xl">
             {subGreeting}
           </p>
         </div>
@@ -72,7 +71,7 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-end self-end sm:self-auto gap-2.5">
           <CreateTripDialog
             trigger={
-              <Button className="h-9 px-4 py-1.5 rounded-sm font-sans text-xs font-semibold gap-1.5 cursor-pointer shadow-xs hover:shadow transition-all active:scale-[0.99] bg-[#2D9BF0] hover:bg-[#2587D3] text-white border border-[#2D9BF0]/30">
+              <Button className="dashboard-btn-primary h-9 px-4 py-1.5 gap-1.5">
                 <Plus className="w-3.5 h-3.5" />
                 <span>Create trip</span>
               </Button>
@@ -118,7 +117,7 @@ export default async function DashboardPage() {
 
           {/* Bottom Section: Cross-Trip Metrics Overview */}
           <div className="pt-2">
-            <div className="font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 mb-3 select-none">
+            <div className="dashboard-section-eyebrow mb-3">
               Cross-Trip Workspace Overview
             </div>
             <DashboardMetrics

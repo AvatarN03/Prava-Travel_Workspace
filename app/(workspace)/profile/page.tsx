@@ -2,7 +2,9 @@ import { Suspense } from "react";
 
 import { AlertCircle } from "lucide-react";
 
-import { getCurrentProfile, ProfileEditor } from "@/features/profile";
+import { ProfileEditor } from "@/features/profile/components/profile-editor";
+
+import { getCurrentProfile } from "@/features/profile/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +19,7 @@ export default async function ProfilePage() {
 
   if (!res.success || !res.profile) {
     return (
-      <div className="w-full max-w-5xl mx-auto">
+      <div className="w-full max-w-7xl mx-auto">
         <div className="rounded-sm border border-destructive/20 bg-destructive/10 p-4 font-sans text-xs text-destructive flex items-center gap-2">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>Failed to load account details. Please make sure you are signed in.</span>

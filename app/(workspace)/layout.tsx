@@ -2,9 +2,10 @@ import { redirect } from "next/navigation";
 
 import { AppShell } from "@/components/app-shell";
 
-import { getCurrentProfile, type TopBarUserInfo } from "@/features/profile";
 import { WorkspaceAiProvider } from "@/features/trip-workspace";
 import { OfflineSyncProvider } from "@/lib/offline";
+
+import { getCurrentProfile, type TopBarUserInfo } from "@/features/profile";
 
 export const dynamic = "force-dynamic";
 

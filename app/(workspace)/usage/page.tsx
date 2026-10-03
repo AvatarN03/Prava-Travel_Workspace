@@ -1,4 +1,6 @@
-import { getAccountUsage, UsageView } from "@/features/pricing";
+import { UsageView } from "@/features/pricing/components/usage-view";
+
+import { getAccountUsage } from "@/features/pricing/actions";
 
 export const dynamic = "force-dynamic";
 
