@@ -58,8 +58,8 @@ export function TaskItem({ item }: TaskItemProps) {
       <div
         className={`group flex items-center justify-between gap-3 p-3 rounded-sm border transition-all duration-150 ${
           isCompleted
-            ? "border-border/40 bg-muted/20 text-muted-foreground"
-            : "border-border/80 bg-card hover:border-[#2D9BF0]/50 text-foreground shadow-2xs"
+            ? "border-border/40 dark:border-zinc-800/60 bg-muted/20 dark:bg-[#121622]/40 text-muted-foreground dark:text-zinc-500"
+            : "border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] hover:border-[#2D9BF0]/50 text-foreground dark:text-zinc-100 shadow-2xs"
         }`}
       >
         <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -70,7 +70,7 @@ export function TaskItem({ item }: TaskItemProps) {
             className={`flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-xs border transition-colors cursor-pointer ${
               isCompleted
                 ? "bg-[#2D9BF0] border-[#2D9BF0] text-white"
-                : "border-border/80 bg-background hover:border-[#2D9BF0]"
+                : "border-border/80 dark:border-zinc-700 bg-background dark:bg-[#121622] hover:border-[#2D9BF0]"
             }`}
             aria-label={isCompleted ? "Mark incomplete" : "Mark complete"}
           >
@@ -80,14 +80,14 @@ export function TaskItem({ item }: TaskItemProps) {
           <div className="space-y-0.5 min-w-0 flex-1">
             <span
               className={`text-xs font-medium leading-normal block ${
-                isCompleted ? "line-through text-muted-foreground/70" : "text-foreground"
+                isCompleted ? "line-through text-muted-foreground/70 dark:text-zinc-500" : "text-foreground dark:text-zinc-100"
               }`}
             >
               {item.title}
             </span>
 
             {item.dueDate && (
-              <span className="inline-flex items-center text-[10px] font-mono text-muted-foreground">
+              <span className="inline-flex items-center text-[10px] font-mono text-muted-foreground dark:text-zinc-400">
                 <Calendar className="w-2.5 h-2.5 mr-1 text-[#2D9BF0]/70" />
                 Due:{" "}
                 {new Date(item.dueDate).toLocaleDateString("en-US", {
@@ -104,7 +104,7 @@ export function TaskItem({ item }: TaskItemProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 text-muted-foreground hover:text-foreground cursor-pointer rounded-xs"
+            className="h-6 w-6 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 hover:bg-muted dark:hover:bg-zinc-800/60 cursor-pointer rounded-xs"
             onClick={() => setIsEditOpen(true)}
             title="Edit task"
           >
@@ -113,7 +113,7 @@ export function TaskItem({ item }: TaskItemProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 text-muted-foreground hover:text-destructive cursor-pointer rounded-xs"
+            className="h-6 w-6 text-muted-foreground dark:text-zinc-400 hover:text-destructive dark:hover:text-red-400 hover:bg-muted dark:hover:bg-zinc-800/60 cursor-pointer rounded-xs"
             onClick={() => setIsDeleteOpen(true)}
             title="Delete task"
           >

@@ -78,11 +78,11 @@ export function EditTaskDialog({ item, open, onOpenChange }: EditTaskDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[420px]">
+      <DialogContent className="sm:max-w-[420px] dark:bg-[#0F131C] dark:border-zinc-800 text-foreground dark:text-zinc-100">
         <form onSubmit={handleSubmit} className="space-y-3.5">
           <DialogHeader>
-            <DialogTitle>Edit Checklist Item</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="dark:text-zinc-100">Edit Checklist Item</DialogTitle>
+            <DialogDescription className="dark:text-zinc-400">
               Update task title, category, or due date.
             </DialogDescription>
           </DialogHeader>
@@ -95,42 +95,44 @@ export function EditTaskDialog({ item, open, onOpenChange }: EditTaskDialogProps
 
           <div className="space-y-3">
             <div className="space-y-1">
-              <Label htmlFor="edit-task-title">Task Title *</Label>
+              <Label htmlFor="edit-task-title" className="dark:text-zinc-300">Task Title *</Label>
               <Input
                 id="edit-task-title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="edit-task-cat">Category</Label>
+                <Label htmlFor="edit-task-cat" className="dark:text-zinc-300">Category</Label>
                 <select
                   id="edit-task-cat"
-                  className="flex h-9 w-full rounded-sm border border-border bg-background px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
+                  className="flex h-9 w-full rounded-sm border border-border bg-background dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100 px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   disabled={isPending}
                 >
-                  <option value="Packing">Packing</option>
-                  <option value="Documents">Documents &amp; Visas</option>
-                  <option value="Bookings">Reservations &amp; Tickets</option>
-                  <option value="Health">Health &amp; Insurance</option>
-                  <option value="General">General To-Do</option>
+                  <option value="Packing" className="dark:bg-[#121622] dark:text-zinc-100">Packing</option>
+                  <option value="Documents" className="dark:bg-[#121622] dark:text-zinc-100">Documents &amp; Visas</option>
+                  <option value="Bookings" className="dark:bg-[#121622] dark:text-zinc-100">Reservations &amp; Tickets</option>
+                  <option value="Health" className="dark:bg-[#121622] dark:text-zinc-100">Health &amp; Insurance</option>
+                  <option value="General" className="dark:bg-[#121622] dark:text-zinc-100">General To-Do</option>
                 </select>
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="edit-task-due">Due Date</Label>
+                <Label htmlFor="edit-task-due" className="dark:text-zinc-300">Due Date</Label>
                 <Input
                   id="edit-task-due"
                   type="date"
                   value={formData.dueDate}
                   onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
@@ -143,10 +145,11 @@ export function EditTaskDialog({ item, open, onOpenChange }: EditTaskDialogProps
               size="sm"
               onClick={() => onOpenChange(false)}
               disabled={isPending}
+              className="cursor-pointer dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800/60"
             >
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={isPending}>
+            <Button type="submit" size="sm" disabled={isPending} className="bg-[#2D9BF0] hover:bg-[#2587d4] text-white cursor-pointer shadow-2xs">
               {isPending && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               Save Changes
             </Button>
