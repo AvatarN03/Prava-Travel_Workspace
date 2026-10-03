@@ -3,18 +3,18 @@
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
-import { pruneUnusedUserAvatars, deleteUserStorageFolder } from "@/lib/storage";
+import { deleteUserStorageFolder, pruneUnusedUserAvatars } from "@/lib/storage";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
-
 import { validateUsername } from "./reserved-usernames";
 import { generateSmartUniqueUsername } from "./username-generator";
+
 import {
-  updateProfileSchema,
-  UpdateProfileInput,
   updateGeneralPreferencesSchema,
-  UpdateGeneralPreferencesInput,
+  updateProfileSchema,
+  type UpdateGeneralPreferencesInput,
+  type UpdateProfileInput,
 } from "./schema";
 import type { ProfileWithStats, TopBarUserInfo } from "./types";
 
@@ -363,10 +363,19 @@ export async function getPublicCreatorProfile(username: string) {
   try {
     const cleanUsername = username.trim().toLowerCase();
 
+    const supabase = await createClient();
+    const {
+      data: { user: currentUser },
+    } = await supabase.auth.getUser();
+
     const profile = await db.profile.findFirst({
       where: {
         username: cleanUsername,
-        isPublic: true,
+        OR: [
+          { isPublic: true },
+          { blogPosts: { some: { status: "PUBLISHED" } } },
+          { trips: { some: { isPublic: true } } },
+        ],
       },
       select: {
         id: true,
@@ -374,6 +383,8 @@ export async function getPublicCreatorProfile(username: string) {
         username: true,
         bio: true,
         avatarUrl: true,
+        isPublic: true,
+        travelPreferences: true,
         createdAt: true,
         trips: {
           where: {
@@ -431,8 +442,37 @@ export async function getPublicCreatorProfile(username: string) {
             title: true,
             excerpt: true,
             coverImageUrl: true,
+            images: true,
             tags: true,
+            upvotes: true,
             publishedAt: true,
+            linkedTrip: {
+              select: {
+                id: true,
+                title: true,
+                destination: true,
+              },
+            },
+          },
+        },
+        communityPosts: {
+          orderBy: { createdAt: "desc" },
+          take: 30,
+          select: {
+            id: true,
+            slug: true,
+            title: true,
+            content: true,
+            category: true,
+            destination: true,
+            tags: true,
+            upvotes: true,
+            createdAt: true,
+            _count: {
+              select: {
+                replies: true,
+              },
+            },
           },
         },
       },
@@ -440,6 +480,22 @@ export async function getPublicCreatorProfile(username: string) {
 
     if (!profile) {
       return { success: false, error: "Creator profile not found or private." };
+    }
+
+    let likedPostIds = new Set<string>();
+    if (currentUser && profile.blogPosts.length > 0) {
+      try {
+        const likes = await db.blogPostLike.findMany({
+          where: {
+            profileId: currentUser.id,
+            postId: { in: profile.blogPosts.map((p) => p.id) },
+          },
+          select: { postId: true },
+        });
+        likedPostIds = new Set(likes.map((l) => l.postId));
+      } catch (err) {
+        console.warn("Could not query user likes for creator profile:", err);
+      }
     }
 
     return {
@@ -460,8 +516,24 @@ export async function getPublicCreatorProfile(username: string) {
           title: post.title,
           excerpt: post.excerpt,
           coverImageUrl: post.coverImageUrl,
+          images: post.images || [],
           tags: post.tags,
           publishedAt: post.publishedAt,
+          upvotes: post.upvotes ?? 0,
+          hasLiked: likedPostIds.has(post.id),
+          profile: {
+            fullName: profile.fullName,
+            username: profile.username,
+            avatarUrl: profile.avatarUrl,
+            isPublic: profile.isPublic,
+          },
+          linkedTrip: post.linkedTrip
+            ? {
+                id: post.linkedTrip.id,
+                title: post.linkedTrip.title,
+                destination: post.linkedTrip.destination,
+              }
+            : null,
         })),
         trips: profile.trips.map((t) => {
           let durationDays = 1;
@@ -483,6 +555,19 @@ export async function getPublicCreatorProfile(username: string) {
             sampleItinerary: t.itinerary,
           };
         }),
+        travelPreferences: profile.travelPreferences || null,
+        forumPosts: profile.communityPosts.map((post) => ({
+          id: post.id,
+          slug: post.slug,
+          title: post.title,
+          content: post.content,
+          category: post.category,
+          destination: post.destination,
+          tags: post.tags,
+          upvotes: post.upvotes ?? 0,
+          replyCount: post._count.replies,
+          createdAt: post.createdAt,
+        })),
       },
     };
   } catch (error) {

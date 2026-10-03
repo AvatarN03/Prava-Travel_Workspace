@@ -1,4 +1,5 @@
 // Components
+export { CreatorProfileView } from "./components/creator-profile-view";
 export { GeneralSection } from "./components/general-section";
 export { OverviewSection } from "./components/overview-section";
 export { ProfileEditor } from "./components/profile-editor";

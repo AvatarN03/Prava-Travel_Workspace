@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import {
   AlertTriangle,
@@ -150,7 +150,7 @@ export function DeleteAccountDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogClose}>
-      <DialogContent className="sm:max-w-md p-6 bg-card border-border shadow-lg rounded-md">
+      <DialogContent className="sm:max-w-md p-6 bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800 shadow-lg rounded-md">
         {step === 1 && (
           <div className="space-y-5">
             <DialogHeader className="space-y-2">
@@ -159,7 +159,7 @@ export function DeleteAccountDialog({
                   <ShieldAlert className="h-4 w-4 text-destructive" />
                 </div>
                 <div>
-                  <DialogTitle className="text-base font-semibold text-foreground">
+                  <DialogTitle className="text-base font-semibold text-foreground dark:text-zinc-100">
                     Delete Workspace Account
                   </DialogTitle>
                   <p className="text-[11px] font-sans font-medium text-destructive">
@@ -167,18 +167,18 @@ export function DeleteAccountDialog({
                   </p>
                 </div>
               </div>
-              <DialogDescription className="text-xs text-muted-foreground leading-relaxed pt-1">
+              <DialogDescription className="text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed pt-1">
                 Permanently deletes your account and wipes all associated records from Prava. This action is irreversible.
               </DialogDescription>
             </DialogHeader>
 
             {/* Impact checklist */}
-            <div className="rounded-sm border border-destructive/20 bg-destructive/5 p-3.5 space-y-2 text-xs text-foreground">
+            <div className="rounded-sm border border-destructive/20 dark:border-destructive/30 bg-destructive/5 dark:bg-destructive/10 p-3.5 space-y-2 text-xs text-foreground">
               <p className="font-semibold text-destructive flex items-center gap-1.5 text-xs">
                 <AlertTriangle className="h-3.5 w-3.5" />
                 The following data will be permanently wiped:
               </p>
-              <ul className="space-y-1.5 pl-5 text-[11px] text-muted-foreground list-disc marker:text-destructive">
+              <ul className="space-y-1.5 pl-5 text-[11px] text-muted-foreground dark:text-zinc-400 list-disc marker:text-destructive">
                 <li>All planned trips, daily itineraries, and accommodation bookings</li>
                 <li>All expense records, budget trackers, and currency calculations</li>
                 <li>All checklist tasks, packing lists, and Markdown travel notes</li>
@@ -193,9 +193,9 @@ export function DeleteAccountDialog({
                 type="checkbox"
                 checked={agreedToConsequences}
                 onChange={(e) => setAgreedToConsequences(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded-xs border-border text-destructive focus:ring-destructive cursor-pointer"
+                className="mt-0.5 h-4 w-4 rounded-xs border-border dark:border-zinc-700 text-destructive focus:ring-destructive cursor-pointer"
               />
-              <span className="text-muted-foreground leading-snug">
+              <span className="text-muted-foreground dark:text-zinc-300 leading-snug">
                 I understand that deleting my account is irreversible and all my journeys, notes, and records will be permanently erased.
               </span>
             </label>
@@ -206,14 +206,14 @@ export function DeleteAccountDialog({
               </div>
             )}
 
-            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-border">
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-border dark:border-zinc-800">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={handleDialogClose}
                 disabled={isSendingOtp}
-                className="h-8 rounded-sm text-xs cursor-pointer"
+                className="h-8 rounded-sm text-xs cursor-pointer border-border dark:border-zinc-800"
               >
                 Cancel
               </Button>
@@ -240,7 +240,7 @@ export function DeleteAccountDialog({
                   <Mail className="h-4 w-4 text-destructive" />
                 </div>
                 <div>
-                  <DialogTitle className="text-base font-semibold text-foreground">
+                  <DialogTitle className="text-base font-semibold text-foreground dark:text-zinc-100">
                     Verify Deletion Authorization
                   </DialogTitle>
                   <p className="text-[11px] font-sans font-medium text-destructive">
@@ -248,9 +248,9 @@ export function DeleteAccountDialog({
                   </p>
                 </div>
               </div>
-              <DialogDescription className="text-xs text-muted-foreground leading-relaxed pt-1">
+              <DialogDescription className="text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed pt-1">
                 We sent a 6-digit confirmation code to{" "}
-                <span className="font-semibold text-foreground font-mono">{userEmail}</span>. Enter the code and type{" "}
+                <span className="font-semibold text-foreground dark:text-zinc-200 font-mono">{userEmail}</span>. Enter the code and type{" "}
                 <span className="font-semibold text-destructive">DELETE</span> below.
               </DialogDescription>
             </DialogHeader>
@@ -263,7 +263,7 @@ export function DeleteAccountDialog({
 
             <div className="space-y-3.5">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-foreground">
+                <label className="text-xs font-medium text-foreground dark:text-zinc-200">
                   6-Digit Verification Code
                 </label>
                 <Input
@@ -275,12 +275,12 @@ export function DeleteAccountDialog({
                   placeholder="123456"
                   value={otpCode}
                   onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
-                  className="h-10 text-center font-mono text-lg tracking-[0.3em] font-semibold rounded-sm border-border bg-transparent"
+                  className="h-10 text-center font-mono text-lg tracking-[0.3em] font-semibold rounded-sm border-border dark:border-zinc-800 bg-background dark:bg-[#121622] text-foreground dark:text-zinc-100"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-foreground">
+                <label className="text-xs font-medium text-foreground dark:text-zinc-200">
                   Type <span className="font-semibold text-destructive uppercase">DELETE</span> to confirm
                 </label>
                 <Input
@@ -290,12 +290,12 @@ export function DeleteAccountDialog({
                   placeholder="DELETE"
                   value={confirmPhrase}
                   onChange={(e) => setConfirmPhrase(e.target.value)}
-                  className="h-9 rounded-sm border-border bg-transparent text-xs font-mono"
+                  className="h-9 rounded-sm border-border dark:border-zinc-800 bg-background dark:bg-[#121622] text-xs font-mono text-foreground dark:text-zinc-100"
                 />
               </div>
 
               <div className="flex items-center justify-between text-xs pt-1">
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-[11px] text-muted-foreground dark:text-zinc-400">
                   Didn't receive the email code?
                 </span>
                 <button
@@ -309,7 +309,7 @@ export function DeleteAccountDialog({
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-3 border-t border-border">
+            <div className="flex items-center justify-between pt-3 border-t border-border dark:border-zinc-800">
               <Button
                 type="button"
                 variant="outline"
@@ -319,7 +319,7 @@ export function DeleteAccountDialog({
                   setStep(1);
                   setErrorMessage(null);
                 }}
-                className="h-8 rounded-sm text-xs cursor-pointer"
+                className="h-8 rounded-sm text-xs cursor-pointer border-border dark:border-zinc-800"
               >
                 Back
               </Button>
@@ -357,10 +357,10 @@ export function DeleteAccountDialog({
             </div>
 
             <div className="space-y-2">
-              <DialogTitle className="text-lg font-light tracking-tight text-foreground">
+              <DialogTitle className="text-lg font-light tracking-tight text-foreground dark:text-zinc-100">
                 Thank you for traveling with Prava
               </DialogTitle>
-              <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
+              <p className="text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed max-w-sm mx-auto">
                 Your account and all associated personal data have been completely deleted. We are grateful to have been part of your travels, and you are always welcome back whenever you're ready to plan your next journey.
               </p>
             </div>

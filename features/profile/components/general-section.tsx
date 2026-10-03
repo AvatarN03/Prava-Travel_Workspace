@@ -1,27 +1,25 @@
 "use client";
 
 import {
-  Globe,
-  Sparkles,
   Bell,
-  Save,
   Compass,
+  Globe,
+  HardDrive,
   Loader2,
   RefreshCw,
-  HardDrive,
+  Save,
+  Sparkles,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
 } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -30,10 +28,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
 import { useOfflineSyncContext } from "@/lib/offline";
 
-import { ProfileWithStats } from "../actions";
+import type { ProfileWithStats } from "../actions";
 
 interface GeneralSectionProps {
   profile: ProfileWithStats;
@@ -84,15 +84,15 @@ export function GeneralSection({
   return (
     <div className="space-y-6 w-full">
       {/* 1. Regional & Currency Defaults */}
-      <Card className="rounded-sm border border-border bg-card shadow-xs">
+      <Card className="rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-xs">
         <CardHeader className="p-4 pb-3">
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-[#2D9BF0]/10 border border-[#2D9BF0]/20 text-[#2D9BF0]">
               <Globe className="h-3.5 w-3.5" />
             </div>
             <div>
-              <CardTitle className="font-sans text-sm font-semibold text-foreground">Region & Currency Defaults</CardTitle>
-              <CardDescription className="font-sans text-xs text-muted-foreground">
+              <CardTitle className="font-sans text-sm font-semibold text-foreground dark:text-zinc-100">Region & Currency Defaults</CardTitle>
+              <CardDescription className="font-sans text-xs text-muted-foreground dark:text-zinc-400">
                 Configure your preferred currency across trips, expense tracking, and budget calculations.
               </CardDescription>
             </div>
@@ -102,8 +102,8 @@ export function GeneralSection({
         <CardContent className="p-4 pt-0 space-y-4 text-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-1">
             <div>
-              <p className="font-sans font-semibold text-foreground">Default Currency</p>
-              <p className="font-sans text-muted-foreground text-[11px]">Primary currency for new trips, live exchange rates, and expense allocations</p>
+              <p className="font-sans font-semibold text-foreground dark:text-zinc-200">Default Currency</p>
+              <p className="font-sans text-muted-foreground dark:text-zinc-400 text-[11px]">Primary currency for new trips, live exchange rates, and expense allocations</p>
             </div>
             <div className="w-full sm:w-64">
               <Select
@@ -111,10 +111,10 @@ export function GeneralSection({
                 onValueChange={onUpdateCurrency}
                 disabled={isUpdatingCurrency}
               >
-                <SelectTrigger className="h-8 rounded-sm cursor-pointer font-sans text-xs">
+                <SelectTrigger className="h-8 rounded-sm cursor-pointer font-sans text-xs bg-background dark:bg-[#121622] border-border dark:border-zinc-800 text-foreground dark:text-zinc-100">
                   <SelectValue placeholder="Select currency" />
                 </SelectTrigger>
-                <SelectContent className="rounded-sm font-sans text-xs max-h-64">
+                <SelectContent className="rounded-sm font-sans text-xs max-h-64 bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800">
                   <SelectItem value="USD" className="cursor-pointer text-xs">USD ($) — US Dollar</SelectItem>
                   <SelectItem value="EUR" className="cursor-pointer text-xs">EUR (€) — Euro</SelectItem>
                   <SelectItem value="GBP" className="cursor-pointer text-xs">GBP (£) — British Pound</SelectItem>
@@ -147,15 +147,15 @@ export function GeneralSection({
       </Card>
 
       {/* 2. AI Assistant Features & Travel Persona */}
-      <Card className="rounded-sm border border-border bg-card shadow-xs">
+      <Card className="rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-xs">
         <CardHeader className="p-4 pb-3">
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-[#2D9BF0]/10 border border-[#2D9BF0]/20 text-[#2D9BF0]">
               <Sparkles className="h-3.5 w-3.5" />
             </div>
             <div>
-              <CardTitle className="font-sans text-sm font-semibold text-foreground">AI Assistant & Travel Persona</CardTitle>
-              <CardDescription className="font-sans text-xs text-muted-foreground">
+              <CardTitle className="font-sans text-sm font-semibold text-foreground dark:text-zinc-100">AI Assistant & Travel Persona</CardTitle>
+              <CardDescription className="font-sans text-xs text-muted-foreground dark:text-zinc-400">
                 Customize smart itinerary planning, autonomous trip proposals, and travel preferences.
               </CardDescription>
             </div>
@@ -165,8 +165,8 @@ export function GeneralSection({
         <CardContent className="p-4 pt-0 space-y-4 text-xs">
           <div className="flex items-center justify-between py-1">
             <div className="space-y-0.5 pr-4">
-              <p className="font-sans font-semibold text-foreground">Structured AI Proposal Cards</p>
-              <p className="font-sans text-muted-foreground text-[11px]">
+              <p className="font-sans font-semibold text-foreground dark:text-zinc-200">Structured AI Proposal Cards</p>
+              <p className="font-sans text-muted-foreground dark:text-zinc-400 text-[11px]">
                 Allow Prava AI to generate interactive action cards for 1-click workspace additions
               </p>
             </div>
@@ -178,13 +178,13 @@ export function GeneralSection({
             />
           </div>
 
-          <Separator />
+          <Separator className="border-border dark:border-zinc-800" />
 
           <div className="space-y-2 py-1">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5 pr-4">
-                <p className="font-sans font-semibold text-foreground">Offline Travel Cache</p>
-                <p className="font-sans text-muted-foreground text-[11px]">
+                <p className="font-sans font-semibold text-foreground dark:text-zinc-200">Offline Travel Cache</p>
+                <p className="font-sans text-muted-foreground dark:text-zinc-400 text-[11px]">
                   Pre-fetch trip essentials, emergency contacts, and maps for zero-connectivity access
                 </p>
               </div>
@@ -197,18 +197,18 @@ export function GeneralSection({
             </div>
 
             {offlineMode && (
-              <div className="flex items-center justify-between rounded-sm border border-border/80 bg-muted/40 px-3 py-2 text-[11px]">
+              <div className="flex items-center justify-between rounded-sm border border-border/80 dark:border-zinc-800 bg-muted/40 dark:bg-[#121622] px-3 py-2 text-[11px]">
                 <div className="flex items-center gap-2">
                   {isSyncing ? (
                     <>
                       <Loader2 className="h-3.5 w-3.5 animate-spin text-[#2D9BF0] shrink-0" />
-                      <span className="font-sans text-foreground font-medium">Syncing active & planning trips to device...</span>
+                      <span className="font-sans text-foreground dark:text-zinc-200 font-medium">Syncing active & planning trips to device...</span>
                     </>
                   ) : (
                     <>
                       <HardDrive className="h-3.5 w-3.5 text-[#2D9BF0] shrink-0" />
-                      <span className="font-sans text-muted-foreground">
-                        Status: <strong className="text-foreground">{lastSyncLabel}</strong>
+                      <span className="font-sans text-muted-foreground dark:text-zinc-400">
+                        Status: <strong className="text-foreground dark:text-zinc-200">{lastSyncLabel}</strong>
                       </span>
                     </>
                   )}
@@ -230,35 +230,35 @@ export function GeneralSection({
             )}
           </div>
 
-          <Separator />
+          <Separator className="border-border dark:border-zinc-800" />
 
           <div className="space-y-1.5 py-1">
             <div className="flex items-center gap-1.5">
               <Compass className="h-3.5 w-3.5 text-[#2D9BF0]" />
-              <p className="font-sans font-semibold text-foreground">AI Travel Style & Dietary Guidance</p>
+              <p className="font-sans font-semibold text-foreground dark:text-zinc-200">AI Travel Style & Dietary Guidance</p>
             </div>
-            <p className="font-sans text-muted-foreground text-[11px]">
+            <p className="font-sans text-muted-foreground dark:text-zinc-400 text-[11px]">
               Prava AI uses these preferences (dietary restrictions, relaxed vs fast pacing, preferred hotel vibes) when drafting your itineraries.
             </p>
             <Textarea
               value={travelPreferences}
               onChange={(e) => setTravelPreferences(e.target.value)}
               placeholder="e.g. Vegetarian, love historic architecture and coffee shops, prefer moderate pace with max 3-4 activities per day."
-              className="h-20 font-sans text-xs rounded-sm resize-none"
+              className="h-20 font-sans text-xs rounded-sm resize-none bg-background dark:bg-[#121622] border-border dark:border-zinc-800 text-foreground dark:text-zinc-100 dark:placeholder:text-zinc-500"
               maxLength={1000}
               disabled={isSavingAiPreferences}
             />
           </div>
         </CardContent>
 
-        <CardFooter className="p-4 pt-3 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <CardFooter className="p-4 pt-3 border-t border-border/60 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div>
             {hasPersonaChanges ? (
               <p className="font-sans text-[11px] text-amber-600 dark:text-amber-400 font-medium">
                 You have unsaved changes. Click Save AI Travel Preferences to update.
               </p>
             ) : (
-              <p className="font-sans text-[11px] text-muted-foreground">
+              <p className="font-sans text-[11px] text-muted-foreground dark:text-zinc-400">
                 AI persona & offline settings are up to date.
               </p>
             )}
@@ -295,15 +295,15 @@ export function GeneralSection({
       </Card>
 
       {/* 3. Notifications & Trip Alerts */}
-      <Card className="rounded-sm border border-border bg-card shadow-xs">
+      <Card className="rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-xs">
         <CardHeader className="p-4 pb-3">
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-[#2D9BF0]/10 border border-[#2D9BF0]/20 text-[#2D9BF0]">
               <Bell className="h-3.5 w-3.5" />
             </div>
             <div>
-              <CardTitle className="font-sans text-sm font-semibold text-foreground">Notifications & Alerts</CardTitle>
-              <CardDescription className="font-sans text-xs text-muted-foreground">
+              <CardTitle className="font-sans text-sm font-semibold text-foreground dark:text-zinc-100">Notifications & Alerts</CardTitle>
+              <CardDescription className="font-sans text-xs text-muted-foreground dark:text-zinc-400">
                 Manage notifications for upcoming travel departures and task checklists.
               </CardDescription>
             </div>
@@ -313,8 +313,8 @@ export function GeneralSection({
         <CardContent className="p-4 pt-0 space-y-4 text-xs">
           <div className="flex items-center justify-between py-1">
             <div className="space-y-0.5 pr-4">
-              <p className="font-sans font-semibold text-foreground">Trip Departure & Milestone Reminders</p>
-              <p className="font-sans text-muted-foreground text-[11px]">
+              <p className="font-sans font-semibold text-foreground dark:text-zinc-200">Trip Departure & Milestone Reminders</p>
+              <p className="font-sans text-muted-foreground dark:text-zinc-400 text-[11px]">
                 Receive checklist alerts and countdown notices before your scheduled departure
               </p>
             </div>
