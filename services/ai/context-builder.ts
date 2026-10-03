@@ -1,4 +1,11 @@
 import { db } from "@/lib/db";
+import { isTripDatesPassed } from "@/lib/utils";
+import {
+  assembleConversationalPrompt,
+  assembleProposalPrompt,
+} from "./prompts";
+
+import type { ActiveTripPromptContext } from "./prompts";
 
 export interface TripContextResult {
   systemInstruction: string;
@@ -115,109 +122,26 @@ export async function buildTripContext(
       ? trip.links.map((l) => `- ${l.title} (${l.category}): ${l.url}`).join("\n")
       : "No bookmarks saved.";
 
-  const conversationalPrompt = `You are Ichinose, Prava's friendly, calm, and helpful Travel Assistant embedded directly in the user's workspace. Your name is Ichinose.
+  const isPastPlanning = trip.status === "PLANNING" && isTripDatesPassed(trip.startDate, trip.endDate);
 
-=== ACTIVE TRIP ===
-Trip: "${trip.title}"
-Destination: ${trip.destination || "Not specified"}
-Dates: ${formatDate(trip.startDate)} to ${formatDate(trip.endDate)}
-Trip Status: ${trip.status}
+  const promptContext: ActiveTripPromptContext = {
+    title: trip.title,
+    destination: trip.destination,
+    formattedStartDate: formatDate(trip.startDate),
+    formattedEndDate: formatDate(trip.endDate),
+    status: trip.status,
+    isPastPlanning,
+  };
 
-=== CONVERSATIONAL GUIDELINES ===
-- Do NOT repeatedly introduce yourself or greet the user on subsequent turns. Answer the traveler's prompt directly, maintaining continuous conversational context.
-- Answer questions, packing advice, local food tips, travel essentials, and cultural etiquette in warm, clear markdown prose.
-- NEVER output raw JSON, code blocks, technical schemas, or developer payloads in conversational chat.
-- Keep responses friendly, structured, and easy to read.`;
+  const conversationalPrompt = assembleConversationalPrompt(promptContext);
 
-  const proposalPrompt = `You are Ichinose, Prava's intelligent, calm, and structured Travel Workspace Assistant. Your name is Ichinose.
-
-=== ACTIVE TRIP CONTEXT (SOURCE OF TRUTH) ===
-Trip Title: "${trip.title}"
-Destination: ${trip.destination || "Not specified"}
-Dates: ${formatDate(trip.startDate)} to ${formatDate(trip.endDate)}
-Trip Status: ${trip.status}
-
-=== SCHEDULED ITINERARY (WITH SYSTEM IDs) ===
-${itinerarySummary}
-
-=== ACCOMMODATIONS & LODGING (WITH SYSTEM IDs) ===
-${accommodationsSummary}
-
-=== EXPENSES & BUDGET ===
-${expensesSummary}
-
-=== USER NOTES & MEMOS ===
-${notesSummary}
-
-=== PREPARATION CHECKLIST ===
-${checklistSummary}
-
-=== WORKSPACE ACTION PROPOSAL INSTRUCTIONS ===
-When the user asks to plan, create, generate, add, move, or delete activities, itineraries, or stays:
-1. Provide a warm, concise conversational summary explaining what you designed or modified.
-2. Append a structured action proposal block in this exact format:
-
-\`\`\`json:proposal
-{
-  "summary": "Short 1-line description of proposed changes",
-  "changes": [
-    {
-      "id": "c1",
-      "domain": "itinerary",
-      "action": "create",
-      "data": {
-        "title": "Visit Fushimi Inari Shrine",
-        "dayNumber": 1,
-        "time": "08:30",
-        "location": "Kyoto",
-        "category": "Sightseeing",
-        "cost": 0,
-        "description": "Early morning hike through the torii gates"
-      }
-    },
-    {
-      "id": "c2",
-      "domain": "itinerary",
-      "action": "update",
-      "targetId": "EXISTING_ITEM_UUID_FROM_CONTEXT",
-      "data": {
-        "title": "Updated Item Title",
-        "time": "14:00"
-      }
-    },
-    {
-      "id": "c3",
-      "domain": "itinerary",
-      "action": "delete",
-      "targetId": "EXISTING_ITEM_UUID_FROM_CONTEXT",
-      "data": {}
-    },
-    {
-      "id": "c4",
-      "domain": "accommodation",
-      "action": "create",
-      "data": {
-        "name": "Ace Hotel Kyoto",
-        "type": "Hotel",
-        "address": "245-2 Kurumayacho, Nakagyo Ward, Kyoto",
-        "checkIn": "2026-10-15",
-        "checkOut": "2026-10-18",
-        "cost": 650,
-        "currency": "USD"
-      }
-    }
-  ]
-}
-\`\`\`
-
-CRITICAL RULES:
-- For 'update' and 'delete' actions, you MUST use the exact existing [ID: <uuid>] from the context as 'targetId'.
-- For 'create' actions, 'targetId' is omitted.
-- Use 'YYYY-MM-DD' for accommodation dates.
-- Keep activity descriptions concise (1 short sentence) so the proposal completes cleanly within limits.
-- Always output the complete \`\`\`json:proposal codeblock when user asks to add, plan, or populate their itinerary.
-- NEVER claim you have saved, locked in, or updated the trip in the database without providing the \`\`\`json:proposal codeblock. Only the user clicking 'Accept' in the UI proposal card saves it.
-- The UI will automatically parse this JSON block into an interactive proposal card for the user.`;
+  const proposalPrompt = assembleProposalPrompt(promptContext, {
+    itinerarySummary,
+    accommodationsSummary,
+    expensesSummary,
+    notesSummary,
+    checklistSummary,
+  });
 
   return {
     systemInstruction: proposalPrompt,

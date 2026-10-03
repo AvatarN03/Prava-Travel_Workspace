@@ -1,24 +1,26 @@
 import { ThinkingLevel } from "@google/genai";
+
 import {
-  getGeminiClient,
-  GEMINI_TRIPS_MODELS,
-  GEMINI_CONVERSATIONAL_MODELS,
   callOpenRouterFree,
+  GEMINI_CONVERSATIONAL_MODELS,
+  GEMINI_TRIPS_MODELS,
+  getGeminiClient,
   hasOpenRouterKey,
   stripReasoning,
-  type OpenRouterMessage,
 } from "@/lib/ai";
+import { buildTripContext } from "./context-builder";
 import {
   detectTravelToolIntent,
   executeCurrencyTool,
   executeWeatherTool,
-  type ToolExecutionResult,
 } from "./travel-tools-dispatcher";
-import { buildTripContext } from "./context-builder";
+
 import {
   aiProposalPayloadSchema,
   type AiProposalPayload,
 } from "@/features/trip-workspace";
+import type { OpenRouterMessage } from "@/lib/ai";
+import type { ToolExecutionResult } from "./travel-tools-dispatcher";
 
 export interface AgentGraphInput {
   tripId: string;
