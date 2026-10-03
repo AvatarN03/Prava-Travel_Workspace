@@ -32,11 +32,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import { EditItineraryDialog } from "./edit-itinerary-dialog";
-import { deleteItineraryItem } from "../actions";
 
 import { buildItineraryItemGoogleCalendarUrl } from "@/lib/calendar/calendar-utils";
+import { deleteItineraryItem } from "../actions";
 
 import type { ItineraryItem } from "@prisma/client";
 

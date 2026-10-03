@@ -12,10 +12,10 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
 import { AddItineraryDialog } from "./add-itinerary-dialog";
 import { AddToCalendarDialog } from "../../common/add-to-calendar-dialog";
 import { ItineraryCard } from "./itinerary-card";
+
 import { useWorkspaceAi } from "../../context/workspace-ai-context";
 
 import { cn } from "@/lib/utils";
