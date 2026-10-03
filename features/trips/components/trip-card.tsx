@@ -1,11 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useState, useTransition } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import {
+  AlertTriangle,
   ArrowUpRight,
   BookOpen,
   Building2,
@@ -24,6 +25,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { ConfirmDeleteDialog } from "@/components/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,11 +36,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-import { ConfirmDeleteDialog } from "@/components/app-shell";
 import { EditTripDialog } from "./edit-trip-dialog";
 
-import { formatDateRange } from "@/lib/utils";
+import { formatDateRange, isTripDatesPassed } from "@/lib/utils";
 import { deleteTrip, duplicateTrip, toggleTripPublicStatus } from "../actions";
 
 import type { Trip } from "../types";
@@ -156,6 +156,15 @@ export function TripCard({ trip }: TripCardProps) {
         <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-700 dark:text-slate-300 bg-slate-100/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800/80 px-2 py-0.5 rounded-xs shadow-2xs backdrop-blur-xs">
           <Clock className="h-3 w-3 text-muted-foreground shrink-0" />
           In {Math.round(diffDays / 30)} months
+        </span>
+      );
+    }
+
+    if (trip.status === "PLANNING" && isTripDatesPassed(start, end)) {
+      return (
+        <span className="inline-flex items-center gap-1 font-sans text-[10px] font-semibold text-amber-800 dark:text-amber-300 bg-amber-50/95 dark:bg-amber-950/90 border border-amber-300/80 dark:border-amber-800/80 px-2 py-0.5 rounded-xs shadow-2xs backdrop-blur-xs">
+          <AlertTriangle className="h-3 w-3 text-amber-600 dark:text-amber-400 shrink-0" />
+          Dates passed
         </span>
       );
     }
@@ -314,6 +323,22 @@ export function TripCard({ trip }: TripCardProps) {
                 <p className="text-xs text-muted-foreground/60 italic">
                   No description provided.
                 </p>
+              )}
+
+              {/* Past Planned Dates Alert Banner */}
+              {trip.status === "PLANNING" && isTripDatesPassed(trip.startDate, trip.endDate) && (
+                <div className="rounded-xs bg-amber-500/10 border border-amber-500/25 px-2.5 py-1.5 flex items-center justify-between text-[11px] text-amber-900 dark:text-amber-200">
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                    Planned dates have passed
+                  </span>
+                  <Link
+                    href={`/trips/${trip.id}`}
+                    className="text-[10px] font-semibold text-[#2D9BF0] hover:underline cursor-pointer"
+                  >
+                    Update &rarr;
+                  </Link>
+                </div>
               )}
 
               {/* Inclusions Chips Strip */}

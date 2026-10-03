@@ -1,4 +1,4 @@
-import { Trip as PrismaTrip, TripStatus as PrismaTripStatus } from "@prisma/client";
+import type { Trip as PrismaTrip, TripStatus as PrismaTripStatus } from "@prisma/client";
 
 export type TripStatus = PrismaTripStatus;
 

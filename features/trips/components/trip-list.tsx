@@ -1,9 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { useState, useMemo, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+
 import {
+  AlertTriangle,
   ArrowUpDown,
   Calendar,
   CheckCircle2,
@@ -20,10 +22,11 @@ import {
   Sparkles,
   WifiOff,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -31,12 +34,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Trip, TripStatus, TripViewMode, TripSortOption, TripUsageQuota } from "../types";
+import { UpgradeDialog } from "@/features/pricing";
+import { CreateTripDialog } from "./create-trip-dialog";
 import { TripCard } from "./trip-card";
 import { TripTableView } from "./trip-table-view";
-import { CreateTripDialog } from "./create-trip-dialog";
-import { UpgradeDialog } from "@/features/pricing";
-import { useOfflineSyncContext, getOfflineTrips } from "@/lib/offline";
+
+import { useOfflineSyncContext } from "@/lib/offline";
+
+import { getOfflineTrips } from "@/lib/offline";
+import { isTripDatesPassed } from "@/lib/utils";
+
+import type {
+  Trip,
+  TripSortOption,
+  TripStatus,
+  TripUsageQuota,
+  TripViewMode,
+} from "../types";
 
 interface TripListProps {
   initialTrips: Trip[];
@@ -89,6 +103,13 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
   const maxTrips = tripUsage?.maxTrips || (tripUsage?.isPro ? 25 : 10);
   const usageCount = tripUsage?.count ?? totalCount;
   const usagePercentage = Math.min(Math.round((usageCount / maxTrips) * 100), 100);
+
+  // Trips in planning mode whose planned dates have passed
+  const stalePlanningCount = useMemo(() => {
+    return trips.filter(
+      (t) => t.status === "PLANNING" && isTripDatesPassed(t.startDate, t.endDate)
+    ).length;
+  }, [trips]);
 
   // Filter and sort trips
   const filteredTrips = useMemo(() => {
@@ -160,55 +181,84 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
         </div>
       )}
 
+      {/* Past Planned Dates Advisory Banner */}
+      {stalePlanningCount > 0 && (statusFilter === "ALL" || statusFilter === "PLANNING") && (
+        <div className="rounded-md border border-amber-500/35 bg-amber-500/10 dark:bg-amber-950/25 dark:border-amber-700/50 p-3 sm:p-3.5 text-xs text-amber-950 dark:text-amber-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xs bg-amber-500/20 text-amber-600 dark:text-amber-400">
+              <AlertTriangle className="h-4 w-4" />
+            </div>
+            <div className="space-y-0.5">
+              <p className="font-semibold text-amber-950 dark:text-amber-100">
+                {stalePlanningCount} trip{stalePlanningCount > 1 ? "s have" : " has"} passed {stalePlanningCount > 1 ? "their" : "its"} planned dates
+              </p>
+              <p className="text-[11px] text-amber-800/90 dark:text-amber-300/80">
+                Still marked as Planning after the scheduled dates. Open any trip to update its status to Active or Completed, reschedule, or delete.
+              </p>
+            </div>
+          </div>
+          {statusFilter !== "PLANNING" && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setStatusFilter("PLANNING")}
+              className="h-7 px-2.5 text-[11px] font-medium border-amber-500/40 hover:bg-amber-500/20 text-amber-950 dark:text-amber-100 cursor-pointer rounded-xs shrink-0 self-end sm:self-center"
+            >
+              Filter Planning Trips
+            </Button>
+          )}
+        </div>
+      )}
+
       {/* Top Metrics & Tier Meter Strip */}
       {totalCount > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
           {/* Active Trips Metric */}
-          <Card className="rounded-sm border border-border bg-card p-3.5 shadow-2xs">
+          <Card className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-3.5 shadow-2xs">
             <div className="flex items-center justify-between">
-              <span className="font-sans text-xs font-medium text-muted-foreground">Active Trips</span>
-              <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-emerald-500/10 text-emerald-600">
+              <span className="font-sans text-xs font-medium text-muted-foreground dark:text-zinc-400">Active Trips</span>
+              <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                 <Clock className="h-4 w-4" />
               </div>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="font-mono text-2xl font-light tracking-tight text-foreground tabular-nums">{activeCount}</span>
-              <span className="text-[11px] text-muted-foreground">In progress</span>
+              <span className="font-mono text-2xl font-light tracking-tight text-foreground dark:text-zinc-50 tabular-nums">{activeCount}</span>
+              <span className="text-[11px] text-muted-foreground dark:text-zinc-400">In progress</span>
             </div>
           </Card>
 
           {/* Planning Metric */}
-          <Card className="rounded-sm border border-border bg-card p-3.5 shadow-2xs">
+          <Card className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-3.5 shadow-2xs">
             <div className="flex items-center justify-between">
-              <span className="font-sans text-xs font-medium text-muted-foreground">Planning</span>
-              <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-sky-500/10 text-sky-600">
+              <span className="font-sans text-xs font-medium text-muted-foreground dark:text-zinc-400">Planning</span>
+              <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-sky-500/10 text-sky-600 dark:text-sky-400">
                 <Calendar className="h-4 w-4" />
               </div>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="font-mono text-2xl font-light tracking-tight text-foreground tabular-nums">{planningCount}</span>
-              <span className="text-[11px] text-muted-foreground">Upcoming drafts</span>
+              <span className="font-mono text-2xl font-light tracking-tight text-foreground dark:text-zinc-50 tabular-nums">{planningCount}</span>
+              <span className="text-[11px] text-muted-foreground dark:text-zinc-400">Upcoming drafts</span>
             </div>
           </Card>
 
           {/* Completed Metric */}
-          <Card className="rounded-sm border border-border bg-card p-3.5 shadow-2xs">
+          <Card className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-3.5 shadow-2xs">
             <div className="flex items-center justify-between">
-              <span className="font-sans text-xs font-medium text-muted-foreground">Completed</span>
-              <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-blue-500/10 text-blue-600">
+              <span className="font-sans text-xs font-medium text-muted-foreground dark:text-zinc-400">Completed</span>
+              <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-blue-500/10 text-blue-600 dark:text-blue-400">
                 <CheckCircle2 className="h-4 w-4" />
               </div>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="font-mono text-2xl font-light tracking-tight text-foreground tabular-nums">{completedCount}</span>
-              <span className="text-[11px] text-muted-foreground">Past journeys</span>
+              <span className="font-mono text-2xl font-light tracking-tight text-foreground dark:text-zinc-50 tabular-nums">{completedCount}</span>
+              <span className="text-[11px] text-muted-foreground dark:text-zinc-400">Past journeys</span>
             </div>
           </Card>
 
           {/* Workspace Tier & Quota Meter */}
-          <Card className="rounded-sm border border-border bg-card p-3.5 shadow-2xs flex flex-col justify-between">
+          <Card className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-3.5 shadow-2xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+              <span className="text-xs font-medium text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5">
                 <Layers className="h-3.5 w-3.5 text-primary" /> Workspace Slots
               </span>
               {!tripUsage?.isPro && (
@@ -223,12 +273,12 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
             </div>
             <div className="mt-2">
               <div className="flex items-baseline justify-between text-xs">
-                <span className="font-bold text-foreground">
-                  {usageCount} <span className="text-[11px] font-normal text-muted-foreground">/ {maxTrips} trips</span>
+                <span className="font-bold text-foreground dark:text-zinc-100">
+                  {usageCount} <span className="text-[11px] font-normal text-muted-foreground dark:text-zinc-400">/ {maxTrips} trips</span>
                 </span>
-                <span className="text-[11px] font-medium text-muted-foreground">{usagePercentage}%</span>
+                <span className="text-[11px] font-medium text-muted-foreground dark:text-zinc-400">{usagePercentage}%</span>
               </div>
-              <div className="mt-1.5 h-1.5 w-full rounded-full bg-muted overflow-hidden">
+              <div className="mt-1.5 h-1.5 w-full rounded-full bg-muted dark:bg-[#121622] overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all duration-300 ${
                     usagePercentage >= 90
@@ -247,15 +297,15 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
 
       {/* Empty State when no trips at all */}
       {totalCount === 0 ? (
-        <Card className="border-dashed rounded-md">
+        <Card className="border-dashed border-border/80 dark:border-zinc-800 bg-card/60 dark:bg-[#0F131C]/60 rounded-md">
           <CardHeader className="text-center py-14">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-md bg-primary/10 text-primary mb-3">
               <Compass className="h-6 w-6" />
             </div>
-            <CardTitle className="text-lg font-bold">
+            <CardTitle className="text-lg font-bold text-foreground dark:text-zinc-100">
               {isShowingOfflineData ? "No cached trips found offline" : "Your Travel Workspace is Empty"}
             </CardTitle>
-            <CardDescription className="max-w-md mx-auto text-xs mt-1">
+            <CardDescription className="max-w-md mx-auto text-xs mt-1 text-muted-foreground dark:text-zinc-400">
               {isShowingOfflineData
                 ? "No trips have been cached on this browser yet. Connect to the internet to sync your workspace."
                 : "Organize daily itineraries, bookings, expenses, notes, and packing checklists in one cohesive workspace."}
@@ -272,8 +322,8 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                 }
               />
               <Link href="/templates">
-                <Button variant="outline" size="sm" className="cursor-pointer gap-1.5">
-                  <LayoutTemplate className="w-4 h-4 text-muted-foreground" />
+                <Button variant="outline" size="sm" className="cursor-pointer gap-1.5 dark:border-zinc-800 dark:hover:bg-[#121622]">
+                  <LayoutTemplate className="w-4 h-4 text-muted-foreground dark:text-zinc-400" />
                   Explore Curated Templates
                 </Button>
               </Link>
@@ -287,10 +337,10 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               {/* Search Bar */}
               <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground dark:text-zinc-400" />
                 <Input
                   placeholder="Search title, destination, notes..."
-                  className="pl-8.5 h-9 text-xs"
+                  className="pl-8.5 h-9 text-xs dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -302,20 +352,20 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   value={sortOption}
                   onValueChange={(val) => setSortOption(val as TripSortOption)}
                 >
-                  <SelectTrigger className="h-9 w-[205px] text-xs cursor-pointer">
-                    <ArrowUpDown className="h-3.5 w-3.5 mr-1.5 text-muted-foreground shrink-0" />
+                  <SelectTrigger className="h-9 w-[205px] text-xs cursor-pointer dark:bg-[#0F131C] dark:border-zinc-800 dark:text-zinc-200">
+                    <ArrowUpDown className="h-3.5 w-3.5 mr-1.5 text-muted-foreground dark:text-zinc-400 shrink-0" />
                     <SelectValue placeholder="Sort order" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="departure" className="cursor-pointer">Departure (Soonest)</SelectItem>
-                    <SelectItem value="recent_updated" className="cursor-pointer">Recently Updated</SelectItem>
-                    <SelectItem value="newest" className="cursor-pointer">Newest Created</SelectItem>
-                    <SelectItem value="alphabetical" className="cursor-pointer">Title (A–Z)</SelectItem>
+                  <SelectContent className="dark:bg-[#0F131C] dark:border-zinc-800">
+                    <SelectItem value="departure" className="cursor-pointer dark:text-zinc-200">Departure (Soonest)</SelectItem>
+                    <SelectItem value="recent_updated" className="cursor-pointer dark:text-zinc-200">Recently Updated</SelectItem>
+                    <SelectItem value="newest" className="cursor-pointer dark:text-zinc-200">Newest Created</SelectItem>
+                    <SelectItem value="alphabetical" className="cursor-pointer dark:text-zinc-200">Title (A–Z)</SelectItem>
                   </SelectContent>
                 </Select>
 
                 {/* View Mode Toggle Buttons */}
-                <div className="flex items-center rounded-md border border-border bg-card p-0.5">
+                <div className="flex items-center rounded-md border border-border dark:border-zinc-800 bg-card dark:bg-[#121622] p-0.5">
                   <button
                     type="button"
                     onClick={() => setViewMode("grid")}
@@ -323,11 +373,26 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                     className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${
                       viewMode === "grid"
                         ? "bg-primary text-primary-foreground shadow-2xs"
-                        : "text-muted-foreground hover:text-foreground"
+                        : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
                     }`}
                   >
                     <LayoutGrid className="h-3.5 w-3.5" />
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("table")}
+                    aria-label="Table view"
+                    className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${
+                      viewMode === "table"
+                        ? "bg-primary text-primary-foreground shadow-2xs"
+                        : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
+                    }`}
+                  >
+                    <List className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
                   <button
                     type="button"
                     onClick={() => setViewMode("table")}

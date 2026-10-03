@@ -1,32 +1,35 @@
 "use client";
 
 import * as React from "react";
-import { useState, useEffect, useTransition, useCallback } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+
 import {
-  Plus,
-  Loader2,
+  AlertTriangle,
   Calendar as CalendarIcon,
-  MapPin,
-  Sparkles,
-  RotateCw,
   Check,
-  ImageIcon,
   Compass,
+  ImageIcon,
+  Loader2,
+  MapPin,
+  Plus,
+  RotateCw,
+  Sparkles,
 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -36,10 +39,11 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
-import { DatePicker } from "@/components/ui/date-picker";
+import { Textarea } from "@/components/ui/textarea";
 
 import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
 
+import { isTripDatesPassed } from "@/lib/utils";
 import { createTrip, getDestinationCoverImages, getUserAiPreferences } from "../actions";
 
 import type { TripStatus } from "../types";
@@ -368,6 +372,21 @@ export function CreateTripDialog({
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Past Dates Warning for Planning Trips */}
+            {formData.status === "PLANNING" && isTripDatesPassed(formData.startDate, formData.endDate) && (
+              <div className="rounded-md bg-amber-500/10 border border-amber-500/30 p-2.5 flex items-start gap-2.5 text-xs text-amber-900 dark:text-amber-200 animate-in fade-in duration-150">
+                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                <div className="space-y-0.5">
+                  <p className="font-semibold text-amber-950 dark:text-amber-100 text-[11px]">
+                    Planned dates are in the past
+                  </p>
+                  <p className="text-[11px] text-amber-800/90 dark:text-amber-300/80 leading-snug">
+                    You are creating a trip in <strong>Planning</strong> status with dates that have already passed. A notification banner will appear in your workspace to help you update its status, adjust the dates, or remove it.
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Tour-Vibe & Destination Cover Image Selector */}
             <div className="space-y-2 pt-1">

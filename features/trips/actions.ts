@@ -2,12 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 
+import { deleteUnusedTripCoverImage } from "@/features/storage";
 import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
-import { searchTourCoverImages, type UnsplashImage } from "@/services/unsplash";
+import { searchTourCoverImages } from "@/services/unsplash";
 
+import type { UnsplashImage } from "@/services/unsplash";
 import {
   createTripSchema,
   deleteTripSchema,
@@ -141,6 +143,8 @@ export async function updateTrip(
       return { success: false, error: "Trip not found or unauthorized." };
     }
 
+    const previousCoverImageUrl = existing.coverImageUrl;
+
     const updated = await db.trip.update({
       where: { id },
       data: {
@@ -153,6 +157,15 @@ export async function updateTrip(
         ...(coverImageUrl !== undefined ? { coverImageUrl: coverImageUrl || null } : {}),
       },
     });
+
+    // If the cover image changed or was cleared, purge the unreferenced previous custom image from Supabase Storage
+    if (
+      coverImageUrl !== undefined &&
+      previousCoverImageUrl &&
+      previousCoverImageUrl !== (coverImageUrl || null)
+    ) {
+      await deleteUnusedTripCoverImage(previousCoverImageUrl, authData.user.id);
+    }
 
     revalidatePath("/trips");
     revalidatePath(`/trips/${id}`);
@@ -199,9 +212,16 @@ export async function deleteTrip(
       return { success: false, error: "Trip not found or unauthorized." };
     }
 
+    const previousCoverImageUrl = existing.coverImageUrl;
+
     await db.trip.delete({
       where: { id },
     });
+
+    // If the deleted trip had a custom cover image in Supabase Storage, purge it if no other trip references it
+    if (previousCoverImageUrl) {
+      await deleteUnusedTripCoverImage(previousCoverImageUrl, authData.user.id);
+    }
 
     revalidatePath("/trips");
     revalidatePath("/dashboard");

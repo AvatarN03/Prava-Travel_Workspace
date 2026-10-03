@@ -1,10 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { useState, useEffect, useTransition, useCallback } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import {
+  AlertTriangle,
   Calendar as CalendarIcon,
   Check,
   ImageIcon,
@@ -36,6 +37,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 
+import { isTripDatesPassed } from "@/lib/utils";
 import { getDestinationCoverImages, updateTrip } from "../actions";
 
 import type { Trip, TripStatus } from "../types";
@@ -296,6 +298,21 @@ export function EditTripDialog({
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Past Dates Warning for Planning Trips */}
+            {formData.status === "PLANNING" && isTripDatesPassed(formData.startDate, formData.endDate) && (
+              <div className="rounded-md bg-amber-500/10 border border-amber-500/30 p-2.5 flex items-start gap-2.5 text-xs text-amber-900 dark:text-amber-200 animate-in fade-in duration-150">
+                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                <div className="space-y-0.5">
+                  <p className="font-semibold text-amber-950 dark:text-amber-100 text-[11px]">
+                    Planned dates are in the past
+                  </p>
+                  <p className="text-[11px] text-amber-800/90 dark:text-amber-300/80 leading-snug">
+                    This trip is set to <strong>Planning</strong> status with dates that have already passed. Update the status (e.g. to Active or Completed) or pick future dates to clear the alert.
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Cover Photo Management */}
             <div className="space-y-2 pt-1 border-t border-border/60">
