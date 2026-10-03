@@ -108,11 +108,11 @@ export function TripTableView({ trips }: TripTableViewProps) {
 
   return (
     <>
-      <div className="rounded-md border border-border bg-card shadow-2xs overflow-hidden">
+      <div className="rounded-md border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-border bg-muted/40 text-muted-foreground font-semibold">
+              <tr className="border-b border-border/80 dark:border-zinc-800 bg-muted/40 dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 font-semibold">
                 <th className="py-2.5 px-4 font-medium">Trip & Destination</th>
                 <th className="py-2.5 px-3 font-medium">Status</th>
                 <th className="py-2.5 px-3 font-medium">Dates</th>
@@ -122,7 +122,7 @@ export function TripTableView({ trips }: TripTableViewProps) {
                 <th className="py-2.5 px-4 font-medium text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/60">
+            <tbody className="divide-y divide-border/60 dark:divide-zinc-800/80">
               {trips.map((trip) => {
                 const isPending = actionPendingId === trip.id;
                 const activityCount = trip._count?.itinerary || 0;
@@ -134,12 +134,12 @@ export function TripTableView({ trips }: TripTableViewProps) {
                 return (
                   <tr
                     key={trip.id}
-                    className="hover:bg-muted/30 transition-colors group"
+                    className="hover:bg-muted/30 dark:hover:bg-[#121622]/40 transition-colors group"
                   >
                     {/* Title and Thumbnail */}
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 shrink-0 rounded-sm overflow-hidden border border-border/80 bg-muted/60 relative">
+                        <div className="h-10 w-10 shrink-0 rounded-sm overflow-hidden border border-border/80 dark:border-zinc-800 bg-muted/60 dark:bg-zinc-900 relative">
                           {trip.coverImageUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -157,17 +157,17 @@ export function TripTableView({ trips }: TripTableViewProps) {
                         <div className="min-w-0">
                           <Link
                             href={`/trips/${trip.id}`}
-                            className="font-semibold text-foreground hover:text-primary transition-colors truncate block text-sm"
+                            className="font-semibold text-foreground dark:text-zinc-100 hover:text-primary transition-colors truncate block text-sm"
                           >
                             {trip.title}
                           </Link>
                           {trip.destination ? (
-                            <div className="flex items-center gap-1 text-[11px] text-muted-foreground truncate mt-0.5">
-                              <MapPin className="h-3 w-3 text-muted-foreground/70 shrink-0" />
+                            <div className="flex items-center gap-1 text-[11px] text-muted-foreground dark:text-zinc-400 truncate mt-0.5">
+                              <MapPin className="h-3 w-3 text-muted-foreground/70 dark:text-zinc-400 shrink-0" />
                               <span className="truncate">{trip.destination}</span>
                             </div>
                           ) : (
-                            <span className="text-[11px] text-muted-foreground/60 italic">
+                            <span className="text-[11px] text-muted-foreground/60 dark:text-zinc-500 italic">
                               No destination
                             </span>
                           )}
@@ -181,28 +181,28 @@ export function TripTableView({ trips }: TripTableViewProps) {
                     </td>
 
                     {/* Dates */}
-                    <td className="py-3 px-3 whitespace-nowrap text-muted-foreground">
+                    <td className="py-3 px-3 whitespace-nowrap text-muted-foreground dark:text-zinc-400">
                       <div className="flex items-center gap-1.5">
-                        <Calendar className="h-3 w-3 text-muted-foreground/70 shrink-0" />
+                        <Calendar className="h-3 w-3 text-muted-foreground/70 dark:text-zinc-400 shrink-0" />
                         <span>{formatDateRange(trip.startDate, trip.endDate)}</span>
                       </div>
                     </td>
 
                     {/* Inclusions */}
                     <td className="py-3 px-3">
-                      <div className="flex items-center gap-2 text-[11px] text-muted-foreground whitespace-nowrap">
+                      <div className="flex items-center gap-2 text-[11px] text-muted-foreground dark:text-zinc-400 whitespace-nowrap">
                         <span title={`${activityCount} activities`}>
-                          <strong>{activityCount}</strong> act
+                          <strong className="text-foreground dark:text-zinc-200">{activityCount}</strong> act
                         </span>
                         <span>•</span>
                         <span title={`${stayCount} stays`}>
-                          <strong>{stayCount}</strong> stay{stayCount === 1 ? "" : "s"}
+                          <strong className="text-foreground dark:text-zinc-200">{stayCount}</strong> stay{stayCount === 1 ? "" : "s"}
                         </span>
                         {taskCount > 0 && (
                           <>
                             <span>•</span>
                             <span title={`${completedTasks}/${taskCount} checklist tasks complete`}>
-                              <strong>{completedTasks}</strong>/{taskCount} tasks
+                              <strong className="text-foreground dark:text-zinc-200">{completedTasks}</strong>/{taskCount} tasks
                             </span>
                           </>
                         )}
@@ -210,13 +210,13 @@ export function TripTableView({ trips }: TripTableViewProps) {
                     </td>
 
                     {/* Spent */}
-                    <td className="py-3 px-3 whitespace-nowrap font-medium text-foreground">
+                    <td className="py-3 px-3 whitespace-nowrap font-medium text-foreground dark:text-zinc-200">
                       {spend > 0 ? (
-                        <span className="text-[11px] font-semibold text-foreground">
+                        <span className="text-[11px] font-semibold text-foreground dark:text-zinc-100">
                           ${spend.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                         </span>
                       ) : (
-                        <span className="text-[11px] text-muted-foreground/60">—</span>
+                        <span className="text-[11px] text-muted-foreground/60 dark:text-zinc-500">—</span>
                       )}
                     </td>
 
@@ -227,7 +227,7 @@ export function TripTableView({ trips }: TripTableViewProps) {
                           <Globe className="h-3 w-3" /> Public
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+                        <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground dark:text-zinc-400">
                           <Lock className="h-3 w-3" /> Private
                         </span>
                       )}
@@ -238,10 +238,10 @@ export function TripTableView({ trips }: TripTableViewProps) {
                       <div className="flex items-center justify-end gap-1.5">
                         <Link
                           href={`/trips/${trip.id}`}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-sm border border-border bg-background hover:bg-muted text-foreground transition-colors"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-sm border border-border/80 dark:border-zinc-800 bg-background dark:bg-[#121622] hover:bg-muted dark:hover:bg-[#161B2A] text-foreground dark:text-zinc-200 transition-colors"
                         >
                           Workspace
-                          <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+                          <ArrowUpRight className="h-3 w-3 text-muted-foreground dark:text-zinc-400" />
                         </Link>
 
                         <DropdownMenu>
@@ -250,7 +250,7 @@ export function TripTableView({ trips }: TripTableViewProps) {
                               variant="ghost"
                               size="icon"
                               disabled={isPending}
-                              className="h-7 w-7 text-muted-foreground hover:text-foreground cursor-pointer"
+                              className="h-7 w-7 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 cursor-pointer"
                             >
                               {isPending ? (
                                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -260,10 +260,10 @@ export function TripTableView({ trips }: TripTableViewProps) {
                               <span className="sr-only">Actions</span>
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuContent align="end" className="w-48 dark:bg-[#0F131C] dark:border-zinc-800">
                             <DropdownMenuItem
                               onClick={() => setEditingTrip(trip)}
-                              className="cursor-pointer"
+                              className="cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200"
                             >
                               <Pencil className="h-3.5 w-3.5 mr-2" />
                               Edit Details & Cover
@@ -271,7 +271,7 @@ export function TripTableView({ trips }: TripTableViewProps) {
 
                             <DropdownMenuItem
                               onClick={() => handleDuplicate(trip)}
-                              className="cursor-pointer"
+                              className="cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200"
                             >
                               <Copy className="h-3.5 w-3.5 mr-2" />
                               Duplicate Trip
@@ -279,17 +279,17 @@ export function TripTableView({ trips }: TripTableViewProps) {
 
                             <DropdownMenuItem
                               onClick={() => handleToggleShare(trip)}
-                              className="cursor-pointer"
+                              className="cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200"
                             >
                               <Globe className="h-3.5 w-3.5 mr-2" />
                               {trip.isPublic ? "Make Private" : "Share to Community"}
                             </DropdownMenuItem>
 
-                            <DropdownMenuSeparator />
+                            <DropdownMenuSeparator className="dark:bg-zinc-800" />
 
                             <DropdownMenuItem
                               onClick={() => setDeletingTrip(trip)}
-                              className="text-destructive focus:text-destructive cursor-pointer"
+                              className="text-destructive focus:text-destructive cursor-pointer dark:hover:bg-destructive/10"
                             >
                               <Trash2 className="h-3.5 w-3.5 mr-2" />
                               Delete Trip

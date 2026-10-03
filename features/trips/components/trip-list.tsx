@@ -393,21 +393,6 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                 </div>
               </div>
             </div>
-                  <button
-                    type="button"
-                    onClick={() => setViewMode("table")}
-                    aria-label="Table view"
-                    className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${
-                      viewMode === "table"
-                        ? "bg-primary text-primary-foreground shadow-2xs"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <List className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
-            </div>
 
             {/* Mobile Responsive Controls: Status Filter Select along the side of Sort Select + View Mode */}
             <div className="flex sm:hidden items-center gap-2 w-full">
@@ -417,23 +402,23 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   value={statusFilter}
                   onValueChange={(val) => setStatusFilter(val as TripStatus | "ALL")}
                 >
-                  <SelectTrigger className="h-9 text-xs w-full cursor-pointer">
+                  <SelectTrigger className="h-9 text-xs w-full cursor-pointer dark:bg-[#0F131C] dark:border-zinc-800 dark:text-zinc-200">
                     <div className="flex items-center gap-1.5 truncate">
-                      <Filter className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      <Filter className="h-3.5 w-3.5 text-muted-foreground dark:text-zinc-400 shrink-0" />
                       <span className="truncate">
                         {statusOptions.find((o) => o.value === statusFilter)?.label || "Status"}
                       </span>
-                      <span className="text-[10px] px-1 py-0.2 rounded-full bg-muted text-muted-foreground font-semibold shrink-0">
+                      <span className="text-[10px] px-1 py-0.2 rounded-full bg-muted dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 font-semibold shrink-0">
                         {statusOptions.find((o) => o.value === statusFilter)?.count ?? 0}
                       </span>
                     </div>
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="dark:bg-[#0F131C] dark:border-zinc-800">
                     {statusOptions.map(({ label, value, count }) => (
-                      <SelectItem key={value} value={value} className="text-xs cursor-pointer">
+                      <SelectItem key={value} value={value} className="text-xs cursor-pointer dark:text-zinc-200">
                         <div className="flex items-center justify-between gap-3 w-full">
                           <span>{label}</span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-semibold">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 font-semibold">
                             {count}
                           </span>
                         </div>
@@ -449,21 +434,21 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   value={sortOption}
                   onValueChange={(val) => setSortOption(val as TripSortOption)}
                 >
-                  <SelectTrigger className="h-9 text-xs w-full cursor-pointer">
-                    <ArrowUpDown className="h-3.5 w-3.5 mr-1 text-muted-foreground shrink-0" />
+                  <SelectTrigger className="h-9 text-xs w-full cursor-pointer dark:bg-[#0F131C] dark:border-zinc-800 dark:text-zinc-200">
+                    <ArrowUpDown className="h-3.5 w-3.5 mr-1 text-muted-foreground dark:text-zinc-400 shrink-0" />
                     <SelectValue placeholder="Sort order" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="departure" className="text-xs cursor-pointer">Departure (Soonest)</SelectItem>
-                    <SelectItem value="recent_updated" className="text-xs cursor-pointer">Recently Updated</SelectItem>
-                    <SelectItem value="newest" className="text-xs cursor-pointer">Newest Created</SelectItem>
-                    <SelectItem value="alphabetical" className="text-xs cursor-pointer">Title (A–Z)</SelectItem>
+                  <SelectContent className="dark:bg-[#0F131C] dark:border-zinc-800">
+                    <SelectItem value="departure" className="text-xs cursor-pointer dark:text-zinc-200">Departure (Soonest)</SelectItem>
+                    <SelectItem value="recent_updated" className="text-xs cursor-pointer dark:text-zinc-200">Recently Updated</SelectItem>
+                    <SelectItem value="newest" className="text-xs cursor-pointer dark:text-zinc-200">Newest Created</SelectItem>
+                    <SelectItem value="alphabetical" className="text-xs cursor-pointer dark:text-zinc-200">Title (A–Z)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* View Mode Toggle Buttons */}
-              <div className="flex items-center rounded-md border border-border bg-card p-0.5 shrink-0">
+              <div className="flex items-center rounded-md border border-border dark:border-zinc-800 bg-card dark:bg-[#121622] p-0.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setViewMode("grid")}
@@ -471,7 +456,7 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${
                     viewMode === "grid"
                       ? "bg-primary text-primary-foreground shadow-2xs"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
                   }`}
                 >
                   <LayoutGrid className="h-3.5 w-3.5" />
@@ -483,7 +468,7 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${
                     viewMode === "table"
                       ? "bg-primary text-primary-foreground shadow-2xs"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
                   }`}
                 >
                   <List className="h-3.5 w-3.5" />
@@ -503,7 +488,7 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                     className={`px-3 py-1 rounded-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 cursor-pointer text-xs ${
                       isActive
                         ? "bg-primary text-primary-foreground"
-                        : "bg-secondary text-secondary-foreground hover:bg-accent hover:text-accent-foreground"
+                        : "bg-secondary dark:bg-[#121622] text-secondary-foreground dark:text-zinc-300 hover:bg-accent dark:hover:bg-zinc-800 border border-transparent dark:border-zinc-800"
                     }`}
                   >
                     <span>{label}</span>
@@ -511,7 +496,7 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                       className={`text-[10px] px-1.5 py-0.2 rounded-full font-semibold ${
                         isActive
                           ? "bg-white/20 text-white"
-                          : "bg-muted text-muted-foreground"
+                          : "bg-muted dark:bg-zinc-800 text-muted-foreground dark:text-zinc-400"
                       }`}
                     >
                       {count}
@@ -524,15 +509,15 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
 
           {/* Results: Grid or Table */}
           {filteredTrips.length === 0 ? (
-            <div className="text-center py-12 rounded-md border border-border bg-card p-6">
-              <p className="text-sm font-semibold text-foreground">No matching trips found</p>
-              <p className="text-xs text-muted-foreground mt-1">
+            <div className="text-center py-12 rounded-md border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-6">
+              <p className="text-sm font-semibold text-foreground dark:text-zinc-100">No matching trips found</p>
+              <p className="text-xs text-muted-foreground dark:text-zinc-400 mt-1">
                 Try adjusting your search query or switching the status filter.
               </p>
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-4 text-xs cursor-pointer"
+                className="mt-4 text-xs cursor-pointer dark:border-zinc-800 dark:hover:bg-[#121622]"
                 onClick={() => {
                   setSearchQuery("");
                   setStatusFilter("ALL");
