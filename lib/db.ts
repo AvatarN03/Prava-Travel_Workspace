@@ -38,7 +38,7 @@ function createPrismaClient(): PrismaClient {
 if (
   process.env.NODE_ENV !== "production" &&
   globalForPrisma.prisma &&
-  !("subscription" in globalForPrisma.prisma)
+  (!("subscription" in globalForPrisma.prisma) || !("blogPostLike" in globalForPrisma.prisma))
 ) {
   globalForPrisma.prisma = undefined;
 }
@@ -59,5 +59,3 @@ export function getDb(): PrismaClient {
   }
   return globalForPrisma.prisma ?? db;
 }
-
-
