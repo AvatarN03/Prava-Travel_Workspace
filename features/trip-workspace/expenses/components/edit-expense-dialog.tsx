@@ -1,21 +1,22 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+
 import { Loader2 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -23,9 +24,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Expense } from "@prisma/client";
+import { Textarea } from "@/components/ui/textarea";
+
 import { updateExpense } from "../actions";
-import { ExpenseCategory } from "../schema";
+
+import type { Expense } from "@prisma/client";
+import type { ExpenseCategory } from "../schema";
 
 interface EditExpenseDialogProps {
   item: Expense;

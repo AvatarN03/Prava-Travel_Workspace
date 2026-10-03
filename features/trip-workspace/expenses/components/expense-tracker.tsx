@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Expense } from "@prisma/client";
+
 import {
   Car,
   CircleHelp,
@@ -51,8 +51,10 @@ import {
 import { AddExpenseDialog } from "./add-expense-dialog";
 import { EditExpenseDialog } from "./edit-expense-dialog";
 
-import { SUPPORTED_CURRENCIES } from "@/features/travel-essentials";
 import { deleteExpense, updateTripBudget } from "../actions";
+
+import { SUPPORTED_CURRENCIES } from "@/features/travel-essentials";
+import type { Expense } from "@prisma/client";
 
 interface ExpenseTrackerProps {
   tripId: string;
