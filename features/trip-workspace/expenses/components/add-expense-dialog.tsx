@@ -134,11 +134,11 @@ export function AddExpenseDialog({ tripId, trigger, defaultCurrency = "INR" }: A
         </DialogTrigger>
       )}
 
-      <DialogContent className="sm:max-w-[460px]">
+      <DialogContent className="sm:max-w-[460px] bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800">
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader>
-            <DialogTitle>Record New Expense</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-foreground dark:text-zinc-50">Record New Expense</DialogTitle>
+            <DialogDescription className="text-muted-foreground dark:text-zinc-400">
               Track spent amount, category, and payment notes.
             </DialogDescription>
           </DialogHeader>
@@ -151,7 +151,7 @@ export function AddExpenseDialog({ tripId, trigger, defaultCurrency = "INR" }: A
 
           <div className="space-y-3.5">
             <div className="space-y-1.5">
-              <Label htmlFor="exp-title">Expense Title *</Label>
+              <Label htmlFor="exp-title" className="text-foreground dark:text-zinc-200">Expense Title *</Label>
               <Input
                 id="exp-title"
                 placeholder="e.g. Shinkansen Bullet Train Ticket"
@@ -159,12 +159,13 @@ export function AddExpenseDialog({ tripId, trigger, defaultCurrency = "INR" }: A
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="exp-amount">Amount *</Label>
+                <Label htmlFor="exp-amount" className="text-foreground dark:text-zinc-200">Amount *</Label>
                 <Input
                   id="exp-amount"
                   type="number"
@@ -175,21 +176,22 @@ export function AddExpenseDialog({ tripId, trigger, defaultCurrency = "INR" }: A
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                   required
                   disabled={isPending}
+                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="exp-currency">Currency</Label>
+                <Label htmlFor="exp-currency" className="text-foreground dark:text-zinc-200">Currency</Label>
                 <Select
                   value={formData.currency}
                   onValueChange={(val) => setFormData({ ...formData, currency: val })}
                   disabled={isPending}
                 >
-                  <SelectTrigger id="exp-currency" className="w-full">
+                  <SelectTrigger id="exp-currency" className="w-full dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100">
                     <SelectValue placeholder="Currency" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800">
                     {CURRENCIES.map((c) => (
-                      <SelectItem key={c.value} value={c.value}>
+                      <SelectItem key={c.value} value={c.value} className="dark:hover:bg-[#121622]">
                         {c.label}
                       </SelectItem>
                     ))}
@@ -200,7 +202,7 @@ export function AddExpenseDialog({ tripId, trigger, defaultCurrency = "INR" }: A
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="exp-category">Category</Label>
+                <Label htmlFor="exp-category" className="text-foreground dark:text-zinc-200">Category</Label>
                 <Select
                   value={formData.category}
                   onValueChange={(val) =>
@@ -208,12 +210,12 @@ export function AddExpenseDialog({ tripId, trigger, defaultCurrency = "INR" }: A
                   }
                   disabled={isPending}
                 >
-                  <SelectTrigger id="exp-category" className="w-full">
+                  <SelectTrigger id="exp-category" className="w-full dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100">
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800">
                     {CATEGORIES.map((c) => (
-                      <SelectItem key={c.value} value={c.value}>
+                      <SelectItem key={c.value} value={c.value} className="dark:hover:bg-[#121622]">
                         {c.label}
                       </SelectItem>
                     ))}
@@ -222,7 +224,7 @@ export function AddExpenseDialog({ tripId, trigger, defaultCurrency = "INR" }: A
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="exp-date">Date</Label>
+                <Label htmlFor="exp-date" className="text-foreground dark:text-zinc-200">Date</Label>
                 <DatePicker
                   date={formData.date ? new Date(formData.date + "T00:00:00") : null}
                   onDateChange={(selectedDate) => {
@@ -237,24 +239,25 @@ export function AddExpenseDialog({ tripId, trigger, defaultCurrency = "INR" }: A
                   }}
                   disabled={isPending}
                   placeholder="Select expense date"
-                  className="h-9 text-xs rounded-sm"
+                  className="h-9 text-xs rounded-sm dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="exp-paidby">Paid By (Optional)</Label>
+              <Label htmlFor="exp-paidby" className="text-foreground dark:text-zinc-200">Paid By (Optional)</Label>
               <Input
                 id="exp-paidby"
                 placeholder="e.g. Credit Card, Cash, Split"
                 value={formData.paidBy}
                 onChange={(e) => setFormData({ ...formData, paidBy: e.target.value })}
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="exp-notes">Notes</Label>
+              <Label htmlFor="exp-notes" className="text-foreground dark:text-zinc-200">Notes</Label>
               <Textarea
                 id="exp-notes"
                 placeholder="Receipt details, split calculations, or memos..."
@@ -262,6 +265,7 @@ export function AddExpenseDialog({ tripId, trigger, defaultCurrency = "INR" }: A
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 disabled={isPending}
+                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
           </div>
@@ -273,10 +277,11 @@ export function AddExpenseDialog({ tripId, trigger, defaultCurrency = "INR" }: A
               size="sm"
               onClick={() => setOpen(false)}
               disabled={isPending}
+              className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-300"
             >
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={isPending}>
+            <Button type="submit" size="sm" disabled={isPending} className="bg-[#2D9BF0] hover:bg-[#2087D6] text-white">
               {isPending && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               Save Expense
             </Button>
