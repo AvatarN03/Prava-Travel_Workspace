@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState, useTransition } from "react";
 
 import {
   ArrowLeft,
@@ -34,10 +34,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
-
-import { cloneTripTemplate } from "@/features/templates";
 import { EditDiscussionDialog } from "@/features/community/components/edit-discussion-dialog";
 import { SaveTipDialog } from "@/features/community/components/save-tip-dialog";
+
 import {
   deleteForumDiscussion,
   deleteForumReply,
@@ -47,7 +46,9 @@ import {
   toggleSaveDiscussion,
   updateForumReply,
 } from "@/features/community/forum-actions";
-import {
+import { cloneTripTemplate } from "@/features/templates";
+
+import type {
   ForumPost,
   ForumReply,
   UserTripOption,
@@ -226,24 +227,24 @@ export function ForumThreadView({
   return (
     <div className="max-w-7xl mx-auto space-y-5 pb-16">
       {/* Top Breadcrumb & Action Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-border">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-border dark:border-zinc-800">
         <div className="flex items-center gap-2">
           <Link href="/forum">
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground cursor-pointer -ml-2"
+              className="h-8 text-xs gap-1.5 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 cursor-pointer -ml-2"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               Discussions
             </Button>
           </Link>
-          <span className="text-muted-foreground/40 text-xs">/</span>
+          <span className="text-muted-foreground/40 dark:text-zinc-600 text-xs">/</span>
           <Badge variant="secondary" className="text-[11px] font-medium py-0.5">
             {post.categoryLabel}
           </Badge>
           {post.destination && (
-            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1 text-xs text-muted-foreground dark:text-zinc-400">
               <MapPin className="h-3 w-3 text-primary" />
               {post.destination}
             </span>
@@ -259,7 +260,7 @@ export function ForumThreadView({
             className={`h-8 text-xs gap-1.5 cursor-pointer ${
               hasUpvoted
                 ? "bg-primary text-primary-foreground font-semibold"
-                : "border-border text-foreground hover:bg-muted"
+                : "border-border dark:border-zinc-800 text-foreground dark:text-zinc-200 hover:bg-muted dark:hover:bg-zinc-800/60"
             }`}
           >
             <ThumbsUp className={`h-3.5 w-3.5 ${hasUpvoted ? "fill-current" : ""}`} />
@@ -270,10 +271,10 @@ export function ForumThreadView({
             variant="outline"
             size="sm"
             onClick={handleToggleBookmark}
-            className={`h-8 text-xs gap-1.5 cursor-pointer border-border ${
+            className={`h-8 text-xs gap-1.5 cursor-pointer border-border dark:border-zinc-800 ${
               hasSaved
                 ? "text-primary border-primary/40 bg-primary/5 font-semibold"
-                : "text-muted-foreground hover:text-foreground"
+                : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 dark:hover:bg-zinc-800/60"
             }`}
           >
             <Bookmark className={`h-3.5 w-3.5 ${hasSaved ? "fill-current" : ""}`} />
@@ -284,7 +285,7 @@ export function ForumThreadView({
             variant="outline"
             size="sm"
             onClick={() => handleOpenSaveTip(post.content, post.authorName)}
-            className="h-8 text-xs gap-1.5 border-border text-muted-foreground hover:text-foreground cursor-pointer"
+            className="h-8 text-xs gap-1.5 border-border dark:border-zinc-800 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 dark:hover:bg-zinc-800/60 cursor-pointer"
             title="Save tip to your trip notes"
           >
             <Sparkles className="h-3.5 w-3.5 text-primary" />
@@ -298,7 +299,7 @@ export function ForumThreadView({
               navigator.clipboard.writeText(window.location.href);
               toast.success("Discussion link copied to clipboard!");
             }}
-            className="h-8 text-xs gap-1.5 border-border text-muted-foreground hover:text-foreground cursor-pointer"
+            className="h-8 text-xs gap-1.5 border-border dark:border-zinc-800 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 dark:hover:bg-zinc-800/60 cursor-pointer"
           >
             <Share2 className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Share</span>
@@ -310,22 +311,22 @@ export function ForumThreadView({
                 <Button
                   variant="outline"
                   size="icon"
-                  className="h-8 w-8 cursor-pointer border-border text-muted-foreground hover:text-foreground"
+                  className="h-8 w-8 cursor-pointer border-border dark:border-zinc-800 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 dark:hover:bg-zinc-800/60"
                 >
                   <MoreVertical className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-popover border-border text-xs">
+              <DropdownMenuContent align="end" className="bg-popover dark:bg-[#0F131C] border-border dark:border-zinc-800 text-xs">
                 <DropdownMenuItem
                   onClick={() => setEditDialogOpen(true)}
-                  className="gap-2 cursor-pointer"
+                  className="gap-2 cursor-pointer dark:hover:bg-zinc-800/60"
                 >
                   <Edit3 className="h-3.5 w-3.5" />
                   Edit Discussion
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleDeletePost}
-                  className="gap-2 text-destructive cursor-pointer"
+                  className="gap-2 text-destructive cursor-pointer dark:hover:bg-destructive/10"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   Delete Discussion
@@ -340,17 +341,17 @@ export function ForumThreadView({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Section: Main Post & Workspace Context (Cols 7/12) */}
         <div className="lg:col-span-7 xl:col-span-7 space-y-4">
-          <Card className="border border-border bg-card shadow-2xs rounded-md overflow-hidden">
+          <Card className="border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs rounded-md overflow-hidden">
             <CardContent className="p-5 sm:p-6 space-y-5">
               {/* Post Title */}
-              <h1 className="font-sans text-xl sm:text-2xl font-semibold tracking-tight text-foreground leading-snug">
+              <h1 className="font-sans text-xl sm:text-2xl font-semibold tracking-tight text-foreground dark:text-zinc-50 leading-snug">
                 {post.title}
               </h1>
 
               {/* Author & Timestamp Bar */}
-              <div className="flex items-center justify-between gap-3 pt-1 pb-3 border-b border-border">
+              <div className="flex items-center justify-between gap-3 pt-1 pb-3 border-b border-border dark:border-zinc-800">
                 <div className="flex items-center gap-2.5">
-                  <Avatar className="h-8 w-8 border border-border">
+                  <Avatar className="h-8 w-8 border border-border dark:border-zinc-800">
                     {post.authorAvatarUrl && (
                       <AvatarImage src={post.authorAvatarUrl} alt={post.authorName} />
                     )}
@@ -360,7 +361,7 @@ export function ForumThreadView({
                   </Avatar>
 
                   <div className="flex items-center gap-2 flex-wrap text-xs">
-                    <span className="font-semibold text-foreground">
+                    <span className="font-semibold text-foreground dark:text-zinc-200">
                       {post.authorName}
                     </span>
                     {post.authorUsername && (
@@ -372,38 +373,38 @@ export function ForumThreadView({
                       </Link>
                     )}
                     {post.isCreatorPublic && (
-                      <Badge variant="outline" className="text-[10px] py-0 px-1 text-muted-foreground rounded-sm">
+                      <Badge variant="outline" className="text-[10px] py-0 px-1 text-muted-foreground dark:text-zinc-400 border-border dark:border-zinc-800 rounded-sm">
                         Verified
                       </Badge>
                     )}
-                    <span className="text-muted-foreground/60">•</span>
-                    <span className="text-muted-foreground">{post.createdAt}</span>
+                    <span className="text-muted-foreground/60 dark:text-zinc-600">•</span>
+                    <span className="text-muted-foreground dark:text-zinc-400">{post.createdAt}</span>
                     {post.isEdited && (
-                      <span className="text-[11px] text-muted-foreground italic">(edited)</span>
+                      <span className="text-[11px] text-muted-foreground dark:text-zinc-500 italic">(edited)</span>
                     )}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
+                <div className="flex items-center gap-3 text-xs text-muted-foreground dark:text-zinc-400 shrink-0">
                   <span className="flex items-center gap-1">
-                    <Eye className="h-3.5 w-3.5 text-muted-foreground/70" />
+                    <Eye className="h-3.5 w-3.5 text-muted-foreground/70 dark:text-zinc-500" />
                     {post.views}
                   </span>
                   <span className="flex items-center gap-1">
-                    <MessageSquare className="h-3.5 w-3.5 text-muted-foreground/70" />
+                    <MessageSquare className="h-3.5 w-3.5 text-muted-foreground/70 dark:text-zinc-500" />
                     {replies.length}
                   </span>
                 </div>
               </div>
 
               {/* Discussion Body Content */}
-              <div className="text-sm sm:text-[15px] leading-relaxed text-foreground/90 whitespace-pre-line font-normal">
+              <div className="text-sm sm:text-[15px] leading-relaxed text-foreground/90 dark:text-zinc-200 whitespace-pre-line font-normal">
                 {post.content}
               </div>
 
               {/* Single Dedicated Attached Visual (Uploaded to Supabase) */}
               {attachedVisual && (
-                <div className="relative rounded-md overflow-hidden border border-border bg-muted/20 my-3">
+                <div className="relative rounded-md overflow-hidden border border-border dark:border-zinc-800 bg-muted/20 dark:bg-zinc-900/40 my-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={attachedVisual}
@@ -415,7 +416,7 @@ export function ForumThreadView({
 
               {/* Attached Workspace Trip Card */}
               {post.linkedTrip && (
-                <div className="rounded-md border border-border bg-muted/20 p-3.5 space-y-2">
+                <div className="rounded-md border border-border dark:border-zinc-800 bg-muted/20 dark:bg-[#121622] p-3.5 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-primary flex items-center gap-1.5">
                       <Compass className="h-3.5 w-3.5" />
@@ -426,7 +427,7 @@ export function ForumThreadView({
                       variant="outline"
                       onClick={handleCloneLinkedTrip}
                       disabled={isCloningTrip}
-                      className="h-7 text-xs gap-1.5 border-border hover:bg-muted cursor-pointer rounded-md"
+                      className="h-7 text-xs gap-1.5 border-border dark:border-zinc-800 hover:bg-muted dark:hover:bg-zinc-800/60 cursor-pointer rounded-md"
                     >
                       {isCloningTrip ? (
                         <Loader2 className="h-3 w-3 animate-spin" />
@@ -439,10 +440,10 @@ export function ForumThreadView({
 
                   <div className="flex items-center justify-between gap-2">
                     <div>
-                      <h3 className="text-xs sm:text-sm font-semibold text-foreground">
+                      <h3 className="text-xs sm:text-sm font-semibold text-foreground dark:text-zinc-200">
                         {post.linkedTrip.title}
                       </h3>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground dark:text-zinc-400 mt-0.5">
                         <span className="flex items-center gap-0.5">
                           <MapPin className="h-3 w-3 text-primary" />
                           {post.linkedTrip.destination}
@@ -462,7 +463,7 @@ export function ForumThreadView({
                     <Badge
                       key={tag}
                       variant="outline"
-                      className="text-[11px] font-normal border-border bg-muted/30 text-muted-foreground rounded-sm"
+                      className="text-[11px] font-normal border-border dark:border-zinc-800 bg-muted/30 dark:bg-zinc-800/50 text-muted-foreground dark:text-zinc-400 rounded-sm"
                     >
                       #{tag}
                     </Badge>
@@ -476,7 +477,7 @@ export function ForumThreadView({
         {/* Right Section: Comments & Travel Advice Stream (Cols 5/12) */}
         <div className="lg:col-span-5 xl:col-span-5 space-y-4 lg:sticky lg:top-16">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2">
+            <h2 className="text-sm font-bold tracking-tight text-foreground dark:text-zinc-100 flex items-center gap-2">
               <MessageSquare className="h-4 w-4 text-primary" />
               Traveler Advice & Comments
             </h2>
@@ -486,18 +487,18 @@ export function ForumThreadView({
           </div>
 
           {/* Quick Reply Composer */}
-          <Card className="border border-border bg-card shadow-2xs rounded-md p-3.5 space-y-2.5">
+          <Card className="border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs rounded-md p-3.5 space-y-2.5">
             <form onSubmit={handleSendReply} className="space-y-2.5">
               <Textarea
                 rows={3}
                 placeholder="Share your advice, route recommendations, or answer this question..."
                 value={newReplyText}
                 onChange={(e) => setNewReplyText(e.target.value)}
-                className="text-xs resize-none bg-background border-border focus-visible:ring-primary rounded-md"
+                className="text-xs resize-none bg-background dark:bg-[#121622] border-border dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 focus-visible:ring-primary rounded-md"
                 disabled={isSubmittingReply}
               />
               <div className="flex items-center justify-between">
-                <span className="text-[10px] text-muted-foreground">
+                <span className="text-[10px] text-muted-foreground dark:text-zinc-500">
                   Be supportive & constructive
                 </span>
                 <Button
@@ -518,24 +519,24 @@ export function ForumThreadView({
           </Card>
 
           {/* Single Parent Card for Advice Stream (No repetitive cards or borders) */}
-          <Card className="border border-border bg-card shadow-2xs rounded-md overflow-hidden">
+          <Card className="border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs rounded-md overflow-hidden">
             {replies.length === 0 ? (
               <div className="text-center py-8 p-4 space-y-1">
-                <p className="text-xs font-semibold text-foreground">No advice posted yet</p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs font-semibold text-foreground dark:text-zinc-200">No advice posted yet</p>
+                <p className="text-[11px] text-muted-foreground dark:text-zinc-400">
                   Be the first traveler to help out with route advice or recommendations!
                 </p>
               </div>
             ) : (
-              <div className="divide-y divide-border/60 max-h-[calc(100vh-260px)] overflow-y-auto pr-0.5 scrollbar-thin">
+              <div className="divide-y divide-border/60 dark:divide-zinc-800/60 max-h-[calc(100vh-260px)] overflow-y-auto pr-0.5 scrollbar-thin">
                 {replies.map((reply) => (
                   <div
                     key={reply.id}
-                    className="p-3.5 space-y-2 hover:bg-muted/15 transition-colors"
+                    className="p-3.5 space-y-2 hover:bg-muted/15 dark:hover:bg-zinc-900/40 transition-colors"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <Avatar className="h-6 w-6 border border-border">
+                        <Avatar className="h-6 w-6 border border-border dark:border-zinc-800">
                           {reply.authorAvatarUrl && (
                             <AvatarImage src={reply.authorAvatarUrl} alt={reply.authorName} />
                           )}
@@ -544,7 +545,7 @@ export function ForumThreadView({
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex items-center gap-1.5 text-xs">
-                          <span className="font-semibold text-foreground text-[11px] sm:text-xs">
+                          <span className="font-semibold text-foreground dark:text-zinc-200 text-[11px] sm:text-xs">
                             {reply.authorName}
                           </span>
                           {reply.authorUsername && (
@@ -563,8 +564,8 @@ export function ForumThreadView({
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground shrink-0">
-                        {reply.isEdited && <span className="italic">(edited)</span>}
+                      <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground dark:text-zinc-400 shrink-0">
+                        {reply.isEdited && <span className="italic dark:text-zinc-500">(edited)</span>}
                         <span>{reply.createdAt}</span>
 
                         {/* 3-Dot Options Dropdown for EVERY comment */}
@@ -573,16 +574,16 @@ export function ForumThreadView({
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-5 w-5 cursor-pointer text-muted-foreground hover:text-foreground"
+                              className="h-5 w-5 cursor-pointer text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
                               title="Comment options"
                             >
                               <MoreVertical className="h-3 w-3" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-popover border-border text-xs rounded-md shadow-md">
+                          <DropdownMenuContent align="end" className="bg-popover dark:bg-[#0F131C] border-border dark:border-zinc-800 text-xs rounded-md shadow-md">
                             <DropdownMenuItem
                               onClick={() => handleOpenSaveTip(reply.content, reply.authorName)}
-                              className="gap-2 cursor-pointer"
+                              className="gap-2 cursor-pointer dark:hover:bg-zinc-800/60"
                             >
                               <Bookmark className="h-3.5 w-3.5 text-primary" />
                               Save Tip to Trip
@@ -595,14 +596,14 @@ export function ForumThreadView({
                                     setEditingReplyId(reply.id);
                                     setEditingReplyContent(reply.content);
                                   }}
-                                  className="gap-2 cursor-pointer"
+                                  className="gap-2 cursor-pointer dark:hover:bg-zinc-800/60"
                                 >
                                   <Edit3 className="h-3.5 w-3.5" />
                                   Edit Reply
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => handleDeleteReply(reply.id)}
-                                  className="gap-2 text-destructive cursor-pointer"
+                                  className="gap-2 text-destructive cursor-pointer dark:hover:bg-destructive/10"
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
                                   Delete Reply
@@ -621,14 +622,14 @@ export function ForumThreadView({
                           rows={3}
                           value={editingReplyContent}
                           onChange={(e) => setEditingReplyContent(e.target.value)}
-                          className="text-xs bg-background border-border rounded-md"
+                          className="text-xs bg-background dark:bg-[#121622] border-border dark:border-zinc-800 dark:text-zinc-100 rounded-md"
                         />
                         <div className="flex justify-end gap-1.5">
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => setEditingReplyId(null)}
-                            className="text-xs h-6 px-2 rounded-md"
+                            className="text-xs h-6 px-2 rounded-md border-border dark:border-zinc-800 dark:hover:bg-zinc-800/60"
                           >
                             Cancel
                           </Button>
@@ -642,7 +643,7 @@ export function ForumThreadView({
                         </div>
                       </div>
                     ) : (
-                      <p className="text-xs text-foreground/90 leading-relaxed whitespace-pre-line pl-8">
+                      <p className="text-xs text-foreground/90 dark:text-zinc-200 leading-relaxed whitespace-pre-line pl-8">
                         {reply.content}
                       </p>
                     )}

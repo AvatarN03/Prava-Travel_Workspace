@@ -4,11 +4,12 @@ import { revalidatePath } from "next/cache";
 
 import { Pool } from "pg";
 
+import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 import { formatRelativeTime, generateSlug } from "@/lib/utils";
 
-import {
+import type {
   CreateDiscussionInput,
   ForumCategory,
   ForumPost,
@@ -405,6 +406,8 @@ export async function createForumDiscussion(input: CreateDiscussionInput) {
       return { success: false, error: "Please sign in to start a discussion." };
     }
 
+    const profile = await syncUserProfile(user);
+
     if (!input.title || input.title.trim().length < 5) {
       return { success: false, error: "Title must be at least 5 characters long." };
     }
@@ -418,40 +421,33 @@ export async function createForumDiscussion(input: CreateDiscussionInput) {
     const baseSlug = generateSlug(input.title).replace(/-+$/, "");
     const slug = `${baseSlug || "discussion"}-${shortId}`;
 
-    const sql = `
-      INSERT INTO community_posts (
-        profile_id,
+    const post = await db.communityPost.create({
+      data: {
+        profileId: profile.id,
         slug,
-        title,
-        content,
-        category,
-        destination,
-        tags,
-        images,
-        cover_image_url,
-        linked_trip_id
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-      RETURNING id, slug;
-    `;
-
-    const res = await pool.query(sql, [
-      user.id,
-      slug,
-      input.title.trim(),
-      input.content.trim(),
-      input.category || "DISCUSSIONS",
-      input.destination?.trim() || null,
-      input.tags || [],
-      input.images || [],
-      input.coverImageUrl || (input.images && input.images[0]) || null,
-      input.linkedTripId || null,
-    ]);
+        title: input.title.trim(),
+        content: input.content.trim(),
+        category: input.category || "DISCUSSIONS",
+        destination: input.destination?.trim() || null,
+        tags: input.tags || [],
+        images: input.images || [],
+        coverImageUrl: input.coverImageUrl || (input.images && input.images[0]) || null,
+        linkedTripId: input.linkedTripId || null,
+      },
+      select: {
+        id: true,
+        slug: true,
+      },
+    });
 
     revalidatePath("/forum");
-    return { success: true, postId: res.rows[0].id, slug: res.rows[0].slug };
+    return { success: true, postId: post.id, slug: post.slug || slug };
   } catch (error) {
     console.error("Error creating forum discussion:", error);
-    return { success: false, error: "Failed to publish discussion." };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to publish discussion.",
+    };
   }
 }
 
@@ -470,55 +466,44 @@ export async function updateForumDiscussion(postId: string, input: UpdateDiscuss
       return { success: false, error: "Please sign in to edit this discussion." };
     }
 
-    // Verify ownership
-    const checkRes = await pool.query(
-      "SELECT profile_id, slug FROM community_posts WHERE id = $1;",
-      [postId]
-    );
+    const profile = await syncUserProfile(user);
 
-    if (checkRes.rows.length === 0) {
+    // Verify ownership
+    const post = await db.communityPost.findUnique({
+      where: { id: postId },
+      select: { profileId: true, slug: true },
+    });
+
+    if (!post) {
       return { success: false, error: "Discussion not found." };
     }
 
-    if (checkRes.rows[0].profile_id !== user.id) {
+    if (post.profileId !== profile.id) {
       return { success: false, error: "You can only edit your own discussions." };
     }
 
-    const sql = `
-      UPDATE community_posts 
-      SET 
-        title = $1,
-        content = $2,
-        category = $3,
-        destination = $4,
-        tags = $5,
-        images = $6,
-        cover_image_url = $7,
-        linked_trip_id = $8,
-        is_edited = TRUE,
-        updated_at = NOW()
-      WHERE id = $9
-      RETURNING slug;
-    `;
-
-    const res = await pool.query(sql, [
-      input.title.trim(),
-      input.content.trim(),
-      input.category,
-      input.destination?.trim() || null,
-      input.tags || [],
-      input.images || [],
-      input.coverImageUrl || (input.images && input.images[0]) || null,
-      input.linkedTripId || null,
-      postId,
-    ]);
+    const updated = await db.communityPost.update({
+      where: { id: postId },
+      data: {
+        title: input.title.trim(),
+        content: input.content.trim(),
+        category: input.category,
+        destination: input.destination?.trim() || null,
+        tags: input.tags || [],
+        images: input.images || [],
+        coverImageUrl: input.coverImageUrl || (input.images && input.images[0]) || null,
+        linkedTripId: input.linkedTripId || null,
+        isEdited: true,
+      },
+      select: { slug: true },
+    });
 
     revalidatePath("/forum");
-    if (res.rows[0]?.slug) {
-      revalidatePath(`/forum/${res.rows[0].slug}`);
+    if (updated.slug) {
+      revalidatePath(`/forum/${updated.slug}`);
     }
 
-    return { success: true, slug: res.rows[0]?.slug };
+    return { success: true, slug: updated.slug };
   } catch (error) {
     console.error("Error updating forum discussion:", error);
     return { success: false, error: "Failed to update discussion." };
@@ -540,20 +525,24 @@ export async function deleteForumDiscussion(postId: string) {
       return { success: false, error: "Please sign in to delete this discussion." };
     }
 
-    const checkRes = await pool.query(
-      "SELECT profile_id, slug FROM community_posts WHERE id = $1;",
-      [postId]
-    );
+    const profile = await syncUserProfile(user);
 
-    if (checkRes.rows.length === 0) {
+    const post = await db.communityPost.findUnique({
+      where: { id: postId },
+      select: { profileId: true },
+    });
+
+    if (!post) {
       return { success: false, error: "Discussion not found." };
     }
 
-    if (checkRes.rows[0].profile_id !== user.id) {
+    if (post.profileId !== profile.id) {
       return { success: false, error: "You can only delete your own discussions." };
     }
 
-    await pool.query("DELETE FROM community_posts WHERE id = $1;", [postId]);
+    await db.communityPost.delete({
+      where: { id: postId },
+    });
 
     revalidatePath("/forum");
     return { success: true };
@@ -582,18 +571,24 @@ export async function postForumReply(postId: string, content: string) {
       return { success: false, error: "Reply cannot be empty." };
     }
 
-    const sql = `
-      INSERT INTO community_replies (post_id, profile_id, content)
-      VALUES ($1, $2, $3)
-      RETURNING id, created_at;
-    `;
+    const profile = await syncUserProfile(user);
 
-    await pool.query(sql, [postId, user.id, content.trim()]);
+    const reply = await db.communityReply.create({
+      data: {
+        postId,
+        profileId: profile.id,
+        content: content.trim(),
+      },
+      include: {
+        post: {
+          select: { slug: true },
+        },
+      },
+    });
 
-    const postRes = await pool.query("SELECT slug FROM community_posts WHERE id = $1;", [postId]);
     revalidatePath("/forum");
-    if (postRes.rows[0]?.slug) {
-      revalidatePath(`/forum/${postRes.rows[0].slug}`);
+    if (reply.post?.slug) {
+      revalidatePath(`/forum/${reply.post.slug}`);
     }
 
     return { success: true };
@@ -622,31 +617,36 @@ export async function updateForumReply(replyId: string, content: string) {
       return { success: false, error: "Reply cannot be empty." };
     }
 
-    const checkRes = await pool.query(
-      "SELECT profile_id, post_id FROM community_replies WHERE id = $1;",
-      [replyId]
-    );
+    const profile = await syncUserProfile(user);
 
-    if (checkRes.rows.length === 0) {
+    const reply = await db.communityReply.findUnique({
+      where: { id: replyId },
+      include: {
+        post: {
+          select: { slug: true },
+        },
+      },
+    });
+
+    if (!reply) {
       return { success: false, error: "Reply not found." };
     }
 
-    if (checkRes.rows[0].profile_id !== user.id) {
+    if (reply.profileId !== profile.id) {
       return { success: false, error: "You can only edit your own replies." };
     }
 
-    await pool.query(
-      "UPDATE community_replies SET content = $1, is_edited = TRUE WHERE id = $2;",
-      [content.trim(), replyId]
-    );
-
-    const postRes = await pool.query("SELECT slug FROM community_posts WHERE id = $1;", [
-      checkRes.rows[0].post_id,
-    ]);
+    await db.communityReply.update({
+      where: { id: replyId },
+      data: {
+        content: content.trim(),
+        isEdited: true,
+      },
+    });
 
     revalidatePath("/forum");
-    if (postRes.rows[0]?.slug) {
-      revalidatePath(`/forum/${postRes.rows[0].slug}`);
+    if (reply.post?.slug) {
+      revalidatePath(`/forum/${reply.post.slug}`);
     }
 
     return { success: true };
@@ -671,28 +671,32 @@ export async function deleteForumReply(replyId: string) {
       return { success: false, error: "Please sign in to delete your reply." };
     }
 
-    const checkRes = await pool.query(
-      "SELECT profile_id, post_id FROM community_replies WHERE id = $1;",
-      [replyId]
-    );
+    const profile = await syncUserProfile(user);
 
-    if (checkRes.rows.length === 0) {
+    const reply = await db.communityReply.findUnique({
+      where: { id: replyId },
+      include: {
+        post: {
+          select: { slug: true },
+        },
+      },
+    });
+
+    if (!reply) {
       return { success: false, error: "Reply not found." };
     }
 
-    if (checkRes.rows[0].profile_id !== user.id) {
+    if (reply.profileId !== profile.id) {
       return { success: false, error: "You can only delete your own replies." };
     }
 
-    await pool.query("DELETE FROM community_replies WHERE id = $1;", [replyId]);
-
-    const postRes = await pool.query("SELECT slug FROM community_posts WHERE id = $1;", [
-      checkRes.rows[0].post_id,
-    ]);
+    await db.communityReply.delete({
+      where: { id: replyId },
+    });
 
     revalidatePath("/forum");
-    if (postRes.rows[0]?.slug) {
-      revalidatePath(`/forum/${postRes.rows[0].slug}`);
+    if (reply.post?.slug) {
+      revalidatePath(`/forum/${reply.post.slug}`);
     }
 
     return { success: true };
@@ -717,35 +721,56 @@ export async function toggleForumPostUpvote(postId: string) {
       return { success: false, error: "Please sign in to upvote." };
     }
 
-    const checkSql = `
-      SELECT 1 FROM community_post_upvotes 
-      WHERE profile_id = $1 AND post_id = $2;
-    `;
-    const checkRes = await pool.query(checkSql, [user.id, postId]);
-    const alreadyUpvoted = checkRes.rows.length > 0;
+    const profile = await syncUserProfile(user);
 
-    if (alreadyUpvoted) {
-      await pool.query(
-        "DELETE FROM community_post_upvotes WHERE profile_id = $1 AND post_id = $2;",
-        [user.id, postId]
-      );
-      await pool.query(
-        "UPDATE community_posts SET upvotes = GREATEST(0, upvotes - 1) WHERE id = $1;",
-        [postId]
-      );
+    const existing = await db.communityPostUpvote.findUnique({
+      where: {
+        profileId_postId: {
+          profileId: profile.id,
+          postId,
+        },
+      },
+    });
+
+    if (existing) {
+      await db.$transaction([
+        db.communityPostUpvote.delete({
+          where: {
+            profileId_postId: {
+              profileId: profile.id,
+              postId,
+            },
+          },
+        }),
+        db.communityPost.update({
+          where: { id: postId },
+          data: {
+            upvotes: { decrement: 1 },
+          },
+        }),
+      ]);
+
+      revalidatePath("/forum");
+      return { success: true, hasUpvoted: false };
     } else {
-      await pool.query(
-        "INSERT INTO community_post_upvotes (profile_id, post_id) VALUES ($1, $2) ON CONFLICT DO NOTHING;",
-        [user.id, postId]
-      );
-      await pool.query(
-        "UPDATE community_posts SET upvotes = upvotes + 1 WHERE id = $1;",
-        [postId]
-      );
-    }
+      await db.$transaction([
+        db.communityPostUpvote.create({
+          data: {
+            profileId: profile.id,
+            postId,
+          },
+        }),
+        db.communityPost.update({
+          where: { id: postId },
+          data: {
+            upvotes: { increment: 1 },
+          },
+        }),
+      ]);
 
-    revalidatePath("/forum");
-    return { success: true, hasUpvoted: !alreadyUpvoted };
+      revalidatePath("/forum");
+      return { success: true, hasUpvoted: true };
+    }
   } catch (error) {
     console.error("Error toggling upvote:", error);
     return { success: false, error: "Failed to update upvote." };
@@ -767,26 +792,40 @@ export async function toggleSaveDiscussion(postId: string) {
       return { success: false, error: "Please sign in to bookmark discussions." };
     }
 
-    const checkRes = await pool.query(
-      "SELECT 1 FROM community_saved_posts WHERE profile_id = $1 AND post_id = $2;",
-      [user.id, postId]
-    );
-    const alreadySaved = checkRes.rows.length > 0;
+    const profile = await syncUserProfile(user);
 
-    if (alreadySaved) {
-      await pool.query(
-        "DELETE FROM community_saved_posts WHERE profile_id = $1 AND post_id = $2;",
-        [user.id, postId]
-      );
+    const existing = await db.communitySavedPost.findUnique({
+      where: {
+        profileId_postId: {
+          profileId: profile.id,
+          postId,
+        },
+      },
+    });
+
+    if (existing) {
+      await db.communitySavedPost.delete({
+        where: {
+          profileId_postId: {
+            profileId: profile.id,
+            postId,
+          },
+        },
+      });
+
+      revalidatePath("/forum");
+      return { success: true, hasSaved: false };
     } else {
-      await pool.query(
-        "INSERT INTO community_saved_posts (profile_id, post_id) VALUES ($1, $2) ON CONFLICT DO NOTHING;",
-        [user.id, postId]
-      );
-    }
+      await db.communitySavedPost.create({
+        data: {
+          profileId: profile.id,
+          postId,
+        },
+      });
 
-    revalidatePath("/forum");
-    return { success: true, hasSaved: !alreadySaved };
+      revalidatePath("/forum");
+      return { success: true, hasSaved: true };
+    }
   } catch (error) {
     console.error("Error toggling bookmark:", error);
     return { success: false, error: "Failed to bookmark discussion." };
@@ -808,9 +847,11 @@ export async function saveForumTipToTripNote(input: SaveTipToTripInput) {
       return { success: false, error: "Please sign in to save this tip." };
     }
 
+    const profile = await syncUserProfile(user);
+
     // Verify trip ownership
     const trip = await db.trip.findFirst({
-      where: { id: input.tripId, profileId: user.id },
+      where: { id: input.tripId, profileId: profile.id },
       select: { id: true, title: true },
     });
 
@@ -850,8 +891,10 @@ export async function getUserTripsForDiscussion(): Promise<UserTripOption[]> {
 
     if (!user) return [];
 
+    const profile = await syncUserProfile(user);
+
     const trips = await db.trip.findMany({
-      where: { profileId: user.id },
+      where: { profileId: profile.id },
       select: {
         id: true,
         title: true,

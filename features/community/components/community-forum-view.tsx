@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
+import { useMemo, useState, useTransition } from "react";
 
 import {
   ArrowRight,
@@ -33,18 +33,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { NewDiscussionDialog } from "@/features/community/components/new-discussion-dialog";
+
 import {
   getForumDiscussions,
   toggleForumPostUpvote,
   toggleSaveDiscussion,
 } from "@/features/community/forum-actions";
+
 import {
   DEFAULT_CATEGORY_IMAGES,
   FORUM_CATEGORIES,
 } from "@/features/community/forum-data";
-import {
+import type {
   ForumCategory,
   ForumPost,
   UserTripOption,
@@ -193,30 +194,30 @@ export function CommunityForumView({
   };
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="max-w-7xl mx-auto space-y-6 pb-12">
       {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-border">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-border dark:border-zinc-800">
         <div className="space-y-1">
           <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
             Community Discussions
           </span>
-          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
             Traveler{" "}
-            <span className="font-serif italic font-normal text-foreground">
+            <span className="font-serif italic font-normal text-foreground dark:text-zinc-100">
               Forum
             </span>
           </h1>
-          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 font-normal leading-relaxed max-w-2xl">
             Ask for route advice, share secret viewpoints and culinary spots, discuss gear packing, or inspect fellow travelers&apos; itineraries.
           </p>
         </div>
 
         <div className="flex items-center gap-2.5 shrink-0">
           <div className="relative w-full sm:w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground dark:text-zinc-500" />
             <Input
               placeholder="Search topics, destinations..."
-              className="pl-8.5 h-9 text-xs bg-background border-border rounded-sm"
+              className="pl-8.5 h-9 text-xs bg-background dark:bg-[#0F131C] border-border dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 rounded-sm"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -244,7 +245,7 @@ export function CommunityForumView({
               setShowBookmarkedOnly(false);
             }}
           >
-            <SelectTrigger className="h-9 text-xs bg-card border-border w-full flex items-center justify-between cursor-pointer rounded-sm shadow-xs">
+            <SelectTrigger className="h-9 text-xs bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800 dark:text-zinc-200 w-full flex items-center justify-between cursor-pointer rounded-sm shadow-xs">
               <div className="flex items-center gap-2 truncate">
                 {(() => {
                   const ActiveIcon = CATEGORY_ICON_MAP[activeCategory] || MessageSquare;
@@ -255,13 +256,13 @@ export function CommunityForumView({
                 </span>
               </div>
             </SelectTrigger>
-            <SelectContent className="bg-popover border-border">
+            <SelectContent className="bg-popover dark:bg-[#0F131C] border-border dark:border-zinc-800">
               {FORUM_CATEGORIES.map((cat) => {
                 const Icon = CATEGORY_ICON_MAP[cat.id] || MessageSquare;
                 return (
-                  <SelectItem key={cat.id} value={cat.id} className="text-xs cursor-pointer">
+                  <SelectItem key={cat.id} value={cat.id} className="text-xs cursor-pointer dark:hover:bg-zinc-800/60">
                     <div className="flex items-center gap-2">
-                      <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+                      <Icon className="h-3.5 w-3.5 text-muted-foreground dark:text-zinc-400" />
                       <span>{cat.label}</span>
                     </div>
                   </SelectItem>
@@ -280,7 +281,7 @@ export function CommunityForumView({
           className={`h-9 px-3 gap-1.5 text-xs shrink-0 cursor-pointer font-medium rounded-sm ${
             showBookmarkedOnly
               ? "bg-primary text-primary-foreground shadow-xs"
-              : "bg-card hover:bg-muted text-muted-foreground hover:text-foreground border-border"
+              : "bg-card dark:bg-[#0F131C] hover:bg-muted dark:hover:bg-zinc-800/60 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 border-border dark:border-zinc-800"
           }`}
           title="Filter saved and bookmarked discussions"
         >
@@ -329,7 +330,7 @@ export function CommunityForumView({
 
       {/* Discussions Grid Layout (2–3 Columns) */}
       {filteredPosts.length === 0 ? (
-        <div className="rounded-md border border-dashed border-border bg-card/40 p-12 text-center space-y-4">
+        <div className="rounded-md border border-dashed border-border dark:border-zinc-800 bg-card/40 dark:bg-[#0F131C]/60 p-12 text-center space-y-4">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
             {showBookmarkedOnly ? (
               <Bookmark className="h-6 w-6" />
@@ -338,12 +339,12 @@ export function CommunityForumView({
             )}
           </div>
           <div className="space-y-1">
-            <h3 className="text-sm font-bold text-foreground">
+            <h3 className="text-sm font-bold text-foreground dark:text-zinc-100">
               {showBookmarkedOnly
                 ? "No bookmarked discussions yet"
                 : "No discussions yet in this topic"}
             </h3>
-            <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+            <p className="text-xs text-muted-foreground dark:text-zinc-400 max-w-sm mx-auto">
               {showBookmarkedOnly
                 ? "Click the bookmark icon on any discussion card to quickly save it for later review."
                 : "Be the first traveler to start a conversation, ask for pacing advice, or share hidden gems!"}
@@ -354,7 +355,7 @@ export function CommunityForumView({
               size="sm"
               variant="outline"
               onClick={() => setShowBookmarkedOnly(false)}
-              className="text-xs cursor-pointer shadow-xs rounded-md"
+              className="text-xs cursor-pointer shadow-xs rounded-md border-border dark:border-zinc-800 dark:hover:bg-zinc-800/60"
             >
               View All Discussions
             </Button>
@@ -385,10 +386,10 @@ export function CommunityForumView({
             return (
               <Card
                 key={post.id}
-                className="group flex flex-col justify-between border border-border bg-card hover:border-primary/50 transition-all duration-200 shadow-2xs hover:shadow-xs rounded-md overflow-hidden"
+                className="group flex flex-col justify-between border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200 shadow-2xs hover:shadow-xs rounded-md overflow-hidden"
               >
                 {/* Cover Visual Thumbnail with Default Fallback */}
-                <div className="relative h-32 w-full overflow-hidden border-b border-border bg-muted/40">
+                <div className="relative h-32 w-full overflow-hidden border-b border-border dark:border-zinc-800 bg-muted/40 dark:bg-zinc-900/50">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={coverImage}
@@ -406,7 +407,7 @@ export function CommunityForumView({
                           {post.categoryLabel}
                         </Badge>
                         {post.destination && (
-                          <span className="flex items-center gap-0.5 text-[11px] text-muted-foreground truncate max-w-[120px]">
+                          <span className="flex items-center gap-0.5 text-[11px] text-muted-foreground dark:text-zinc-400 truncate max-w-[120px]">
                             <MapPin className="h-3 w-3 text-primary shrink-0" />
                             <span className="truncate">{post.destination}</span>
                           </span>
@@ -419,7 +420,7 @@ export function CommunityForumView({
                         className={`p-1 rounded-md transition-colors cursor-pointer ${
                           post.hasSaved
                             ? "text-primary bg-primary/10"
-                            : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                            : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 hover:bg-muted dark:hover:bg-zinc-800/60"
                         }`}
                         title={post.hasSaved ? "Remove Bookmark" : "Bookmark Discussion"}
                       >
@@ -429,25 +430,25 @@ export function CommunityForumView({
 
                     {/* Title */}
                     <Link href={postHref} className="block">
-                      <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                      <h3 className="text-sm font-bold text-foreground dark:text-zinc-100 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                         {post.title}
                       </h3>
                     </Link>
 
                     {/* Content Excerpt */}
-                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-muted-foreground dark:text-zinc-400 line-clamp-2 leading-relaxed">
                       {post.content}
                     </p>
 
                     {/* Attached Workspace Trip Badge */}
                     {post.linkedTrip && (
-                      <div className="flex items-center gap-1.5 rounded-md bg-muted/40 border border-border px-2 py-1 text-[11px] text-foreground">
+                      <div className="flex items-center gap-1.5 rounded-md bg-muted/40 dark:bg-[#121622] border border-border dark:border-zinc-800 px-2 py-1 text-[11px] text-foreground dark:text-zinc-200">
                         <Compass className="h-3 w-3 text-primary shrink-0" />
                         <span className="font-semibold text-primary truncate max-w-[140px]">
                           {post.linkedTrip.title}
                         </span>
-                        <span className="text-muted-foreground">•</span>
-                        <span className="text-muted-foreground text-[10px]">
+                        <span className="text-muted-foreground dark:text-zinc-500">•</span>
+                        <span className="text-muted-foreground dark:text-zinc-400 text-[10px]">
                           {post.linkedTrip.durationDays}d
                         </span>
                       </div>
@@ -459,7 +460,7 @@ export function CommunityForumView({
                         {post.tags.slice(0, 3).map((tag) => (
                           <span
                             key={tag}
-                            className="text-[9px] text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded-sm"
+                            className="text-[9px] text-muted-foreground dark:text-zinc-400 bg-muted/60 dark:bg-zinc-800/60 px-1.5 py-0.5 rounded-sm"
                           >
                             #{tag}
                           </span>
@@ -469,11 +470,11 @@ export function CommunityForumView({
                   </div>
 
                   {/* Footer Metas & View Thread CTA */}
-                  <div className="pt-3 border-t border-border space-y-2">
+                  <div className="pt-3 border-t border-border dark:border-zinc-800 space-y-2">
                     <div className="flex items-center justify-between text-xs">
                       {/* Author */}
                       <div className="flex items-center gap-1.5">
-                        <Avatar className="h-5 w-5 border border-border">
+                        <Avatar className="h-5 w-5 border border-border dark:border-zinc-800">
                           {post.authorAvatarUrl && (
                             <AvatarImage src={post.authorAvatarUrl} alt={post.authorName} />
                           )}
@@ -481,11 +482,11 @@ export function CommunityForumView({
                             {getAuthorInitials(post.authorName)}
                           </AvatarFallback>
                         </Avatar>
-                        <span className="text-[11px] font-medium text-foreground truncate max-w-[100px]">
+                        <span className="text-[11px] font-medium text-foreground dark:text-zinc-200 truncate max-w-[100px]">
                           {post.authorName}
                         </span>
-                        <span className="text-[10px] text-muted-foreground">•</span>
-                        <span className="text-[10px] text-muted-foreground">{post.createdAt}</span>
+                        <span className="text-[10px] text-muted-foreground dark:text-zinc-500">•</span>
+                        <span className="text-[10px] text-muted-foreground dark:text-zinc-400">{post.createdAt}</span>
                       </div>
 
                       {/* Social Stats */}
@@ -497,7 +498,7 @@ export function CommunityForumView({
                           className={`flex items-center gap-1 text-[11px] px-1.5 py-0.5 rounded transition-colors cursor-pointer ${
                             post.hasUpvoted
                               ? "bg-primary/10 text-primary font-semibold"
-                              : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                              : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 hover:bg-muted dark:hover:bg-zinc-800/60"
                           }`}
                         >
                           <ThumbsUp className={`h-3 w-3 ${post.hasUpvoted ? "fill-current" : ""}`} />
@@ -505,7 +506,7 @@ export function CommunityForumView({
                         </button>
 
                         {/* Replies */}
-                        <div className="flex items-center gap-1 text-muted-foreground text-[11px]">
+                        <div className="flex items-center gap-1 text-muted-foreground dark:text-zinc-400 text-[11px]">
                           <MessageSquare className="h-3 w-3" />
                           <span>{post.repliesCount}</span>
                         </div>
