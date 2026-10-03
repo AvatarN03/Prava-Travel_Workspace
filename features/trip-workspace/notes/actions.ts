@@ -3,20 +3,17 @@
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
-
 import { verifyTripOwnership } from "../common/auth-check";
+
 import {
   createNoteSchema,
   deleteNoteSchema,
   togglePinNoteSchema,
   updateNoteSchema,
-} from "./schema";
-
-import type {
-  CreateNoteInput,
-  DeleteNoteInput,
-  TogglePinNoteInput,
-  UpdateNoteInput,
+  type CreateNoteInput,
+  type DeleteNoteInput,
+  type TogglePinNoteInput,
+  type UpdateNoteInput,
 } from "./schema";
 
 export async function createNote(input: CreateNoteInput) {

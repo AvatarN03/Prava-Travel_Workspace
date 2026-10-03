@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+
 import {
   FileText,
   Pin,
@@ -10,13 +11,14 @@ import {
   Tag,
   X,
 } from "lucide-react";
-import { Note } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { AddNoteDialog } from "./add-note-dialog";
 import { NoteCard } from "./note-card";
+
+import type { Note } from "@prisma/client";
 
 interface NotesGridProps {
   tripId: string;

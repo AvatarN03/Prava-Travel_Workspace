@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+
 import {
   ChevronDown,
   ChevronUp,
@@ -25,9 +26,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { MarkdownRenderer } from "@/features/blog";
 import { EditNoteDialog } from "./edit-note-dialog";
 
-import { MarkdownRenderer } from "@/features/blog";
 import { deleteNote, togglePinNote } from "../actions";
 
 import type { Note } from "@prisma/client";
