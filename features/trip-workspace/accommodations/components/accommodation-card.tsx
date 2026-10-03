@@ -28,8 +28,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import { EditAccommodationDialog } from "./edit-accommodation-dialog";
+
 import { deleteAccommodation } from "../actions";
 
 import type { Accommodation } from "@prisma/client";

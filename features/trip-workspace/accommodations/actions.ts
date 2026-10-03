@@ -3,18 +3,15 @@
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
-
 import { verifyTripOwnership } from "../common/auth-check";
+
 import {
   createAccommodationSchema,
   deleteAccommodationSchema,
   updateAccommodationSchema,
-} from "./schema";
-
-import type {
-  CreateAccommodationInput,
-  DeleteAccommodationInput,
-  UpdateAccommodationInput,
+  type CreateAccommodationInput,
+  type DeleteAccommodationInput,
+  type UpdateAccommodationInput,
 } from "./schema";
 
 export async function createAccommodation(input: CreateAccommodationInput) {

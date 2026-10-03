@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-
 import { AccommodationCard } from "./accommodation-card";
 import { AddAccommodationDialog } from "./add-accommodation-dialog";
 
