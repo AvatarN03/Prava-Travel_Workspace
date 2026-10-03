@@ -4,8 +4,8 @@ import {
   type GatewayOptions,
   type GatewayResult,
 } from "./gateway";
-
 import { GROQ_MODELS } from "./models";
+
 export { GROQ_MODELS };
 
 export type GroqMessage = GatewayMessage;

@@ -4,8 +4,8 @@ import {
   type GatewayOptions,
   type GatewayResult,
 } from "./gateway";
-
 import { OPENCODE_ZEN_FREE_MODELS } from "./models";
+
 export { OPENCODE_ZEN_FREE_MODELS };
 
 export type OpenCodeMessage = GatewayMessage;

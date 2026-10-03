@@ -2,14 +2,16 @@
 
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
-  useState,
   useRef,
-  useCallback,
+  useState,
 } from "react";
-import { openDB, type IDBPDatabase } from "idb";
-import { WifiOff, Database } from "lucide-react";
+
+import { type IDBPDatabase, openDB } from "idb";
+import { Database, WifiOff } from "lucide-react";
+
 import { fetchTripsForOfflineSync } from "./actions";
 
 // ─── Constants & Types ────────────────────────────────────────────────────────

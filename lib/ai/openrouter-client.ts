@@ -1,12 +1,12 @@
 import {
   callOpenAiCompatible,
-  stripReasoning,
   type GatewayMessage,
   type GatewayOptions,
   type GatewayResult,
+  stripReasoning,
 } from "./gateway";
-
 import { OPENROUTER_FREE_MODELS } from "./models";
+
 export { OPENROUTER_FREE_MODELS };
 
 export type OpenRouterMessage = GatewayMessage;

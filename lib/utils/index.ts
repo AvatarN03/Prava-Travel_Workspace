@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export * from "./image-resize";
@@ -34,6 +34,26 @@ export function formatDateRange(
   }
   const e = new Date(end!);
   return isNaN(e.getTime()) ? "Dates not set" : `Ends ${e.toLocaleDateString("en-US", options)}`;
+}
+
+/**
+ * Checks if a trip's planned dates have completely passed relative to the current local day.
+ * Returns true if endDate (or startDate if no endDate) is before today midnight.
+ */
+export function isTripDatesPassed(
+  start?: Date | string | null,
+  end?: Date | string | null
+): boolean {
+  const target = end || start;
+  if (!target) return false;
+  const targetDate = new Date(target);
+  if (isNaN(targetDate.getTime())) return false;
+
+  const now = new Date();
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const targetMidnight = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime();
+
+  return targetMidnight < todayMidnight;
 }
 
 /**
