@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+
 import {
   ArrowUpRight,
   BookOpen,
@@ -66,10 +67,10 @@ export function DashboardQuickActions() {
     <div className="space-y-3 pt-2">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 select-none">
+          <h3 className="dashboard-section-eyebrow">
             Quick Actions &amp; Travel Utilities
           </h3>
-          <p className="font-sans text-[11px] text-muted-foreground mt-0.5">
+          <p className="dashboard-subtext mt-0.5">
             Combined travel essentials, destination intelligence, and curated community shortcuts
           </p>
         </div>
@@ -81,7 +82,7 @@ export function DashboardQuickActions() {
           return (
             <Card
               key={group.id}
-              className="border-border bg-card shadow-xs rounded-md hover:border-[#2D9BF0]/40 transition-colors flex flex-col justify-between p-4 space-y-3.5"
+              className="dashboard-card-hover flex flex-col justify-between p-4 space-y-3.5"
             >
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
@@ -89,14 +90,14 @@ export function DashboardQuickActions() {
                     <span className={`p-1.5 rounded-xs ${group.iconColor}`}>
                       <GroupIcon className="w-4 h-4" />
                     </span>
-                    <span className="font-sans text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    <span className="font-sans text-[10px] font-semibold uppercase tracking-wider text-muted-foreground dark:text-zinc-400">
                       {group.category}
                     </span>
                   </div>
 
                   <Link
                     href={group.mainHref}
-                    className="text-muted-foreground hover:text-primary transition-colors p-1"
+                    className="text-muted-foreground dark:text-zinc-400 hover:text-primary transition-colors p-1"
                     title={`Open ${group.title}`}
                   >
                     <ArrowUpRight className="w-4 h-4" />
@@ -106,18 +107,18 @@ export function DashboardQuickActions() {
                 <div>
                   <Link
                     href={group.mainHref}
-                    className="font-sans text-sm font-semibold text-foreground hover:text-primary transition-colors block"
+                    className="font-sans text-sm font-semibold text-foreground dark:text-zinc-100 hover:text-primary transition-colors block"
                   >
                     {group.title}
                   </Link>
-                  <p className="font-sans text-xs text-muted-foreground mt-1 leading-relaxed line-clamp-2">
+                  <p className="font-sans text-xs text-muted-foreground dark:text-zinc-400 mt-1 leading-relaxed line-clamp-2">
                     {group.description}
                   </p>
                 </div>
               </div>
 
               {/* Combined Sub-Tools Pills */}
-              <div className="pt-2 border-t border-border/60">
+              <div className="pt-2 border-t border-border/60 dark:border-zinc-800/80">
                 <div className="flex flex-wrap gap-1.5">
                   {group.tools.map((tool) => {
                     const ToolIcon = tool.icon;
@@ -125,7 +126,7 @@ export function DashboardQuickActions() {
                       <Link
                         key={tool.label}
                         href={tool.href}
-                        className="inline-flex items-center gap-1.5 px-2 py-1 rounded-xs font-sans text-[11px] font-medium bg-muted/60 hover:bg-muted text-slate-700 dark:text-slate-300 hover:text-foreground transition-colors cursor-pointer border border-border/50"
+                        className="dashboard-interactive-row inline-flex items-center gap-1.5 px-2 py-1 font-sans text-[11px] font-medium text-slate-700 dark:text-zinc-300 hover:text-primary transition-colors cursor-pointer"
                       >
                         <ToolIcon className="w-3 h-3 text-primary shrink-0" />
                         <span>{tool.label}</span>

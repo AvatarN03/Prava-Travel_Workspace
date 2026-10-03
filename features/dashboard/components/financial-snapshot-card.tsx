@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import { ArrowUpRight, TrendingUp } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -35,20 +36,20 @@ export function FinancialSnapshotCard({ trip }: FinancialSnapshotCardProps) {
   };
 
   return (
-    <Card className="border-border bg-card shadow-xs rounded-md">
+    <Card className="dashboard-card">
       <CardHeader className="p-5 pb-3">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-1">
-            <span className="font-sans text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500 block select-none">
+            <span className="dashboard-section-eyebrow block">
               Financial Snapshot
             </span>
-            <h3 className="font-sans text-sm sm:text-base font-semibold tracking-tight text-foreground flex items-center gap-1.5">
+            <h3 className="font-sans text-sm sm:text-base font-semibold tracking-tight text-foreground dark:text-zinc-100 flex items-center gap-1.5">
               Trip expenses — {trip.title}
             </h3>
           </div>
 
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="font-sans text-xs font-semibold tabular-nums rounded-xs">
+            <Badge variant="outline" className="font-sans text-xs font-semibold tabular-nums rounded-xs dark:border-zinc-800">
               {financials.currency} ({currencySymbol})
             </Badge>
             <Link
@@ -63,27 +64,27 @@ export function FinancialSnapshotCard({ trip }: FinancialSnapshotCardProps) {
 
       <CardContent className="p-5 pt-1 space-y-5">
         {/* 3-Column Metrics: Total Spent | Allocated Budget | Remaining */}
-        <div className="grid grid-cols-3 gap-3 p-3.5 rounded-sm border border-border/70 bg-muted/20">
+        <div className="grid grid-cols-3 gap-3 p-3.5 dashboard-surface-subtle">
           <div>
-            <div className="font-sans text-[11px] font-medium text-muted-foreground">Total Spent</div>
-            <div className="font-sans text-lg sm:text-xl font-semibold tabular-nums text-foreground mt-0.5">
+            <div className="font-sans text-[11px] font-medium text-muted-foreground dark:text-zinc-400">Total Spent</div>
+            <div className="font-sans text-lg sm:text-xl font-semibold tabular-nums text-foreground dark:text-zinc-100 mt-0.5">
               {formatAmount(financials.totalSpent)}
             </div>
           </div>
 
           <div>
-            <div className="font-sans text-[11px] font-medium text-muted-foreground">Allocated Budget</div>
-            <div className="font-sans text-lg sm:text-xl font-semibold tabular-nums text-muted-foreground mt-0.5">
+            <div className="font-sans text-[11px] font-medium text-muted-foreground dark:text-zinc-400">Allocated Budget</div>
+            <div className="font-sans text-lg sm:text-xl font-semibold tabular-nums text-muted-foreground dark:text-zinc-400 mt-0.5">
               {formatAmount(financials.allocatedBudget)}
             </div>
           </div>
 
           <div>
-            <div className="font-sans text-[11px] font-medium text-muted-foreground">Remaining</div>
+            <div className="font-sans text-[11px] font-medium text-muted-foreground dark:text-zinc-400">Remaining</div>
             <div
               className={`font-sans text-lg sm:text-xl font-semibold tabular-nums mt-0.5 ${
                 financials.remainingBudget > 0
-                  ? "text-primary"
+                  ? "text-primary dark:text-[#38BDF8]"
                   : "text-amber-600 dark:text-amber-400"
               }`}
             >
@@ -95,15 +96,15 @@ export function FinancialSnapshotCard({ trip }: FinancialSnapshotCardProps) {
         {/* Budget Usage Bar */}
         <div className="space-y-2">
           <div className="flex items-center justify-between font-sans text-xs">
-            <span className="font-medium text-foreground">Budget usage</span>
-            <span className="text-muted-foreground tabular-nums">
+            <span className="font-medium text-foreground dark:text-zinc-200">Budget usage</span>
+            <span className="text-muted-foreground dark:text-zinc-400 tabular-nums">
               {financials.percentUtilized}% utilized
             </span>
           </div>
 
           {/* If breakdown exists, render multi-segment bar */}
           {financials.categoryBreakdown.length > 0 ? (
-            <div className="h-2 w-full flex rounded-full overflow-hidden bg-muted">
+            <div className="h-2 w-full flex rounded-full overflow-hidden bg-muted dark:bg-zinc-800">
               {financials.categoryBreakdown.map((cat) => {
                 const config =
                   CATEGORY_COLORS[cat.category.toUpperCase()] || CATEGORY_COLORS.OTHER;
@@ -118,7 +119,7 @@ export function FinancialSnapshotCard({ trip }: FinancialSnapshotCardProps) {
               })}
             </div>
           ) : (
-            <Progress value={financials.percentUtilized} className="h-2 rounded-full" />
+            <Progress value={financials.percentUtilized} className="h-2 rounded-full bg-muted dark:bg-zinc-800" />
           )}
 
           {/* Category Legend Pills */}
@@ -128,9 +129,9 @@ export function FinancialSnapshotCard({ trip }: FinancialSnapshotCardProps) {
                 const config =
                   CATEGORY_COLORS[cat.category.toUpperCase()] || CATEGORY_COLORS.OTHER;
                 return (
-                  <div key={cat.category} className="flex items-center gap-1.5 text-muted-foreground">
+                  <div key={cat.category} className="flex items-center gap-1.5 text-muted-foreground dark:text-zinc-400">
                     <span className={`w-2 h-2 rounded-full ${config.bg}`} />
-                    <span className="font-medium text-foreground tabular-nums">
+                    <span className="font-medium text-foreground dark:text-zinc-200 tabular-nums">
                       {formatAmount(cat.amount)}
                     </span>
                     <span className="tabular-nums">
@@ -141,7 +142,7 @@ export function FinancialSnapshotCard({ trip }: FinancialSnapshotCardProps) {
               })}
             </div>
           ) : (
-            <div className="font-sans text-[11px] text-muted-foreground flex items-center gap-1.5 pt-0.5">
+            <div className="font-sans text-[11px] text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5 pt-0.5">
               <TrendingUp className="w-3 h-3 text-primary" />
               <span>No logged expenses yet. Add expenses in the trip workspace.</span>
             </div>

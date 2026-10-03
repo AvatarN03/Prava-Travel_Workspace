@@ -1,15 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-import { Expense } from "@prisma/client";
+import type { Expense } from "@prisma/client";
 import {
   ArrowUpRight,
-  ChevronRight,
   Coins,
   CreditCard,
-  FolderOpen,
   Loader2,
   Package,
   Plus,
@@ -39,7 +37,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 
 import {
   createGeneralTravelExpense,
@@ -182,28 +179,28 @@ export function TravelFinancialsDialog({
 
         <div className="space-y-4 py-2 flex-1 overflow-y-auto pr-1">
           {/* Spend Summary Matrix */}
-          <div className="grid grid-cols-3 gap-2.5 p-3 rounded-lg bg-muted/40 border border-border">
+          <div className="grid grid-cols-3 gap-2.5 p-3 rounded-lg dashboard-surface-subtle">
             <div className="space-y-0.5">
-              <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">
+              <span className="text-[10px] uppercase font-semibold text-muted-foreground dark:text-zinc-400 tracking-wider">
                 Total Spend
               </span>
-              <div className="text-lg font-bold font-mono text-foreground">
+              <div className="text-lg font-bold font-mono text-foreground dark:text-zinc-100">
                 {currency} {metrics.totalSpend.toLocaleString()}
               </div>
             </div>
             <div className="space-y-0.5">
-              <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">
+              <span className="text-[10px] uppercase font-semibold text-muted-foreground dark:text-zinc-400 tracking-wider">
                 Trip Workspaces
               </span>
-              <div className="text-sm font-semibold font-mono text-foreground">
+              <div className="text-sm font-semibold font-mono text-foreground dark:text-zinc-200">
                 {currency} {metrics.tripSpend.toLocaleString()}
               </div>
             </div>
             <div className="space-y-0.5">
-              <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">
+              <span className="text-[10px] uppercase font-semibold text-muted-foreground dark:text-zinc-400 tracking-wider">
                 Travel Gear & Overheads
               </span>
-              <div className="text-sm font-semibold font-mono text-foreground">
+              <div className="text-sm font-semibold font-mono text-foreground dark:text-zinc-200">
                 {currency} {metrics.generalSpend.toLocaleString()}
               </div>
             </div>
@@ -213,10 +210,10 @@ export function TravelFinancialsDialog({
           {showAddForm ? (
             <form
               onSubmit={handleCreate}
-              className="p-3.5 rounded-lg border border-border bg-card space-y-3"
+              className="p-3.5 rounded-lg dashboard-surface-subtle space-y-3"
             >
-              <div className="flex items-center justify-between pb-1 border-b border-border/60">
-                <span className="text-xs font-semibold text-foreground">
+              <div className="flex items-center justify-between pb-1 border-b border-border/60 dark:border-zinc-800/80">
+                <span className="text-xs font-semibold text-foreground dark:text-zinc-100">
                   Record Travel Overhead / Gear
                 </span>
                 <button
@@ -347,7 +344,7 @@ export function TravelFinancialsDialog({
           {/* List of general travel overheads */}
           <div className="space-y-2">
             {generalExpenses.length === 0 ? (
-              <div className="p-6 rounded-md border border-dashed text-center text-xs text-muted-foreground">
+              <div className="p-6 rounded-md border border-dashed border-border dark:border-zinc-800 text-center text-xs text-muted-foreground dark:text-zinc-400">
                 No general travel overhead items logged yet. Record global items like travel backpacks, multi-trip insurance, or passport renewals here.
               </div>
             ) : (
@@ -358,7 +355,7 @@ export function TravelFinancialsDialog({
                 return (
                   <div
                     key={exp.id}
-                    className="flex items-center justify-between p-2.5 rounded-md border border-border bg-card/60 hover:bg-card transition-colors text-xs"
+                    className="dashboard-interactive-row flex items-center justify-between p-2.5 text-xs"
                   >
                     <div className="flex items-center gap-2.5 min-w-0 flex-1">
                       <Badge
@@ -367,18 +364,18 @@ export function TravelFinancialsDialog({
                       >
                         {catInfo.label}
                       </Badge>
-                      <span className="font-semibold text-foreground truncate">
+                      <span className="font-semibold text-foreground dark:text-zinc-200 truncate">
                         {exp.title}
                       </span>
                       {exp.notes && (
-                        <span className="text-[11px] text-muted-foreground truncate hidden sm:inline">
+                        <span className="text-[11px] text-muted-foreground dark:text-zinc-400 truncate hidden sm:inline">
                           — {exp.notes}
                         </span>
                       )}
                     </div>
 
                     <div className="flex items-center gap-3 flex-shrink-0">
-                      <span className="font-mono font-bold text-foreground">
+                      <span className="font-mono font-bold text-foreground dark:text-zinc-100">
                         {exp.currency} {exp.amount.toLocaleString()}
                       </span>
                       <button

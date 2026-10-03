@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+
 import {
   ArrowUpRight,
   Compass,
@@ -12,21 +13,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { formatDateRange } from "@/lib/utils";
 
-import type { TripSummaryItem } from "../queries";
 import { getTripStatusBadge } from "../constants";
+import type { TripSummaryItem } from "../queries";
 
 interface RecentTripsListProps {
   trips: TripSummaryItem[];
 }
 
 export function RecentTripsList({ trips }: RecentTripsListProps) {
-
   return (
-    <Card className="border-border bg-card shadow-xs rounded-md">
-      <CardHeader className="p-4 pb-3 border-b border-border/60 flex flex-row items-center justify-between">
+    <Card className="dashboard-card">
+      <CardHeader className="dashboard-card-header p-4 pb-3 flex flex-row items-center justify-between">
         <div className="flex items-center gap-2">
           <Plane className="w-4 h-4 text-primary" />
-          <CardTitle className="font-sans text-sm font-semibold tracking-tight text-foreground">
+          <CardTitle className="dashboard-title">
             My trips
           </CardTitle>
         </div>
@@ -41,7 +41,7 @@ export function RecentTripsList({ trips }: RecentTripsListProps) {
 
       <CardContent className="p-4 space-y-2.5">
         {trips.length === 0 ? (
-          <div className="text-center py-6 font-sans text-xs text-muted-foreground">
+          <div className="text-center py-6 font-sans text-xs text-muted-foreground dark:text-zinc-400">
             No trips created yet.
           </div>
         ) : (
@@ -52,11 +52,11 @@ export function RecentTripsList({ trips }: RecentTripsListProps) {
             return (
               <div
                 key={trip.id}
-                className="flex items-center justify-between gap-3 p-2.5 rounded-sm border border-border/80 bg-background hover:border-primary/40 hover:bg-accent/30 transition-colors text-xs group"
+                className="dashboard-interactive-row flex items-center justify-between gap-3 p-2.5 text-xs group"
               >
                 {/* Left: Thumbnail icon & details */}
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="relative w-10 h-10 rounded-xs overflow-hidden bg-primary/10 flex items-center justify-center shrink-0 border border-border/50">
+                  <div className="relative w-10 h-10 rounded-xs overflow-hidden dashboard-surface-subtle flex items-center justify-center shrink-0 border border-border/50 dark:border-zinc-800">
                     {trip.coverImageUrl ? (
                       <Image
                         src={trip.coverImageUrl}
@@ -74,7 +74,7 @@ export function RecentTripsList({ trips }: RecentTripsListProps) {
                     <div className="flex items-center gap-2 flex-wrap">
                       <Link
                         href={`/trips/${trip.id}`}
-                        className="font-sans font-semibold text-foreground truncate group-hover:text-primary transition-colors max-w-[180px] sm:max-w-[240px]"
+                        className="font-sans font-semibold text-foreground dark:text-zinc-100 truncate group-hover:text-primary transition-colors max-w-[180px] sm:max-w-[240px]"
                       >
                         {trip.title}
                       </Link>
@@ -86,10 +86,10 @@ export function RecentTripsList({ trips }: RecentTripsListProps) {
                       </Badge>
                     </div>
 
-                    <div className="font-sans text-[11px] text-muted-foreground flex items-center gap-1.5 truncate">
+                    <div className="font-sans text-[11px] text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5 truncate">
                       {trip.destination && (
                         <>
-                          <span className="font-serif italic truncate max-w-[120px] text-foreground/80">
+                          <span className="font-serif italic truncate max-w-[120px] text-foreground/80 dark:text-zinc-300">
                             {trip.destination}
                           </span>
                           <span>·</span>
@@ -107,7 +107,7 @@ export function RecentTripsList({ trips }: RecentTripsListProps) {
                   size="sm"
                   variant="outline"
                   asChild
-                  className="h-7 px-2.5 font-sans text-xs font-medium shrink-0 cursor-pointer hover:border-primary/50 rounded-xs"
+                  className="h-7 px-2.5 font-sans text-xs font-medium shrink-0 cursor-pointer hover:border-primary/50 rounded-xs dark:border-zinc-800 dark:hover:bg-zinc-800"
                 >
                   <Link href={`/trips/${trip.id}`}>
                     {isCompleted ? "Review" : "Open"}
