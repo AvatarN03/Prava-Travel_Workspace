@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 
 import { ItineraryView } from "@/features/trip-workspace";
-import { verifyTripOwnership } from "@/features/trip-workspace/common/auth-check";
 
+import { verifyTripOwnership } from "@/features/trip-workspace/common/auth-check";
 import { db } from "@/lib/db";
 
 interface ItineraryPageProps {

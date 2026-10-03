@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 
 import { ExpenseTracker } from "@/features/trip-workspace";
-import { verifyTripOwnership } from "@/features/trip-workspace/common/auth-check";
-import { fetchFxRates } from "@/features/travel-essentials";
 
+import { fetchFxRates } from "@/features/travel-essentials";
+import { verifyTripOwnership } from "@/features/trip-workspace/common/auth-check";
 import { db } from "@/lib/db";
 
 interface ExpensesPageProps {

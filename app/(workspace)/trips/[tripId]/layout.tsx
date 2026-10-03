@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { TripWorkspaceContainer } from "@/features/trip-workspace";
+
 import { verifyTripOwnership } from "@/features/trip-workspace/common/auth-check";
 
 interface TripWorkspaceLayoutProps {
