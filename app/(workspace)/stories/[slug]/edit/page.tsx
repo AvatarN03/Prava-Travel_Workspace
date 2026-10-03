@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 
-import { BlogEditor, getBlogPostForEdit } from "@/features/blog";
-import { getTrips } from "@/features/trips";
+import { BlogEditor } from "@/features/blog/components/blog-editor";
+
+import { getBlogPostForEdit } from "@/features/blog/actions";
+import { getTrips } from "@/features/trips/actions";
 
 export const dynamic = "force-dynamic";
 

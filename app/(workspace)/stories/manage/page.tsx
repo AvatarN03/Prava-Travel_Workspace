@@ -1,4 +1,6 @@
-import { getMyBlogPosts, MyStoriesList } from "@/features/blog";
+import { MyStoriesList } from "@/features/blog/components/my-stories-list";
+
+import { getMyBlogPosts } from "@/features/blog/actions";
 
 export const dynamic = "force-dynamic";
 
