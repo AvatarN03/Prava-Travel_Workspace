@@ -1,8 +1,8 @@
 "use client";
 
-import { useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 
 import {
   BookOpen,
@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/card";
 
 import { cloneTripTemplate } from "../actions";
+
 import type { TemplateTripItem } from "../types";
 
 interface TemplateCardProps {
@@ -66,21 +67,21 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
     .toUpperCase();
 
   return (
-    <Card className="group relative flex flex-col justify-between overflow-hidden border border-border bg-card hover:border-primary/50 transition-all duration-200 shadow-2xs hover:shadow-xs rounded-sm">
+    <Card className="dashboard-card group relative flex flex-col justify-between overflow-hidden shadow-2xs hover:shadow-xs rounded-sm">
       {/* Cover Image Header */}
-      <div className="relative h-48 w-full overflow-hidden bg-muted border-b border-border/60">
+      <div className="relative h-48 w-full overflow-hidden bg-muted dark:bg-zinc-900 border-b border-border/60 dark:border-zinc-800">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={coverUrl}
           alt={trip.title}
           className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
         {/* Top-Left Badges: Duration & Destination */}
         <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
-          <Badge className="bg-background/90 text-foreground text-[10px] font-bold uppercase tracking-wider backdrop-blur-xs border border-border shadow-xs">
-            <Clock className="w-3 h-3 mr-1" />
+          <Badge className="bg-background/90 dark:bg-zinc-900/90 text-foreground dark:text-zinc-100 text-[10px] font-bold uppercase tracking-wider backdrop-blur-xs border border-border dark:border-zinc-800 shadow-xs">
+            <Clock className="w-3 h-3 mr-1 text-primary" />
             {trip.durationDays} {trip.durationDays === 1 ? "Day" : "Days"}
           </Badge>
 
@@ -124,11 +125,11 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
         {/* Creator Attribution */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5 min-w-0">
-            <Avatar className="h-7 w-7 border border-border shrink-0">
+            <Avatar className="h-7 w-7 border border-border dark:border-zinc-800 shrink-0">
               {trip.author.avatarUrl ? (
                 <AvatarImage src={trip.author.avatarUrl} alt={trip.author.fullName || ""} />
               ) : null}
-              <AvatarFallback className="text-[10px] font-bold">
+              <AvatarFallback className="text-[10px] font-bold bg-muted dark:bg-zinc-800 text-foreground dark:text-zinc-200">
                 {authorInitials}
               </AvatarFallback>
             </Avatar>
@@ -137,17 +138,17 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
               {trip.author.username && trip.author.isPublic ? (
                 <Link
                   href={`/u/${trip.author.username}`}
-                  className="text-xs font-semibold text-foreground hover:text-primary transition-colors truncate"
+                  className="text-xs font-semibold text-foreground dark:text-zinc-100 hover:text-primary transition-colors truncate"
                 >
                   {trip.author.fullName || trip.author.username}
                 </Link>
               ) : (
-                <span className="text-xs font-semibold text-foreground truncate">
+                <span className="text-xs font-semibold text-foreground dark:text-zinc-100 truncate">
                   {trip.author.fullName || trip.author.username || "Prava Traveler"}
                 </span>
               )}
               {trip.author.username && (
-                <span className="text-[10px] text-muted-foreground font-mono truncate">
+                <span className="text-[10px] text-muted-foreground dark:text-zinc-400 font-mono truncate">
                   @{trip.author.username}
                 </span>
               )}
@@ -159,7 +160,7 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
               <User className="h-2.5 w-2.5 text-primary" /> Your Template
             </Badge>
           ) : trip.author.isPublic ? (
-            <Badge variant="secondary" className="text-[9px] px-1 py-0 gap-0.5 shrink-0">
+            <Badge variant="secondary" className="text-[9px] px-1 py-0 gap-0.5 shrink-0 dark:border-zinc-800">
               <Globe className="h-2.5 w-2.5 text-primary" /> Creator
             </Badge>
           ) : null}
@@ -167,11 +168,11 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
 
         {/* Description */}
         {trip.description ? (
-          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+          <p className="text-xs text-muted-foreground dark:text-zinc-400 line-clamp-2 leading-relaxed">
             {trip.description}
           </p>
         ) : (
-          <p className="text-xs text-muted-foreground/60 italic">
+          <p className="text-xs text-muted-foreground/60 dark:text-zinc-500 italic">
             Authentic community travel blueprint ready to clone.
           </p>
         )}
@@ -180,14 +181,14 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
       <CardContent className="p-4 pt-0 pb-3 space-y-3 flex-1 flex flex-col justify-between">
         {/* "What's Included" Asset Strip */}
         <div className="grid grid-cols-2 gap-1.5 pt-1">
-          <div className="flex items-center gap-1.5 rounded-sm bg-muted/40 px-2 py-1 text-[11px] text-foreground">
+          <div className="dashboard-surface-subtle flex items-center gap-1.5 px-2 py-1 text-[11px] text-foreground dark:text-zinc-200">
             <Calendar className="h-3 w-3 text-primary shrink-0" />
             <span className="font-medium truncate">
               {trip.metrics.activityCount} Activities
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 rounded-sm bg-muted/40 px-2 py-1 text-[11px] text-foreground">
+          <div className="dashboard-surface-subtle flex items-center gap-1.5 px-2 py-1 text-[11px] text-foreground dark:text-zinc-200">
             <Compass className="h-3 w-3 text-primary shrink-0" />
             <span className="font-medium truncate">
               {trip.metrics.accommodationCount} Stays
@@ -195,7 +196,7 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
           </div>
 
           {trip.metrics.checklistCount > 0 && (
-            <div className="flex items-center gap-1.5 rounded-sm bg-muted/40 px-2 py-1 text-[11px] text-foreground">
+            <div className="dashboard-surface-subtle flex items-center gap-1.5 px-2 py-1 text-[11px] text-foreground dark:text-zinc-200">
               <CheckSquare className="h-3 w-3 text-primary shrink-0" />
               <span className="font-medium truncate">
                 {trip.metrics.checklistCount} Packing
@@ -204,7 +205,7 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
           )}
 
           {trip.metrics.notesCount > 0 && (
-            <div className="flex items-center gap-1.5 rounded-sm bg-muted/40 px-2 py-1 text-[11px] text-foreground">
+            <div className="dashboard-surface-subtle flex items-center gap-1.5 px-2 py-1 text-[11px] text-foreground dark:text-zinc-200">
               <FileText className="h-3 w-3 text-primary shrink-0" />
               <span className="font-medium truncate">
                 {trip.metrics.notesCount} Local Tips
@@ -217,7 +218,7 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
         {trip.linkedStory && (
           <Link
             href={`/stories/${trip.linkedStory.slug}`}
-            className="flex items-center justify-between gap-2 p-2 rounded-sm border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors text-[11px] text-primary"
+            className="flex items-center justify-between gap-2 p-2 rounded-sm border border-primary/20 bg-primary/5 dark:bg-[#2D9BF0]/10 hover:bg-primary/10 transition-colors text-[11px] text-primary"
           >
             <div className="flex items-center gap-1.5 min-w-0">
               <BookOpen className="h-3.5 w-3.5 shrink-0" />
@@ -233,12 +234,12 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
       </CardContent>
 
       {/* Card Footer Actions */}
-      <CardFooter className="border-t border-border/60 p-3 flex items-center gap-2 bg-muted/10">
+      <CardFooter className="border-t border-border/60 dark:border-zinc-800/80 p-3 flex items-center gap-2 bg-muted/10 dark:bg-zinc-950/40">
         <Button
           variant="outline"
           size="sm"
           onClick={() => onPreview(trip)}
-          className="flex-1 h-8 text-xs cursor-pointer border-border hover:border-primary/50"
+          className="flex-1 h-8 text-xs cursor-pointer border-border dark:border-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-850 hover:border-primary/50"
         >
           Preview Itinerary
         </Button>
@@ -258,7 +259,7 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
             size="sm"
             disabled={true}
             variant="secondary"
-            className="flex-1 h-8 text-xs gap-1.5 opacity-90 cursor-not-allowed bg-muted text-muted-foreground border border-border"
+            className="flex-1 h-8 text-xs gap-1.5 opacity-90 cursor-not-allowed bg-muted dark:bg-zinc-850 text-muted-foreground dark:text-zinc-400 border border-border dark:border-zinc-800"
           >
             <Check className="h-3.5 w-3.5 text-emerald-500" />
             <span>Already Cloned</span>
@@ -268,7 +269,7 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
             size="sm"
             onClick={handleQuickClone}
             disabled={isCloning}
-            className="flex-1 h-8 text-xs gap-1.5 shadow-xs cursor-pointer"
+            className="dashboard-btn-primary flex-1 h-8 text-xs gap-1.5 shadow-xs"
           >
             {isCloning ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />

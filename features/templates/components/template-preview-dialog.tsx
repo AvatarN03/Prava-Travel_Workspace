@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useMemo, useState, useTransition } from "react";
 
 import {
   Calendar,
@@ -33,6 +33,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { cloneTripTemplate } from "../actions";
+
 import type { TemplateTripItem } from "../types";
 
 interface TemplatePreviewDialogProps {
@@ -90,12 +91,12 @@ export function TemplatePreviewDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden rounded-sm sm:rounded-sm">
+      <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden rounded-sm sm:rounded-sm dark:bg-[#0F131C] dark:border-zinc-800">
         {/* Modal Header */}
-        <DialogHeader className="p-5 pb-3 border-b border-border bg-muted/20">
+        <DialogHeader className="p-5 pb-3 border-b border-border dark:border-zinc-800 bg-muted/20 dark:bg-[#090D16]">
           <div className="flex items-center gap-2 flex-wrap mb-1.5">
-            <Badge variant="secondary" className="text-xs px-2 py-0.5">
-              <Clock className="w-3 h-3 mr-1" />
+            <Badge variant="secondary" className="text-xs px-2 py-0.5 dark:border-zinc-800">
+              <Clock className="w-3 h-3 mr-1 text-primary" />
               {trip.durationDays} {trip.durationDays === 1 ? "Day" : "Days"}
             </Badge>
 
@@ -106,7 +107,7 @@ export function TemplatePreviewDialog({
             )}
 
             {trip.destination && (
-              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-medium">
+              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground dark:text-zinc-400 font-medium">
                 <MapPin className="w-3.5 h-3.5 text-primary" /> {trip.destination}
               </span>
             )}
@@ -120,11 +121,11 @@ export function TemplatePreviewDialog({
             )}
           </div>
 
-          <DialogTitle className="text-lg font-bold text-foreground">
+          <DialogTitle className="text-lg font-bold text-foreground dark:text-zinc-100">
             {trip.title}
           </DialogTitle>
 
-          <DialogDescription className="text-xs text-muted-foreground line-clamp-2">
+          <DialogDescription className="text-xs text-muted-foreground dark:text-zinc-400 line-clamp-2">
             {trip.description ||
               "Review the full day-by-day schedule, stays, and packing list before cloning."}
           </DialogDescription>
@@ -133,7 +134,7 @@ export function TemplatePreviewDialog({
         {/* Modal Body with Tabs */}
         <div className="flex-1 overflow-y-auto p-5 space-y-4">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-3 h-9 mb-4 rounded-sm">
+            <TabsList className="grid grid-cols-3 h-9 mb-4 rounded-sm dark:bg-zinc-900 dark:border-zinc-800">
               <TabsTrigger value="itinerary" className="text-xs gap-1.5 rounded-sm">
                 <Calendar className="h-3.5 w-3.5" />
                 <span>Itinerary ({trip.metrics.activityCount})</span>
@@ -153,20 +154,20 @@ export function TemplatePreviewDialog({
             {/* Tab 1: Day-by-day Itinerary */}
             <TabsContent value="itinerary" className="space-y-4 mt-0">
               {daysList.length === 0 ? (
-                <div className="py-8 text-center text-xs text-muted-foreground">
+                <div className="py-8 text-center text-xs text-muted-foreground dark:text-zinc-400">
                   No scheduled activities logged in this itinerary.
                 </div>
               ) : (
                 daysList.map((dayNum) => (
                   <div
                     key={dayNum}
-                    className="rounded-sm border border-border bg-card p-3.5 space-y-2.5"
+                    className="rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#121622] p-3.5 space-y-2.5"
                   >
-                    <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
+                    <div className="flex items-center justify-between border-b border-border/60 dark:border-zinc-800/80 pb-1.5">
                       <span className="text-xs font-bold text-primary uppercase tracking-wider">
-                        Day {dayNum}
+                         Day {dayNum}
                       </span>
-                      <span className="text-[11px] text-muted-foreground">
+                      <span className="text-[11px] text-muted-foreground dark:text-zinc-400">
                         {groupedItinerary[dayNum].length} activities
                       </span>
                     </div>
@@ -178,16 +179,16 @@ export function TemplatePreviewDialog({
                           className="flex items-start justify-between gap-3 text-xs"
                         >
                           <div className="space-y-0.5 min-w-0">
-                            <p className="font-semibold text-foreground">
+                            <p className="font-semibold text-foreground dark:text-zinc-100">
                               {item.title}
                             </p>
                             {item.description && (
-                              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                              <p className="text-[11px] text-muted-foreground dark:text-zinc-400 leading-relaxed">
                                 {item.description}
                               </p>
                             )}
                             {item.location && (
-                              <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              <p className="text-[10px] text-muted-foreground dark:text-zinc-400 flex items-center gap-1">
                                 <MapPin className="w-3 h-3 text-primary" />
                                 {item.location}
                               </p>
@@ -198,13 +199,13 @@ export function TemplatePreviewDialog({
                             {item.category && (
                               <Badge
                                 variant="secondary"
-                                className="text-[9px] px-1.5 py-0"
+                                className="text-[9px] px-1.5 py-0 dark:border-zinc-800"
                               >
                                 {item.category}
                               </Badge>
                             )}
                             {item.cost && item.cost > 0 ? (
-                              <span className="text-[10px] font-mono text-muted-foreground">
+                              <span className="text-[10px] font-mono text-muted-foreground dark:text-zinc-400">
                                 {trip.metrics.currency} {item.cost}
                               </span>
                             ) : null}
@@ -220,38 +221,38 @@ export function TemplatePreviewDialog({
             {/* Tab 2: Accommodations */}
             <TabsContent value="stays" className="space-y-3 mt-0">
               {trip.accommodations.length === 0 ? (
-                <div className="py-8 text-center text-xs text-muted-foreground">
+                <div className="py-8 text-center text-xs text-muted-foreground dark:text-zinc-400">
                   No accommodations logged for this trip.
                 </div>
               ) : (
                 trip.accommodations.map((stay, idx) => (
                   <div
                     key={idx}
-                    className="p-3 rounded-sm border border-border bg-card flex items-center justify-between gap-3 text-xs"
+                    className="p-3 rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#121622] flex items-center justify-between gap-3 text-xs"
                   >
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-bold text-foreground">
+                        <span className="font-bold text-foreground dark:text-zinc-100">
                           {stay.name}
                         </span>
                         {stay.type && (
                           <Badge
                             variant="secondary"
-                            className="text-[9px] px-1.5 py-0"
+                            className="text-[9px] px-1.5 py-0 dark:border-zinc-800"
                           >
                             {stay.type}
                           </Badge>
                         )}
                       </div>
                       {stay.address && (
-                        <p className="text-[11px] text-muted-foreground">
+                        <p className="text-[11px] text-muted-foreground dark:text-zinc-400">
                           {stay.address}
                         </p>
                       )}
                     </div>
 
                     {stay.cost && stay.cost > 0 ? (
-                      <span className="font-semibold text-xs text-foreground shrink-0">
+                      <span className="font-semibold text-xs text-foreground dark:text-zinc-100 shrink-0">
                         {stay.currency} {stay.cost.toLocaleString()}
                       </span>
                     ) : null}
@@ -264,7 +265,7 @@ export function TemplatePreviewDialog({
             <TabsContent value="prep" className="space-y-4 mt-0">
               {trip.checklistHighlights.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5">
                     <CheckSquare className="h-3.5 w-3.5 text-primary" /> Recommended
                     Packing Checklist
                   </h4>
@@ -272,7 +273,7 @@ export function TemplatePreviewDialog({
                     {trip.checklistHighlights.map((item, idx) => (
                       <div
                         key={idx}
-                        className="p-2 rounded-sm bg-muted/30 border border-border/50 text-xs text-foreground flex items-center gap-2"
+                        className="p-2 rounded-sm bg-muted/30 dark:bg-[#121622] border border-border/50 dark:border-zinc-800 text-xs text-foreground dark:text-zinc-200 flex items-center gap-2"
                       >
                         <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
                         <span className="truncate">{item}</span>
@@ -284,7 +285,7 @@ export function TemplatePreviewDialog({
 
               {trip.tips.length > 0 && (
                 <div className="space-y-2 pt-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5">
                     <FileText className="h-3.5 w-3.5 text-primary" /> Local Tips &
                     Notes
                   </h4>
@@ -292,7 +293,7 @@ export function TemplatePreviewDialog({
                     {trip.tips.map((tip, idx) => (
                       <div
                         key={idx}
-                        className="p-2.5 rounded-sm bg-primary/5 border border-primary/20 text-xs text-foreground"
+                        className="p-2.5 rounded-sm bg-primary/5 dark:bg-[#2D9BF0]/10 border border-primary/20 dark:border-[#2D9BF0]/30 text-xs text-foreground dark:text-zinc-200"
                       >
                         {tip}
                       </div>
@@ -302,7 +303,7 @@ export function TemplatePreviewDialog({
               )}
 
               {trip.checklistHighlights.length === 0 && trip.tips.length === 0 && (
-                <div className="py-8 text-center text-xs text-muted-foreground">
+                <div className="py-8 text-center text-xs text-muted-foreground dark:text-zinc-400">
                   No packing checklist or notes attached to this template.
                 </div>
               )}
@@ -310,10 +311,10 @@ export function TemplatePreviewDialog({
           </Tabs>
 
           {/* Optional AI Tailor Accordion */}
-          <div className="rounded-sm border border-primary/30 bg-primary/5 p-3.5 space-y-2">
+          <div className="rounded-sm border border-primary/30 dark:border-[#2D9BF0]/40 bg-primary/5 dark:bg-[#2D9BF0]/10 p-3.5 space-y-2">
             <div
               onClick={() => setShowAiCustomizer(!showAiCustomizer)}
-              className="flex items-center justify-between cursor-pointer text-xs font-bold text-foreground hover:text-primary transition-colors"
+              className="flex items-center justify-between cursor-pointer text-xs font-bold text-foreground dark:text-zinc-100 hover:text-primary transition-colors"
             >
               <div className="flex items-center gap-1.5">
                 <Wand2 className="h-3.5 w-3.5 text-primary" />
@@ -322,14 +323,14 @@ export function TemplatePreviewDialog({
                   Free
                 </span>
               </div>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-muted-foreground dark:text-zinc-400">
                 {showAiCustomizer ? "▲ Hide" : "▼ Open"}
               </span>
             </div>
 
             {showAiCustomizer && (
               <div className="space-y-2 pt-1">
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                <p className="text-[11px] text-muted-foreground dark:text-zinc-400 leading-relaxed">
                   Provide custom instructions for our free AI model (e.g. &ldquo;Make all
                   food stops pure vegetarian&rdquo;, &ldquo;Slower pace suitable for toddlers&rdquo;,
                   or &ldquo;Focus on budget-friendly free sights&rdquo;).
@@ -338,7 +339,7 @@ export function TemplatePreviewDialog({
                   placeholder="e.g. Adapt activities for a relaxed, kid-friendly pace..."
                   value={aiPrompt}
                   onChange={(e) => setAiPrompt(e.target.value)}
-                  className="h-8 text-xs bg-background"
+                  className="h-8 text-xs bg-background dark:bg-[#0A0E17] border-border dark:border-zinc-800 text-foreground dark:text-zinc-100"
                 />
               </div>
             )}
@@ -346,12 +347,12 @@ export function TemplatePreviewDialog({
         </div>
 
         {/* Modal Footer Actions */}
-        <DialogFooter className="p-4 border-t border-border bg-muted/20 flex flex-row items-center justify-between gap-2 sm:justify-between">
+        <DialogFooter className="p-4 border-t border-border dark:border-zinc-800 bg-muted/20 dark:bg-[#090D16] flex flex-row items-center justify-between gap-2 sm:justify-between">
           <Button
             variant="outline"
             size="sm"
             onClick={() => onOpenChange(false)}
-            className="h-8 text-xs cursor-pointer"
+            className="h-8 text-xs cursor-pointer dark:border-zinc-800 dark:text-zinc-200"
           >
             Close
           </Button>
@@ -371,7 +372,7 @@ export function TemplatePreviewDialog({
               size="sm"
               disabled={true}
               variant="secondary"
-              className="h-8 text-xs gap-1.5 opacity-90 cursor-not-allowed bg-muted text-muted-foreground border border-border"
+              className="h-8 text-xs gap-1.5 opacity-90 cursor-not-allowed bg-muted dark:bg-zinc-850 text-muted-foreground dark:text-zinc-400 border border-border dark:border-zinc-800"
             >
               <Check className="h-3.5 w-3.5 text-emerald-500" />
               <span>Already in Workspace</span>
@@ -381,7 +382,7 @@ export function TemplatePreviewDialog({
               size="sm"
               onClick={handleClone}
               disabled={isCloning}
-              className="h-8 text-xs gap-1.5 shadow-xs cursor-pointer"
+              className="dashboard-btn-primary h-8 text-xs gap-1.5 shadow-xs"
             >
               {isCloning ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
