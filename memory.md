@@ -1,4 +1,4 @@
-# Prava AI V2 - Development Memory
+# Prava Travel Workspace V2 - Development Memory
 
 ## Current Project Phase
 - **Phase 0: Baseline Alignment & Tooling Decision** (Complete)
@@ -27,21 +27,235 @@
 - **Phase 23: Profile Avatar Storage Optimization & Orphaned Image Pruning** (Complete)
 - **Phase 24: Authentication Forgot Password Flow & Duplicate Account Detection** (Complete)
 - **Phase 25: Account Deletion Flow with 2-Step Confirmation, Email OTP & Farewell Experience** (Complete)
+- **Phase 49: AI Assistant System Boundaries & Past Planned Dates Advisory Banner** (Complete)
+- **Phase 50: Modular System Prompt Architecture & Prompt-Induction Guardrail Defense** (Complete)
+- **Phase 51: AI Assistant Loading State Modernization & Thinking Pulse Indicator** (Complete)
+- **Phase 52: Trip Banner Storage Optimization & Reference-Counted Orphan Purging** (Complete)
+- **Phase 53: Sidebar Workspace Logo Tooltip Affordance** (Complete)
+- **Phase 54: Travel Essentials Dark Mode Modernization & Max-Width 7XL Expansion** (Complete)
+- **Phase 55: Complete Codebase Import Architecture & Clean Formatting** (Complete)
+- **Phase 56: Travel Stories Multi-Image Studio Gallery, Story Upvotes/Likes & Creator Profile Navigation** (Complete)
+- **Phase 57: Dashboard Workspace Reusable Design System & Sleek Dark Mode** (Complete)
+- **Phase 58: Explore Section Dark Mode Modernization (Templates, Forum, Stories & Creator Profile)** (Complete)
+- **Phase 59: Instagram-Style Tabbed Creator Profile & 7XL Editorial Story Reading Architecture** (Complete)
+- **Phase 60: Account Session Dark Mode Modernization (Profile, Subscription & Usage)** (Complete)
+- **Phase 61: Supabase Database Row Level Security (RLS) Hardening & PostgREST Lockdown** (Complete)
 
 ## Current Task
-- **Phase 25 Complete**: Account Deletion Flow with 2-Step Confirmation, Email OTP & Farewell Experience:
-  - **Danger Zone UI (`features/profile/components/settings-section.tsx`)**: Added a dedicated Danger Zone card under the Security tab with destructive styling, warning metadata, and a "Delete Account" button triggering the modal.
-  - **Delete Account Modal (`features/profile/components/delete-account-dialog.tsx`)**: Implemented a 3-step dialog:
-    - *Step 1 (Scope & Warning)*: Full inventory of data being deleted (trips, stays, expenses, stories, notes, checklists, AI histories) with mandatory acknowledgment checkbox.
-    - *Step 2 (Email OTP & "DELETE" Confirmation)*: Sends a 6-digit OTP via `supabase.auth.signInWithOtp` without new user creation. Requires entering the 6-digit OTP + typing `"DELETE"` with a 45s resend cooldown.
-    - *Step 3 (Farewell Experience)*: Displays a warm thank you screen (*"Thank you for traveling with Prava... you are always welcome back whenever you're ready to plan your next journey"*) and an extended farewell toast before returning to home.
-  - **Server-Side Atomic Account Deletion (`features/profile/actions.ts`)**:
-    - Validates active user session and verifies OTP via `supabase.auth.verifyOtp`.
-    - Purges user storage objects across media folders via `deleteUserStorageFolder(userId)` (`lib/storage/index.ts`).
-    - Deletes Prisma `Profile` row (triggering PostgreSQL foreign key cascades across all 10+ tables).
-    - Deletes Supabase Auth record via `createAdminClient().auth.admin.deleteUser(userId)` (`lib/supabase/admin.ts`).
-    - Signs out session cookies.
-  - **Production Verification**: Passed `npx tsc --noEmit` with 0 errors and completed Next.js 16 + Turbopack production build (`npm run build`, exit code 0).
+- **Phase 61 Complete**: Supabase Database Row Level Security (RLS) Hardening & PostgREST API Lockdown:
+  - **Identified & Mitigated Threat Vector**:
+    - Addressed Supabase Security Advisor automated alerts regarding public tables lacking Row Level Security (RLS).
+    - Hardened database tables against unauthorized scraping via Supabase PostgREST Data API (`/rest/v1/*`) using the client-exposed `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+  - **Applied Database-Wide RLS & Fine-Grained Security Policies**:
+    - Created tracked migration script in `prisma/rls_policies.sql`.
+    - Successfully enabled `ROW LEVEL SECURITY` across all 20 public database tables: `profiles`, `trips`, `itinerary_items`, `accommodations`, `expenses`, `notes`, `checklist_items`, `links`, `ai_conversations`, `ai_messages`, `ai_proposals`, `blog_posts`, `blog_post_likes`, `community_posts`, `community_replies`, `community_post_upvotes`, `community_saved_posts`, `subscriptions`, `webhook_events`, and `_prisma_migrations`.
+    - Configured fine-grained access policies:
+      - `profiles`: Self-read/update/insert/delete (`auth.uid() = id`), public read-only for public creator profiles (`is_public = true`). Prevents private user email and settings leakage.
+      - `trips`: Public/template viewability (`is_public = true OR is_template = true`), private trip ownership isolation (`auth.uid() = profile_id`).
+      - `expenses`, `notes`, `checklist_items`: Strict user isolation scoped via owner / trip ownership. Zero public leak via REST API.
+      - `accommodations`: Accessible only if linked trip is public or owned by requester; mutations strictly owner-only.
+      - `ai_conversations`, `ai_messages`, `ai_proposals`: Trip and profile owner-scoped access.
+      - `community_posts`, `community_replies`, `blog_posts`: Public read access, author-authenticated mutations.
+      - `subscriptions`: Self-read only (`auth.uid() = user_id`).
+      - `webhook_events`, `_prisma_migrations`: Strictly internal (zero public access policies, accessible only via admin/Prisma connection).
+  - **Prisma & Application Runtime Compatibility**:
+    - Maintained 100% compatibility with Next.js Server Actions and Prisma ORM (`@prisma/adapter-pg`), which connects using the `postgres` role via direct/pooled PostgreSQL connection string and bypasses RLS by default.
+
+  - **Standardized Width Hierarchy (`max-w-7xl mx-auto`)**:
+    - Applied uniform `max-w-7xl mx-auto` outer containers across `/profile`, `/subscription`, and `/usage`, seamlessly harmonizing account session pages with the Dashboard, Explore, and Travel Essentials modules.
+  - **Profile Module Modernization (`/profile`)**:
+    - `app/(workspace)/profile/page.tsx`: Standardized outer container to `max-w-7xl mx-auto`.
+    - `features/profile/components/profile-editor.tsx`: Applied `max-w-7xl mx-auto`, dark header divider (`dark:border-zinc-800`), crisp text hierarchy (`dark:text-zinc-50`, `dark:text-zinc-100`, `dark:text-zinc-400`), refined left-hand vertical navigation tab pill buttons (active: `dark:bg-[#0F131C] dark:border-zinc-800 dark:text-zinc-100 dark:shadow-xs`, inactive: `dark:text-zinc-400 dark:hover:bg-[#0F131C]/60 dark:hover:text-zinc-200`), and mobile segmented control.
+    - `features/profile/components/overview-section.tsx`: Upgraded card surfaces (`dark:bg-[#0F131C] dark:border-zinc-800`), nested metric stat pills (`dark:bg-[#121622]`), form inputs & bio textarea (`dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100`), locked email and username fields (`dark:bg-zinc-900/60 dark:text-zinc-400`), public creator toggle panel (`dark:bg-[#121622] dark:border-zinc-800`), and card footer divider.
+    - `features/profile/components/general-section.tsx`: Converted cards to `dark:bg-[#0F131C] dark:border-zinc-800`, select dropdowns to `dark:bg-[#121622] dark:border-zinc-800`, separators to `dark:border-zinc-800`, offline sync container to `dark:bg-[#121622]`, and travel persona textarea to `dark:bg-[#121622]`.
+    - `features/profile/components/settings-section.tsx`: Upgraded account security credential cards (`dark:bg-[#0F131C] dark:border-zinc-800`), inner identity detail rows (`dark:bg-[#121622]`), and Danger Zone card with calibrated high-contrast destructive styling (`dark:bg-destructive/10 dark:border-destructive/40`).
+    - `features/profile/components/delete-account-dialog.tsx`: Upgraded dialog modal shell (`dark:bg-[#0F131C] dark:border-zinc-800`), permanent impact warning box (`dark:bg-destructive/10`), 6-digit OTP code input (`dark:bg-[#121622] dark:border-zinc-800`), phrase confirmation input (`dark:bg-[#121622]`), and success step.
+  - **Subscription & Billing Module Modernization (`/subscription`)**:
+    - `features/pricing/components/account-usage-view.tsx`: Applied `max-w-7xl mx-auto`, top header (`dark:border-zinc-800`, `dark:text-zinc-50`, `dark:text-zinc-400`), currency select dropdown (`dark:bg-[#0F131C] dark:border-zinc-800`), active subscription tier overview card (`dark:bg-[#0F131C] dark:border-zinc-800`), nested metric chips (`dark:bg-[#121622]`), segmented billing cycle switcher (`dark:bg-[#121622] dark:border-zinc-800` with active pill `dark:bg-[#0F131C]`), plan tier cards with Pro highlight glow (`dark:bg-[#0F131C] dark:border-zinc-800`), detailed subscription management cards, quick action navigation links (`dark:bg-[#121622]`), FAQ accordion items (`dark:bg-[#0F131C] dark:border-zinc-800`), and Polar simulated checkout modal.
+    - `features/pricing/components/upgrade-dialog.tsx`: Upgraded modal shell (`dark:bg-[#0F131C] dark:border-zinc-800`), top banner (`dark:bg-[#121622]/60 dark:border-zinc-800`), segmented billing period switcher (`dark:bg-[#0F131C]`), pricing highlight row (`dark:bg-[#121622]/30 dark:border-zinc-800`), and feature checkmarks.
+  - **Usage & Quota Analytics Module Modernization (`/usage`)**:
+    - `features/pricing/components/usage-view.tsx`: Applied `max-w-7xl mx-auto`, top header (`dark:border-zinc-800`, `dark:text-zinc-50`, `dark:text-zinc-100`, `dark:text-zinc-400`), quota depletion alert banner (`dark:bg-rose-950/20 dark:border-rose-900/50`), AI assistant credits meter card (`dark:bg-[#0F131C] dark:border-zinc-800`), workspace trips capacity meter card (`dark:bg-[#0F131C] dark:border-zinc-800`), trip-by-trip AI usage breakdown table (`dark:bg-[#0F131C] dark:border-zinc-800`, `dark:divide-zinc-800/80`, `dark:hover:bg-[#121622]/50`), 6-cycle activity history table (`dark:bg-[#0F131C] dark:border-zinc-800`), and bottom billing cycle quick navigation card.
+    - `features/pricing/components/usage-chart.tsx`: Upgraded 6-month AI credit expense card (`dark:bg-[#0F131C] dark:border-zinc-800`), top divider (`dark:border-zinc-800`), aggregate 6-month KPI badges (`dark:bg-[#121622] dark:border-zinc-800`), discrete bar track containers (`dark:bg-[#121622] dark:border-zinc-800`), floating hover tooltip (`dark:bg-[#121622] dark:border-zinc-800`), and footer summary callout (`dark:bg-[#121622]/70 dark:border-zinc-800/80`).
+  - **Application Shell Integrity**:
+    - Zero modifications to `components/app-shell/sidebar.tsx` or `components/app-shell/top-bar.tsx`. All enhancements strictly scoped to the account session page bodies.
+  - **Instagram-Style Tabbed Creator Profile (`/u/[username]`)**:
+    - Expanded creator profile layout to full `max-w-7xl mx-auto` width.
+    - Built [CreatorProfileView](file:///e:/Projects/Web-Dev/NextJS/prava_v2/features/profile/components/creator-profile-view.tsx) featuring an Instagram-style horizontal metrics bar (Trips count, Stories count, Discussions count, Member since) with direct clickable tab switching.
+    - Organized creator contributions into 4 dedicated, zero-scroll tab views:
+      1. **Itineraries**: Complete blueprints with cover images, destinations, durations, activity/stay counters, and 1-click clone actions.
+      2. **Stories**: Published travel narratives and field guides with like buttons, reading times, and direct article links.
+      3. **Discussions**: Community forum threads created by the user, displaying categories, reply counters, and upvotes.
+      4. **About & DNA**: Full biography, travel style & preferences, creator stats summary, and membership duration.
+    - Updated [getPublicCreatorProfile](file:///e:/Projects/Web-Dev/NextJS/prava_v2/features/profile/actions.ts) to query `communityPosts` and `travelPreferences` alongside public trips and stories.
+  - **7XL Editorial Story Reading Layout (`/stories/[slug]`)**:
+    - Expanded story reader from `max-w-4xl` to spacious `max-w-7xl mx-auto w-full py-2 pb-20`.
+    - Implemented a 2-column layout:
+      - **Left Main Column (8 cols)**: Large elegant title, markdown story body, dedicated multi-image photo gallery showcase with lightbox, attached trip blueprint callout, and author bio engagement card.
+      - **Right Sticky Companion Column (4 cols)**: Author card with bio and profile link, attached blueprint card with 1-click clone button, visual trip photo gallery quick preview strip (with thumbnail count), and reading metrics widget (word count, read time, date, pill like button).
+    - **Header Cleanup & Fully Clickable Creator Links**:
+      - Eliminated the redundant top author byline block and its abrupt cut-off horizontal divider from the story header, unifying reading metadata (tags, read time, publish date) into a clean top row.
+      - Made the author's avatar, full name, and `@username` completely interactive clickable links in both the bottom Author Bio card and the right desktop Companion Sidebar, routing directly to `/u/${authorUsername}`.
+  - **Verification**:
+    - Ran full production build (`npm run build`), confirming 0 TypeScript errors and successful static/dynamic page generation.
+
+- **Phase 58 Complete**: Explore Section Dark Mode Modernization (Templates, Forum, Stories & Creator Profile):
+  - **Standardized Max-Width Alignment (`max-w-7xl mx-auto`)**:
+    - Upgraded top-level layout containers across Templates, Traveler Forum, Travel Stories discovery feed, Story Studio manager, and Creator Public Profiles to `max-w-7xl mx-auto`, eliminating cramped narrower layouts and harmonizing with Dashboard and Travel Essentials.
+    - Preserved `max-w-4xl mx-auto` on the single story reading layout (`app/(workspace)/stories/[slug]/page.tsx`) for optimal typographical readability and line-length ergonomics.
+  - **Templates Module Modernization**:
+    - `features/templates/components/templates-view.tsx`: Updated outer container to `max-w-7xl mx-auto`, top banner with dark text (`dark:text-zinc-50`), search input (`dark:bg-[#0F131C] dark:border-zinc-800`), duration & inclusion select dropdowns (`dark:bg-[#0F131C] dark:border-zinc-800`), and empty filter state.
+    - `features/templates/components/template-card.tsx`: Integrated `.dashboard-card`, `.dashboard-surface-subtle`, `.dashboard-btn-primary`, and crisp dark typography.
+    - `features/templates/components/template-preview-dialog.tsx`: Upgraded dialog modal surface (`dark:bg-[#0F131C] dark:border-zinc-800`), tabs list (`dark:bg-zinc-900`), itinerary daily containers (`dark:bg-[#121622] dark:border-zinc-800`), accommodations, packing checklist, AI tailor notice, and dialog footer.
+  - **Community Forum Module Modernization**:
+    - `features/community/components/community-forum-view.tsx`: Applied `max-w-7xl mx-auto`, header with dark typography (`dark:text-zinc-50`), search input (`dark:bg-[#0F131C] dark:border-zinc-800`), category select trigger (`dark:bg-[#0F131C] dark:border-zinc-800`), bookmark filter button, empty state (`dark:bg-[#0F131C]/60 dark:border-zinc-800`), discussion cards (`dark:bg-[#0F131C] dark:border-zinc-800`), cover image thumbnail shells, and attached trip badges (`dark:bg-[#121622] dark:border-zinc-800`).
+    - `features/community/components/forum-thread-view.tsx`: Standardized container to `max-w-7xl mx-auto`, back navigation bar (`dark:border-zinc-800`), main question card (`dark:bg-[#0F131C] dark:border-zinc-800`), author attribution header, attached trip box (`dark:bg-[#121622] dark:border-zinc-800`), reply composer card (`dark:bg-[#0F131C] dark:border-zinc-800`), reply textarea (`dark:bg-[#121622] dark:border-zinc-800`), advice stream parent card (`dark:bg-[#0F131C] dark:border-zinc-800`), comments divide styling (`dark:divide-zinc-800/60`), and inline edit textarea.
+    - `features/community/components/new-discussion-dialog.tsx`: Upgraded modal shell (`dark:bg-[#0F131C] dark:border-zinc-800`), title, all input & textarea elements (`dark:bg-[#121622] dark:border-zinc-800`), category dropdown, and footer buttons.
+    - `features/community/components/edit-discussion-dialog.tsx`: Applied matching dark modal styling (`dark:bg-[#0F131C] dark:border-zinc-800`), input elements (`dark:bg-[#121622]`), and action buttons.
+    - `features/community/components/save-tip-dialog.tsx`: Applied matching dark modal container (`dark:bg-[#0F131C] dark:border-zinc-800`), tip excerpt preview card (`dark:bg-[#121622] dark:border-zinc-800`), select dropdowns, and footer buttons.
+  - **Travel Stories Module Modernization**:
+    - `app/(workspace)/stories/page.tsx`: Standardized container to `max-w-7xl mx-auto`, top banner with dark title (`dark:text-zinc-50`), topic filter tag pills (`dark:bg-zinc-800/60 dark:text-zinc-200`), empty state, and new story CTA.
+    - `features/blog/components/story-card.tsx`: Upgraded card container (`dark:bg-[#0F131C] dark:border-zinc-800`), cover header placeholder (`dark:bg-zinc-900 dark:border-zinc-800/80`), title and excerpt typography, cloneable trip badge (`dark:bg-primary/15 dark:border-primary/30`), creator avatar border (`dark:border-zinc-800`), and footer (`dark:bg-[#121622]/60 dark:border-zinc-800`).
+    - `features/blog/components/story-like-button.tsx`: Added dark-mode variants for pill (`dark:bg-zinc-800/60 dark:border-zinc-800 dark:text-zinc-400`) and outline button (`dark:border-zinc-800 dark:hover:bg-zinc-800/60`).
+    - `features/blog/components/markdown-renderer.tsx`: Upgraded markdown headings with high-contrast text (`dark:text-zinc-50`, `dark:text-zinc-100`) and divider lines (`dark:border-zinc-800`), blockquotes (`dark:bg-zinc-900/40 dark:text-zinc-300`), inline images (`dark:border-zinc-800`), prose paragraphs (`dark:text-zinc-200`), and inline code blocks (`dark:bg-zinc-800 dark:text-zinc-200`).
+    - `app/(workspace)/stories/[slug]/page.tsx`: Refined navigation bar (`dark:border-zinc-800`), story header, author byline (`dark:border-zinc-800`), hero cover image container (`dark:bg-zinc-900 dark:border-zinc-800`), linked itinerary callout box (`dark:bg-primary/10 dark:border-primary/20`), inner cloneable trip card (`dark:bg-[#0F131C] dark:border-zinc-800`), and author bio engagement card (`dark:bg-[#0F131C] dark:border-zinc-800`).
+    - `features/blog/components/my-stories-list.tsx`: Upgraded filter tabs (`dark:border-zinc-800/60`), empty state container, story cards (`dark:bg-[#0F131C] dark:border-zinc-800`), cover headers, status badges, and action footers (`dark:bg-[#121622]/60`).
+    - `features/blog/components/blog-editor.tsx`: Upgraded sticky top header banner (`dark:border-zinc-800`), story details card (`dark:bg-[#0F131C] dark:border-zinc-800`), form inputs & textareas (`dark:bg-[#121622] dark:border-zinc-800`), cover image upload box, trip photos gallery card (`dark:bg-[#0F131C] dark:border-zinc-800`), tags card, and linked trip selector.
+  - **Creator Profile Modernization (`/u/[username]`)**:
+    - `app/(workspace)/u/[username]/page.tsx`: Standardized outer container to `max-w-7xl mx-auto`, creator identity hero banner (`dark:bg-[#0F131C] dark:border-zinc-800`), avatar wrapper (`dark:bg-zinc-900 dark:border-zinc-800`), stat divider lines, published itineraries grid cards (`dark:bg-[#0F131C] dark:border-zinc-800`), fallback destination banner, and empty states.
+  - **Preserved App Shell Boundary**: Zero modifications to sidebar, topbar, or navigation shells — changes were exclusively restricted to the Explore Section page content.
+- **Phase 57 Complete**: Dashboard Workspace Reusable Design System & Sleek Dark Mode:
+  - **Centralized Reusable CSS Utilities in `app/globals.css`**:
+    - Created an explicit, reusable dashboard design system in [globals.css](file:///e:/Projects/Web-Dev/NextJS/prava_v2/app/globals.css) with `:where(.dark, .dark *)` dark variant support:
+      - `.dashboard-card`: Unified card container with clean borders and deep obsidian-zinc dark fills (`#0F131C`) with soft ambient drop-shadow.
+      - `.dashboard-card-hover`: Interactive card with smooth hover transitions, cerulean edge glow (`#2D9BF0`), and elevated surface shading.
+      - `.dashboard-card-header`: Standardized subtle divider for card title bars.
+      - `.dashboard-surface-subtle`: Nested panels and metric containers with muted background and fine borders.
+      - `.dashboard-interactive-row`: High-usability list row for recent trips, checklist items, and workspace tasks with hover states.
+      - `.dashboard-section-eyebrow`: Unified 10px uppercase tracker & section label with tracking `0.16em`.
+      - `.dashboard-title` & `.dashboard-subtext`: Semantic typographic styles for card titles and secondary captions.
+      - `.dashboard-badge-cerulean`: Prava brand highlight pill with cerulean glow in dark mode.
+      - `.dashboard-icon-box`: Square icon wrapper with balanced brand tinting.
+      - `.dashboard-btn-primary`: Reusable Cerulean CTA button (`#2D9BF0` / `#2587D3`) eliminating hardcoded inline button classes.
+  - **Dashboard Components Refactoring**:
+    - Replaced all repetitive raw inline color codes and hardcoded hex classes across the entire dashboard feature directory with the new reusable classes:
+      - `app/(workspace)/dashboard/page.tsx`: Updated page header, greeting typography (`dark:text-zinc-50`, `dark:text-zinc-200`, `dark:text-zinc-400`), `.dashboard-btn-primary`, and `.dashboard-section-eyebrow`.
+      - `features/dashboard/components/upcoming-trip-card.tsx`: Integrated `.dashboard-card`, `.dashboard-badge-cerulean`, `.dashboard-surface-subtle`, `.dashboard-interactive-row`, `.dashboard-btn-primary`, and dark text hierarchy.
+      - `features/dashboard/components/recent-trips-list.tsx`: Applied `.dashboard-card`, `.dashboard-card-header`, `.dashboard-title`, `.dashboard-interactive-row`, and `.dashboard-surface-subtle`.
+      - `features/dashboard/components/financial-snapshot-card.tsx`: Applied `.dashboard-card`, `.dashboard-section-eyebrow`, `.dashboard-surface-subtle`, and dark-mode multi-category budget progress bar.
+      - `features/dashboard/components/urgent-checklist.tsx`: Applied `.dashboard-card`, `.dashboard-card-header`, `.dashboard-title`, `.dashboard-subtext`, `.dashboard-interactive-row`, and `.dashboard-surface-subtle`.
+      - `features/dashboard/components/active-trip-workspace-card.tsx`: Applied `.dashboard-card`, `.dashboard-card-header`, `.dashboard-title`, `.dashboard-subtext`, and `.dashboard-interactive-row`.
+      - `features/dashboard/components/travel-essentials-grid.tsx`: Applied `.dashboard-card`, `.dashboard-card-header`, `.dashboard-title`, `.dashboard-subtext`, `.dashboard-interactive-row`, and `.dashboard-icon-box`.
+      - `features/dashboard/components/ai-assistant-card.tsx`: Applied `.dashboard-card` with dark typography and cerulean button styling.
+      - `features/dashboard/components/dashboard-quick-actions.tsx`: Applied `.dashboard-section-eyebrow`, `.dashboard-subtext`, `.dashboard-card-hover`, and `.dashboard-interactive-row`.
+      - `features/dashboard/components/dashboard-metrics.tsx`: Applied `.dashboard-card` to all 4 metrics cards with high-contrast dark values.
+      - `features/dashboard/components/dashboard-empty-state.tsx`: Applied `.dashboard-card`, `.dashboard-badge-cerulean`, and `.dashboard-btn-primary`.
+      - `features/dashboard/components/travel-financials-dialog.tsx`: Applied `.dashboard-surface-subtle`, `.dashboard-interactive-row`, and dark text classes.
+  - **Preserved App Shell Boundary**: Zero changes to sidebar or topbar; modifications strictly focused on the Dashboard page workspace canvas.
+
+- **Phase 56 Complete**: Travel Stories Multi-Image Studio Gallery, Story Upvotes/Likes & Creator Profile Navigation:
+  - **Prisma Schema & PostgreSQL DDL Migration**:
+    - Added `images String[] @default([])` to `BlogPost` for storing an array of trip showcase photos alongside `coverImageUrl`.
+    - Added `upvotes Int? @default(0)` to `BlogPost` with atomic Prisma transaction increment/decrement logic.
+    - Added `BlogPostLike` junction model (`profileId`, `postId`, `createdAt`, composite key `@@id([profileId, postId])`) with cascade deletions on both profile and blog post.
+    - Safely applied non-destructive DDL migration on PostgreSQL and regenerated Prisma Client v7.10.0.
+  - **Multi-Image Trip Photo Gallery in Studio (`BlogEditor`)**:
+    - Upgraded `features/blog/components/blog-editor.tsx` with a multi-image upload section using `uploadImageAction` (`folder: "stories"`).
+    - Added thumbnail preview grid with "Make Cover", "Insert in Text", and "Remove" quick controls.
+    - Preserved existing cover image picker while making multi-image gallery fully integrated with trip photos.
+  - **Full-Featured Multi-Image Gallery Lightbox (`StoryPhotoGallery`)**:
+    - Created `features/blog/components/story-photo-gallery.tsx` rendering a high-density, responsive photo grid with thumbnail overlays.
+    - Built-in full-screen modal lightbox dialog with previous/next image navigation, counter badge (`X of Y`), keyboard accessibility, and direct caption display.
+    - Integrated gallery into the story reading layout (`app/(workspace)/stories/[slug]/page.tsx`).
+  - **Story Upvoting & Like Architecture (`StoryLikeButton` & Server Action)**:
+    - Built `toggleStoryLike(postId)` in `features/blog/actions.ts` utilizing `syncUserProfile(user)` and atomic Prisma `$transaction`.
+    - Created `features/blog/components/story-like-button.tsx` with optimistic UI updates, active heart icon animations, formatted count badges, and sign-in toast prompts for unauthenticated visitors.
+    - Supported both `pill` (card footer) and `default` (action bar) button variants.
+    - Integrated like buttons into `StoryCard`, reader top action bar, and bottom reader engagement footer.
+  - **Author Profile Navigation & Creator Showcase (`/u/[username]`)**:
+    - Made author avatars and `@username` handles clickable across `StoryCard`, reader header byline, and bottom author bio card, routing visitors directly to `/u/[username]`.
+    - Enhanced `getPublicCreatorProfile` in `features/profile/actions.ts` to allow viewing creator profiles if they have published stories or public trips (even if profile was not manually set to public in settings).
+    - Populated full author profiles, linked trips, and viewer-specific `hasLiked` states on public creator profiles.
+  - **Prisma Client Cache Invalidation & Decoupled Likes Query**:
+    - Updated development singleton check in `lib/db.ts` to invalidate `globalForPrisma.prisma` if `blogPostLike` is missing in memory.
+    - Decoupled `likes` from `BlogPost.findMany` and `profile.blogPosts` by querying `BlogPostLike.findMany` with post ID sets, completely eliminating `PrismaClientValidationError` (`Unknown field likes for include statement on model BlogPost`).
+  - **Blog Editor Button Deduplication & Balanced Card Heights**:
+    - Removed redundant "Save Draft" and "Publish Story" buttons from the bottom right card in `features/blog/components/blog-editor.tsx`, keeping controls unified in the sticky top header banner and equalizing the visual card heights between left and right columns.
+  - **Verification**:
+    - Ran full production build (`npm run build`), verifying zero TypeScript compilation errors, successful page generation, and clean route mapping.
+
+- **Phase 55 Complete**: Complete Codebase Import Architecture & Clean Formatting:
+  - **Full Codebase Audit & Standardization**:
+    - Conducted a comprehensive audit and systematically refactored every single file across the repository according to `.agents/skills/format-imports-and-clean/SKILL.md`.
+    - Enforced the strict 6-tier hierarchy:
+      1. Tier 1: Inbuilt (`react`, `react-dom`, `next`, `next/*`, `node:*`)
+      2. Tier 2: Installed npm packages (`lucide-react`, `@radix-ui/*`, `@supabase/*`, `zod`, `sonner`, etc.)
+      3. Tier 3: Components (`@/components/*`, feature UI components)
+      4. Tier 4: Context & Providers (`@/providers/*`, context hooks/providers)
+      5. Tier 5: Services, Lib & Utils (`@/lib/*`, `@/services/*`, actions, helpers)
+      6. Tier 6: Constants, Types & CSS (`@/types/*`, schemas, `.css` stylesheets)
+    - Enforced strict vertical spacing: exactly **one blank line** between different tiers, and **zero blank lines** within the same tier.
+    - Alphabetized named imports within `{ ... }` curly braces across all files.
+    - Converted pure type and interface imports to explicit `import type { ... }`.
+    - Stripped dead and unreferenced imports across UI components and actions.
+    - Cleaned up all 6 batches:
+      - **Batch 1 (Core Lib, Providers & App Shell)**: 16 files (`proxy.ts`, `providers/`, `lib/`, `components/app-shell/`).
+      - **Batch 2 (UI Primitives & Storage Components)**: 25 files (`components/ui/`, `components/storage/`).
+      - **Batch 3 (App Routes & Webhooks)**: 35 files (`app/auth/`, `app/(workspace)/`).
+      - **Batch 4 (Dashboard, Profile, Pricing & Storage)**: 25 files (`features/dashboard/`, `features/profile/`, `features/pricing/`, `features/storage/`).
+      - **Batch 5 (Travel Essentials, Community, Blog & Templates)**: 27 files (`features/travel-essentials/`, `features/community/`, `features/blog/`, `features/templates/`).
+      - **Batch 6 (Trip Workspace, Trips CRUD & Services)**: 36 files (`features/trips/`, `features/trip-workspace/` [accommodations, ai, checklist, common, context, expenses, itinerary, links, notes, overview], `services/` [ai, subscription, unsplash]).
+  - **Comprehensive README.md & Branding Synchronization**:
+    - Rebranded project references from `"Prava AI"` to `"Prava Travel Workspace V2"` across `README.md`, `AGENTS.md`, and `memory.md`.
+    - Fully updated `README.md` to reflect all architectural milestones reached through Phase 55: 7-tab trip workspace, right-side companion Ichinose AI panel with multi-tier Gemini/OpenRouter cascade, Travel Essentials 7-submodule suite (including Resource Vault and Max-Width 7XL obsidian dark theme), Google Calendar/.ics exports, cross-trip travel overhead financials, Polar subscription billing, reference-counted storage garbage collection, and strict 6-tier import architecture.
+
+- **Phase 54 Complete**: Travel Essentials Dark Mode Modernization & Max-Width 7XL Expansion:
+  - **Layout Expansion to 7XL**:
+    - Expanded max width from `max-w-5xl` to `max-w-7xl` in `app/(workspace)/travel-essentials/page.tsx` (Suspense fallback) and `app/(workspace)/travel-essentials/travel-essentials-shell.tsx` to match the spacious layout of the rest of the application.
+  - **Scope Boundary Compliance**:
+    - Zero modifications to `components/app-shell/sidebar.tsx`, `components/app-shell/top-bar.tsx`, `components/app-shell/app-shell.tsx`, or `app/globals.css`. Modifications strictly isolated to Travel Essentials views and components.
+  - **Sleek Obsidian & Cerulean Blue Aesthetics**:
+    - Upgraded all Travel Essentials feature tabs to pair deep obsidian midnight backgrounds (`#0C1322`, `#080D18`, `#060A14`) with crisp slate borders (`#1E293B`), bright legible typography (`text-zinc-100`, `text-white`, `text-slate-400`), and radiant Prava Cerulean Blue accents (`#2D9BF0`).
+    - **Shell (`travel-essentials-shell.tsx`)**: Upgraded kicker pill, tabs bar, mobile navigation select, active tab cerulean glow, and tab headers.
+    - **Currency Converter (`currency-converter.tsx`)**: Dark styling for base currency strip, quick-converter card, number inputs, quick amount chips, watchlist cards, performance chart card, and currency strength bar.
+    - **Weather View (`weather-view.tsx`)**: Dark styling for search input, suggestions dropdown, metro quick-pick pills, main hero card, atmospheric matrix, 7-day forecast cards, and hourly schedule carousel.
+    - **Country Guide (`country-guide-view.tsx`)**: Dark styling for search bar, region switcher tabs, country quick pills, core overview card, fast facts strip, Emergency Dispatch Hub, AI travel summary & News feed, 6 core intelligence cards, cultural dos/don'ts, and global directory.
+    - **Language Phrasebook (`language-view.tsx`)**: Dark styling for search input, language selector, AI custom sentence translator & keypad reader, bidirectional mode selector, translation result card, category filter pills, and phrase cards grid.
+    - **Interactive Maps (`map-view.tsx`)**: Dark styling for search input, locate me GPS button, suggestions dropdown, quick destination pins, map top bar, map pin legend, category filter pills, and nearby travel essentials cards.
+    - **Travel Resource Vault (`vault-view.tsx`)**: Dark styling for search input, category filters, empty vault placeholder, and resource bookmark cards.
+
+- **Phase 53 Complete**: Sidebar Workspace Logo Tooltip Affordance:
+  - **Brand Logo Tooltip (`components/app-shell/sidebar.tsx`)**: Wrapped the Prava brand logo and title link (`<Link href="/dashboard">`) in the persistent sidebar header with shadcn/ui `TooltipProvider` (`delayDuration={150}`), `Tooltip`, `TooltipTrigger asChild`, and `TooltipContent`.
+  - **Clear Affordance**: Hovering over the logo/brand header displays a floating tooltip with `side="bottom" align="start" sideOffset={8}` indicating `"Prava — The Travel Workspace"`.
+  - **Clean Imports & Code Structure**: Followed the strict 6-tier import structure and project conventions.
+
+- **Phase 52 Complete**: Trip Banner Storage Optimization & Reference-Counted Orphan Purging:
+  - **Reference-Counted Storage Garbage Collection (`deleteUnusedTripCoverImage`)**: Built `deleteUnusedTripCoverImage(coverImageUrl, userId)` in `features/storage/actions.ts` and exported via `features/storage/index.ts`. Before purging an image from Supabase Storage (`prava-media`), it verifies with PostgreSQL (`db.trip.count({ where: { coverImageUrl } })`) to ensure no other duplicated or cloned trips are still referencing the file.
+  - **Cover Image Replacement & Removal Cleanup (`updateTripCoverImage`)**: When a user changes or clears a trip banner via `CoverImage` in the individual trip workspace, the previous image file in Supabase Storage is automatically deleted.
+  - **Trip Details Edit Synchronization (`updateTrip`)**: When a trip's cover image is changed or removed via `EditTripDialog`, the previous custom image is automatically purged from Supabase Storage.
+  - **Trip Deletion Purge (`deleteTrip`)**: When a trip is permanently deleted, its custom cover image is automatically purged from Supabase Storage if unreferenced by other trips.
+  - **External CDN Safety**: Third-party Unsplash images (`https://images.unsplash.com/...`) are safely detected by `parseSupabaseStoragePath` and skipped without contacting Supabase.
+  - **Verification**: Verified with `npx tsc --noEmit` (0 errors) and successful production build with Turbopack (`npm run build`, exit code 0).
+    - `proposals.ts`: Structured JSON proposal rules and schemas for activities and stays.
+    - `conversation.ts`: Guidelines for packing, local food, cultural etiquette, and formatting.
+    - `index.ts`: Unified prompt assembler functions (`assembleConversationalPrompt`, `assembleProposalPrompt`).
+  - **Credit Enforcement Policy**:
+    - Preserved credit deduction for off-topic/prompt-injection requests as requested: user pays the credit cost for deliberate prompt induction attempts while the AI delivers a firm refusal and pivots back to trip planning.
+- **Phase 49 Complete**: AI Assistant System Boundaries & Past Planned Dates Advisory Banner:
+  - **AI Assistant Inspection & Fix (`services/ai/context-builder.ts`)**:
+    - Identified why the AI assistant hallucinated updating trip status and dates without changing the database: the LLM is stateless and lacks direct database write permissions for trip-level metadata, but lacked explicit negative system boundaries forbidding affirmative action claims for trip settings.
+    - Added strict system boundaries to both `conversationalPrompt` and `proposalPrompt`: AI is forbidden from claiming it updated trip status, dates, title, or destination, and must instruct the user to use the Status dropdown and the "Edit Details & Cover" modal in the top header.
+    - Integrated past planned dates awareness into trip context prompts so Ichinose can proactively remind travelers when viewing a stale planning trip.
+  - **Workspace Past Planned Dates Banner (`features/trip-workspace/common/workspace-header.tsx`)**:
+    - Added reactive banner for trips in `PLANNING` status whose planned dates have passed (`isTripDatesPassed(trip.startDate, trip.endDate)`).
+    - Features 4 direct action buttons: **"Set to Active"**, **"Mark Completed"**, **"Edit Dates"** (opens `EditTripDialog`), and **"Delete"** (opens `ConfirmDeleteDialog`), plus session dismiss.
+    - Updated `getCountdownLabel` to render an amber "Planned dates passed" badge on the cover image.
+  - **Create & Edit Trip Dialog Notifications (`features/trips/components/create-trip-dialog.tsx`, `edit-trip-dialog.tsx`)**:
+    - Added instant contextual warning banner when the user selects dates in the past while setting status to `PLANNING`, explaining the upcoming banner in the workspace.
+  - **Trips List & Trip Card Badges (`features/trips/components/trip-card.tsx`, `trip-list.tsx`)**:
+    - Added "Dates passed" badge and a subtle "Planned dates have passed · Update ->" card notification strip.
+    - Added top advisory banner to `TripList` indicating total stale planning trips with a 1-click filter button.
+  - **Shared Date Utility (`lib/utils/index.ts`)**:
+    - Created and exported `isTripDatesPassed(start, end)` helper.
 
 ## Completed Work
 - Inspected repository state and validated Next.js 16.3.0, React 19.2.8, Tailwind CSS v4, and ESLint 9 configuration.
@@ -299,7 +513,7 @@
     - Every option change (currency select, date format select, AI proposal switch, offline cache switch, departure notifications switch) immediately saves to PostgreSQL and fires a descriptive Sonner toast (e.g. `"Default currency updated to EUR in database."`, `"Structured AI proposals enabled in database."`).
   - **Simplified Date Format Select**: Removed confusing `MMM D, YYYY` prefix syntax in favor of clean real-world date examples (`Oct 14, 2026`, `14/10/2026`, `2026-10-14`, `10/14/2026`).
 - **Task 45 (Agent & Repository Documentation — AGENTS.md & README.md Comprehensive Guide)**:
-  - **AGENTS.md Overhaul**: Preserved Next.js breaking changes agent rule block and authored a comprehensive guide for LLMs/AI assistants working on Prava AI. Documented the core philosophy ("Workspace First, AI Second", "The application remembers, the LLM does not"), complete routing architecture, full technology stack, feature-first codebase organization, Prisma database conventions (`syncUserProfile`, UUID PKs, cascade deletes), Supabase SSR & PKCE authentication, Gemini 2.5 Flash structured action proposals, calm productivity design standards (Cerulean `#2D9BF0`, shadcn/ui, no AI slop/glassmorphism), external API services, and strict developer/agent rules of engagement.
+  - **AGENTS.md Overhaul**: Preserved Next.js breaking changes agent rule block and authored a comprehensive guide for LLMs/AI assistants working on Prava Travel Workspace. Documented the core philosophy ("Workspace First, AI Second", "The application remembers, the LLM does not"), complete routing architecture, full technology stack, feature-first codebase organization, Prisma database conventions (`syncUserProfile`, UUID PKs, cascade deletes), Supabase SSR & PKCE authentication, Gemini 2.5 Flash structured action proposals, calm productivity design standards (Cerulean `#2D9BF0`, shadcn/ui, no AI slop/glassmorphism), external API services, and strict developer/agent rules of engagement.
   - **README.md Overhaul**: Replaced the default `create-next-app` boilerplate with a comprehensive project README featuring badges, executive overview, feature breakdown across all 5 key modules, technology stack matrix, step-by-step setup and environment configuration guide, project structure, scripts, design philosophy, and documentation links.
 - **Task 46 (Format Imports & Code Cleaner Skill — `.agents/skills/format-imports-and-clean`)**:
   - **Skill Creation**: Created the custom Antigravity skill `format-imports-and-clean` in both workspace (`.agents/skills/format-imports-and-clean/SKILL.md`) and global configuration (`~/.gemini/config/skills/format-imports-and-clean/SKILL.md`).
@@ -385,7 +599,7 @@
     - **LandscapeBanner (`landscape-banner.tsx`)**: Full-bleed scenic mountain highway banner ("The journey is yours.") with exploration CTA.
     - **CorePhilosophySection (`core-philosophy-section.tsx`)**: 3 principles breakdown (01 PLAN, 02 ORGANIZE, 03 ASSIST).
     - **CtaBanner (`cta-banner.tsx`) & LandingFooter (`landing-footer.tsx`)**: "Make space for the journey." with monochrome buttons and minimal footer.
-  - **Preserved Authentic Travel Dashboard**: Reverted `app/(app)/dashboard/page.tsx` and `DashboardMetrics` back to Prava AI's core travel workspace entities (Total Trips, Total Budget Spent, Scheduled Activities, Pending Tasks, Upcoming Trip, Quick Essentials, Recent Trips, and Urgent Checklist), avoiding unnecessary domain deviations.
+  - **Preserved Authentic Travel Dashboard**: Reverted `app/(app)/dashboard/page.tsx` and `DashboardMetrics` back to Prava Travel Workspace's core travel workspace entities (Total Trips, Total Budget Spent, Scheduled Activities, Pending Tasks, Upcoming Trip, Quick Essentials, Recent Trips, and Urgent Checklist), avoiding unnecessary domain deviations.
   - **Strict Import Standards**: Adhered to the 6-tier import hierarchy formalized in `.agents/skills/format-imports-and-clean`.
 
 - **Task 49 (Sidebar & AppShell Refactor: Flex Sibling, Compact Width, Muted Font Weight, Less Rounding & Border Removal)**:
@@ -959,7 +1173,7 @@
       - General queries and live essentials (weather forecasts, ECB exchange rates, general travel Q&A) seamlessly fallback to free OpenRouter models (`nvidia/nemotron-3.5-lightning:free` and `openrouter/free`) with an explicit "Free Fallback" badge.
     - Persistent credit usage indicator displayed in the workspace header button (`AI Assistant [24]` or `AI Assistant [Free]`) and inside the assistant header (`⚡ X/30 Credits` / `0/30 (Free Fallback)`).
   - **Verification**:
-- **Task 86 (Ichinose Prava AI Assistant Full-Right Companion, Theme Mirroring & Scrollbar Fixes)**:
+- **Task 86 (Ichinose Prava Travel Workspace Assistant Full-Right Companion, Theme Mirroring & Scrollbar Fixes)**:
   - **Right-Side Companion Architecture (`AppShell` Level)**:
     - Shifted `WorkspaceAiPanel` out from inside `<main>` to the complete right of the viewport as a top-level flex companion in `AppShell` (`components/app-shell/app-shell.tsx`), creating a 3-column workspace architecture: `[ Sidebar (w-52) ] | [ Center Canvas (flex-1) ] | [ Ichinose Panel (380px/410px) ]`.
     - Wrapped `AppShell` with `WorkspaceAiProvider` in `app/(app)/layout.tsx` so trip context is shared seamlessly while isolating `<main>` scroll layout.
@@ -967,8 +1181,8 @@
     - Mirrored the left sidebar's theme palette exactly: in light mode, the panel is dark navy (`#090E1A` background, `#152033` borders, slate text); in dark mode, the panel is light slate (`slate-100` background, `slate-300` borders, slate-900 text).
     - Added symmetrical 20px rounded corners and 8px blue border (`md:rounded-tr-[20px] md:rounded-br-[20px] md:border-r-8 border-blue-500`) to the center canvas when Ichinose is open, with smooth margin/padding transitions.
   - **Assistant Rebranding & Prompt Awareness**:
-    - Rebranded assistant to **Ichinose — Prava AI Assistant**.
-    - Updated system prompts in `services/ai/context-builder.ts` so the assistant explicitly recognizes itself as **Ichinose, Prava AI's Travel Workspace Assistant**.
+    - Rebranded assistant to **Ichinose — Prava Travel Workspace Assistant**.
+    - Updated system prompts in `services/ai/context-builder.ts` so the assistant explicitly recognizes itself as **Ichinose, Prava Travel Workspace Assistant**.
     - Updated header button to **Ichinose** with Sparkles icon and credit pill indicator.
   - **Scrollbar Isolation & Scroll Chaining Prevention**:
     - Eliminated `messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })`, which caused the underlying trip page to jump and scroll up/down on message updates. Replaced with direct `chatScrollContainerRef.current.scrollTo(...)` and `scrollTop` adjustments strictly contained to the chat feed container.
@@ -978,7 +1192,7 @@
     - Created custom circular portrait avatar `/ichinose-avatar.jpg` in dark navy with glowing Cerulean blue headset and "ICHINOSE" collar emblem.
     - Integrated avatar into `WorkspaceAiPanel` header, empty state hero, AI message bubbles, loading indicator, and `WorkspaceHeader` trigger button.
   - **Header Decluttering & 3-Dot Actions Menu**:
-    - Removed `Prava AI` badge and inline pencil icon from panel header to provide clean space for session titles.
+    - Removed former "Prava AI" branding badge and inline pencil icon from panel header to provide clean space for session titles.
     - Added a 3-dot dropdown menu (`DropdownMenu`) consolidating "Rename Chat" (with pencil icon) and "Clear Messages" (with trash icon).
     - Removed `X` close icon on desktop (`flex md:hidden`), keeping it exclusively for mobile drawers to optimize space readability.
   - **Flush Canvas-to-Panel Docking**:
@@ -3186,4 +3400,40 @@
   - **Verification**:
     - Verified compilation with `npm run build` using Turbopack and Prisma 7.10 generation.
     - Result: Exit code 0, 0 TypeScript errors across all 28 dynamic and static routes.
+
+- **Phase 52 (AI Assistant Opposite-Theme Synchronization & AiProposalCard Modernization)**:
+  - **Context & Diagnosis**:
+    - The user observed that in dark mode, the AI assistant's proposal response rendered as a harsh, stark white square box with rigid blue borders, while the assistant panel itself stayed dark.
+    - Root cause: `workspace-ai-panel.tsx` was hardcoded to `bg-[#090E1A]` without opposite-theme classes, causing it to remain dark when the app was in dark mode, while child components (like `AiProposalCard`) activated Tailwind `dark:` classes (`dark:bg-white`, `dark:border-blue-500`).
+    - In Prava's inverted theme design, the sidebar and frame are **dark** when the main app is in light mode, and **light** when the main app is in dark mode. The AI Assistant panel was not synchronized to this rule.
+  - **Implementation**:
+    1. **Opposite-Theme AI Assistant Panel (`workspace-ai-panel.tsx`)**:
+       - Container: `bg-[#090E1A] text-slate-200 border-l border-[#152033] dark:bg-slate-100 dark:text-slate-900 dark:border-slate-300 md:border-l md:border-[#152033] dark:md:border-slate-300`
+       - Header: `bg-[#090E1A] dark:bg-slate-100 border-b border-[#152033] dark:border-slate-300`, title text `text-white dark:text-slate-900`, title edit input `bg-[#0E1729] dark:bg-white text-white dark:text-slate-900`, buttons with `dark:text-slate-600 dark:hover:text-slate-950 dark:hover:bg-slate-200`.
+       - History Tab: `bg-[#090E1A] dark:bg-slate-100`, empty state and thread cards with opposite theme tokens (`dark:bg-white`, `dark:border-slate-200`, `dark:hover:bg-slate-50`).
+       - Chat Feed: `bg-[#090E1A] dark:bg-slate-100`, empty state avatar ring and suggested prompt buttons, assistant stats/reasoning box (`dark:bg-white dark:border-slate-200 dark:text-slate-600`), and formatted markdown content (`dark:text-slate-800`, bold `dark:text-slate-900`, code `dark:bg-slate-200 dark:text-blue-800`).
+       - Bottom Input Bar: `bg-[#090E1A] dark:bg-slate-100 border-t border-[#152033] dark:border-slate-300`, form input `bg-[#0E1729] dark:bg-white dark:border-slate-300`, textarea `text-white dark:text-slate-900`, quota badge `dark:bg-slate-100 dark:border-slate-200 dark:text-slate-700`.
+    2. **AiProposalCard Modern Minimal Redesign (`ai-proposal-card.tsx`)**:
+       - Card Container: Replaced rigid `rounded-xs` with `rounded-xl`, `bg-[#0B1322] border-[#1E2B45] text-slate-200 dark:bg-white dark:border-slate-200/90 dark:text-slate-900 shadow-sm`.
+       - Proposal Items: Replaced harsh square blue boxes with `rounded-lg` smooth cards with subtle borders (`dark:bg-blue-50/70 dark:border-blue-300` when selected, `dark:bg-slate-50/70 dark:border-slate-200` when unselected).
+       - Badges: Pill badges (`rounded-full`) for actions (`Add`, `Update`, `Remove`) in soft pastel tones.
+       - Structured Metadata Chips: Organized into clean chips with icons (📅 `Day N`, ⏰ `HH:mm`, 📍 Location, 🏷️ Cost with `Free` or `$N`).
+       - Footer Action Bar: Modern rounded buttons for `Reject` (ghost with soft hover), `Apply Selected`, and `Accept All` with spinning loader and check icon.
+  - **Verification**:
+    - Validated all JSX tags, TypeScript types, and styling consistency across both Light Mode and Dark Mode.
+
+- **Phase 53 (Forum Discussion & Reply Publishing Resolution - Profile Sync & Prisma Migration)**:
+  - **Context & Diagnosis**:
+    - User reported "Failed to publish discussion" error when attempting to start a forum discussion topic.
+    - Root cause: `features/community/forum-actions.ts` did not call `syncUserProfile(user)` and relied on raw PostgreSQL SQL queries with a standalone `new Pool()` instance bypassing Prisma ORM.
+    - When a user session attempted to insert into `community_posts` with `user.id`, PostgreSQL threw a foreign key violation (`community_posts_profile_id_fkey`) if their row in `public.profiles` had not yet been synced by other modules.
+    - Furthermore, raw parameterized queries against PgBouncer (port 6543) had untyped null parameters for `linked_trip_id` and empty array literal mismatches.
+  - **Implementation**:
+    1. **Imported Safe Profile Sync (`lib/auth/index.ts`)**: Added `const profile = await syncUserProfile(user)` to `createForumDiscussion`, `updateForumDiscussion`, `deleteForumDiscussion`, `postForumReply`, `updateForumReply`, `deleteForumReply`, `toggleForumPostUpvote`, `toggleSaveDiscussion`, `saveForumTipToTripNote`, and `getUserTripsForDiscussion`.
+    2. **Prisma ORM Migration (`db.communityPost`, `db.communityReply`, `db.communityPostUpvote`, `db.communitySavedPost`)**:
+       - Replaced raw `pool.query(INSERT ...)` with type-safe `db.communityPost.create({ data: { profileId: profile.id, ... } })`.
+       - Migrated post updates, deletes, replies, upvotes ($transaction increment/decrement), and bookmarks to Prisma.
+       - Returned detailed error messages on catch to avoid opaque failure messages.
+  - **Verification**:
+    - Verified TypeScript type compatibility across all migrated forum actions and enforced strict 6-tier import structure.
 

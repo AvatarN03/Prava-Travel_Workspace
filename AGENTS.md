@@ -8,9 +8,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# Prava AI V2 — Agent & LLM Development Guide
+# Prava Travel Workspace V2 — Agent & LLM Development Guide
 
-Welcome to the **Prava AI V2** codebase. This document serves as the primary technical and architectural reference for AI assistants, LLMs, and software engineers modifying or extending this application.
+Welcome to the **Prava Travel Workspace V2** codebase. This document serves as the primary technical and architectural reference for AI assistants, LLMs, and software engineers modifying or extending this application.
 
 Always consult this document alongside `memory.md` (which logs the active task state and all 44+ completed implementation phases) and the foundational specifications in `docs/`.
 
@@ -19,12 +19,12 @@ Always consult this document alongside `memory.md` (which logs the active task s
 ## 1. Executive Summary & Core Philosophy
 
 ### Product Vision: "Workspace First, AI Second"
-Prava AI is an **AI-augmented travel workspace**. It is the single system of record where a traveler plans, organizes, and manages every aspect of their trips — itineraries, accommodations, expenses, notes, checklists, and reference links — alongside live contextual tools (weather forecasts, currency conversion, maps, country guides, emergency contacts, language essentials) and a community discovery feed.
+Prava Travel Workspace is an **AI-augmented travel workspace**. It is the single system of record where a traveler plans, organizes, and manages every aspect of their trips — itineraries, accommodations, expenses, notes, checklists, and reference links — alongside live contextual tools (weather forecasts, currency conversion, maps, country guides, emergency contacts, language essentials) and a community discovery feed.
 
 - **Workspace First**: The primary value lies in structured, persistent, user-owned data. Every core workflow can be completed 100% manually, with zero AI involvement.
 - **AI Second**: AI is an assistive accelerant, not a gatekeeper. It suggests, drafts, summarizes, and answers context-specific questions on top of persisted workspace data.
 - **"The Application Remembers, The LLM Does Not"**: The LLM is stateless. Continuity, context assembly, and conversation histories are persisted in PostgreSQL via Prisma.
-- **Design Philosophy**: Prava AI is modeled after high-efficiency productivity tools (**Notion, Linear, GitHub, Stripe Dashboard**), explicitly rejecting "AI slop", chat-first chrome, floating conversational bubbles, neumorphism, heavy gradients, or glowing neon animations.
+- **Design Philosophy**: Prava Travel Workspace is modeled after high-efficiency productivity tools (**Notion, Linear, GitHub, Stripe Dashboard**), explicitly rejecting "AI slop", chat-first chrome, floating conversational bubbles, neumorphism, heavy gradients, or glowing neon animations.
 
 ---
 
@@ -163,7 +163,7 @@ All database operations run through **Prisma 7** against Supabase PostgreSQL:
 
 ## 7. AI Subsystem Architecture (Gemini 2.5 Flash)
 
-AI in Prava AI operates under strict structured contracts:
+AI in Prava Travel Workspace operates under strict structured contracts:
 1. **Model**: Google Gemini 2.5 Flash via `@google/genai` (`lib/ai/gemini-client.ts`).
 2. **Context Assembly (`services/ai/context-builder.ts`)**:
    - Dynamically pulls trip details, itinerary items with `[ID: uuid]`, accommodations, expenses, and notes.
