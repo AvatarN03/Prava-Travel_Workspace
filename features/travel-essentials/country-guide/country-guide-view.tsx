@@ -62,6 +62,7 @@ import {
   setCachedCountryInfo,
   setCachedNews,
 } from "./country-cache";
+import { getPassportVisaGuidance } from "./country-constants";
 import {
   fetchCountryNews,
   fetchCountrySuggestions,
@@ -70,11 +71,9 @@ import {
 } from "./country-service";
 
 import { EMERGENCY_DIRECTORY } from "../emergency/emergency-data";
-import type { CountryInfo, EmergencyContacts } from "../types";
 import {
   ALLIANCE_FULL_NAMES,
   BORDER_COUNTRY_NAMES,
-  getPassportVisaGuidance,
   QUICK_PICK_COUNTRIES,
   type QuickPickCountry,
 } from "./country-constants";
@@ -83,6 +82,7 @@ import type {
   CountryNewsArticle,
   CountrySuggestionItem,
 } from "./country-service";
+import type { CountryInfo, EmergencyContacts } from "../types";
 
 const REGIONS = ["All", "Europe", "Asia", "Americas", "Middle East"] as const;
 type RegionType = (typeof REGIONS)[number];
@@ -379,19 +379,19 @@ export function CountryGuideView() {
   return (
     <div className="space-y-6">
       {/* Header & Search Bar Strip */}
-      <div className="flex flex-col gap-3 pb-2 border-b border-border/80">
+      <div className="flex flex-col gap-3 pb-2 border-b border-border/80 dark:border-[#1E293B]/70">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-indigo-500" />
+              <h2 className="text-base font-semibold text-foreground dark:text-zinc-100 flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-indigo-500 dark:text-[#2D9BF0]" />
                 Country Guide & Emergency Directory
               </h2>
-              <Badge variant="secondary" className="text-[10px] font-mono px-2 py-0">
+              <Badge variant="secondary" className="text-[10px] font-mono px-2 py-0 dark:bg-[#131F35] dark:text-zinc-200 dark:border dark:border-[#1E293B]">
                 250+ Countries
               </Badge>
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-xs text-muted-foreground dark:text-slate-400 mt-0.5">
               Live intelligence: visa rules, emergency hotlines, power plugs, tipping norms, geography, and AI news summaries.
             </p>
           </div>
@@ -402,10 +402,10 @@ export function CountryGuideView() {
           <div ref={searchContainerRef} className="relative flex-1 max-w-md">
             <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
               <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground dark:text-slate-400" />
                 <Input
                   placeholder="Search countries (e.g. Poland, Japan, France, Brazil)..."
-                  className="pl-8 pr-8 h-9 text-xs bg-background"
+                  className="pl-8 pr-8 h-9 text-xs bg-background dark:bg-[#060A14] dark:border-[#1E293B] dark:text-white dark:placeholder:text-slate-500 dark:focus-visible:border-[#2D9BF0]"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -424,7 +424,7 @@ export function CountryGuideView() {
                   disabled={isSearching}
                 />
                 {(isSuggesting || isSearching) && (
-                  <Loader2 className="absolute right-2.5 top-2.5 h-3.5 w-3.5 text-primary animate-spin" />
+                  <Loader2 className="absolute right-2.5 top-2.5 h-3.5 w-3.5 text-primary dark:text-[#2D9BF0] animate-spin" />
                 )}
               </div>
               <Button
@@ -439,25 +439,25 @@ export function CountryGuideView() {
 
             {/* Compact Autocomplete Suggestions Dropdown */}
             {showDropdown && suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-full mt-1 z-50 rounded-xl border border-border/80 bg-popover/95 backdrop-blur-md shadow-xl overflow-hidden py-1 divide-y divide-border/40 animate-in fade-in-50 zoom-in-95 duration-100 max-h-56 overflow-y-auto thin-scrollbar">
+              <div className="absolute left-0 right-0 top-full mt-1 z-50 rounded-xl border border-border/80 dark:border-[#1E293B] bg-popover/95 dark:bg-[#0C1322]/95 backdrop-blur-md shadow-xl overflow-hidden py-1 divide-y divide-border/40 dark:divide-[#1E293B] animate-in fade-in-50 zoom-in-95 duration-100 max-h-56 overflow-y-auto thin-scrollbar">
                 {suggestions.map((item) => (
                   <button
                     key={`${item.code}-${item.name}`}
                     type="button"
                     onClick={() => handleSelectCountry(item.name)}
-                    className="w-full text-left px-3 py-2 text-xs flex items-center justify-between gap-3 hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer group select-none"
+                    className="w-full text-left px-3 py-2 text-xs flex items-center justify-between gap-3 hover:bg-primary/10 hover:text-primary dark:hover:bg-[#131F35] dark:hover:text-[#2D9BF0] transition-colors cursor-pointer group select-none"
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-sm leading-none">{item.flag}</span>
-                      <span className="font-semibold text-foreground group-hover:text-primary truncate">
+                      <span className="font-semibold text-foreground dark:text-zinc-100 group-hover:text-primary dark:group-hover:text-[#2D9BF0] truncate">
                         {item.name}
                       </span>
-                      <span className="text-muted-foreground text-[10px] truncate hidden sm:inline">
+                      <span className="text-muted-foreground dark:text-slate-400 text-[10px] truncate hidden sm:inline">
                         • {item.capital}
                       </span>
                     </div>
 
-                    <span className="text-[10px] text-muted-foreground font-mono shrink-0">
+                    <span className="text-[10px] text-muted-foreground dark:text-slate-500 font-mono shrink-0">
                       {item.code}
                     </span>
                   </button>
@@ -474,8 +474,8 @@ export function CountryGuideView() {
                 type="button"
                 onClick={() => setActiveRegion(reg)}
                 className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer border ${activeRegion === reg
-                  ? "bg-primary text-primary-foreground border-primary font-semibold shadow-xs"
-                  : "bg-muted/40 text-muted-foreground hover:text-foreground border-border/60 hover:bg-muted"
+                  ? "bg-primary text-primary-foreground border-primary font-semibold shadow-xs dark:bg-[#2D9BF0] dark:border-[#2D9BF0] dark:text-white dark:shadow-[0_0_12px_rgba(45,155,240,0.3)]"
+                  : "bg-muted/40 text-muted-foreground hover:text-foreground border-border/60 hover:bg-muted dark:bg-[#0C1322] dark:border-[#1E293B] dark:text-slate-400 dark:hover:text-white dark:hover:border-[#2D9BF0]/30"
                   }`}
               >
                 {reg}
@@ -486,7 +486,7 @@ export function CountryGuideView() {
 
         {/* Quick Country Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
-          <span className="text-[11px] font-semibold text-muted-foreground mr-1 shrink-0">
+          <span className="text-[11px] font-semibold text-muted-foreground dark:text-slate-400 mr-1 shrink-0">
             Quick pick:
           </span>
           {filteredQuickPicks.slice(0, 10).map((pick) => (
@@ -495,8 +495,8 @@ export function CountryGuideView() {
               type="button"
               onClick={() => handleSelectCountry(pick.name)}
               className={`px-2.5 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${country.name.toLowerCase() === pick.name.toLowerCase() || country.code === pick.code
-                ? "bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-500/40 font-semibold shadow-xs"
-                : "bg-muted/50 text-muted-foreground hover:text-foreground border-border hover:bg-muted"
+                ? "bg-indigo-500/10 text-indigo-700 dark:text-[#2D9BF0] border-indigo-500/40 dark:border-[#2D9BF0]/40 dark:bg-[#2D9BF0]/15 dark:shadow-[0_0_10px_rgba(45,155,240,0.2)] font-semibold shadow-xs"
+                : "bg-muted/50 text-muted-foreground hover:text-foreground border-border hover:bg-muted dark:bg-[#0C1322] dark:border-[#1E293B] dark:text-slate-400 dark:hover:text-white dark:hover:border-[#2D9BF0]/30"
                 }`}
             >
               <span>{pick.flag || "🌐"}</span>
@@ -507,7 +507,7 @@ export function CountryGuideView() {
       </div>
 
       {/* Selected Country Core Overview Banner */}
-      <Card className="border-border/80 bg-gradient-to-br from-card via-card to-muted/20 shadow-xs overflow-hidden">
+      <Card className="border-border/80 dark:border-[#1E293B] bg-gradient-to-br from-card via-card to-muted/20 dark:from-[#0C1322] dark:via-[#090E1A] dark:to-[#0C1322] dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)] shadow-xs overflow-hidden">
         <CardContent className="p-4 sm:p-5">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="space-y-2 flex-1">
@@ -515,10 +515,10 @@ export function CountryGuideView() {
                 {country.flag && <span className="text-3xl leading-none">{country.flag}</span>}
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-2xl font-extrabold tracking-tight text-foreground">
+                    <h3 className="text-2xl font-extrabold tracking-tight text-foreground dark:text-white">
                       {country.name}
                     </h3>
-                    <Badge variant="secondary" className="font-mono text-xs">
+                    <Badge variant="secondary" className="font-mono text-xs dark:bg-[#131F35] dark:text-zinc-200 dark:border dark:border-[#1E293B]">
                       {country.code}
                     </Badge>
                     {country.callingCode && (
@@ -527,7 +527,7 @@ export function CountryGuideView() {
                       </Badge>
                     )}
                     {country.region && (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs dark:border-[#1E293B] dark:text-slate-300">
                         {country.subregion || country.region}
                       </Badge>
                     )}
@@ -537,7 +537,7 @@ export function CountryGuideView() {
                     </Badge>
                   </div>
                   {country.officialName && country.officialName !== country.name && (
-                    <p className="text-xs text-muted-foreground font-serif italic mt-0.5">
+                    <p className="text-xs text-muted-foreground dark:text-slate-400 font-serif italic mt-0.5">
                       {country.officialName}
                     </p>
                   )}
@@ -545,27 +545,27 @@ export function CountryGuideView() {
               </div>
 
               {/* Fast Facts Strip */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 gap-1.5 text-xs text-muted-foreground sm:flex-wrap pt-0.5">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 gap-1.5 text-xs text-muted-foreground dark:text-slate-400 sm:flex-wrap pt-0.5">
                 <span>
-                  Capital: <strong className="text-foreground font-semibold">{country.capital}</strong>
+                  Capital: <strong className="text-foreground dark:text-zinc-100 font-semibold">{country.capital}</strong>
                 </span>
                 <span className="hidden sm:inline">•</span>
                 <span>
-                  Currency: <strong className="text-foreground font-semibold">{country.currency}</strong>
+                  Currency: <strong className="text-foreground dark:text-zinc-100 font-semibold">{country.currency}</strong>
                 </span>
                 <span className="hidden sm:inline">•</span>
                 <span>
-                  Languages: <strong className="text-foreground font-semibold">{country.languages.join(", ")}</strong>
+                  Languages: <strong className="text-foreground dark:text-zinc-100 font-semibold">{country.languages.join(", ")}</strong>
                 </span>
                 <span className="hidden sm:inline">•</span>
                 <span>
-                  Driving: <strong className="text-foreground font-semibold">{country.drivingSide}-hand</strong>
+                  Driving: <strong className="text-foreground dark:text-zinc-100 font-semibold">{country.drivingSide}-hand</strong>
                 </span>
                 {country.population && (
                   <>
                     <span className="hidden sm:inline">•</span>
                     <span>
-                      Population: <strong className="text-foreground font-semibold">{(country.population / 1_000_000).toFixed(1)}M</strong>
+                      Population: <strong className="text-foreground dark:text-zinc-100 font-semibold">{(country.population / 1_000_000).toFixed(1)}M</strong>
                     </span>
                   </>
                 )}
@@ -573,7 +573,7 @@ export function CountryGuideView() {
                   <>
                     <span className="hidden sm:inline">•</span>
                     <span>
-                      Area: <strong className="text-foreground font-semibold">{country.areaKm.toLocaleString()} km²</strong>
+                      Area: <strong className="text-foreground dark:text-zinc-100 font-semibold">{country.areaKm.toLocaleString()} km²</strong>
                     </span>
                   </>
                 )}
@@ -581,17 +581,17 @@ export function CountryGuideView() {
 
               {/* Descriptions from v5 API */}
               {country.descriptionShort && (
-                <p className="text-xs text-foreground/90 leading-relaxed pt-1 max-w-4xl">
+                <p className="text-xs text-foreground/90 dark:text-zinc-200 leading-relaxed pt-1 max-w-4xl">
                   {country.descriptionShort}
                 </p>
               )}
             </div>
 
             {/* Links and Action Buttons */}
-            <div className="flex flex-col items-start sm:items-end gap-2 shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0 border-border/60 w-full sm:w-auto">
+            <div className="flex flex-col items-start sm:items-end gap-2 shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0 border-border/60 dark:border-[#1E293B] w-full sm:w-auto">
               {country.bestSeasons && (
-                <div className="flex items-start gap-1.5 text-xs text-indigo-700 dark:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1.5 rounded-lg w-full sm:max-w-xs">
-                  <Calendar className="w-3.5 h-3.5 text-indigo-500 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-1.5 text-xs text-indigo-700 dark:text-indigo-300 bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/20 dark:border-indigo-500/30 px-2.5 py-1.5 rounded-lg w-full sm:max-w-xs">
+                  <Calendar className="w-3.5 h-3.5 text-indigo-500 dark:text-[#2D9BF0] shrink-0 mt-0.5" />
                   <span className="leading-snug text-left">{country.bestSeasons}</span>
                 </div>
               )}
@@ -601,9 +601,9 @@ export function CountryGuideView() {
                     href={country.googleMapsUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 font-medium bg-muted/40 px-2.5 py-1 rounded-md border border-border/50"
+                    className="text-xs text-muted-foreground hover:text-primary dark:text-slate-300 dark:hover:text-[#2D9BF0] transition-colors flex items-center gap-1 font-medium bg-muted/40 dark:bg-[#080D18] px-2.5 py-1 rounded-md border border-border/50 dark:border-[#1E293B] dark:hover:border-[#2D9BF0]/40"
                   >
-                    <MapPin className="h-3 w-3 text-primary" /> Maps <ExternalLink className="h-2.5 w-2.5" />
+                    <MapPin className="h-3 w-3 text-primary dark:text-[#2D9BF0]" /> Maps <ExternalLink className="h-2.5 w-2.5" />
                   </a>
                 )}
                 {country.wikipediaUrl && (
@@ -611,7 +611,7 @@ export function CountryGuideView() {
                     href={country.wikipediaUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 font-medium bg-muted/40 px-2.5 py-1 rounded-md border border-border/50"
+                    className="text-xs text-muted-foreground hover:text-primary dark:text-slate-300 dark:hover:text-[#2D9BF0] transition-colors flex items-center gap-1 font-medium bg-muted/40 dark:bg-[#080D18] px-2.5 py-1 rounded-md border border-border/50 dark:border-[#1E293B] dark:hover:border-[#2D9BF0]/40"
                   >
                     <Globe className="h-3 w-3 text-sky-500" /> Wikipedia <ExternalLink className="h-2.5 w-2.5" />
                   </a>
@@ -621,7 +621,7 @@ export function CountryGuideView() {
                     href={country.officialUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 font-medium bg-muted/40 px-2.5 py-1 rounded-md border border-border/50"
+                    className="text-xs text-muted-foreground hover:text-primary dark:text-slate-300 dark:hover:text-[#2D9BF0] transition-colors flex items-center gap-1 font-medium bg-muted/40 dark:bg-[#080D18] px-2.5 py-1 rounded-md border border-border/50 dark:border-[#1E293B] dark:hover:border-[#2D9BF0]/40"
                   >
                     <Landmark className="h-3 w-3 text-emerald-500" /> Portal <ExternalLink className="h-2.5 w-2.5" />
                   </a>
@@ -633,8 +633,8 @@ export function CountryGuideView() {
       </Card>
 
       {/* ─── INTEGRATED EMERGENCY & SAFETY HUB ───────────────────────────────── */}
-      <Card className="border-rose-500/30 bg-gradient-to-br from-rose-500/5 via-card to-card shadow-sm overflow-hidden">
-        <CardHeader className="p-4 pb-2.5 border-b border-rose-500/20 bg-rose-500/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <Card className="border-rose-500/30 dark:border-rose-500/30 bg-gradient-to-br from-rose-500/5 via-card to-card dark:from-rose-500/10 dark:via-[#0C1322] dark:to-[#0C1322] shadow-sm overflow-hidden">
+        <CardHeader className="p-4 pb-2.5 border-b border-rose-500/20 bg-rose-500/5 dark:bg-rose-500/5 dark:border-rose-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400">
               <ShieldAlert className="w-4 h-4" />
@@ -643,7 +643,7 @@ export function CountryGuideView() {
               <CardTitle className="text-xs font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400">
                 {country.name} Emergency & Dispatch Contacts
               </CardTitle>
-              <CardDescription className="text-[11px] text-muted-foreground">
+              <CardDescription className="text-[11px] text-muted-foreground dark:text-slate-400">
                 Dial directly or copy critical dispatch hotlines for emergency services in {country.name}.
               </CardDescription>
             </div>
@@ -659,7 +659,7 @@ export function CountryGuideView() {
           {/* Actionable Emergency Hotline Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {/* General Emergency */}
-            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 flex flex-col justify-between space-y-2">
+            <div className="p-3 rounded-xl bg-rose-500/10 dark:bg-rose-500/15 border border-rose-500/30 flex flex-col justify-between space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
                   <PhoneCall className="w-3.5 h-3.5" /> General Emergency
@@ -667,11 +667,11 @@ export function CountryGuideView() {
                 <Badge variant="destructive" className="text-[9px] px-1.5 py-0 uppercase">Primary</Badge>
               </div>
               <div className="flex items-baseline justify-between pt-1">
-                <span className="text-xl font-mono font-extrabold text-foreground">{emergency.general}</span>
+                <span className="text-xl font-mono font-extrabold text-foreground dark:text-white">{emergency.general}</span>
                 <button
                   type="button"
                   onClick={() => copyToClipboard(emergency.general)}
-                  className="px-2 py-1 rounded-md bg-background/80 hover:bg-background border border-border text-[11px] font-medium text-foreground transition-all flex items-center gap-1 cursor-pointer"
+                  className="px-2 py-1 rounded-md bg-background/80 hover:bg-background border border-border text-[11px] font-medium text-foreground dark:bg-[#060A14] dark:border-rose-500/30 dark:text-slate-200 dark:hover:bg-[#101A2D] transition-all flex items-center gap-1 cursor-pointer"
                   title="Copy number"
                 >
                   {copiedNumber === emergency.general ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
@@ -681,19 +681,19 @@ export function CountryGuideView() {
             </div>
 
             {/* Police */}
-            <div className="p-3 rounded-xl bg-card border border-border/70 flex flex-col justify-between space-y-2">
+            <div className="p-3 rounded-xl bg-card dark:bg-[#080D18] border border-border/70 dark:border-[#1E293B] flex flex-col justify-between space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <span className="text-[11px] font-bold text-foreground dark:text-zinc-100 uppercase tracking-wider flex items-center gap-1.5">
                   <Shield className="w-3.5 h-3.5 text-sky-500" /> Police
                 </span>
-                <span className="text-[10px] text-muted-foreground">Law Enforcement</span>
+                <span className="text-[10px] text-muted-foreground dark:text-slate-400">Law Enforcement</span>
               </div>
               <div className="flex items-baseline justify-between pt-1">
-                <span className="text-lg font-mono font-bold text-foreground">{emergency.police}</span>
+                <span className="text-lg font-mono font-bold text-foreground dark:text-white">{emergency.police}</span>
                 <button
                   type="button"
                   onClick={() => copyToClipboard(emergency.police)}
-                  className="px-2 py-1 rounded-md bg-muted/50 hover:bg-muted border border-border/60 text-[11px] font-medium text-foreground transition-all flex items-center gap-1 cursor-pointer"
+                  className="px-2 py-1 rounded-md bg-muted/50 hover:bg-muted border border-border/60 text-[11px] font-medium text-foreground dark:bg-[#060A14] dark:border-[#1E293B] dark:text-slate-200 dark:hover:bg-[#101A2D] transition-all flex items-center gap-1 cursor-pointer"
                 >
                   {copiedNumber === emergency.police ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                   <span>{copiedNumber === emergency.police ? "Copied" : "Copy"}</span>
@@ -702,19 +702,19 @@ export function CountryGuideView() {
             </div>
 
             {/* Ambulance */}
-            <div className="p-3 rounded-xl bg-card border border-border/70 flex flex-col justify-between space-y-2">
+            <div className="p-3 rounded-xl bg-card dark:bg-[#080D18] border border-border/70 dark:border-[#1E293B] flex flex-col justify-between space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <span className="text-[11px] font-bold text-foreground dark:text-zinc-100 uppercase tracking-wider flex items-center gap-1.5">
                   <HeartPulse className="w-3.5 h-3.5 text-rose-500" /> Ambulance / Medical
                 </span>
-                <span className="text-[10px] text-muted-foreground">First Aid</span>
+                <span className="text-[10px] text-muted-foreground dark:text-slate-400">First Aid</span>
               </div>
               <div className="flex items-baseline justify-between pt-1">
-                <span className="text-lg font-mono font-bold text-foreground">{emergency.ambulance}</span>
+                <span className="text-lg font-mono font-bold text-foreground dark:text-white">{emergency.ambulance}</span>
                 <button
                   type="button"
                   onClick={() => copyToClipboard(emergency.ambulance)}
-                  className="px-2 py-1 rounded-md bg-muted/50 hover:bg-muted border border-border/60 text-[11px] font-medium text-foreground transition-all flex items-center gap-1 cursor-pointer"
+                  className="px-2 py-1 rounded-md bg-muted/50 hover:bg-muted border border-border/60 text-[11px] font-medium text-foreground dark:bg-[#060A14] dark:border-[#1E293B] dark:text-slate-200 dark:hover:bg-[#101A2D] transition-all flex items-center gap-1 cursor-pointer"
                 >
                   {copiedNumber === emergency.ambulance ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                   <span>{copiedNumber === emergency.ambulance ? "Copied" : "Copy"}</span>
@@ -723,19 +723,19 @@ export function CountryGuideView() {
             </div>
 
             {/* Fire Brigade */}
-            <div className="p-3 rounded-xl bg-card border border-border/70 flex flex-col justify-between space-y-2">
+            <div className="p-3 rounded-xl bg-card dark:bg-[#080D18] border border-border/70 dark:border-[#1E293B] flex flex-col justify-between space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <span className="text-[11px] font-bold text-foreground dark:text-zinc-100 uppercase tracking-wider flex items-center gap-1.5">
                   <Flame className="w-3.5 h-3.5 text-amber-500" /> Fire Department
                 </span>
-                <span className="text-[10px] text-muted-foreground">Rescue</span>
+                <span className="text-[10px] text-muted-foreground dark:text-slate-400">Rescue</span>
               </div>
               <div className="flex items-baseline justify-between pt-1">
-                <span className="text-lg font-mono font-bold text-foreground">{emergency.fire}</span>
+                <span className="text-lg font-mono font-bold text-foreground dark:text-white">{emergency.fire}</span>
                 <button
                   type="button"
                   onClick={() => copyToClipboard(emergency.fire)}
-                  className="px-2 py-1 rounded-md bg-muted/50 hover:bg-muted border border-border/60 text-[11px] font-medium text-foreground transition-all flex items-center gap-1 cursor-pointer"
+                  className="px-2 py-1 rounded-md bg-muted/50 hover:bg-muted border border-border/60 text-[11px] font-medium text-foreground dark:bg-[#060A14] dark:border-[#1E293B] dark:text-slate-200 dark:hover:bg-[#101A2D] transition-all flex items-center gap-1 cursor-pointer"
                 >
                   {copiedNumber === emergency.fire ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                   <span>{copiedNumber === emergency.fire ? "Copied" : "Copy"}</span>
@@ -745,13 +745,13 @@ export function CountryGuideView() {
           </div>
 
           {/* Emergency Special Notes & Life Safety Notice */}
-          <div className="p-3 rounded-xl bg-muted/30 border border-border/60 flex items-start gap-2.5">
+          <div className="p-3 rounded-xl bg-muted/30 dark:bg-[#080D18] border border-border/60 dark:border-[#1E293B] flex items-start gap-2.5">
             <Info className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
             <div className="space-y-1 text-[11px] leading-relaxed">
-              <span className="font-semibold text-foreground">
+              <span className="font-semibold text-foreground dark:text-zinc-200">
                 Emergency Dispatch & Traveler Protocol for {country.name}:
               </span>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground dark:text-slate-400">
                 {emergency.notes ||
                   `In European Union member states, 112 is standard and free of charge. When calling from an international SIM, ensure roaming enables emergency routing. In ${country.name}, announce your nationality and language immediately to connect with multi-lingual operators.`}
               </p>
@@ -763,15 +763,15 @@ export function CountryGuideView() {
       {/* AI Travel Intelligence Summary & Live News Digest */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left (7 Cols): AI Executive Intelligence & Traveler Advisory */}
-        <Card className="lg:col-span-7 border-border/80 bg-card shadow-xs flex flex-col justify-between">
-          <CardHeader className="p-3.5 sm:p-4 pb-2.5 border-b border-border/50">
+        <Card className="lg:col-span-7 border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs flex flex-col justify-between">
+          <CardHeader className="p-3.5 sm:p-4 pb-2.5 border-b border-border/50 dark:border-[#1E293B]">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 w-full">
               {/* Left: Bot Icon + Title */}
               <div className="flex items-center gap-2 min-w-0">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-[#2D9BF0]">
                   <Bot className="w-4 h-4" />
                 </div>
-                <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground truncate">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground dark:text-white truncate">
                   AI Travel Intelligence & Live Advisory
                 </CardTitle>
               </div>
@@ -794,7 +794,7 @@ export function CountryGuideView() {
                     <span>AI Service Notice</span>
                   </Badge>
                 ) : (
-                  <Badge variant="outline" className="text-[10px] font-mono border-border text-muted-foreground bg-muted/40 flex items-center gap-1 px-2 py-0.5">
+                  <Badge variant="outline" className="text-[10px] font-mono border-border dark:border-[#1E293B] text-muted-foreground dark:text-slate-400 bg-muted/40 dark:bg-[#080D18] flex items-center gap-1 px-2 py-0.5">
                     <Info className="w-3 h-3" />
                     <span>Curated Data</span>
                   </Badge>
@@ -802,7 +802,7 @@ export function CountryGuideView() {
 
                 {/* Timestamp */}
                 {aiSummary?.generatedAt && (
-                  <span className="text-[10px] text-muted-foreground font-mono hidden sm:inline">
+                  <span className="text-[10px] text-muted-foreground dark:text-slate-400 font-mono hidden sm:inline">
                     {aiSummary.generatedAt}
                   </span>
                 )}
@@ -825,22 +825,22 @@ export function CountryGuideView() {
 
           <CardContent className="p-4 space-y-3.5 text-xs flex-1">
             {isLoadingAi ? (
-              <div className="py-8 flex flex-col items-center justify-center gap-2 text-xs text-muted-foreground">
-                <Loader2 className="w-4 h-4 animate-spin text-primary" />
+              <div className="py-8 flex flex-col items-center justify-center gap-2 text-xs text-muted-foreground dark:text-slate-400">
+                <Loader2 className="w-4 h-4 animate-spin text-primary dark:text-[#2D9BF0]" />
                 <span>Synthesizing travel conditions and safety advisory...</span>
               </div>
             ) : aiSummary ? (
               <div className="space-y-3">
                 {/* AI Service Error Notice with Inline Retry & Fallback Details */}
                 {aiSummary.hasError && (
-                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="p-3 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-start gap-2.5 min-w-0">
                       <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                       <div className="space-y-0.5 min-w-0">
-                        <span className="font-semibold text-foreground text-xs block">
+                        <span className="font-semibold text-foreground dark:text-zinc-100 text-xs block">
                           AI Service Notice
                         </span>
-                        <p className="text-[11px] text-muted-foreground leading-relaxed">
+                        <p className="text-[11px] text-muted-foreground dark:text-slate-400 leading-relaxed">
                           {aiSummary.errorMessage || "AI providers were busy. Showing authentic verified data below."}
                         </p>
                       </div>
@@ -858,18 +858,18 @@ export function CountryGuideView() {
                   </div>
                 )}
                 {/* 1. Travel Vibe Overview */}
-                <p className="text-foreground leading-relaxed text-xs">
+                <p className="text-foreground dark:text-zinc-200 leading-relaxed text-xs">
                   {aiSummary.vibe}
                 </p>
 
                 {/* 2. Advisory Status Pill */}
-                <div className="p-2.5 rounded-xl bg-muted/40 border border-border/50 flex items-start gap-2.5">
+                <div className="p-2.5 rounded-xl bg-muted/40 dark:bg-[#080D18] border border-border/50 dark:border-[#1E293B] flex items-start gap-2.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                   <div className="space-y-0.5">
-                    <span className="font-bold text-foreground block text-[11px]">
+                    <span className="font-bold text-foreground dark:text-zinc-100 block text-[11px]">
                       Safety & Travel Assessment:
                     </span>
-                    <p className="text-muted-foreground text-[11px] leading-relaxed">
+                    <p className="text-muted-foreground dark:text-slate-400 text-[11px] leading-relaxed">
                       {aiSummary.advisoryReason}
                     </p>
                   </div>
@@ -877,13 +877,13 @@ export function CountryGuideView() {
 
                 {/* 3. Live News & Event Actionable Bullets */}
                 <div className="space-y-1.5 pt-1">
-                  <span className="text-[11px] font-bold text-foreground block">
+                  <span className="text-[11px] font-bold text-foreground dark:text-zinc-100 block">
                     Traveler Digest & Key Updates:
                   </span>
                   <div className="space-y-1.5">
                     {aiSummary.newsDigest.map((item, idx) => (
-                      <div key={idx} className="flex items-start gap-2 text-[11px] text-muted-foreground">
-                        <span className="text-indigo-500 font-bold shrink-0">•</span>
+                      <div key={idx} className="flex items-start gap-2 text-[11px] text-muted-foreground dark:text-slate-400">
+                        <span className="text-indigo-500 dark:text-[#2D9BF0] font-bold shrink-0">•</span>
                         <span className="leading-snug">{item}</span>
                       </div>
                     ))}
@@ -892,16 +892,16 @@ export function CountryGuideView() {
 
                 {/* 4. Insider Hack / Tip */}
                 {aiSummary.insiderTip && (
-                  <div className="p-2.5 rounded-xl bg-amber-500/5 border border-amber-500/20 flex items-start gap-2 text-[11px]">
+                  <div className="p-2.5 rounded-xl bg-amber-500/5 dark:bg-amber-500/10 border border-amber-500/20 dark:border-amber-500/30 flex items-start gap-2 text-[11px]">
                     <Lightbulb className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
-                    <span className="text-foreground">
-                      <strong>Insider Tip:</strong> {aiSummary.insiderTip}
+                    <span className="text-foreground dark:text-zinc-200">
+                      <strong className="text-foreground dark:text-white">Insider Tip:</strong> {aiSummary.insiderTip}
                     </span>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="py-6 text-center text-xs text-muted-foreground">
+              <div className="py-6 text-center text-xs text-muted-foreground dark:text-slate-400">
                 AI Intelligence summary unavailable.
               </div>
             )}
@@ -909,13 +909,13 @@ export function CountryGuideView() {
         </Card>
 
         {/* Right (5 Cols): Live News Feed Articles */}
-        <Card className="lg:col-span-5 border-border/80 bg-card shadow-xs flex flex-col">
-          <CardHeader className="p-4 pb-2.5 border-b border-border/50 flex flex-row items-center justify-between gap-2">
+        <Card className="lg:col-span-5 border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs flex flex-col">
+          <CardHeader className="p-4 pb-2.5 border-b border-border/50 dark:border-[#1E293B] flex flex-row items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-500/10 text-sky-600">
                 <Newspaper className="w-4 h-4" />
               </div>
-              <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground">
+              <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground dark:text-white">
                 Latest News & Headlines
               </CardTitle>
             </div>
@@ -924,19 +924,19 @@ export function CountryGuideView() {
                 NewsAPI.org Live Feed
               </Badge>
               {isLoadingNews && (
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary dark:text-[#2D9BF0]" />
               )}
             </div>
           </CardHeader>
 
           <CardContent className="p-3 flex-1 overflow-y-auto max-h-[320px] thin-scrollbar space-y-2">
             {isLoadingNews ? (
-              <div className="py-8 text-center text-xs text-muted-foreground flex flex-col items-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin text-primary" />
+              <div className="py-8 text-center text-xs text-muted-foreground dark:text-slate-400 flex flex-col items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin text-primary dark:text-[#2D9BF0]" />
                 <span>Fetching latest headlines...</span>
               </div>
             ) : news.length === 0 ? (
-              <div className="py-8 text-center text-xs text-muted-foreground">
+              <div className="py-8 text-center text-xs text-muted-foreground dark:text-slate-400">
                 No recent news reports found.
               </div>
             ) : (
@@ -946,20 +946,20 @@ export function CountryGuideView() {
                   href={item.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="p-2.5 rounded-xl border border-border/60 bg-muted/20 hover:bg-muted/50 hover:border-border transition-all block group cursor-pointer space-y-1"
+                  className="p-2.5 rounded-xl border border-border/60 dark:border-[#1E293B] bg-muted/20 dark:bg-[#080D18] hover:bg-muted/50 dark:hover:bg-[#101A2D] hover:border-border dark:hover:border-[#2D9BF0]/30 transition-all block group cursor-pointer space-y-1"
                 >
-                  <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                  <div className="flex items-center justify-between text-[10px] text-muted-foreground dark:text-slate-400">
                     <span className="font-semibold text-sky-600 dark:text-sky-400">
                       {item.source}
                     </span>
                     <span>{item.publishedAt}</span>
                   </div>
 
-                  <h4 className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-2">
+                  <h4 className="text-xs font-semibold text-foreground dark:text-zinc-100 group-hover:text-primary dark:group-hover:text-[#2D9BF0] transition-colors leading-snug line-clamp-2">
                     {item.title}
                   </h4>
 
-                  <p className="text-[11px] text-muted-foreground line-clamp-2 leading-relaxed">
+                  <p className="text-[11px] text-muted-foreground dark:text-slate-400 line-clamp-2 leading-relaxed">
                     {item.description}
                   </p>
                 </a>
@@ -972,13 +972,13 @@ export function CountryGuideView() {
       {/* Core Intelligence Matrix: Plugs, Tipping, Water, Visa, Cash, Geography */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {/* 1. Electrical Plugs & Voltage */}
-        <Card className="border-border/80 bg-card shadow-xs">
-          <CardHeader className="p-4 pb-2 border-b border-border/50">
+        <Card className="border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs">
+          <CardHeader className="p-4 pb-2 border-b border-border/50 dark:border-[#1E293B]">
             <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary dark:text-[#2D9BF0]">
                 <Zap className="w-4 h-4" />
               </div>
-              <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground">
+              <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground dark:text-white">
                 Power Plugs & Voltage
               </CardTitle>
             </div>
@@ -986,45 +986,45 @@ export function CountryGuideView() {
           <CardContent className="p-4 space-y-2 text-xs">
             <div className="flex items-center gap-1.5 flex-wrap">
               {country.plugTypes.map((plug) => (
-                <Badge key={plug} variant="secondary" className="font-mono text-xs font-bold">
+                <Badge key={plug} variant="secondary" className="font-mono text-xs font-bold dark:bg-[#131F35] dark:text-zinc-200 dark:border dark:border-[#1E293B]">
                   {plug}
                 </Badge>
               ))}
             </div>
             <div className="flex items-center justify-between text-[11px] pt-1 font-mono">
-              <span className="text-muted-foreground">Grid Voltage:</span>
-              <strong className="text-foreground">{country.voltage}</strong>
+              <span className="text-muted-foreground dark:text-slate-400">Grid Voltage:</span>
+              <strong className="text-foreground dark:text-zinc-100">{country.voltage}</strong>
             </div>
           </CardContent>
         </Card>
 
         {/* 2. Tipping Customs & Interactive Calculator */}
-        <Card className="border-border/80 bg-card shadow-xs">
-          <CardHeader className="p-4 pb-2 border-b border-border/50">
+        <Card className="border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs">
+          <CardHeader className="p-4 pb-2 border-b border-border/50 dark:border-[#1E293B]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                   <DollarSign className="w-4 h-4" />
                 </div>
-                <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground dark:text-white">
                   Tipping Calculator
                 </CardTitle>
               </div>
-              <Badge variant="outline" className="text-[10px] font-mono">
+              <Badge variant="outline" className="text-[10px] font-mono dark:border-[#1E293B] dark:text-slate-300">
                 {country.tippingPercent ? `~${country.tippingPercent}%` : "No tip"}
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="p-4 space-y-2.5 text-xs">
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
+            <p className="text-[11px] text-muted-foreground dark:text-slate-400 leading-relaxed">
               {country.tipping}
             </p>
 
             {/* Quick Bill Tip Calculator */}
-            <div className="p-2.5 rounded-lg bg-muted/40 border border-border/50 space-y-1.5">
+            <div className="p-2.5 rounded-lg bg-muted/40 dark:bg-[#080D18] border border-border/50 dark:border-[#1E293B] space-y-1.5">
               <div className="flex items-center justify-between gap-1">
-                <span className="text-[10px] font-semibold text-muted-foreground uppercase flex items-center gap-1">
-                  <Calculator className="w-3 h-3 text-emerald-600" /> Bill ($):
+                <span className="text-[10px] font-semibold text-muted-foreground dark:text-slate-400 uppercase flex items-center gap-1">
+                  <Calculator className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> Bill ($):
                 </span>
                 <div className="flex items-center gap-1">
                   {[0, 5, 10, 15, 20].map((pct) => (
@@ -1034,7 +1034,7 @@ export function CountryGuideView() {
                       onClick={() => setTipPercent(pct)}
                       className={`px-1.5 py-0.5 rounded text-[10px] font-mono transition-colors cursor-pointer ${tipPercent === pct
                         ? "bg-emerald-600 text-white font-bold"
-                        : "bg-muted text-muted-foreground hover:text-foreground"
+                        : "bg-muted dark:bg-[#131F35] text-muted-foreground dark:text-slate-400 hover:text-foreground dark:hover:text-white"
                         }`}
                     >
                       {pct}%
@@ -1049,14 +1049,14 @@ export function CountryGuideView() {
                   min="0"
                   value={billAmount}
                   onChange={(e) => setBillAmount(e.target.value)}
-                  className="h-7 text-xs font-mono font-bold"
+                  className="h-7 text-xs font-mono font-bold dark:bg-[#060A14] dark:border-[#1E293B] dark:text-white"
                   placeholder="50"
                 />
                 <div className="text-right font-mono text-[11px]">
-                  <div className="text-muted-foreground">
+                  <div className="text-muted-foreground dark:text-slate-400">
                     Tip: <strong className="text-emerald-600 dark:text-emerald-400">+{calculatedTip}</strong>
                   </div>
-                  <div className="font-bold text-foreground text-xs">
+                  <div className="font-bold text-foreground dark:text-zinc-100 text-xs">
                     Total: {totalWithTip}
                   </div>
                 </div>
@@ -1066,13 +1066,13 @@ export function CountryGuideView() {
         </Card>
 
         {/* 3. Tap Water Safety */}
-        <Card className="border-border/80 bg-card shadow-xs">
-          <CardHeader className="p-4 pb-2 border-b border-border/50">
+        <Card className="border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs">
+          <CardHeader className="p-4 pb-2 border-b border-border/50 dark:border-[#1E293B]">
             <div className="flex items-center gap-2">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-500/10 text-sky-600">
                 <Droplets className="w-4 h-4" />
               </div>
-              <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground">
+              <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground dark:text-white">
                 Tap Water Safety
               </CardTitle>
             </div>
@@ -1082,21 +1082,21 @@ export function CountryGuideView() {
               <ShieldCheck className="w-4 h-4 shrink-0" />
               <span>{waterBadgeMeta.label}</span>
             </div>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
+            <p className="text-[11px] text-muted-foreground dark:text-slate-400 leading-relaxed">
               {country.tapWater}
             </p>
           </CardContent>
         </Card>
 
         {/* 4. Passport & Visa Snapshot */}
-        <Card className="border-border/80 bg-card shadow-xs">
-          <CardHeader className="p-4 pb-2 border-b border-border/50">
+        <Card className="border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs">
+          <CardHeader className="p-4 pb-2 border-b border-border/50 dark:border-[#1E293B]">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary dark:text-[#2D9BF0]">
                   <FileCheck className="w-4 h-4" />
                 </div>
-                <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground dark:text-white">
                   Passport & Visa Snapshot
                 </CardTitle>
               </div>
@@ -1119,64 +1119,64 @@ export function CountryGuideView() {
           </CardHeader>
           <CardContent className="p-4 space-y-3 text-xs">
             {visaSnapshot?.duration && (
-              <div className="flex items-center justify-between text-[11px] pb-2 border-b border-border/40">
-                <span className="text-muted-foreground font-medium">Permitted Stay:</span>
-                <strong className="font-semibold text-foreground font-mono">{visaSnapshot.duration}</strong>
+              <div className="flex items-center justify-between text-[11px] pb-2 border-b border-border/40 dark:border-[#1E293B]">
+                <span className="text-muted-foreground dark:text-slate-400 font-medium">Permitted Stay:</span>
+                <strong className="font-semibold text-foreground dark:text-zinc-100 font-mono">{visaSnapshot.duration}</strong>
               </div>
             )}
-            <p className="text-[11px] text-foreground leading-relaxed">
+            <p className="text-[11px] text-foreground dark:text-zinc-200 leading-relaxed">
               {visaSnapshot?.note || country.visaInfo}
             </p>
-            <p className="text-[10px] text-muted-foreground border-t border-border/40 pt-2.5 leading-normal">
+            <p className="text-[10px] text-muted-foreground dark:text-slate-400 border-t border-border/40 dark:border-[#1E293B] pt-2.5 leading-normal">
               Passports must have at least <strong>6 months</strong> remaining validity from departure date.
             </p>
           </CardContent>
         </Card>
 
         {/* 5. Payment & Cash Culture */}
-        <Card className="border-border/80 bg-card shadow-xs">
-          <CardHeader className="p-4 pb-2.5 border-b border-border/50">
+        <Card className="border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs">
+          <CardHeader className="p-4 pb-2.5 border-b border-border/50 dark:border-[#1E293B]">
             <div className="flex items-center gap-2">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-purple-500/10 text-purple-600">
                 <CreditCard className="w-4 h-4" />
               </div>
-              <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground">
+              <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground dark:text-white">
                 Payment & Currency
               </CardTitle>
             </div>
           </CardHeader>
           <CardContent className="p-4 space-y-3 text-xs">
-            <div className="flex items-center justify-between pb-2 border-b border-border/40">
-              <span className="font-medium text-muted-foreground text-[11px]">Official Currency:</span>
-              <strong className="font-mono text-xs font-semibold text-foreground">{country.currency}</strong>
+            <div className="flex items-center justify-between pb-2 border-b border-border/40 dark:border-[#1E293B]">
+              <span className="font-medium text-muted-foreground dark:text-slate-400 text-[11px]">Official Currency:</span>
+              <strong className="font-mono text-xs font-semibold text-foreground dark:text-white">{country.currency}</strong>
             </div>
-            <p className="text-[11px] text-muted-foreground leading-relaxed pt-0.5">
+            <p className="text-[11px] text-muted-foreground dark:text-slate-400 leading-relaxed pt-0.5">
               Cards and digital pay are widely accepted in major cities. Keep small local currency notes for traditional kiosks and markets.
             </p>
           </CardContent>
         </Card>
 
         {/* 6. Geography & Borders */}
-        <Card className="border-border/80 bg-card shadow-xs">
-          <CardHeader className="p-4 pb-2.5 border-b border-border/50">
+        <Card className="border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs">
+          <CardHeader className="p-4 pb-2.5 border-b border-border/50 dark:border-[#1E293B]">
             <div className="flex items-center gap-2">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600">
                 <Compass className="w-4 h-4" />
               </div>
-              <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground">
+              <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground dark:text-white">
                 Geography & Borders
               </CardTitle>
             </div>
           </CardHeader>
           <CardContent className="p-4 space-y-3 text-xs">
             <div className="flex items-center justify-between text-[11px]">
-              <span className="text-muted-foreground font-medium">Landlocked Status:</span>
-              <strong className="text-foreground font-semibold">{country.landlocked ? "Landlocked Nation" : "Coastal / Island Nation"}</strong>
+              <span className="text-muted-foreground dark:text-slate-400 font-medium">Landlocked Status:</span>
+              <strong className="text-foreground dark:text-zinc-100 font-semibold">{country.landlocked ? "Landlocked Nation" : "Coastal / Island Nation"}</strong>
             </div>
 
             {country.borders && country.borders.length > 0 && (
-              <div className="space-y-1.5 pt-2 border-t border-border/40">
-                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider block">
+              <div className="space-y-1.5 pt-2 border-t border-border/40 dark:border-[#1E293B]">
+                <span className="text-[10px] text-muted-foreground dark:text-slate-400 uppercase font-bold tracking-wider block">
                   Bordering Nations:
                 </span>
                 <div className="flex flex-wrap gap-1.5 pt-0.5">
@@ -1188,7 +1188,7 @@ export function CountryGuideView() {
                           <TooltipTrigger asChild>
                             <Badge
                               variant="outline"
-                              className="font-mono text-[10px] px-2 py-0.5 cursor-help hover:border-primary/50 hover:bg-primary/5 transition-colors"
+                              className="font-mono text-[10px] px-2 py-0.5 cursor-help hover:border-primary/50 hover:bg-primary/5 dark:border-[#1E293B] dark:hover:border-[#2D9BF0]/50 dark:hover:bg-[#2D9BF0]/10 transition-colors"
                             >
                               {b}
                             </Badge>
@@ -1205,8 +1205,8 @@ export function CountryGuideView() {
             )}
 
             {country.memberships && country.memberships.length > 0 && (
-              <div className="space-y-1.5 pt-2 border-t border-border/40">
-                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider block">
+              <div className="space-y-1.5 pt-2 border-t border-border/40 dark:border-[#1E293B]">
+                <span className="text-[10px] text-muted-foreground dark:text-slate-400 uppercase font-bold tracking-wider block">
                   Alliances & Treaties:
                 </span>
                 <div className="flex flex-wrap gap-1.5 pt-0.5">
@@ -1218,7 +1218,7 @@ export function CountryGuideView() {
                           <TooltipTrigger asChild>
                             <Badge
                               variant="secondary"
-                              className="text-[10px] px-2 py-0.5 font-semibold cursor-help hover:bg-primary/15 hover:text-primary transition-colors"
+                              className="text-[10px] px-2 py-0.5 font-semibold cursor-help hover:bg-primary/15 hover:text-primary dark:bg-[#131F35] dark:text-zinc-200 dark:border dark:border-[#1E293B] dark:hover:text-[#2D9BF0] transition-colors"
                             >
                               {m}
                             </Badge>
@@ -1239,8 +1239,8 @@ export function CountryGuideView() {
 
       {/* Cultural Dos & Don'ts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <Card className="border-border/80 bg-card shadow-xs">
-          <CardHeader className="p-3.5 pb-2 border-b border-border/50 bg-emerald-500/5">
+        <Card className="border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs">
+          <CardHeader className="p-3.5 pb-2 border-b border-border/50 dark:border-[#1E293B] bg-emerald-500/5 dark:bg-emerald-500/5">
             <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="w-4 h-4" />
               <CardTitle className="text-xs font-bold uppercase tracking-wider">
@@ -1253,20 +1253,20 @@ export function CountryGuideView() {
               (custom, idx) => (
                 <div
                   key={idx}
-                  className="flex items-start gap-2.5 p-2 rounded-lg border border-border/60 bg-muted/20 text-[11px]"
+                  className="flex items-start gap-2.5 p-2 rounded-lg border border-border/60 dark:border-[#1E293B] bg-muted/20 dark:bg-[#080D18] text-[11px]"
                 >
                   <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-[9px] font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
                     {idx + 1}
                   </span>
-                  <p className="text-foreground leading-relaxed">{custom}</p>
+                  <p className="text-foreground dark:text-zinc-200 leading-relaxed">{custom}</p>
                 </div>
               )
             )}
           </CardContent>
         </Card>
 
-        <Card className="border-border/80 bg-card shadow-xs">
-          <CardHeader className="p-3.5 pb-2 border-b border-border/50 bg-rose-500/5">
+        <Card className="border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs">
+          <CardHeader className="p-3.5 pb-2 border-b border-border/50 dark:border-[#1E293B] bg-rose-500/5 dark:bg-rose-500/5">
             <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400">
               <XCircle className="w-4 h-4" />
               <CardTitle className="text-xs font-bold uppercase tracking-wider">
@@ -1285,12 +1285,12 @@ export function CountryGuideView() {
             ).map((dontItem, idx) => (
               <div
                 key={idx}
-                className="flex items-start gap-2.5 p-2 rounded-lg border border-rose-500/20 bg-rose-500/5 text-[11px]"
+                className="flex items-start gap-2.5 p-2 rounded-lg border border-rose-500/20 dark:border-rose-500/30 bg-rose-500/5 dark:bg-rose-500/10 text-[11px]"
               >
                 <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-rose-500/20 text-[9px] font-bold text-rose-600 dark:text-rose-400 mt-0.5">
                   ✕
                 </span>
-                <p className="text-foreground leading-relaxed">{dontItem}</p>
+                <p className="text-foreground dark:text-zinc-200 leading-relaxed">{dontItem}</p>
               </div>
             ))}
           </CardContent>
@@ -1298,18 +1298,18 @@ export function CountryGuideView() {
       </div>
 
       {/* Global Emergency Quick Directory Browser */}
-      <Card className="border-border/80 bg-card shadow-xs">
-        <CardHeader className="p-4 pb-2.5 border-b border-border/50">
+      <Card className="border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs">
+        <CardHeader className="p-4 pb-2.5 border-b border-border/50 dark:border-[#1E293B]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600">
                 <Shield className="w-4 h-4" />
               </div>
               <div>
-                <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground dark:text-white">
                   Global Emergency Quick Reference
                 </CardTitle>
-                <CardDescription className="text-[11px] text-muted-foreground">
+                <CardDescription className="text-[11px] text-muted-foreground dark:text-slate-400">
                   Quick lookup of primary emergency numbers across major global destinations.
                 </CardDescription>
               </div>
@@ -1324,16 +1324,16 @@ export function CountryGuideView() {
                 type="button"
                 onClick={() => handleSelectCountry(item.country.split(" ")[0])}
                 className={`p-2.5 rounded-xl border text-left transition-all hover:bg-muted/50 cursor-pointer space-y-1 ${country.code.toUpperCase() === item.code.toUpperCase()
-                  ? "border-rose-500/40 bg-rose-500/5"
-                  : "border-border/60 bg-muted/20"
+                  ? "border-rose-500/40 bg-rose-500/5 dark:bg-rose-500/10 dark:border-rose-500/40"
+                  : "border-border/60 bg-muted/20 dark:border-[#1E293B] dark:bg-[#080D18] dark:hover:bg-[#101A2D] dark:hover:border-[#2D9BF0]/30"
                   }`}
               >
-                <div className="flex items-center justify-between text-[11px] font-bold text-foreground">
+                <div className="flex items-center justify-between text-[11px] font-bold text-foreground dark:text-zinc-100">
                   <span className="truncate">{item.country.split(" (")[0]}</span>
-                  <span className="font-mono text-[9px] text-muted-foreground">{item.code}</span>
+                  <span className="font-mono text-[9px] text-muted-foreground dark:text-slate-400">{item.code}</span>
                 </div>
                 <div className="flex items-baseline justify-between text-[10px]">
-                  <span className="text-muted-foreground">Emergency:</span>
+                  <span className="text-muted-foreground dark:text-slate-400">Emergency:</span>
                   <span className="font-mono font-bold text-rose-600 dark:text-rose-400">{item.general}</span>
                 </div>
               </button>

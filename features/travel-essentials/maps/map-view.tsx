@@ -327,18 +327,18 @@ export function MapView() {
   return (
     <div className="space-y-6">
       {/* Header & Controls Strip */}
-      <div className="flex flex-col gap-3 pb-2 border-b border-border/80">
+      <div className="flex flex-col gap-3 pb-2 border-b border-border/80 dark:border-[#1E293B]/70">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
-              <Map className="w-4 h-4 text-sky-500" />
+            <h2 className="text-base font-semibold text-foreground dark:text-zinc-100 flex items-center gap-2">
+              <Map className="w-4 h-4 text-sky-500 dark:text-[#2D9BF0]" />
               Interactive Travel Maps & Local Essentials (Beta Mode)
             </h2>
-            <Badge variant="secondary" className="text-[10px] font-mono px-2 py-0">
+            <Badge variant="secondary" className="text-[10px] font-mono px-2 py-0 dark:bg-[#131F35] dark:text-zinc-200 dark:border dark:border-[#1E293B]">
               OpenStreetMap Feed
             </Badge>
           </div>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-xs text-muted-foreground dark:text-slate-400 mt-0.5">
             Explore destinations, pinpoint device GPS, and locate verified hotels, hospitals, metro stations, and ATMs.
           </p>
         </div>
@@ -348,10 +348,10 @@ export function MapView() {
           <div ref={searchContainerRef} className="relative flex-1 max-w-lg">
             <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
               <div className="relative flex-1 min-w-0">
-                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground dark:text-slate-400" />
                 <Input
                   placeholder="Search destination (e.g. Mumbai, Goa)..."
-                  className="pl-8 pr-8 h-9 text-xs bg-background"
+                  className="pl-8 pr-8 h-9 text-xs bg-background dark:bg-[#060A14] dark:border-[#1E293B] dark:text-white dark:placeholder:text-slate-500 dark:focus-visible:border-[#2D9BF0]"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -369,7 +369,7 @@ export function MapView() {
                   }}
                 />
                 {isSuggesting && (
-                  <Loader2 className="absolute right-2.5 top-2.5 h-3.5 w-3.5 text-primary animate-spin" />
+                  <Loader2 className="absolute right-2.5 top-2.5 h-3.5 w-3.5 text-primary dark:text-[#2D9BF0] animate-spin" />
                 )}
               </div>
               <Button type="submit" size="sm" className="h-9 px-3 text-xs cursor-pointer shrink-0" disabled={isSuggesting}>
@@ -380,15 +380,19 @@ export function MapView() {
                 type="button"
                 variant={isUserDeviceLocation ? "default" : "outline"}
                 size="sm"
-                className="h-9 px-3 text-xs font-semibold gap-1.5 cursor-pointer shadow-xs shrink-0"
+                className={`h-9 px-3 text-xs font-semibold gap-1.5 cursor-pointer shadow-xs shrink-0 ${
+                  isUserDeviceLocation
+                    ? "dark:bg-[#2D9BF0] dark:text-white"
+                    : "dark:bg-[#0C1322] dark:border-[#1E293B] dark:text-slate-300 dark:hover:text-white dark:hover:border-[#2D9BF0]/40"
+                }`}
                 onClick={handleLocateMe}
                 disabled={isLocating}
                 title="Request device GPS location"
               >
                 {isLocating ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-primary dark:text-[#2D9BF0]" />
                 ) : (
-                  <Crosshair className={`w-3.5 h-3.5 ${isUserDeviceLocation ? "text-primary-foreground" : "text-sky-500"}`} />
+                  <Crosshair className={`w-3.5 h-3.5 ${isUserDeviceLocation ? "text-primary-foreground" : "text-sky-500 dark:text-[#2D9BF0]"}`} />
                 )}
                 <span>{isLocating ? "Locating..." : isUserDeviceLocation ? "GPS Active" : "Locate Me"}</span>
               </Button>
@@ -396,10 +400,10 @@ export function MapView() {
 
             {/* Suggestions Dropdown (Closes reliably on select) */}
             {showDropdown && suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-full mt-1.5 z-50 rounded-xl border border-border/80 bg-popover/95 backdrop-blur-md shadow-xl overflow-hidden py-1 divide-y divide-border/40 animate-in fade-in-50 duration-100">
-                <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground bg-muted/30 flex items-center justify-between">
+              <div className="absolute left-0 right-0 top-full mt-1.5 z-50 rounded-xl border border-border/80 dark:border-[#1E293B] bg-popover/95 dark:bg-[#0C1322]/95 backdrop-blur-md shadow-xl overflow-hidden py-1 divide-y divide-border/40 dark:divide-[#1E293B] animate-in fade-in-50 duration-100">
+                <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground dark:text-slate-400 bg-muted/30 dark:bg-[#080D18] flex items-center justify-between">
                   <span>Destination Suggestions</span>
-                  <span className="text-[9px] font-normal lowercase text-muted-foreground/70">
+                  <span className="text-[9px] font-normal lowercase text-muted-foreground/70 dark:text-slate-500">
                     {suggestions.length} places
                   </span>
                 </div>
@@ -408,18 +412,18 @@ export function MapView() {
                     key={`${item.shortName}-${item.lat}-${item.lon}-${index}`}
                     type="button"
                     onClick={() => handleSelectLocation(item.displayName, [item.lat, item.lon])}
-                    className="w-full text-left px-3 py-2 text-xs flex items-center justify-between gap-3 hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer group select-none"
+                    className="w-full text-left px-3 py-2 text-xs flex items-center justify-between gap-3 hover:bg-primary/10 hover:text-primary dark:hover:bg-[#131F35] dark:hover:text-[#2D9BF0] transition-colors cursor-pointer group select-none"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary">
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted dark:bg-[#080D18] text-muted-foreground dark:text-slate-400 group-hover:bg-primary/20 dark:group-hover:bg-[#2D9BF0]/20 group-hover:text-primary dark:group-hover:text-[#2D9BF0]">
                         <MapPin className="h-3.5 w-3.5" />
                       </div>
                       <div className="truncate">
-                        <span className="font-semibold text-foreground group-hover:text-primary">
+                        <span className="font-semibold text-foreground dark:text-zinc-100 group-hover:text-primary dark:group-hover:text-[#2D9BF0]">
                           {item.shortName}
                         </span>
                         {item.secondaryText && (
-                          <span className="text-muted-foreground text-[11px] ml-1">
+                          <span className="text-muted-foreground dark:text-slate-400 text-[11px] ml-1">
                             ({item.secondaryText})
                           </span>
                         )}
@@ -427,7 +431,7 @@ export function MapView() {
                     </div>
 
                     <div className="flex items-center gap-1 shrink-0">
-                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" />
+                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50 dark:text-slate-500 group-hover:text-primary dark:group-hover:text-[#2D9BF0] group-hover:translate-x-0.5 transition-transform" />
                     </div>
                   </button>
                 ))}
@@ -437,15 +441,15 @@ export function MapView() {
 
           {/* Quick Indian Destination Pins */}
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-            <span className="text-[11px] text-muted-foreground whitespace-nowrap mr-1 font-medium">Quick pins:</span>
+            <span className="text-[11px] text-muted-foreground dark:text-slate-400 whitespace-nowrap mr-1 font-medium">Quick pins:</span>
             {POPULAR_DESTINATIONS.map((dest) => (
               <button
                 key={dest.name}
                 type="button"
                 onClick={() => handleSelectLocation(dest.name, dest.coords)}
                 className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap cursor-pointer border ${locationName.toLowerCase().includes(dest.name.split(",")[0].toLowerCase())
-                    ? "bg-sky-500/10 border-sky-500/30 text-sky-600 dark:text-sky-400 font-semibold"
-                    : "bg-muted/50 border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                    ? "bg-sky-500/10 border-sky-500/30 text-sky-600 dark:text-[#2D9BF0] dark:bg-[#2D9BF0]/15 dark:border-[#2D9BF0]/40 dark:shadow-[0_0_10px_rgba(45,155,240,0.2)] font-semibold"
+                    : "bg-muted/50 border-border text-muted-foreground hover:text-foreground hover:bg-muted dark:bg-[#0C1322] dark:border-[#1E293B] dark:text-slate-400 dark:hover:text-white dark:hover:border-[#2D9BF0]/30"
                   }`}
               >
                 {dest.name.split(",")[0]}
@@ -477,28 +481,28 @@ export function MapView() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left / Main Map View (8 Cols) */}
         <div className="lg:col-span-8 space-y-4">
-          <Card className="border-border/80 bg-card overflow-hidden shadow-xs">
+          <Card className="border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] overflow-hidden shadow-xs">
             {/* Map Top Bar */}
-            <div className="p-3 border-b border-border/60 bg-muted/20 flex flex-wrap items-center justify-between gap-2 text-xs">
-              <div className="flex items-center gap-2 font-medium text-foreground min-w-0">
-                <MapPin className="w-4 h-4 text-sky-500 shrink-0" />
+            <div className="p-3 border-b border-border/60 dark:border-[#1E293B] bg-muted/20 dark:bg-[#080D18] flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div className="flex items-center gap-2 font-medium text-foreground dark:text-white min-w-0">
+                <MapPin className="w-4 h-4 text-sky-500 dark:text-[#2D9BF0] shrink-0" />
                 <span className="font-semibold text-sm truncate max-w-[280px] sm:max-w-md">{locationName}</span>
                 {isUserDeviceLocation && (
-                  <Badge variant="outline" className="text-[10px] font-mono border-blue-500/40 text-blue-600 bg-blue-500/10 shrink-0">
+                  <Badge variant="outline" className="text-[10px] font-mono border-blue-500/40 text-blue-600 dark:text-blue-400 bg-blue-500/10 shrink-0">
                     GPS Active
                   </Badge>
                 )}
               </div>
 
-              <div className="flex items-center gap-2 text-[11px] font-mono text-muted-foreground">
+              <div className="flex items-center gap-2 text-[11px] font-mono text-muted-foreground dark:text-slate-400">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handleCopyCoordinates}
-                  className="h-6 px-2 text-[10px] gap-1 cursor-pointer hover:bg-muted"
+                  className="h-6 px-2 text-[10px] gap-1 cursor-pointer hover:bg-muted dark:hover:bg-[#131F35] dark:text-slate-300"
                   title="Copy GPS coordinates"
                 >
-                  {copiedCoords ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3 text-muted-foreground" />}
+                  {copiedCoords ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3 text-muted-foreground dark:text-slate-400" />}
                   <span>{center[0].toFixed(4)}°N, {center[1].toFixed(4)}°E</span>
                 </Button>
 
@@ -506,7 +510,7 @@ export function MapView() {
                   href={googleMapsUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline font-semibold pl-1"
+                  className="inline-flex items-center gap-1 text-[10px] text-primary dark:text-[#2D9BF0] hover:underline font-semibold pl-1"
                 >
                   <span>Open Maps</span>
                   <ExternalLink className="w-2.5 h-2.5" />
@@ -527,8 +531,8 @@ export function MapView() {
             />
 
             {/* Map Pin Visual Guide & Legend */}
-            <div className="p-2.5 px-3.5 border-t border-border/50 bg-muted/20 flex flex-wrap items-center justify-between gap-y-2 gap-x-4 text-[11px]">
-              <div className="flex items-center gap-1.5 font-semibold text-foreground text-xs shrink-0">
+            <div className="p-2.5 px-3.5 border-t border-border/50 dark:border-[#1E293B] bg-muted/20 dark:bg-[#080D18] flex flex-wrap items-center justify-between gap-y-2 gap-x-4 text-[11px]">
+              <div className="flex items-center gap-1.5 font-semibold text-foreground dark:text-zinc-100 text-xs shrink-0">
                 <span>Map Pin Guide:</span>
               </div>
 
@@ -537,46 +541,46 @@ export function MapView() {
                   <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white shadow-xs">
                     <DollarSign className="w-3 h-3" />
                   </span>
-                  <span className="font-medium text-foreground">ATMs & Cash</span>
+                  <span className="font-medium text-foreground dark:text-zinc-200">ATMs & Cash</span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
                   <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-rose-500 text-white shadow-xs">
                     <Pill className="w-3 h-3" />
                   </span>
-                  <span className="font-medium text-foreground">Hospitals & Medical</span>
+                  <span className="font-medium text-foreground dark:text-zinc-200">Hospitals & Medical</span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
                   <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500 text-white shadow-xs">
                     <Hotel className="w-3 h-3" />
                   </span>
-                  <span className="font-medium text-foreground">Hotels & Stays</span>
+                  <span className="font-medium text-foreground dark:text-zinc-200">Hotels & Stays</span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
                   <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-sky-500 text-white shadow-xs">
                     <Train className="w-3 h-3" />
                   </span>
-                  <span className="font-medium text-foreground">Transit Stations</span>
+                  <span className="font-medium text-foreground dark:text-zinc-200">Transit Stations</span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
                   <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-500 text-white shadow-xs">
                     <ShoppingCart className="w-3 h-3" />
                   </span>
-                  <span className="font-medium text-foreground">General Stores</span>
+                  <span className="font-medium text-foreground dark:text-zinc-200">General Stores</span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
                   <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-900 border border-sky-400 text-sky-400 shadow-xs">
                     <MapPin className="w-3 h-3" />
                   </span>
-                  <span className="font-medium text-foreground">Search Hub</span>
+                  <span className="font-medium text-foreground dark:text-zinc-200">Search Hub</span>
                 </div>
               </div>
 
-              <span className="text-[10px] text-muted-foreground ml-auto hidden sm:inline">
+              <span className="text-[10px] text-muted-foreground dark:text-slate-400 ml-auto hidden sm:inline">
                 Click any pin to inspect details
               </span>
             </div>
@@ -585,20 +589,20 @@ export function MapView() {
 
         {/* Right: Nearby Travel Essentials Explorer (4 Cols) */}
         <div className="lg:col-span-4 space-y-4 flex flex-col">
-          <Card className="border-border/80 bg-card shadow-xs flex-1 flex flex-col">
-            <CardHeader className="p-4 pb-3 border-b border-border/50">
+          <Card className="border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs flex-1 flex flex-col">
+            <CardHeader className="p-4 pb-3 border-b border-border/50 dark:border-[#1E293B]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-sky-500" />
-                  <CardTitle className="text-sm font-semibold">
+                  <Sparkles className="w-4 h-4 text-sky-500 dark:text-[#2D9BF0]" />
+                  <CardTitle className="text-sm font-semibold dark:text-white">
                     Nearby Travel Essentials
                   </CardTitle>
                 </div>
                 {isLoadingPois && (
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-primary" />
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-primary dark:text-[#2D9BF0]" />
                 )}
               </div>
-              <CardDescription className="text-xs">
+              <CardDescription className="text-xs dark:text-slate-400">
                 Verified essentials within 1.5 km of {locationName.split(",")[0]}.
               </CardDescription>
 
@@ -615,13 +619,13 @@ export function MapView() {
                       type="button"
                       onClick={() => handleCategorySelect(tab.id)}
                       className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 border select-none ${isCurrent
-                          ? "bg-primary text-primary-foreground border-primary font-semibold shadow-xs"
-                          : "bg-muted/40 text-muted-foreground hover:text-foreground border-border/60 hover:bg-muted"
+                          ? "bg-primary text-primary-foreground border-primary font-semibold shadow-xs dark:bg-[#2D9BF0] dark:border-[#2D9BF0] dark:text-white dark:shadow-[0_0_12px_rgba(45,155,240,0.3)]"
+                          : "bg-muted/40 text-muted-foreground hover:text-foreground border-border/60 hover:bg-muted dark:bg-[#080D18] dark:border-[#1E293B] dark:text-slate-400 dark:hover:text-white dark:hover:border-[#2D9BF0]/30"
                         }`}
                     >
                       <Icon className={`w-3 h-3 ${isCurrent ? "text-primary-foreground" : tab.color}`} />
                       <span>{tab.label.split(" ")[0]}</span>
-                      <span className={`text-[10px] px-1 py-0 rounded-full font-mono ${isCurrent ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                      <span className={`text-[10px] px-1 py-0 rounded-full font-mono ${isCurrent ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted dark:bg-[#131F35] text-muted-foreground dark:text-slate-400"}`}>
                         {count}
                       </span>
                     </button>
@@ -632,13 +636,13 @@ export function MapView() {
 
             <CardContent className="p-3 flex-1 flex flex-col max-h-[440px] overflow-y-auto thin-scrollbar">
               {isLoadingPois ? (
-                <div className="py-12 flex flex-col items-center justify-center gap-2 text-xs text-muted-foreground">
-                  <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                <div className="py-12 flex flex-col items-center justify-center gap-2 text-xs text-muted-foreground dark:text-slate-400">
+                  <Loader2 className="w-5 h-5 animate-spin text-primary dark:text-[#2D9BF0]" />
                   <span>Scanning local area for travel essentials...</span>
                 </div>
               ) : filteredPois.length === 0 ? (
-                <div className="py-12 text-center text-xs text-muted-foreground space-y-1">
-                  <p className="font-semibold text-foreground">No places found in this category.</p>
+                <div className="py-12 text-center text-xs text-muted-foreground dark:text-slate-400 space-y-1">
+                  <p className="font-semibold text-foreground dark:text-white">No places found in this category.</p>
                   <p className="text-[11px]">Try switching to &quot;All Essentials&quot; or search another city hub.</p>
                 </div>
               ) : (
@@ -654,43 +658,43 @@ export function MapView() {
                         key={poi.id}
                         onClick={() => setSelectedPoi(poi)}
                         className={`p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between space-y-1.5 ${isSelected
-                            ? "border-sky-500 bg-sky-500/5 shadow-xs ring-1 ring-sky-500/30"
-                            : "border-border/70 bg-card hover:bg-muted/40 hover:border-border"
+                            ? "border-sky-500 bg-sky-500/5 shadow-xs ring-1 ring-sky-500/30 dark:border-[#2D9BF0] dark:bg-[#2D9BF0]/15 dark:shadow-[0_0_12px_rgba(45,155,240,0.25)] dark:ring-[#2D9BF0]/40"
+                            : "border-border/70 bg-card hover:bg-muted/40 hover:border-border dark:border-[#1E293B] dark:bg-[#080D18] dark:hover:bg-[#101A2D] dark:hover:border-[#2D9BF0]/30"
                           }`}
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground dark:text-slate-400 block">
                               {poi.categoryLabel}
                             </span>
-                            <h4 className={`text-xs font-bold leading-snug truncate ${isSelected ? "text-sky-600 dark:text-sky-400" : "text-foreground"}`}>
+                            <h4 className={`text-xs font-bold leading-snug truncate ${isSelected ? "text-sky-600 dark:text-[#2D9BF0]" : "text-foreground dark:text-zinc-100"}`}>
                               {poi.name}
                             </h4>
                           </div>
 
                           <div className="text-right shrink-0">
-                            <span className="font-mono text-xs font-bold text-sky-600 dark:text-sky-400 block">
+                            <span className="font-mono text-xs font-bold text-sky-600 dark:text-[#2D9BF0] block">
                               {formatDistance(poi.distanceMeters)}
                             </span>
-                            <span className="text-[10px] text-muted-foreground flex items-center justify-end gap-0.5">
+                            <span className="text-[10px] text-muted-foreground dark:text-slate-400 flex items-center justify-end gap-0.5">
                               <Clock className="w-2.5 h-2.5" /> ~{poi.walkingMinutes}m
                             </span>
                           </div>
                         </div>
 
                         {poi.address && (
-                          <p className="text-[11px] text-muted-foreground truncate">
+                          <p className="text-[11px] text-muted-foreground dark:text-slate-400 truncate">
                             {poi.address}
                           </p>
                         )}
 
-                        <div className="flex items-center justify-between pt-1 border-t border-border/40 text-[11px]">
+                        <div className="flex items-center justify-between pt-1 border-t border-border/40 dark:border-[#1E293B] text-[11px]">
                           {poi.openingHours ? (
                             <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
                               {poi.openingHours}
                             </span>
                           ) : (
-                            <span className="text-[10px] text-muted-foreground">Standard Hours</span>
+                            <span className="text-[10px] text-muted-foreground dark:text-slate-400">Standard Hours</span>
                           )}
 
                           <div className="flex items-center gap-2">
@@ -700,7 +704,7 @@ export function MapView() {
                                 e.stopPropagation();
                                 setSelectedPoi(poi);
                               }}
-                              className="text-[10px] text-primary hover:underline font-semibold cursor-pointer"
+                              className="text-[10px] text-primary dark:text-[#2D9BF0] hover:underline font-semibold cursor-pointer"
                             >
                               Show on Map
                             </button>
@@ -709,7 +713,7 @@ export function MapView() {
                               target="_blank"
                               rel="noreferrer"
                               onClick={(e) => e.stopPropagation()}
-                              className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-0.5"
+                              className="text-[10px] text-muted-foreground dark:text-slate-400 hover:text-foreground dark:hover:text-white flex items-center gap-0.5"
                             >
                               Directions <ExternalLink className="w-2.5 h-2.5" />
                             </a>
