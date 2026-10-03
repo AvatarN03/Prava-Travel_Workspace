@@ -3,18 +3,15 @@
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
-
 import { verifyTripOwnership } from "../common/auth-check";
+
 import {
   createLinkSchema,
   deleteLinkSchema,
   updateLinkSchema,
-} from "./schema";
-
-import type {
-  CreateLinkInput,
-  DeleteLinkInput,
-  UpdateLinkInput,
+  type CreateLinkInput,
+  type DeleteLinkInput,
+  type UpdateLinkInput,
 } from "./schema";
 
 export async function createLink(input: CreateLinkInput) {

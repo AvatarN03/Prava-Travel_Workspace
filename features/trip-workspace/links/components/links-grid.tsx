@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+
 import {
   Bookmark,
   ExternalLink,
@@ -11,7 +12,6 @@ import {
   Tag,
   X,
 } from "lucide-react";
-import { Link as PrismaLink } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input";
 import { AddLinkDialog } from "./add-link-dialog";
 import { ImportFromVaultDialog } from "./import-from-vault-dialog";
 import { LinkCard } from "./link-card";
+
+import type { Link as PrismaLink } from "@prisma/client";
 
 interface LinksGridProps {
   tripId: string;

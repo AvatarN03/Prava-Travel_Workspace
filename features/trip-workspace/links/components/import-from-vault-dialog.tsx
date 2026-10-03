@@ -1,9 +1,9 @@
 "use client";
 
+import type * as React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { Link as PrismaLink } from "@prisma/client";
 import { Bookmark, Check, Download, ExternalLink, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -20,6 +20,8 @@ import {
 
 import { getVaultLinks } from "@/features/travel-essentials";
 import { createLink } from "../actions";
+
+import type { Link as PrismaLink } from "@prisma/client";
 
 interface ImportFromVaultDialogProps {
   tripId: string;
