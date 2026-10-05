@@ -50,12 +50,25 @@ export function isItineraryPlanningIntent(
 ): boolean {
   const p = prompt.toLowerCase().trim();
 
+  // 1. Explicit read-only / query check:
+  // If the user is asking to view, read, check, summarize, or query their existing itinerary,
+  // it is an informational conversational request, NOT an action proposal to create or mutate.
+  const isQueryOnly =
+    /\b(what(?:'s| is| are)?|show(?: me)?|view|tell me(?: about)?|do (?:i|we) have|give me|list|check|summarize|read|see|how does (?:my|the) itinerary look)\b/i.test(p) &&
+    /\b(itinerar|ititnerar|itinera|schedule|plan|activities|stay|hotel|booking|days?)\b/i.test(p) &&
+    !/\b(create|generate|add|make|plan a new|populate|draft|build a|insert|reschedule|change|delete|remove|update|suggest new)\b/i.test(p);
+
+  if (isQueryOnly) {
+    return false;
+  }
+
   const patterns = [
     // Typo-tolerant planning and creation patterns
     /\b(create|plan|generate|build|make|suggest|draft|design|organize|schedule|prepare|populate)\b.*\b(itinerar|ititnerar|itinera|itin|schedule|plan|activities|trip|route|days?)\b/i,
-    /\b(itinerar|ititnerar|itinera|schedule|trip plan)\s+(for|of|to|in)\b/i,
+    /\b(create|plan|generate|draft|build|make)\s+(?:an?\s+)?(?:itinerar|ititnerar|itinera|schedule|trip plan)\s+(for|of|to|in)\b/i,
     /\b(plan|schedule|populate)\s+(my|this|our|the)\s+trip\b/i,
-    /\b(day\s*\d+|day-\d+)\b/i,
+    /\b(plan|schedule|suggest|activities for)\s+(day\s*\d+|day-\d+)\b/i,
+    /\b(day\s*\d+|day-\d+)\s+(plan|schedule|activities|itinerary)\b/i,
     // Conversational follow-ups: "add them", "go ahead add them", "add it", "add to itinerary", "add the places"
     /\b(?:go\s*ahead\s*(?:and\s*)?)?(?:add|put|insert|include|schedule)\s+(?:them|it|these|those|places|activities|spots|items)\b/i,
     /\b(add|insert|include|schedule|put|book)\b.*\b(to|into|on|in)\s+(?:my\s+)?(itinerar|ititnerar|itinera|plan|trip|schedule|day|workspace)\b/i,
@@ -92,6 +105,7 @@ export function isItineraryPlanningIntent(
 
   return false;
 }
+
 
 /**
  * Attempts to parse or repair potentially truncated JSON from LLMs
@@ -186,7 +200,7 @@ export async function runTripAgentGraph(
   } = input;
 
   // 1. Resolve trip context (avoid duplicate PostgreSQL roundtrips)
-  const context = preloadedContext || (await buildTripContext(tripId, userId));
+  const context = preloadedContext || (await buildTripContext(tripId, userId, userCurrency));
   const destination = context?.destination || null;
 
   // 2. Classify intent: Planning/Mutation vs Conversational (with history awareness)

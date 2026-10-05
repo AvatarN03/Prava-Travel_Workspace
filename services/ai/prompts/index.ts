@@ -11,10 +11,10 @@
  */
 
 import { WORKSPACE_MUTATION_BOUNDARIES } from "./boundaries";
-import { CONVERSATIONAL_RULES } from "./conversation";
+import { buildConversationalRules, CONVERSATIONAL_RULES } from "./conversation";
 import { TRAVEL_SCOPE_GUARDRAILS } from "./guardrails";
 import { ICHINOSE_PERSONA } from "./persona";
-import { PROPOSAL_INSTRUCTIONS } from "./proposals";
+import { buildProposalInstructions, PROPOSAL_INSTRUCTIONS } from "./proposals";
 
 export * from "./boundaries";
 export * from "./conversation";
@@ -29,6 +29,8 @@ export interface ActiveTripPromptContext {
   formattedEndDate: string;
   status: string;
   isPastPlanning?: boolean;
+  userCurrency: string;
+  budget?: number | null;
 }
 
 export interface WorkspaceSummariesBlock {
@@ -51,25 +53,45 @@ export function buildActiveTripContextBlock(ctx: ActiveTripPromptContext): strin
 Trip Title: "${ctx.title}"
 Destination: ${ctx.destination || "Not specified"}
 Dates: ${ctx.formattedStartDate} to ${ctx.formattedEndDate}
-Trip Status: ${ctx.status}${pastPlanningNotice}`;
+Trip Status: ${ctx.status}${pastPlanningNotice}
+User Preferred Currency: ${ctx.userCurrency || "INR"}${ctx.budget ? `\nTrip Budget: ${ctx.userCurrency || "INR"} ${ctx.budget}` : ""}`;
 }
 
 /**
  * Assembles the full conversational system prompt for Q&A, advice, and essentials.
+ * Injects current trip workspace entities so conversational questions about itinerary,
+ * stays, and expenses are answered with 100% accuracy.
  */
-export function assembleConversationalPrompt(ctx: ActiveTripPromptContext): string {
+export function assembleConversationalPrompt(
+  ctx: ActiveTripPromptContext,
+  summaries: WorkspaceSummariesBlock
+): string {
   const activeTripBlock = buildActiveTripContextBlock(ctx);
+
+  const workspaceEntitiesBlock = [
+    activeTripBlock,
+    "",
+    `=== CURRENT SCHEDULED ITINERARY ===\n${summaries.itinerarySummary}`,
+    "",
+    `=== CURRENT ACCOMMODATIONS & LODGING ===\n${summaries.accommodationsSummary}`,
+    "",
+    `=== EXPENSES & BUDGET ===\n${summaries.expensesSummary}`,
+    "",
+    `=== USER NOTES & MEMOS ===\n${summaries.notesSummary}`,
+    "",
+    `=== PREPARATION CHECKLIST ===\n${summaries.checklistSummary}`,
+  ].join("\n");
 
   return [
     ICHINOSE_PERSONA,
     "",
-    activeTripBlock,
+    workspaceEntitiesBlock,
     "",
     TRAVEL_SCOPE_GUARDRAILS,
     "",
     WORKSPACE_MUTATION_BOUNDARIES,
     "",
-    CONVERSATIONAL_RULES,
+    buildConversationalRules(ctx.userCurrency || "INR"),
   ].join("\n");
 }
 
@@ -105,6 +127,6 @@ export function assembleProposalPrompt(
     "",
     WORKSPACE_MUTATION_BOUNDARIES,
     "",
-    PROPOSAL_INSTRUCTIONS,
+    buildProposalInstructions(ctx.userCurrency || "INR"),
   ].join("\n");
 }

@@ -15,6 +15,7 @@ export interface TripContextResult {
   destination: string | null;
   startDate: Date | null;
   endDate: Date | null;
+  userCurrency: string;
 }
 
 /**
@@ -23,14 +24,20 @@ export interface TripContextResult {
  */
 export async function buildTripContext(
   tripId: string,
-  profileId: string
+  profileId: string,
+  userCurrencyParam?: string
 ): Promise<TripContextResult | null> {
   const trip = await db.trip.findFirst({
     where: {
       id: tripId,
-      profileId,
+      OR: [{ profileId }, { isPublic: true }],
     },
     include: {
+      profile: {
+        select: {
+          defaultCurrency: true,
+        },
+      },
       itinerary: {
         orderBy: [{ dayNumber: "asc" }, { order: "asc" }, { createdAt: "asc" }],
       },
@@ -56,6 +63,7 @@ export async function buildTripContext(
     return null;
   }
 
+  const userCurrency = userCurrencyParam || trip.profile?.defaultCurrency || "INR";
   const formatDate = (d?: Date | null) => (d ? new Date(d).toISOString().split("T")[0] : "Not set");
 
   const totalSpent = trip.expenses.reduce((acc, curr) => acc + curr.amount, 0);
@@ -69,7 +77,7 @@ export async function buildTripContext(
             (item) =>
               `- [ID: ${item.id}] Day ${item.dayNumber || 1}${item.time ? ` (${item.time})` : ""}: ${item.title}${
                 item.location ? ` @ ${item.location}` : ""
-              } [${item.category}]${item.cost ? ` (Est. cost: $${item.cost})` : ""}${
+              } [${item.category}]${item.cost !== null && item.cost !== undefined ? ` (Est. cost: ${userCurrency} ${item.cost})` : ""}${
                 item.description ? ` - ${item.description}` : ""
               }`
           )
@@ -85,19 +93,19 @@ export async function buildTripContext(
                 acc.checkIn
               )}, Check-out: ${formatDate(acc.checkOut)}${
                 acc.confirmationCode ? `, Confirmation: #${acc.confirmationCode}` : ""
-              }${acc.cost ? `, Cost: $${acc.cost} ${acc.currency}` : ""}`
+              }${acc.cost !== null && acc.cost !== undefined ? `, Cost: ${acc.currency || userCurrency} ${acc.cost}` : ""}`
           )
           .join("\n")
       : "No lodging added yet.";
 
   const expensesSummary =
     trip.expenses.length > 0
-      ? `Total Spent: $${totalSpent.toFixed(2)}\n` +
+      ? `Total Spent: ${userCurrency} ${totalSpent.toFixed(2)}\n` +
         trip.expenses
           .slice(0, 10)
           .map(
             (exp) =>
-              `- ${exp.title}: $${exp.amount.toFixed(2)} ${exp.currency} [${exp.category}] on ${formatDate(exp.date)}`
+              `- ${exp.title}: ${exp.currency || userCurrency} ${exp.amount.toFixed(2)} [${exp.category}] on ${formatDate(exp.date)}`
           )
           .join("\n")
       : "No expenses recorded yet.";
@@ -131,17 +139,20 @@ export async function buildTripContext(
     formattedEndDate: formatDate(trip.endDate),
     status: trip.status,
     isPastPlanning,
+    userCurrency,
+    budget: trip.budget,
   };
 
-  const conversationalPrompt = assembleConversationalPrompt(promptContext);
-
-  const proposalPrompt = assembleProposalPrompt(promptContext, {
+  const summaries = {
     itinerarySummary,
     accommodationsSummary,
     expensesSummary,
     notesSummary,
     checklistSummary,
-  });
+  };
+
+  const conversationalPrompt = assembleConversationalPrompt(promptContext, summaries);
+  const proposalPrompt = assembleProposalPrompt(promptContext, summaries);
 
   return {
     systemInstruction: proposalPrompt,
@@ -151,5 +162,7 @@ export async function buildTripContext(
     destination: trip.destination,
     startDate: trip.startDate,
     endDate: trip.endDate,
+    userCurrency,
   };
 }
+

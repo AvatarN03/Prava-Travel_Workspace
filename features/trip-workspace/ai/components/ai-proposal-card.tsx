@@ -26,17 +26,26 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { acceptAiProposal, rejectAiProposal } from "../actions";
 
+import { SUPPORTED_CURRENCIES } from "@/features/travel-essentials";
 import type { AiProposalChange, AiProposalDTO } from "../schema";
+
+function getCurrencySymbol(code?: string): string {
+  if (!code) return "$";
+  const found = SUPPORTED_CURRENCIES.find((c) => c.code.toUpperCase() === code.toUpperCase());
+  return found?.symbol || code;
+}
 
 interface AiProposalCardProps {
   proposal: AiProposalDTO;
   tripId: string;
+  userCurrency?: string;
   onProposalResolved?: (updatedProposal: AiProposalDTO) => void;
 }
 
 export function AiProposalCard({
   proposal,
   tripId,
+  userCurrency = "INR",
   onProposalResolved,
 }: AiProposalCardProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>(() =>
@@ -238,7 +247,9 @@ export function AiProposalCard({
                     {change.data.cost !== undefined && change.data.cost !== null && (
                       <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700 font-mono">
                         <DollarSign className="h-3 w-3 text-[#2D9BF0]" />
-                        {Number(change.data.cost) === 0 ? "Free" : `$${change.data.cost}`}
+                        {Number(change.data.cost) === 0
+                          ? "Free"
+                          : `${getCurrencySymbol(change.data.currency || userCurrency)} ${change.data.cost} ${change.data.currency || userCurrency}`}
                       </span>
                     )}
                   </div>
@@ -270,7 +281,9 @@ export function AiProposalCard({
                     {change.data.cost !== undefined && change.data.cost !== null && (
                       <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700 font-mono">
                         <DollarSign className="h-3 w-3 text-[#2D9BF0]" />
-                        {Number(change.data.cost) === 0 ? "Free" : `$${change.data.cost} ${change.data.currency || "USD"}`}
+                        {Number(change.data.cost) === 0
+                          ? "Free"
+                          : `${getCurrencySymbol(change.data.currency || userCurrency)} ${change.data.cost} ${change.data.currency || userCurrency}`}
                       </span>
                     )}
                   </div>

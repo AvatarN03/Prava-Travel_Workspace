@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 import {
@@ -21,7 +21,6 @@ import {
   Minimize2,
   Pencil,
   Plus,
-  Sparkles,
   ThumbsDown,
   ThumbsUp,
   Trash2,
@@ -45,7 +44,6 @@ import { useWorkspaceAi } from "../../context/workspace-ai-context";
 
 import { cn } from "@/lib/utils";
 import {
-  clearTripConversation,
   createTripConversationThread,
   deleteTripConversationThread,
   getTripConversation,
@@ -288,7 +286,7 @@ export function WorkspaceAiPanel({
   isOpen,
   onClose,
 }: WorkspaceAiPanelProps) {
-  const { userQuota, setUserQuota, userAvatarUrl, pendingPrompt, clearPendingPrompt } = useWorkspaceAi();
+  const { userQuota, setUserQuota, pendingPrompt, clearPendingPrompt } = useWorkspaceAi();
   const [messages, setMessages] = useState<MessageDTO[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [activeConversationTitle, setActiveConversationTitle] = useState<string>("");
@@ -297,7 +295,6 @@ export function WorkspaceAiPanel({
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isCreatingThread, setIsCreatingThread] = useState(false);
-  const [isClearing, startClearing] = useTransition();
   const [editingThreadId, setEditingThreadId] = useState<string | null>(null);
   const [editingThreadTitle, setEditingThreadTitle] = useState<string>("");
   const [isEditingHeaderTitle, setIsEditingHeaderTitle] = useState(false);
@@ -305,6 +302,7 @@ export function WorkspaceAiPanel({
   const [error, setError] = useState<string | null>(null);
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
   const [aiAutoPropose, setAiAutoPropose] = useState<boolean>(true);
+  const [userCurrency, setUserCurrency] = useState<string>("INR");
   const [isInitialized, setIsInitialized] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [reasoningExpanded, setReasoningExpanded] = useState<Record<string, boolean>>({});
@@ -358,6 +356,9 @@ export function WorkspaceAiPanel({
       }
       if ((res as unknown as { aiAutoPropose?: boolean }).aiAutoPropose !== undefined) {
         setAiAutoPropose((res as unknown as { aiAutoPropose?: boolean }).aiAutoPropose ?? true);
+      }
+      if ((res as unknown as { userCurrency?: string }).userCurrency) {
+        setUserCurrency((res as unknown as { userCurrency?: string }).userCurrency || "INR");
       }
     }
     setIsInitialized(true);
@@ -517,6 +518,9 @@ export function WorkspaceAiPanel({
       if (res.userQuota) {
         setUserQuota(res.userQuota);
       }
+      if ((res as unknown as { userCurrency?: string }).userCurrency) {
+        setUserCurrency((res as unknown as { userCurrency?: string }).userCurrency || "INR");
+      }
       if (messages.length === 0) {
         loadThreadsList();
       }
@@ -526,15 +530,6 @@ export function WorkspaceAiPanel({
         setUpgradeDialogOpen(true);
       }
     }
-  };
-
-  const handleClear = () => {
-    if (!confirm("Clear messages in this conversation?")) return;
-    startClearing(async () => {
-      await clearTripConversation(tripId);
-      setMessages([]);
-      loadThreadsList();
-    });
   };
 
   const toggleReasoning = (msgId: string) => {
@@ -1115,6 +1110,7 @@ export function WorkspaceAiPanel({
                           <AiProposalCard
                             proposal={msg.proposal}
                             tripId={tripId}
+                            userCurrency={userCurrency}
                             onProposalResolved={handleProposalResolved}
                           />
                         </div>

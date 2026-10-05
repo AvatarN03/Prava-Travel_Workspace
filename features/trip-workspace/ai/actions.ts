@@ -402,7 +402,7 @@ export async function getTripConversation(tripId: string, conversationId?: strin
     const userQuota = await getUserAiCredits(user.id);
     const profile = await db.profile.findUnique({
       where: { id: user.id },
-      select: { aiAutoPropose: true },
+      select: { aiAutoPropose: true, defaultCurrency: true },
     });
 
     return {
@@ -413,6 +413,7 @@ export async function getTripConversation(tripId: string, conversationId?: strin
       totalMessages: messages.length,
       userQuota,
       aiAutoPropose: profile?.aiAutoPropose ?? true,
+      userCurrency: profile?.defaultCurrency || "INR",
     };
   } catch (error) {
     console.error("Error loading conversation:", error);
@@ -440,8 +441,16 @@ export async function sendTripMessage(tripId: string, prompt: string, conversati
       return { success: false, error: "Unauthorized. Please sign in." };
     }
 
-    // Build trip-scoped context
-    const contextResult = await buildTripContext(tripId, user.id);
+    // Lookup user's currency and proposal preferences
+    const profile = await db.profile.findUnique({
+      where: { id: user.id },
+      select: { defaultCurrency: true, aiAutoPropose: true },
+    });
+    const userCurrency = profile?.defaultCurrency || "INR";
+    const aiAutoPropose = profile?.aiAutoPropose ?? true;
+
+    // Build trip-scoped context with user's preferred currency
+    const contextResult = await buildTripContext(tripId, user.id, userCurrency);
     if (!contextResult) {
       return { success: false, error: "Trip not found or unauthorized." };
     }
@@ -537,14 +546,6 @@ export async function sendTripMessage(tripId: string, prompt: string, conversati
       },
     });
 
-    // Lookup user's currency and proposal preferences
-    const profile = await db.profile.findUnique({
-      where: { id: user.id },
-      select: { defaultCurrency: true, aiAutoPropose: true },
-    });
-    const userCurrency = profile?.defaultCurrency || "INR";
-    const aiAutoPropose = profile?.aiAutoPropose ?? true;
-
     // Execute Trip Agent Graph: Tools (Weather/Currency) -> Gemini Flash Lite / OpenRouter Free Cascade
     const agentResult = await runTripAgentGraph({
       tripId,
@@ -618,6 +619,7 @@ export async function sendTripMessage(tripId: string, prompt: string, conversati
       proposal: savedProposalDTO,
       creditsDeducted: requiredCredits,
       userQuota: await getUserAiCredits(user.id),
+      userCurrency,
     };
   } catch (error) {
     console.error("Gemini AI generation error:", error);
@@ -651,9 +653,16 @@ export async function acceptAiProposal(
       return { success: false, error: "Unauthorized" };
     }
 
-    // Verify trip ownership
+    // Verify trip ownership and fetch user's currency preference
     const trip = await db.trip.findFirst({
       where: { id: tripId, profileId: user.id },
+      include: {
+        profile: {
+          select: {
+            defaultCurrency: true,
+          },
+        },
+      },
     });
 
     if (!trip) {
@@ -733,7 +742,7 @@ export async function acceptAiProposal(
                 checkIn: change.data.checkIn ? new Date(change.data.checkIn) : null,
                 checkOut: change.data.checkOut ? new Date(change.data.checkOut) : null,
                 cost: change.data.cost ?? null,
-                currency: change.data.currency || "USD",
+                currency: change.data.currency || trip.profile?.defaultCurrency || "INR",
                 notes: change.data.notes || null,
               },
             });
