@@ -48,8 +48,19 @@
 - **Phase 67: High-Contrast Light Mode Skeleton Loading & Progressive 3-Day Itinerary Chunking Architecture** (Complete)
 - **Phase 68: Centralized Card & Card-Subtle Theme Tokens for Skeletons and Surfaces** (Complete)
 - **Phase 70: High-Contrast Shadcn Button Theming & Filter Toolbar Simplification** (Complete)
+- **Phase 71: Inbuilt Shadcn Button High-Contrast Theme & Travel Essentials Integration** (Complete)
 
 ## Current Task
+- **Phase 71 Complete**: Inbuilt Shadcn Button High-Contrast Theme & Travel Essentials Integration:
+  - **Inbuilt Shadcn Button Theming (`components/ui/button.tsx`)**:
+    - Refactored `buttonVariants` `default` variant to natively render high-contrast shadcn colors: `bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-white shadow-xs border border-white/10 dark:border-black/15`.
+    - Added dedicated `brand` variant (`bg-primary text-primary-foreground hover:bg-primary/90`) for cases where explicit Cerulean Blue buttons are specifically desired.
+    - Standard `<Button>` instances across the entire workspace (including Travel Essentials Weather, Country Guide, Maps, and Vault) now automatically inherit this clean, dark/light contrast without requiring custom utility classes.
+  - **Global CSS Utility Expansion (`app/globals.css`)**:
+    - Added `.btn-primary` alongside `.prava-btn-primary` and `.dashboard-btn-primary`.
+  - **Travel Essentials Modernization**:
+    - Removed hardcoded `bg-violet-600` styling from `features/travel-essentials/language/language-view.tsx` so the Translate button seamlessly matches the rest of the Travel Essentials toolkit actions (Weather search, Maps search, Country Guide lookup, Vault attach).
+  - **Verification**: Verified zero compilation or type errors with `npm run build` (Turbopack).
 - **Phase 70 Complete**: High-Contrast Shadcn Button Theming & Filter Toolbar Simplification:
   - **High-Contrast Button Design System (`.prava-btn-primary` & `.dashboard-btn-primary`)**:
     - Centralized in `app/globals.css`: deep obsidian zinc-950 (`#09090b`) with white text in light mode, and clean light zinc (`#f4f4f5`) with dark text in dark mode.

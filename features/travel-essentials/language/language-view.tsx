@@ -584,7 +584,7 @@ export function LanguageView() {
             <Button
               type="submit"
               size="sm"
-              className="h-9 px-4 text-xs bg-violet-600 hover:bg-violet-700 text-white cursor-pointer shrink-0"
+              className="h-9 px-4 text-xs font-semibold cursor-pointer shrink-0"
               disabled={isTranslating || !customInput.trim()}
             >
               {isTranslating ? (
