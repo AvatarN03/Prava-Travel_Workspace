@@ -14,7 +14,7 @@ export default function ChecklistLoading() {
 
         <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 flex-wrap sm:flex-nowrap">
           <div className="h-9 w-32 bg-[#2D9BF0]/20 border border-[#2D9BF0]/30 rounded-sm" />
-          <div className="h-9 w-28 bg-muted/50 dark:bg-[#121622] border border-border dark:border-zinc-800 rounded-sm" />
+          <div className="h-9 w-28 bg-muted/50 dark:bg-card-subtle border border-border dark:border-zinc-800 rounded-sm" />
           <div className="h-9 w-28 bg-[#2D9BF0]/50 rounded-sm" />
         </div>
       </div>
@@ -24,7 +24,7 @@ export default function ChecklistLoading() {
         {Array.from({ length: 3 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 shadow-2xs space-y-2.5"
+            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-4 shadow-2xs space-y-2.5"
           >
             <div className="flex items-center justify-between">
               <div className="h-3.5 w-24 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
@@ -39,21 +39,21 @@ export default function ChecklistLoading() {
       {/* Filter and Tasks List */}
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-3">
-          <div className="h-8 w-64 bg-muted/40 dark:bg-[#121622] rounded-sm border border-border/60 dark:border-zinc-800" />
+          <div className="h-8 w-64 bg-muted/40 dark:bg-card-subtle rounded-sm border border-border/60 dark:border-zinc-800" />
           <div className="flex gap-1.5">
             <div className="h-7 w-16 bg-[#2D9BF0]/20 rounded-xs" />
-            <div className="h-7 w-20 bg-muted/40 dark:bg-[#121622] rounded-xs" />
+            <div className="h-7 w-20 bg-muted/40 dark:bg-card-subtle rounded-xs" />
           </div>
         </div>
 
         {/* Task Category Group */}
-        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 space-y-3 shadow-2xs">
+        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-4 space-y-3 shadow-2xs">
           <div className="h-4 w-32 bg-muted/80 dark:bg-zinc-800 rounded-xs pb-1" />
           <div className="space-y-2">
             {Array.from({ length: 4 }).map((_, j) => (
               <div
                 key={j}
-                className="h-11 bg-muted/30 dark:bg-[#121622] rounded-sm border border-border/40 dark:border-zinc-800/60 flex items-center justify-between px-3"
+                className="h-11 bg-muted/30 dark:bg-card-subtle rounded-sm border border-border/40 dark:border-zinc-800/60 flex items-center justify-between px-3"
               >
                 <div className="flex items-center gap-3">
                   <div className="h-4 w-4 rounded-xs bg-muted/70 dark:bg-zinc-800" />

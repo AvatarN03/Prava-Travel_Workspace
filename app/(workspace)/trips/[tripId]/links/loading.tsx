@@ -13,7 +13,7 @@ export default function LinksLoading() {
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-          <div className="h-9 w-32 bg-muted/50 dark:bg-[#121622] border border-border dark:border-zinc-800 rounded-sm" />
+          <div className="h-9 w-32 bg-muted/50 dark:bg-card-subtle border border-border dark:border-zinc-800 rounded-sm" />
           <div className="h-9 w-28 bg-[#2D9BF0]/50 rounded-sm" />
         </div>
       </div>
@@ -23,7 +23,7 @@ export default function LinksLoading() {
         {Array.from({ length: 3 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 shadow-2xs space-y-2"
+            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-4 shadow-2xs space-y-2"
           >
             <div className="h-3.5 w-24 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
             <div className="h-7 w-16 bg-muted/80 dark:bg-zinc-800 rounded-sm" />
@@ -34,12 +34,12 @@ export default function LinksLoading() {
 
       {/* Search & Category Filter Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="h-8 w-64 bg-muted/40 dark:bg-[#121622] rounded-sm border border-border/60 dark:border-zinc-800" />
+        <div className="h-8 w-64 bg-muted/40 dark:bg-card-subtle rounded-sm border border-border/60 dark:border-zinc-800" />
         <div className="flex gap-1.5 overflow-x-auto">
           {["All", "Stay", "Activity", "Transit", "Restaurant"].map((cat) => (
             <div
               key={cat}
-              className="h-7 px-3 bg-muted/40 dark:bg-[#121622] border border-border/60 dark:border-zinc-800 rounded-xs w-20"
+              className="h-7 px-3 bg-muted/40 dark:bg-card-subtle border border-border/60 dark:border-zinc-800 rounded-xs w-20"
             />
           ))}
         </div>
@@ -50,7 +50,7 @@ export default function LinksLoading() {
         {Array.from({ length: 6 }).map((_, j) => (
           <div
             key={j}
-            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 space-y-3 shadow-2xs"
+            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-4 space-y-3 shadow-2xs"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">

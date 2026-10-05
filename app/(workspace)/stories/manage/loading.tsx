@@ -15,8 +15,8 @@ export default function StoriesManageLoading() {
       {/* Filter Tabs Strip */}
       <div className="flex items-center gap-2 border-b border-border/60 dark:border-zinc-800/60 pb-3">
         <div className="h-7 w-16 bg-primary/40 rounded-sm" />
-        <div className="h-7 w-24 bg-muted/40 dark:bg-[#121622] rounded-sm" />
-        <div className="h-7 w-20 bg-muted/40 dark:bg-[#121622] rounded-sm" />
+        <div className="h-7 w-24 bg-muted/40 dark:bg-card-subtle rounded-sm" />
+        <div className="h-7 w-20 bg-muted/40 dark:bg-card-subtle rounded-sm" />
       </div>
 
       {/* Stories Management List */}
@@ -24,7 +24,7 @@ export default function StoriesManageLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs"
+            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs"
           >
             <div className="flex items-center gap-4 min-w-0">
               <div className="h-16 w-24 rounded-xs bg-muted/60 dark:bg-zinc-800 shrink-0" />

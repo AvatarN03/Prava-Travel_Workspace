@@ -10,7 +10,7 @@ export default function StoriesLoading() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <div className="h-9 w-24 bg-muted/50 dark:bg-[#121622] border border-border dark:border-zinc-800 rounded-sm" />
+          <div className="h-9 w-24 bg-muted/50 dark:bg-card-subtle border border-border dark:border-zinc-800 rounded-sm" />
           <div className="h-9 w-28 bg-[#2D9BF0]/50 rounded-sm" />
         </div>
       </div>
@@ -20,13 +20,13 @@ export default function StoriesLoading() {
         {["All", "Japan", "Europe", "Solo Travel", "Food Guides", "Budget"].map((tag) => (
           <div
             key={tag}
-            className="h-7 px-3.5 bg-muted/40 dark:bg-[#121622] border border-border/60 dark:border-zinc-800 rounded-full w-20 shrink-0"
+            className="h-7 px-3.5 bg-muted/40 dark:bg-card-subtle border border-border/60 dark:border-zinc-800 rounded-full w-20 shrink-0"
           />
         ))}
       </div>
 
       {/* Featured Story Hero Card */}
-      <div className="rounded-lg border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] overflow-hidden shadow-2xs">
+      <div className="rounded-lg border border-border/80 dark:border-zinc-800 bg-card overflow-hidden shadow-2xs">
         <div className="grid grid-cols-1 lg:grid-cols-12">
           <div className="lg:col-span-7 h-64 lg:h-80 bg-muted/60 dark:bg-zinc-800/60" />
           <div className="lg:col-span-5 p-6 flex flex-col justify-between space-y-4">
@@ -55,7 +55,7 @@ export default function StoriesLoading() {
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-md border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] overflow-hidden shadow-2xs space-y-0"
+            className="rounded-md border border-border/80 dark:border-zinc-800 bg-card overflow-hidden shadow-2xs space-y-0"
           >
             <div className="h-44 sm:h-48 bg-muted/60 dark:bg-zinc-800/60" />
             <div className="p-4 space-y-3">

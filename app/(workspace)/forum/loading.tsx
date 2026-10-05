@@ -10,15 +10,15 @@ export default function ForumLoading() {
         </div>
 
         <div className="flex items-center gap-2.5 shrink-0">
-          <div className="h-9 w-48 sm:w-64 bg-background dark:bg-[#0F131C] border border-border dark:border-zinc-800 rounded-sm" />
+          <div className="h-9 w-48 sm:w-64 bg-background dark:bg-card border border-border dark:border-zinc-800 rounded-sm" />
           <div className="h-9 w-32 bg-[#2D9BF0]/50 rounded-sm" />
         </div>
       </div>
 
       {/* Filter Controls */}
       <div className="flex items-center gap-2 w-full">
-        <div className="h-9 w-64 bg-card dark:bg-[#0F131C] border border-border dark:border-zinc-800 rounded-sm" />
-        <div className="h-9 w-28 bg-card dark:bg-[#0F131C] border border-border dark:border-zinc-800 rounded-sm" />
+        <div className="h-9 w-64 bg-card border border-border dark:border-zinc-800 rounded-sm" />
+        <div className="h-9 w-28 bg-card border border-border dark:border-zinc-800 rounded-sm" />
       </div>
 
       {/* Discussions Feed List */}
@@ -26,7 +26,7 @@ export default function ForumLoading() {
         {Array.from({ length: 5 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 space-y-3 shadow-2xs"
+            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-4 sm:p-5 space-y-3 shadow-2xs"
           >
             {/* Author row & category badge */}
             <div className="flex items-center justify-between">

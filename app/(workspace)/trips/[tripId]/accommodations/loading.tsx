@@ -20,7 +20,7 @@ export default function AccommodationsLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="p-3.5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] space-y-1 shadow-2xs"
+            className="p-3.5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card space-y-1 shadow-2xs"
           >
             <div className="flex items-center justify-between">
               <div className="h-3 w-20 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
@@ -36,7 +36,7 @@ export default function AccommodationsLoading() {
         {Array.from({ length: 3 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 space-y-3.5 shadow-2xs"
+            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-4 space-y-3.5 shadow-2xs"
           >
             <div className="flex items-start justify-between">
               <div className="space-y-1.5 flex-1">
@@ -46,7 +46,7 @@ export default function AccommodationsLoading() {
               <div className="h-4 w-4 bg-muted/40 dark:bg-zinc-800 rounded-xs shrink-0" />
             </div>
 
-            <div className="p-2.5 rounded-sm bg-muted/30 dark:bg-[#121622] space-y-2 border border-border/50 dark:border-zinc-800/60">
+            <div className="p-2.5 rounded-sm bg-muted/30 dark:bg-card-subtle space-y-2 border border-border/50 dark:border-zinc-800/60">
               <div className="flex items-center justify-between text-xs">
                 <div className="h-3.5 w-24 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
                 <div className="h-3.5 w-24 bg-muted/60 dark:bg-zinc-800 rounded-xs" />

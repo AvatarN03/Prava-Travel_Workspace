@@ -10,7 +10,7 @@ export default function TemplatesLoading() {
         </div>
 
         <div className="w-full sm:w-80 shrink-0">
-          <div className="h-9 w-full bg-card dark:bg-[#0F131C] border border-border dark:border-zinc-800 rounded-sm" />
+          <div className="h-9 w-full bg-card border border-border dark:border-zinc-800 rounded-sm" />
         </div>
       </div>
 
@@ -18,9 +18,9 @@ export default function TemplatesLoading() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 py-1">
         <div className="h-4 w-44 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          <div className="h-8 w-36 bg-background dark:bg-[#0F131C] border border-border dark:border-zinc-800 rounded-sm" />
-          <div className="h-8 w-32 bg-background dark:bg-[#0F131C] border border-border dark:border-zinc-800 rounded-sm" />
-          <div className="h-8 w-32 bg-background dark:bg-[#0F131C] border border-border dark:border-zinc-800 rounded-sm" />
+          <div className="h-8 w-36 bg-background dark:bg-card border border-border dark:border-zinc-800 rounded-sm" />
+          <div className="h-8 w-32 bg-background dark:bg-card border border-border dark:border-zinc-800 rounded-sm" />
+          <div className="h-8 w-32 bg-background dark:bg-card border border-border dark:border-zinc-800 rounded-sm" />
         </div>
       </div>
 
@@ -29,7 +29,7 @@ export default function TemplatesLoading() {
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-md border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] overflow-hidden shadow-2xs space-y-0"
+            className="rounded-md border border-border/80 dark:border-zinc-800 bg-card overflow-hidden shadow-2xs space-y-0"
           >
             {/* Aspect Video Cover with Badges */}
             <div className="h-44 sm:h-48 bg-muted/60 dark:bg-zinc-800/60 p-3 flex justify-between items-start">

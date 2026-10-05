@@ -16,7 +16,7 @@ export default function TripsLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-3.5 space-y-2 shadow-2xs"
+            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-3.5 space-y-2 shadow-2xs"
           >
             <div className="flex items-center justify-between">
               <div className="h-3 w-20 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
@@ -36,15 +36,15 @@ export default function TripsLoading() {
               className={`h-8 px-3 rounded-xs ${
                 i === 0
                   ? "bg-[#2D9BF0]/20 border border-[#2D9BF0]/40 w-14"
-                  : "bg-muted/40 dark:bg-[#121622] border border-border/60 dark:border-zinc-800/70 w-20"
+                  : "bg-muted/40 dark:bg-card-subtle border border-border/60 dark:border-zinc-800/70 w-20"
               }`}
             />
           ))}
         </div>
 
         <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
-          <div className="h-8 w-48 bg-muted/50 dark:bg-[#0F131C] border border-border/80 dark:border-zinc-800 rounded-sm" />
-          <div className="h-8 w-24 bg-muted/50 dark:bg-[#0F131C] border border-border/80 dark:border-zinc-800 rounded-sm" />
+          <div className="h-8 w-48 bg-muted/50 dark:bg-card border border-border/80 dark:border-zinc-800 rounded-sm" />
+          <div className="h-8 w-24 bg-muted/50 dark:bg-card border border-border/80 dark:border-zinc-800 rounded-sm" />
         </div>
       </div>
 
@@ -53,7 +53,7 @@ export default function TripsLoading() {
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-md border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] overflow-hidden shadow-2xs space-y-0"
+            className="rounded-md border border-border/80 dark:border-zinc-800 bg-card overflow-hidden shadow-2xs space-y-0"
           >
             {/* Aspect Video Cover image placeholder with badges */}
             <div className="relative h-44 sm:h-48 bg-muted/60 dark:bg-zinc-800/60 p-3 flex justify-between items-start">

@@ -34,7 +34,7 @@ export default function TripWorkspaceRootLoading() {
             className={`h-9 px-3.5 rounded-sm flex items-center gap-1.5 shrink-0 ${
               i === 0
                 ? "bg-[#2D9BF0]/20 border-b-2 border-[#2D9BF0] w-24"
-                : "bg-muted/40 dark:bg-[#121622] border border-border/50 dark:border-zinc-800/60 w-28"
+                : "bg-muted/40 dark:bg-card-subtle border border-border/50 dark:border-zinc-800/60 w-28"
             }`}
           />
         ))}
@@ -44,12 +44,12 @@ export default function TripWorkspaceRootLoading() {
       <div className="pt-2 space-y-4">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-20 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-3.5" />
+            <div key={i} className="h-20 rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-3.5" />
           ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          <div className="h-48 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C]" />
-          <div className="h-48 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C]" />
+          <div className="h-48 rounded-sm border border-border/80 dark:border-zinc-800 bg-card" />
+          <div className="h-48 rounded-sm border border-border/80 dark:border-zinc-800 bg-card" />
         </div>
       </div>
     </div>

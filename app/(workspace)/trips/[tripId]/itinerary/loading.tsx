@@ -14,9 +14,9 @@ export default function ItineraryLoading() {
 
         {/* Action Triggers */}
         <div className="flex flex-wrap items-center gap-2.5">
-          <div className="h-8 w-24 bg-muted/50 dark:bg-[#121622] border border-border/80 dark:border-zinc-800 rounded-sm" />
+          <div className="h-8 w-24 bg-muted/50 dark:bg-card-subtle border border-border/80 dark:border-zinc-800 rounded-sm" />
           <div className="h-8 w-24 bg-[#2D9BF0]/20 border border-[#2D9BF0]/30 rounded-sm" />
-          <div className="h-8 w-32 bg-muted/50 dark:bg-[#121622] border border-border/80 dark:border-zinc-800 rounded-sm" />
+          <div className="h-8 w-32 bg-muted/50 dark:bg-card-subtle border border-border/80 dark:border-zinc-800 rounded-sm" />
           <div className="h-8 w-28 bg-[#2D9BF0]/50 rounded-sm" />
         </div>
       </div>
@@ -27,7 +27,7 @@ export default function ItineraryLoading() {
         {["Day 1", "Day 2", "Day 3", "Day 4"].map((day) => (
           <div
             key={day}
-            className="h-7 w-28 bg-muted/40 dark:bg-[#121622] border border-border/60 dark:border-zinc-800/70 rounded-sm"
+            className="h-7 w-28 bg-muted/40 dark:bg-card-subtle border border-border/60 dark:border-zinc-800/70 rounded-sm"
           />
         ))}
       </div>
@@ -35,7 +35,7 @@ export default function ItineraryLoading() {
       {/* Day Section & Timeline List */}
       <div className="space-y-4">
         {/* Day Header Banner */}
-        <div className="flex items-center justify-between p-3 rounded-sm bg-muted/40 dark:bg-[#121622] border border-border/70 dark:border-zinc-800">
+        <div className="flex items-center justify-between p-3 rounded-sm bg-muted/40 dark:bg-card-subtle border border-border/70 dark:border-zinc-800">
           <div className="flex items-center gap-2.5">
             <div className="h-5 w-16 bg-muted/80 dark:bg-zinc-800 rounded-xs" />
             <div className="h-4 w-28 bg-muted/50 dark:bg-zinc-800/50 rounded-xs" />
@@ -48,7 +48,7 @@ export default function ItineraryLoading() {
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="relative p-4 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] space-y-2.5 shadow-2xs"
+              className="relative p-4 rounded-sm border border-border/80 dark:border-zinc-800 bg-card space-y-2.5 shadow-2xs"
             >
               {/* Timeline Node on Left */}
               <div className="absolute -left-[25px] sm:-left-[33px] top-4 h-4 w-4 rounded-full bg-[#2D9BF0]/40 border-2 border-background" />

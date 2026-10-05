@@ -13,7 +13,7 @@ export default function ExpensesLoading() {
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-          <div className="h-9 w-28 bg-muted/50 dark:bg-[#121622] border border-border dark:border-zinc-800 rounded-sm" />
+          <div className="h-9 w-28 bg-muted/50 dark:bg-card-subtle border border-border dark:border-zinc-800 rounded-sm" />
           <div className="h-9 w-32 bg-[#2D9BF0]/50 rounded-sm" />
         </div>
       </div>
@@ -23,7 +23,7 @@ export default function ExpensesLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 space-y-2 shadow-2xs"
+            className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-4 space-y-2 shadow-2xs"
           >
             <div className="flex items-center justify-between">
               <div className="h-3 w-20 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
@@ -37,7 +37,7 @@ export default function ExpensesLoading() {
 
       {/* 2-Column Split: Donut / Breakdown + Quick FX Converter */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <div className="lg:col-span-7 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-5 space-y-4 shadow-2xs">
+        <div className="lg:col-span-7 rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-5 space-y-4 shadow-2xs">
           <div className="h-4 w-36 bg-muted/80 dark:bg-zinc-800 rounded-xs" />
           <div className="flex flex-col sm:flex-row items-center gap-6 pt-2">
             <div className="h-36 w-36 rounded-full border-8 border-muted/50 dark:border-zinc-800 shrink-0" />
@@ -52,27 +52,27 @@ export default function ExpensesLoading() {
           </div>
         </div>
 
-        <div className="lg:col-span-5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-5 space-y-3.5 shadow-2xs">
+        <div className="lg:col-span-5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-5 space-y-3.5 shadow-2xs">
           <div className="h-4 w-40 bg-muted/80 dark:bg-zinc-800 rounded-xs" />
-          <div className="h-10 bg-muted/30 dark:bg-[#121622] rounded-sm border border-border/40 dark:border-zinc-800/60" />
-          <div className="h-10 bg-muted/30 dark:bg-[#121622] rounded-sm border border-border/40 dark:border-zinc-800/60" />
-          <div className="h-12 bg-muted/40 dark:bg-[#121622] rounded-sm border border-border/40 dark:border-zinc-800/60" />
+          <div className="h-10 bg-muted/30 dark:bg-card-subtle rounded-sm border border-border/40 dark:border-zinc-800/60" />
+          <div className="h-10 bg-muted/30 dark:bg-card-subtle rounded-sm border border-border/40 dark:border-zinc-800/60" />
+          <div className="h-12 bg-muted/40 dark:bg-card-subtle rounded-sm border border-border/40 dark:border-zinc-800/60" />
         </div>
       </div>
 
       {/* Expenses List / Table View */}
-      <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 space-y-3 shadow-2xs">
+      <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-4 space-y-3 shadow-2xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/60 dark:border-zinc-800">
-          <div className="h-8 w-64 bg-muted/40 dark:bg-[#121622] rounded-sm border border-border/60 dark:border-zinc-800" />
+          <div className="h-8 w-64 bg-muted/40 dark:bg-card-subtle rounded-sm border border-border/60 dark:border-zinc-800" />
           <div className="flex gap-2">
-            <div className="h-8 w-20 bg-muted/40 dark:bg-[#121622] rounded-sm" />
-            <div className="h-8 w-24 bg-muted/40 dark:bg-[#121622] rounded-sm" />
+            <div className="h-8 w-20 bg-muted/40 dark:bg-card-subtle rounded-sm" />
+            <div className="h-8 w-24 bg-muted/40 dark:bg-card-subtle rounded-sm" />
           </div>
         </div>
 
         <div className="space-y-2 pt-1">
           {Array.from({ length: 4 }).map((_, k) => (
-            <div key={k} className="h-14 bg-muted/30 dark:bg-[#121622] rounded-sm border border-border/40 dark:border-zinc-800/60 flex items-center justify-between px-3">
+            <div key={k} className="h-14 bg-muted/30 dark:bg-card-subtle rounded-sm border border-border/40 dark:border-zinc-800/60 flex items-center justify-between px-3">
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 rounded-sm bg-muted/60 dark:bg-zinc-800" />
                 <div className="space-y-1">

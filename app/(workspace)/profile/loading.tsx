@@ -17,7 +17,7 @@ export default function ProfileLoading() {
               key={tab}
               className={`h-10 px-3.5 rounded-sm flex items-center gap-2 ${
                 i === 0
-                  ? "bg-muted/70 dark:bg-[#0F131C] border border-border/80 dark:border-zinc-800"
+                  ? "bg-muted/70 dark:bg-card border border-border/80 dark:border-zinc-800"
                   : "bg-muted/30 dark:bg-zinc-900/30"
               }`}
             >
@@ -29,7 +29,7 @@ export default function ProfileLoading() {
 
         {/* Right Content Panel (9 cols) */}
         <div className="lg:col-span-9 space-y-6">
-          <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-6 space-y-6 shadow-2xs">
+          <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-6 space-y-6 shadow-2xs">
             {/* Header & Avatar Row */}
             <div className="flex items-center gap-5 pb-5 border-b border-border/60 dark:border-zinc-800">
               <div className="h-20 w-20 rounded-full bg-muted/70 dark:bg-zinc-800 shrink-0" />
@@ -43,18 +43,18 @@ export default function ProfileLoading() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <div className="h-3.5 w-20 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
-                <div className="h-10 w-full bg-muted/30 dark:bg-[#121622] rounded-sm border border-border/60 dark:border-zinc-800" />
+                <div className="h-10 w-full bg-muted/30 dark:bg-card-subtle rounded-sm border border-border/60 dark:border-zinc-800" />
               </div>
               <div className="space-y-1.5">
                 <div className="h-3.5 w-20 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
-                <div className="h-10 w-full bg-muted/30 dark:bg-[#121622] rounded-sm border border-border/60 dark:border-zinc-800" />
+                <div className="h-10 w-full bg-muted/30 dark:bg-card-subtle rounded-sm border border-border/60 dark:border-zinc-800" />
               </div>
             </div>
 
             {/* Bio Textarea */}
             <div className="space-y-1.5">
               <div className="h-3.5 w-16 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
-              <div className="h-24 w-full bg-muted/30 dark:bg-[#121622] rounded-sm border border-border/60 dark:border-zinc-800" />
+              <div className="h-24 w-full bg-muted/30 dark:bg-card-subtle rounded-sm border border-border/60 dark:border-zinc-800" />
             </div>
 
             {/* Bottom Save Action */}

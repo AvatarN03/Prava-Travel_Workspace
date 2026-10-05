@@ -12,6 +12,7 @@
 
   --card: 255 255 255;
   --card-foreground: 17 24 39;
+  --card-subtle: 244 247 250;
 
   --popover: 255 255 255;
   --popover-foreground: 17 24 39;
@@ -53,10 +54,13 @@
   --background: 10 15 23;
   --foreground: 241 245 249;
 
-  --card: 15 23 42;
+  /* Prava Obsidian Card Surface — #0F131C */
+  --card: 15 19 28;
   --card-foreground: 241 245 249;
+  /* Prava Inset / Subtle Card Surface — #121622 */
+  --card-subtle: 18 22 34;
 
-  --popover: 15 23 42;
+  --popover: 15 19 28;
   --popover-foreground: 241 245 249;
 
   /* Keep Prava blue as the primary brand */
@@ -93,6 +97,7 @@
 
   --color-card: rgb(var(--card));
   --color-card-foreground: rgb(var(--card-foreground));
+  --color-card-subtle: rgb(var(--card-subtle));
 
   --color-popover: rgb(var(--popover));
   --color-popover-foreground: rgb(var(--popover-foreground));

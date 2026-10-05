@@ -46,9 +46,41 @@
 - **Phase 65: AI Assist Action Contextual Scoping & Empty-State Exclusivity** (Complete)
 - **Phase 66: Trips Page Unified Controls Bar & Status Select Integration** (Complete)
 - **Phase 67: High-Contrast Light Mode Skeleton Loading & Progressive 3-Day Itinerary Chunking Architecture** (Complete)
+- **Phase 68: Centralized Card & Card-Subtle Theme Tokens for Skeletons and Surfaces** (Complete)
 
 ## Current Task
-- **Phase 67 Complete**: High-Contrast Light Mode Skeleton Loading & Progressive 3-Day Itinerary Chunking Architecture:
+- **Phase 68 Complete**: Centralized Card & Card-Subtle Theme Tokens for Skeletons and Surfaces:
+  - **Identified Hardcoding Root Cause**:
+    - Developers previously hardcoded `dark:bg-[#0F131C]` (obsidian card surface) and `dark:bg-[#121622]` (subtle/inset card surface) across skeleton loaders and workspace components because `.dark` in `app/globals.css` previously mapped `--card` to `15 23 42` (Slate-900), which clashed with Prava's refined `#0F131C` obsidian design.
+  - **Centralized Design System Tokens (`app/globals.css`)**:
+    - Calibrated `.dark` `--card: 15 19 28;` (exact RGB for `#0F131C`).
+    - Added `--card-subtle: 18 22 34;` (exact RGB for `#121622`) in `.dark` and `--card-subtle: 244 247 250;` in `:root`.
+    - Mapped `--color-card-subtle: rgb(var(--card-subtle));` inside `@theme inline`, unlocking standard Tailwind utilities: `bg-card-subtle`, `dark:bg-card-subtle`, `border-card-subtle`.
+  - **Comprehensive Skeletons Refactor Across Workspace**:
+    - Stripped redundant hardcoded `dark:bg-[#0F131C]` overrides across all workspace loading skeletons, allowing them to naturally inherit `bg-card` (which seamlessly evaluates to `#0F131C` in dark mode).
+    - Refactored all hardcoded `dark:bg-[#121622]` inset elements across all workspace `loading.tsx` routes to `dark:bg-card-subtle`.
+    - Refactored 19 loading skeleton files across the application:
+      - `app/(workspace)/dashboard/loading.tsx`
+      - `app/(workspace)/usage/loading.tsx`
+      - `app/(workspace)/subscription/loading.tsx`
+      - `app/(workspace)/profile/loading.tsx`
+      - `app/(workspace)/stories/loading.tsx`
+      - `app/(workspace)/stories/manage/loading.tsx`
+      - `app/(workspace)/travel-essentials/loading.tsx`
+      - `app/(workspace)/templates/loading.tsx`
+      - `app/(workspace)/forum/loading.tsx`
+      - `app/(workspace)/trips/loading.tsx`
+      - `app/(workspace)/trips/[tripId]/loading.tsx`
+      - `app/(workspace)/trips/[tripId]/overview/loading.tsx`
+      - `app/(workspace)/trips/[tripId]/itinerary/loading.tsx`
+      - `app/(workspace)/trips/[tripId]/accommodations/loading.tsx`
+      - `app/(workspace)/trips/[tripId]/expenses/loading.tsx`
+      - `app/(workspace)/trips/[tripId]/notes/loading.tsx`
+      - `app/(workspace)/trips/[tripId]/checklist/loading.tsx`
+      - `app/(workspace)/trips/[tripId]/links/loading.tsx`
+      - `app/(workspace)/loading.tsx`
+  - **Full Production Build Verification**:
+    - Verified compilation via `npm run build` with Turbopack (0 TypeScript errors, all routes generated).
   - **Light Mode Skeleton Loading Visibility (`app/globals.css`, `components/ui/skeleton.tsx`)**:
     - Identified that `--muted: 244 247 250` (#F4F7FA) was too pale (97% lightness), causing loading skeletons with opacities (`bg-muted/80`, `bg-muted/60`, `bg-muted/50`) to wash out completely on white backgrounds in light mode.
     - Updated light mode `--muted` to `226 232 240` (Slate-200), restoring distinct, elegant contrast matching dark mode's Slate-800 symmetry.

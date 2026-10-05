@@ -14,8 +14,8 @@ export default function OverviewLoading() {
 
         {/* Header Right: Destination, Date & Action Badges */}
         <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <div className="h-7 w-28 bg-muted/60 dark:bg-[#121622] border border-border/80 dark:border-zinc-800 rounded-sm" />
-          <div className="h-7 w-36 bg-muted/60 dark:bg-[#121622] border border-border/80 dark:border-zinc-800 rounded-sm" />
+          <div className="h-7 w-28 bg-muted/60 dark:bg-card-subtle border border-border/80 dark:border-zinc-800 rounded-sm" />
+          <div className="h-7 w-36 bg-muted/60 dark:bg-card-subtle border border-border/80 dark:border-zinc-800 rounded-sm" />
           <div className="h-7 w-32 bg-[#2D9BF0]/20 border border-[#2D9BF0]/30 rounded-sm" />
         </div>
       </div>
@@ -25,7 +25,7 @@ export default function OverviewLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="p-3.5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] space-y-2 shadow-2xs"
+            className="p-3.5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card space-y-2 shadow-2xs"
           >
             <div className="flex items-center justify-between">
               <div className="h-3 w-16 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
@@ -42,49 +42,49 @@ export default function OverviewLoading() {
       {/* 2x2 Feature Cards Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Card 1: Route / Schedule */}
-        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-4 sm:p-5 space-y-4 shadow-xs">
           <div className="flex items-center justify-between pb-2 border-b border-border/60 dark:border-zinc-800">
             <div className="h-4 w-36 bg-muted/80 dark:bg-zinc-800 rounded-xs" />
             <div className="h-3 w-16 bg-[#2D9BF0]/30 rounded-xs" />
           </div>
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, j) => (
-              <div key={j} className="h-12 bg-muted/30 dark:bg-[#121622] rounded-sm border border-border/40 dark:border-zinc-800/60" />
+              <div key={j} className="h-12 bg-muted/30 dark:bg-card-subtle rounded-sm border border-border/40 dark:border-zinc-800/60" />
             ))}
           </div>
         </div>
 
         {/* Card 2: Lodging & Stays */}
-        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-4 sm:p-5 space-y-4 shadow-xs">
           <div className="flex items-center justify-between pb-2 border-b border-border/60 dark:border-zinc-800">
             <div className="h-4 w-32 bg-muted/80 dark:bg-zinc-800 rounded-xs" />
             <div className="h-3 w-16 bg-[#2D9BF0]/30 rounded-xs" />
           </div>
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, j) => (
-              <div key={j} className="h-12 bg-muted/30 dark:bg-[#121622] rounded-sm border border-border/40 dark:border-zinc-800/60" />
+              <div key={j} className="h-12 bg-muted/30 dark:bg-card-subtle rounded-sm border border-border/40 dark:border-zinc-800/60" />
             ))}
           </div>
         </div>
 
         {/* Card 3: Financial Snapshot */}
-        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-4 sm:p-5 space-y-4 shadow-xs">
           <div className="flex items-center justify-between pb-2 border-b border-border/60 dark:border-zinc-800">
             <div className="h-4 w-40 bg-muted/80 dark:bg-zinc-800 rounded-xs" />
             <div className="h-3 w-16 bg-[#2D9BF0]/30 rounded-xs" />
           </div>
-          <div className="h-20 bg-muted/30 dark:bg-[#121622] rounded-sm border border-border/40 dark:border-zinc-800/60" />
+          <div className="h-20 bg-muted/30 dark:bg-card-subtle rounded-sm border border-border/40 dark:border-zinc-800/60" />
         </div>
 
         {/* Card 4: Preparation Checklist */}
-        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-4 sm:p-5 space-y-4 shadow-xs">
           <div className="flex items-center justify-between pb-2 border-b border-border/60 dark:border-zinc-800">
             <div className="h-4 w-36 bg-muted/80 dark:bg-zinc-800 rounded-xs" />
             <div className="h-3 w-16 bg-[#2D9BF0]/30 rounded-xs" />
           </div>
           <div className="space-y-2.5">
             {Array.from({ length: 3 }).map((_, j) => (
-              <div key={j} className="h-9 bg-muted/30 dark:bg-[#121622] rounded-sm border border-border/40 dark:border-zinc-800/60" />
+              <div key={j} className="h-9 bg-muted/30 dark:bg-card-subtle rounded-sm border border-border/40 dark:border-zinc-800/60" />
             ))}
           </div>
         </div>
