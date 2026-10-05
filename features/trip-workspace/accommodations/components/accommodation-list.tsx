@@ -10,20 +10,38 @@ import {
   DollarSign,
   Moon,
   Plus,
+  Sparkles,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { AccommodationCard } from "./accommodation-card";
 import { AddAccommodationDialog } from "./add-accommodation-dialog";
 
+import { useWorkspaceAi } from "../../context/workspace-ai-context";
+
 import type { Accommodation } from "@prisma/client";
 
 interface AccommodationListProps {
   tripId: string;
   items: Accommodation[];
+  destination?: string | null;
+  tripTitle?: string;
 }
 
-export function AccommodationList({ tripId, items }: AccommodationListProps) {
+export function AccommodationList({
+  tripId,
+  items,
+  destination,
+  tripTitle,
+}: AccommodationListProps) {
+  const { sendAiPrompt } = useWorkspaceAi();
+
+  const handleSuggestStaysWithAi = () => {
+    const dest = destination || tripTitle || "my destination";
+    const prompt = `Please suggest 2 to 3 great accommodation options (hotels, boutique stays, or apartments) for my trip to ${dest}. Include recommended check-in instructions, approximate nightly rates, addresses, and key amenities. Provide these as structured accommodation proposals so I can review and add them to my workspace.`;
+    sendAiPrompt(prompt);
+  };
+
   // Aggregate stats across confirmed stays
   const { totalNights, totalLodgingCost, avgNightlyCost } = useMemo(() => {
     let nights = 0;
@@ -80,10 +98,23 @@ export function AccommodationList({ tripId, items }: AccommodationListProps) {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <Button
+              size="sm"
+              onClick={handleSuggestStaysWithAi}
+              className="w-full sm:w-auto cursor-pointer gap-2 bg-[#2D9BF0] hover:bg-[#2087D6] text-white shadow-xs font-semibold"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
+              <span>AI Assist · Suggest Stays</span>
+            </Button>
+
             <AddAccommodationDialog
               tripId={tripId}
               trigger={
-                <Button size="sm" className="w-full sm:w-auto cursor-pointer gap-1.5 bg-[#2D9BF0] hover:bg-[#2087D6] text-white shadow-xs font-semibold">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full sm:w-auto cursor-pointer gap-1.5 border-border dark:border-zinc-800 dark:bg-[#121622] hover:bg-muted dark:hover:bg-zinc-800 text-foreground dark:text-zinc-100"
+                >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Add First Stay</span>
                 </Button>

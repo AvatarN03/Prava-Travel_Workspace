@@ -20,7 +20,6 @@ import {
   Pin,
   Plus,
   Receipt,
-  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 

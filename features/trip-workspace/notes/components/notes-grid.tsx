@@ -7,7 +7,6 @@ import {
   Pin,
   Plus,
   Search,
-  Sparkles,
   Tag,
   X,
 } from "lucide-react";

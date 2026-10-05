@@ -19,7 +19,6 @@ import {
   Receipt,
   Search,
   ShoppingBag,
-  Sparkles,
   Target,
   Trash2,
   TrendingUp,

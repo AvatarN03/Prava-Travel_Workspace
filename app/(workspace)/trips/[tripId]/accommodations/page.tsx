@@ -31,7 +31,12 @@ export default async function AccommodationsPage({ params }: AccommodationsPageP
 
   return (
     <div className="space-y-4">
-      <AccommodationList tripId={trip.id} items={items} />
+      <AccommodationList
+        tripId={trip.id}
+        items={items}
+        destination={trip.destination}
+        tripTitle={trip.title}
+      />
     </div>
   );
 }

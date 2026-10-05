@@ -57,10 +57,21 @@ export function ItineraryView({
     }
   }, [tripStartDate, tripEndDate]);
 
+  // Progressive Itinerary Chunking: 3 days max per generation chunk
+  const isMultiDayTrip = (tripDurationDays || 1) > 3;
+  const initialDaysToKickstart = isMultiDayTrip ? 3 : (tripDurationDays || 3);
+
   const handleKickstartWithAi = () => {
     const dest = destination || tripTitle || "my destination";
-    const daysCount = tripDurationDays || 3;
-    const prompt = `Please propose a comprehensive, day-by-day starter itinerary for my ${daysCount}-day trip to ${dest}. Organize 2 to 3 well-timed activities per day (morning, afternoon, evening) with estimated start times, recommended durations, and locations. Provide this as a structured itinerary proposal so I can review and add it to my workspace.`;
+    const prompt = isMultiDayTrip
+      ? `Please propose a comprehensive, day-by-day starter itinerary for the first 3 days (Days 1 to 3) of my ${tripDurationDays}-day trip to ${dest}. Organize 2 to 3 well-timed activities per day with dayNumber=1 through 3, estimated start times, recommended durations, and locations. Provide this as a structured itinerary proposal so I can review and add it to my workspace.`
+      : `Please propose a comprehensive, day-by-day starter itinerary for my ${initialDaysToKickstart}-day trip to ${dest}. Organize 2 to 3 well-timed activities per day with estimated start times, recommended durations, and locations. Provide this as a structured itinerary proposal so I can review and add it to my workspace.`;
+    sendAiPrompt(prompt);
+  };
+
+  const handlePlanNextDaysChunk = (startDay: number, endDay: number) => {
+    const dest = destination || tripTitle || "my destination";
+    const prompt = `Please propose a day-by-day itinerary for Days ${startDay} to ${endDay} of my ${tripDurationDays}-day trip to ${dest}. Organize 2 to 3 well-timed activities per day with dayNumber=${startDay} through ${endDay}, estimated start times, recommended durations, and locations. Provide this as a structured itinerary proposal so I can review and add it to my workspace.`;
     sendAiPrompt(prompt);
   };
 
@@ -117,6 +128,13 @@ export function ItineraryView({
     return items.reduce((acc, curr) => acc + (curr.cost || 0), 0);
   }, [items]);
 
+  const maxPlannedDay = useMemo(() => {
+    return daysList.length > 0 ? Math.max(...daysList) : 0;
+  }, [daysList]);
+
+  const nextChunkStart = maxPlannedDay + 1;
+  const nextChunkEnd = tripDurationDays ? Math.min(maxPlannedDay + 3, tripDurationDays) : maxPlannedDay + 3;
+
   if (items.length === 0) {
     const destName = destination || tripTitle || "your destination";
 
@@ -150,8 +168,7 @@ export function ItineraryView({
               Ready to plan your days in {destName}?
             </h3>
             <p className="text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed">
-              Your itinerary is currently empty. You can kickstart a full{" "}
-              {tripDurationDays ? `${tripDurationDays}-day ` : ""}day-by-day draft with Ichinose AI, or craft your schedule manually.
+              Your itinerary is currently empty. You can kickstart {isMultiDayTrip ? `an initial 3-day starter draft (Days 1–3 of your ${tripDurationDays}-day trip) ` : tripDurationDays ? `a full ${tripDurationDays}-day draft ` : "a starter draft "}with Ichinose AI, or craft your schedule manually.
             </p>
           </div>
 
@@ -163,7 +180,7 @@ export function ItineraryView({
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
               <span>
-                Kickstart {tripDurationDays ? `${tripDurationDays}-Day ` : ""}with AI
+                AI Assist · Kickstart {isMultiDayTrip ? `Days 1–3 (${tripDurationDays}-Day Trip)` : `${initialDaysToKickstart}-Day Itinerary`}
               </span>
             </Button>
 
@@ -225,16 +242,6 @@ export function ItineraryView({
               </span>
             </div>
           )}
-
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleKickstartWithAi}
-            className="h-8 gap-1.5 text-xs font-medium cursor-pointer border-[#2D9BF0]/30 text-[#2D9BF0] hover:bg-[#2D9BF0]/10 dark:bg-[#121622]"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>AI Assist</span>
-          </Button>
 
           <AddToCalendarDialog
             trip={{
@@ -364,6 +371,37 @@ export function ItineraryView({
               </div>
             );
           })}
+
+        {/* Progressive Multi-Day Chunking: Next 3 Days Continuation Banner */}
+        {tripDurationDays && maxPlannedDay > 0 && maxPlannedDay < tripDurationDays && (
+          <div className="rounded-sm border border-dashed border-[#2D9BF0]/30 bg-[#2D9BF0]/5 dark:bg-[#0F131C] p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-semibold text-[#2D9BF0] uppercase tracking-wider">
+                  Progressive Planning
+                </span>
+                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-[#2D9BF0]/15 text-[#2D9BF0] font-semibold">
+                  Days {nextChunkStart}–{nextChunkEnd} of {tripDurationDays}
+                </span>
+              </div>
+              <h4 className="text-sm font-semibold text-foreground dark:text-zinc-100 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Ready to plan Days {nextChunkStart} to {nextChunkEnd}?</span>
+              </h4>
+              <p className="text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed max-w-xl">
+                You have scheduled up to Day {maxPlannedDay}. Keep your generation fast, high-quality, and cost-effective by generating the next 3-day block with Ichinose AI.
+              </p>
+            </div>
+            <Button
+              size="sm"
+              onClick={() => handlePlanNextDaysChunk(nextChunkStart, nextChunkEnd)}
+              className="w-full sm:w-auto gap-2 bg-[#2D9BF0] hover:bg-[#2087D6] text-white shadow-xs font-semibold cursor-pointer shrink-0"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
+              <span>Plan Days {nextChunkStart}–{nextChunkEnd} with AI</span>
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
