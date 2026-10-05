@@ -89,7 +89,7 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-end self-end sm:self-auto gap-2.5">
           <CreateTripDialog
             trigger={
-              <Button className=" h-9 px-4 py-1.5 gap-1.5">
+              <Button className="dashboard-btn-primary h-9 px-4 py-1.5 gap-1.5">
                 <Plus className="w-3.5 h-3.5" />
                 <span>Create trip</span>
               </Button>

@@ -31,9 +31,8 @@ export function AiAssistantCard() {
 
         <Button
           size="sm"
-          variant="outline"
           asChild
-          className="w-full gap-1.5 border-primary/30 hover:border-primary/60 font-sans text-xs font-medium cursor-pointer rounded-xs text-primary dark:text-[#38BDF8] hover:bg-primary/5 dark:hover:bg-primary/10 dark:border-primary/40"
+          className="dashboard-btn-primary w-full h-8 gap-1.5 font-sans text-xs font-medium cursor-pointer rounded-xs"
         >
           <Link href="/trips">
             <span>Open in Trip Workspace</span>

@@ -105,9 +105,8 @@ export function RecentTripsList({ trips }: RecentTripsListProps) {
                 {/* Right: Action Button */}
                 <Button
                   size="sm"
-                  variant="outline"
                   asChild
-                  className="h-7 px-2.5 font-sans text-xs font-medium shrink-0 cursor-pointer hover:border-primary/50 rounded-xs dark:border-zinc-800 dark:hover:bg-zinc-800"
+                  className="dashboard-btn-primary h-7 px-3 font-sans text-xs font-medium shrink-0 cursor-pointer rounded-xs"
                 >
                   <Link href={`/trips/${trip.id}`}>
                     {isCompleted ? "Review" : "Open"}

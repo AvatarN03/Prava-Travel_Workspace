@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   Clock,
   Compass,
-  Database,
   Flag,
   MapPin,
   Plane,
@@ -42,21 +41,13 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
 
   const statusConfig = getStatusBadge(trip.status, trip.isPastTrip, trip.isOngoing);
 
-  // Generate a clean reference code
-  const destinationCode = (trip.destination || trip.title)
-    .replace(/[^a-zA-Z]/g, "")
-    .slice(0, 2)
-    .toUpperCase() || "TR";
-  const tripYear = new Date(trip.startDate || trip.createdAt).getFullYear();
-  const tripCode = `PRV-${destinationCode}-${tripYear}`;
-
   // Default fallback travel image
   const fallbackCover =
     "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1200&auto=format&fit=crop";
 
   return (
     <div className="space-y-2">
-      {/* Tracker label & Trip Code */}
+      {/* Tracker label */}
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span className="dashboard-section-eyebrow">
           {trip.isPastTrip
@@ -64,9 +55,6 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
             : trip.isOngoing
             ? "Current Journey"
             : "Upcoming Trip"}
-        </span>
-        <span className="font-sans text-xs font-semibold tabular-nums tracking-wider text-muted-foreground dark:text-zinc-400">
-          {tripCode}
         </span>
       </div>
 
@@ -226,7 +214,7 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
               {/* Bottom Actions Bar */}
               <div className="pt-4 border-t border-border/60 dark:border-zinc-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5 flex-wrap w-full sm:w-auto">
-                  <Button asChild className="dashboard-btn-secondary h-9 px-4 gap-2 w-full sm:w-auto">
+                  <Button asChild className="dashboard-btn-primary h-9 px-4 gap-2 w-full sm:w-auto">
                     <Link href={`/trips/${trip.id}`}>
                       {trip.isPastTrip ? "View trip memories & details" : "Open trip workspace"}
                       <ArrowRight className="w-4 h-4 ml-0.5" />
@@ -243,11 +231,6 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
                       }
                     />
                   )}
-                </div>
-
-                <div className="flex items-center gap-1.5 font-sans text-xs text-muted-foreground dark:text-zinc-400">
-                  <Database className="w-3.5 h-3.5 text-primary/80" />
-                  <span>Synced with PostgreSQL</span>
                 </div>
               </div>
             </div>
