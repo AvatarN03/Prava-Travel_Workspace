@@ -3582,6 +3582,24 @@
        - Replaced raw `pool.query(INSERT ...)` with type-safe `db.communityPost.create({ data: { profileId: profile.id, ... } })`.
        - Migrated post updates, deletes, replies, upvotes ($transaction increment/decrement), and bookmarks to Prisma.
        - Returned detailed error messages on catch to avoid opaque failure messages.
+- **Phase 70 (Dashboard Past Trip Intelligence, 6-Tier Import Alignment & Quick Create CTA)**:
+  - **Context & Diagnosis**:
+    - When a traveler's trip start and end dates had passed the current time, the dashboard greeted them with nonsensical text (`1 trip starting in 11 days ago.`) and rendered the hero card under the title `Upcoming Trip` with status `• CONFIRMED`.
+    - Furthermore, `app/(workspace)/dashboard/page.tsx` imports did not adhere to the project's strict 6-tier hierarchy.
+  - **Implementation**:
+    1. **6-Tier Import Hierarchy Standardization (`dashboard/page.tsx`)**:
+       - Refactored all module imports into strict 6-tier standard: Tier 1 (`next` types) -> Tier 2 (`lucide-react`) -> Tier 3 (components) -> Tier 5 (`getDashboardSummary`).
+       - Replaced hardcoded `#2D9BF0` with `text-primary`.
+    2. **Past & Ongoing Trip Intelligence (`features/dashboard/queries.ts`)**:
+       - Extended `UpcomingTripDetails` with `isPastTrip: boolean`, `isOngoing: boolean`, and `daysSinceEnd: number | null`.
+       - Calculated whether a trip is in the past (`endDate < now` or `startDate < now` without active ongoing status) and computed exact `daysSinceEnd`.
+    3. **Dynamic Journey Subtitle Polish (`dashboard/page.tsx`)**:
+       - Cleaned `subGreeting`: When a trip concluded in the past, renders `"Your previous journey to {destination} concluded {X} days ago. Ready for what's next? Plan a new trip!"` instead of `"1 trip starting in 11 days ago."`.
+    4. **Hero Card Transformation & Quick Trip Creation (`UpcomingTripCard`)**:
+       - When viewing a past trip, adapts header eyebrow to `"Previous Journey"` and badge to `• CONCLUDED` + `Ended {X} days ago`.
+       - Renders an interactive banner `"Ready to plan your next adventure?"` with a 1-click `Create new trip` button (`CreateTripDialog`).
+       - Adds a secondary `Create new trip` CTA button directly in the bottom action bar.
+    5. **Workspace Archive Card (`ActiveTripWorkspaceCard`)**:
+       - Displays `"{destination} Archive"` and an `Archived` badge when rendering a concluded trip.
   - **Verification**:
-    - Verified TypeScript type compatibility across all migrated forum actions and enforced strict 6-tier import structure.
-
+    - `npm run build` executed with exit code 0, 0 TypeScript errors across all routes.

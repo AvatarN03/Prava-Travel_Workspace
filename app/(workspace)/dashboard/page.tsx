@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -15,7 +17,7 @@ import { CreateTripDialog } from "@/features/trips";
 
 import { getDashboardSummary } from "@/features/dashboard/queries";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Prava Dashboard",
   description: "Cross-trip overview, upcoming schedules, and departure readiness.",
 };
@@ -34,27 +36,46 @@ export default async function DashboardPage() {
     hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   // Dynamic journey subtitle
-  const subGreeting =
-    upcomingTrip && upcomingTrip.countdownDays !== null
-      ? `Ready for your next journey? 1 trip starting in ${
-          upcomingTrip.countdownDays > 0
-            ? `${upcomingTrip.countdownDays} days.`
-            : upcomingTrip.countdownDays === 0
-            ? "today."
-            : `${Math.abs(upcomingTrip.countdownDays)} days ago.`
-        }`
-      : metrics.totalTrips > 0
-      ? `Ready for your next journey? You have ${metrics.totalTrips} ${
-          metrics.totalTrips === 1 ? "trip" : "trips"
-        } saved in your workspace.`
-      : "Ready for your next journey? Start planning your first travel experience.";
+  let subGreeting = "Ready for your next journey? Start planning your first travel experience.";
+
+  if (upcomingTrip) {
+    if (upcomingTrip.isOngoing) {
+      subGreeting = `Your journey to ${upcomingTrip.destination || upcomingTrip.title} is currently underway. Have a wonderful trip!`;
+    } else if (upcomingTrip.isPastTrip) {
+      const daysText =
+        upcomingTrip.daysSinceEnd !== null && upcomingTrip.daysSinceEnd !== undefined
+          ? upcomingTrip.daysSinceEnd === 0
+            ? "today"
+            : `${upcomingTrip.daysSinceEnd} ${upcomingTrip.daysSinceEnd === 1 ? "day" : "days"} ago`
+          : "recently";
+      subGreeting = `Your previous journey to ${upcomingTrip.destination || upcomingTrip.title} concluded ${daysText}. Ready for what's next? Plan a new trip!`;
+    } else if (upcomingTrip.countdownDays !== null) {
+      if (upcomingTrip.countdownDays > 0) {
+        subGreeting = `Ready for your next journey? 1 trip starting in ${upcomingTrip.countdownDays} ${
+          upcomingTrip.countdownDays === 1 ? "day" : "days"
+        }.`;
+      } else if (upcomingTrip.countdownDays === 0) {
+        subGreeting = "Ready for your next journey? 1 trip starting today.";
+      } else {
+        subGreeting = "Ready for your next journey? Start planning your next travel experience.";
+      }
+    } else {
+      subGreeting = `Ready for your next journey? You have ${metrics.totalTrips} ${
+        metrics.totalTrips === 1 ? "trip" : "trips"
+      } saved in your workspace.`;
+    }
+  } else if (metrics.totalTrips > 0) {
+    subGreeting = `Ready for your next journey? You have ${metrics.totalTrips} ${
+      metrics.totalTrips === 1 ? "trip" : "trips"
+    } saved in your workspace.`;
+  }
 
   return (
     <div className="space-y-6 pb-10">
       {/* Workspace Header with Editorial Typography */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
-          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] dark:text-[#38BDF8] uppercase block select-none">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block select-none">
             Travel Workspace
           </span>
           <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
@@ -88,7 +109,7 @@ export default async function DashboardPage() {
         </div>
       ) : (
         <>
-          {/* Hero Section: Upcoming Trip Card (Full Width) */}
+          {/* Hero Section: Upcoming or Past Trip Card (Full Width) */}
           {upcomingTrip && <UpcomingTripCard trip={upcomingTrip} />}
 
           {/* Main 2-Column Grid (Linear / Notion Productivity Layout) */}

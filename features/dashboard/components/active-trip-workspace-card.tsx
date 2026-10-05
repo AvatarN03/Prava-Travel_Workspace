@@ -30,10 +30,14 @@ export function ActiveTripWorkspaceCard({ trip }: ActiveTripWorkspaceCardProps) 
       <CardHeader className="dashboard-card-header p-4 pb-3 flex flex-row items-center justify-between">
         <div className="space-y-0.5">
           <CardTitle className="dashboard-title">
-            Active {trip.destination || trip.title} Workspace
+            {trip.isPastTrip
+              ? `${trip.destination || trip.title} Archive`
+              : `Active ${trip.destination || trip.title} Workspace`}
           </CardTitle>
           <p className="dashboard-subtext">
-            Quick access to checklist, notes, and places
+            {trip.isPastTrip
+              ? "Review checklist, notes, and places"
+              : "Quick access to checklist, notes, and places"}
           </p>
         </div>
 
@@ -42,7 +46,7 @@ export function ActiveTripWorkspaceCard({ trip }: ActiveTripWorkspaceCardProps) 
           className="font-sans text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 gap-1 rounded-xs dark:border-zinc-800"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-          Synced
+          {trip.isPastTrip ? "Archived" : "Synced"}
         </Badge>
       </CardHeader>
 

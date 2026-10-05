@@ -1,4 +1,4 @@
-import {
+import type {
   Accommodation,
   ChecklistItem,
   Expense,
@@ -29,6 +29,9 @@ export interface UpcomingTripDetails extends Trip {
   links: Link[];
   countdownDays: number | null;
   durationDays: number | null;
+  isPastTrip: boolean;
+  isOngoing: boolean;
+  daysSinceEnd: number | null;
   readiness: {
     totalItems: number;
     completedItems: number;
@@ -209,6 +212,40 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
       countdownDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
     }
 
+    // 2. Ongoing and Past Trip Status calculation
+    const isOngoing =
+      selectedTrip.status === "ACTIVE" ||
+      Boolean(
+        selectedTrip.startDate &&
+        new Date(selectedTrip.startDate) <= now &&
+        selectedTrip.endDate &&
+        new Date(selectedTrip.endDate) >= now
+      );
+
+    const isPastTrip =
+      !isOngoing &&
+      (selectedTrip.status === "COMPLETED" ||
+        Boolean(
+          selectedTrip.endDate && new Date(selectedTrip.endDate).getTime() < now.getTime()
+        ) ||
+        Boolean(
+          !selectedTrip.endDate &&
+          selectedTrip.startDate &&
+          new Date(selectedTrip.startDate).getTime() < now.getTime() &&
+          selectedTrip.status !== "ACTIVE"
+        ));
+
+    let daysSinceEnd: number | null = null;
+    if (isPastTrip) {
+      if (selectedTrip.endDate) {
+        const endMs = new Date(selectedTrip.endDate).getTime();
+        daysSinceEnd = Math.max(0, Math.floor((now.getTime() - endMs) / (1000 * 60 * 60 * 24)));
+      } else if (selectedTrip.startDate) {
+        const startMs = new Date(selectedTrip.startDate).getTime();
+        daysSinceEnd = Math.max(0, Math.floor((now.getTime() - startMs) / (1000 * 60 * 60 * 24)));
+      }
+    }
+
     // 2. Duration Days calculation
     let durationDays: number | null = null;
     if (selectedTrip.startDate && selectedTrip.endDate) {
@@ -324,6 +361,9 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
       ...selectedTrip,
       countdownDays,
       durationDays,
+      isPastTrip,
+      isOngoing,
+      daysSinceEnd,
       readiness: {
         totalItems,
         completedItems,

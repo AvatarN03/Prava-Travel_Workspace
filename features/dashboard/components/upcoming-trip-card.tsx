@@ -12,12 +12,14 @@ import {
   Flag,
   MapPin,
   Plane,
+  Plus,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { CreateTripDialog } from "@/features/trips";
 
 import { formatDateRange } from "@/lib/utils";
 
@@ -28,18 +30,17 @@ interface UpcomingTripCardProps {
 }
 
 export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "ACTIVE":
-        return { label: "• ONGOING", variant: "default" as const };
-      case "COMPLETED":
-        return { label: "• COMPLETED", variant: "secondary" as const };
-      default:
-        return { label: "• CONFIRMED", variant: "outline" as const };
+  const getStatusBadge = (status: string, isPastTrip?: boolean, isOngoing?: boolean) => {
+    if (isOngoing || status === "ACTIVE") {
+      return { label: "• ONGOING", variant: "default" as const };
     }
+    if (isPastTrip || status === "COMPLETED") {
+      return { label: "• CONCLUDED", variant: "secondary" as const };
+    }
+    return { label: "• CONFIRMED", variant: "outline" as const };
   };
 
-  const statusConfig = getStatusBadge(trip.status);
+  const statusConfig = getStatusBadge(trip.status, trip.isPastTrip, trip.isOngoing);
 
   // Generate a clean reference code
   const destinationCode = (trip.destination || trip.title)
@@ -58,7 +59,11 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
       {/* Tracker label & Trip Code */}
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span className="dashboard-section-eyebrow">
-          Upcoming Trip
+          {trip.isPastTrip
+            ? "Previous Journey"
+            : trip.isOngoing
+            ? "Current Journey"
+            : "Upcoming Trip"}
         </span>
         <span className="font-sans text-xs font-semibold tabular-nums tracking-wider text-muted-foreground dark:text-zinc-400">
           {tripCode}
@@ -80,7 +85,27 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
                     {statusConfig.label}
                   </Badge>
 
-                  {trip.countdownDays !== null && (
+                  {trip.isPastTrip ? (
+                    <Badge
+                      variant="outline"
+                      className="font-sans text-[10px] font-semibold tabular-nums gap-1.5 px-2.5 py-0.5 border-border text-muted-foreground dark:text-zinc-400"
+                    >
+                      <Clock className="w-3 h-3 text-muted-foreground shrink-0" />
+                      {trip.daysSinceEnd !== null && trip.daysSinceEnd !== undefined
+                        ? trip.daysSinceEnd === 0
+                          ? "Ended today"
+                          : `Ended ${trip.daysSinceEnd} ${trip.daysSinceEnd === 1 ? "day" : "days"} ago`
+                        : "Concluded"}
+                    </Badge>
+                  ) : trip.isOngoing ? (
+                    <Badge
+                      variant="outline"
+                      className="dashboard-badge-cerulean font-sans text-[10px] font-semibold tabular-nums gap-1.5 px-2.5 py-0.5"
+                    >
+                      <Plane className="w-3 h-3 text-primary shrink-0" />
+                      Happening now
+                    </Badge>
+                  ) : trip.countdownDays !== null ? (
                     <Badge
                       variant="outline"
                       className="dashboard-badge-cerulean font-sans text-[10px] font-semibold tabular-nums gap-1.5 px-2.5 py-0.5"
@@ -88,11 +113,9 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
                       <Clock className="w-3 h-3 text-primary shrink-0" />
                       {trip.countdownDays > 0
                         ? `${trip.countdownDays} ${trip.countdownDays === 1 ? "day left" : "days left"}`
-                        : trip.countdownDays === 0
-                        ? "Departing today"
-                        : `${Math.abs(trip.countdownDays)} days elapsed`}
+                        : "Departing today"}
                     </Badge>
-                  )}
+                  ) : null}
                 </div>
 
                 {/* Main Destination Title & Route */}
@@ -130,15 +153,39 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
                   )}
                   <span>·</span>
                   <span className="font-sans font-medium text-foreground/70 dark:text-zinc-300">
-                    Active Workspace
+                    {trip.isPastTrip ? "Archived Journey" : "Active Workspace"}
                   </span>
                 </div>
+
+                {/* Past Trip Callout to Create New Trip */}
+                {trip.isPastTrip && (
+                  <div className="p-3.5 rounded-md bg-primary/5 border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <div className="space-y-0.5">
+                      <span className="font-semibold text-foreground dark:text-zinc-200">
+                        Ready to plan your next adventure?
+                      </span>
+                      <p className="text-muted-foreground dark:text-zinc-400">
+                        This journey concluded {trip.daysSinceEnd !== null && trip.daysSinceEnd !== undefined ? `${trip.daysSinceEnd} ${trip.daysSinceEnd === 1 ? "day" : "days"} ago` : "recently"}. Start drafting a fresh itinerary!
+                      </p>
+                    </div>
+                    <CreateTripDialog
+                      trigger={
+                        <Button size="sm" className="dashboard-btn-primary h-8 px-3 gap-1.5 shrink-0 self-start sm:self-auto">
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Create new trip</span>
+                        </Button>
+                      }
+                    />
+                  </div>
+                )}
 
                 {/* Progress / Logistics readiness gauge */}
                 <div className="pt-2 space-y-2.5">
                   <div className="flex items-center justify-between font-sans text-xs">
                     <span className="font-medium text-foreground dark:text-zinc-200">
-                      Itinerary &amp; logistics {trip.readiness.percentage}% planned
+                      {trip.isPastTrip
+                        ? `Itinerary & logistics was ${trip.readiness.percentage}% planned`
+                        : `Itinerary & logistics ${trip.readiness.percentage}% planned`}
                     </span>
                     <span className="text-muted-foreground dark:text-zinc-400 tabular-nums">
                       {trip.readiness.completedItems} / {trip.readiness.totalItems} items ready
@@ -178,12 +225,25 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
 
               {/* Bottom Actions Bar */}
               <div className="pt-4 border-t border-border/60 dark:border-zinc-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <Button asChild className="dashboard-btn-primary h-9 px-4 gap-2 w-full sm:w-auto">
-                  <Link href={`/trips/${trip.id}`}>
-                    Open trip workspace
-                    <ArrowRight className="w-4 h-4 ml-0.5" />
-                  </Link>
-                </Button>
+                <div className="flex items-center gap-2.5 flex-wrap w-full sm:w-auto">
+                  <Button asChild className="dashboard-btn-secondary h-9 px-4 gap-2 w-full sm:w-auto">
+                    <Link href={`/trips/${trip.id}`}>
+                      {trip.isPastTrip ? "View trip memories & details" : "Open trip workspace"}
+                      <ArrowRight className="w-4 h-4 ml-0.5" />
+                    </Link>
+                  </Button>
+
+                  {trip.isPastTrip && (
+                    <CreateTripDialog
+                      trigger={
+                        <Button className="dashboard-btn-primary h-9 px-4 gap-1.5 w-full sm:w-auto">
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Create new trip</span>
+                        </Button>
+                      }
+                    />
+                  )}
+                </div>
 
                 <div className="flex items-center gap-1.5 font-sans text-xs text-muted-foreground dark:text-zinc-400">
                   <Database className="w-3.5 h-3.5 text-primary/80" />
@@ -230,7 +290,7 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
                     </div>
                     <div className="space-y-0.5 min-w-0">
                       <span className="font-sans text-[11px] font-semibold text-foreground dark:text-zinc-200">
-                        Next checkpoint
+                        {trip.isPastTrip ? "Final checkpoint" : "Next checkpoint"}
                       </span>
                       <p className="font-sans text-muted-foreground dark:text-zinc-400 truncate font-medium">
                         {trip.nextCheckpoint.title}
@@ -240,7 +300,9 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
 
                   {trip.nextCheckpoint.daysRemaining !== null && (
                     <Badge variant="outline" className="font-sans text-[11px] shrink-0 tabular-nums">
-                      {trip.nextCheckpoint.daysRemaining > 0
+                      {trip.isPastTrip
+                        ? "Completed"
+                        : trip.nextCheckpoint.daysRemaining > 0
                         ? `In ${trip.nextCheckpoint.daysRemaining}d`
                         : trip.nextCheckpoint.daysRemaining === 0
                         ? "Today"
@@ -252,14 +314,16 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
                 <div className="p-3.5 rounded-md dashboard-surface-subtle flex items-center justify-between font-sans text-xs text-muted-foreground dark:text-zinc-400">
                   <span className="inline-flex items-center gap-1.5">
                     <Compass className="w-3.5 h-3.5 text-primary" />
-                    All trip checkpoints in order
+                    {trip.isPastTrip ? "All trip checkpoints recorded" : "All trip checkpoints in order"}
                   </span>
-                  <Link
-                    href={`/trips/${trip.id}/checklist`}
-                    className="text-primary hover:underline font-medium"
-                  >
-                    Add task
-                  </Link>
+                  {!trip.isPastTrip && (
+                    <Link
+                      href={`/trips/${trip.id}/checklist`}
+                      className="text-primary hover:underline font-medium"
+                    >
+                      Add task
+                    </Link>
+                  )}
                 </div>
               )}
             </div>
