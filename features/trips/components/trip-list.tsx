@@ -346,13 +346,42 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                 />
               </div>
 
-              {/* Desktop Sort & View Mode Switcher */}
+              {/* Desktop Controls: Status Select beside Sort Select, View Mode Switcher & Create Trip Button */}
               <div className="hidden sm:flex items-center gap-2 self-end sm:self-auto">
+                {/* Status Filter Select */}
+                <Select
+                  value={statusFilter}
+                  onValueChange={(val) => setStatusFilter(val as TripStatus | "ALL")}
+                >
+                  <SelectTrigger className="h-9 w-[155px] text-xs cursor-pointer dark:bg-[#0F131C] dark:border-zinc-800 dark:text-zinc-200">
+                    <Filter className="h-3.5 w-3.5 mr-1.5 text-muted-foreground dark:text-zinc-400 shrink-0" />
+                    <span className="truncate">
+                      {statusOptions.find((o) => o.value === statusFilter)?.label || "Status"}
+                    </span>
+                    <span className="ml-auto text-[10px] px-1.5 py-0.2 rounded-full bg-muted dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 font-semibold shrink-0">
+                      {statusOptions.find((o) => o.value === statusFilter)?.count ?? 0}
+                    </span>
+                  </SelectTrigger>
+                  <SelectContent className="dark:bg-[#0F131C] dark:border-zinc-800">
+                    {statusOptions.map(({ label, value, count }) => (
+                      <SelectItem key={value} value={value} className="text-xs cursor-pointer dark:text-zinc-200">
+                        <div className="flex items-center justify-between gap-3 w-full">
+                          <span>{label}</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 font-semibold">
+                            {count}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Departure Sort Select */}
                 <Select
                   value={sortOption}
                   onValueChange={(val) => setSortOption(val as TripSortOption)}
                 >
-                  <SelectTrigger className="h-9 w-[205px] text-xs cursor-pointer dark:bg-[#0F131C] dark:border-zinc-800 dark:text-zinc-200">
+                  <SelectTrigger className="h-9 w-[190px] text-xs cursor-pointer dark:bg-[#0F131C] dark:border-zinc-800 dark:text-zinc-200">
                     <ArrowUpDown className="h-3.5 w-3.5 mr-1.5 text-muted-foreground dark:text-zinc-400 shrink-0" />
                     <SelectValue placeholder="Sort order" />
                   </SelectTrigger>
@@ -365,7 +394,7 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                 </Select>
 
                 {/* View Mode Toggle Buttons */}
-                <div className="flex items-center rounded-md border border-border dark:border-zinc-800 bg-card dark:bg-[#121622] p-0.5">
+                <div className="flex items-center rounded-md border border-border dark:border-zinc-800 bg-card dark:bg-[#121622] p-0.5 shrink-0">
                   <button
                     type="button"
                     onClick={() => setViewMode("grid")}
@@ -391,6 +420,19 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                     <List className="h-3.5 w-3.5" />
                   </button>
                 </div>
+
+                {/* Create Trip Trigger Button */}
+                <CreateTripDialog
+                  trigger={
+                    <Button
+                      size="sm"
+                      className="h-9 gap-1.5 bg-[#2D9BF0] hover:bg-[#2087D6] text-white shadow-xs cursor-pointer text-xs font-semibold shrink-0"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>New Trip</span>
+                    </Button>
+                  }
+                />
               </div>
             </div>
 
@@ -474,36 +516,19 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   <List className="h-3.5 w-3.5" />
                 </button>
               </div>
-            </div>
 
-            {/* Desktop Status Filter Chips */}
-            <div className="hidden sm:flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-              {statusOptions.map(({ label, value, count }) => {
-                const isActive = statusFilter === value;
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setStatusFilter(value)}
-                    className={`px-3 py-1 rounded-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 cursor-pointer text-xs ${
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary dark:bg-[#121622] text-secondary-foreground dark:text-zinc-300 hover:bg-accent dark:hover:bg-zinc-800 border border-transparent dark:border-zinc-800"
-                    }`}
+              {/* Mobile Create Trip Button */}
+              <CreateTripDialog
+                trigger={
+                  <Button
+                    size="sm"
+                    className="h-8.5 w-8.5 p-0 bg-[#2D9BF0] hover:bg-[#2087D6] text-white shadow-xs cursor-pointer shrink-0"
+                    aria-label="Create Trip"
                   >
-                    <span>{label}</span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-semibold ${
-                        isActive
-                          ? "bg-white/20 text-white"
-                          : "bg-muted dark:bg-zinc-800 text-muted-foreground dark:text-zinc-400"
-                      }`}
-                    >
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                }
+              />
             </div>
           </div>
 
