@@ -193,7 +193,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
                 The author has linked their complete trip itinerary to this story. You can clone all activities, stays, checklists, and notes directly into your workspace with 1 click.
               </p>
 
-              <div className="p-3.5 rounded-md border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="p-3.5 rounded-md border border-border dark:border-zinc-800 bg-card flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="space-y-0.5">
                   <h4 className="text-sm font-bold text-foreground dark:text-zinc-100">
                     {story.linkedTrip.title}
@@ -214,7 +214,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
           )}
 
           {/* Author Bio & Engagement Card */}
-          <div className="p-6 rounded-xl border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 shadow-xs">
+          <div className="p-6 rounded-xl border border-border dark:border-zinc-800 bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 shadow-xs">
             <div className="flex items-start gap-4">
               {authorUsername ? (
                 <Link
@@ -302,7 +302,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
         {/* Right Sticky Companion Sidebar (Right 4 Cols - Desktop) */}
         <aside className="lg:col-span-4 space-y-5 lg:sticky lg:top-20 hidden lg:block">
           {/* Author Card */}
-          <Card className="border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs rounded-md">
+          <Card className="border border-border dark:border-zinc-800 bg-card shadow-2xs rounded-md">
             <CardHeader className="pb-3 border-b border-border/60 dark:border-zinc-800/80">
               <CardTitle className="text-xs uppercase tracking-wider font-semibold text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5">
                 <User className="h-3.5 w-3.5 text-primary" /> Creator
@@ -380,7 +380,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
 
           {/* Linked Itinerary Card */}
           {story.linkedTrip && (
-            <Card className="border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs rounded-md">
+            <Card className="border border-border dark:border-zinc-800 bg-card shadow-2xs rounded-md">
               <CardHeader className="pb-3 border-b border-border/60 dark:border-zinc-800/80">
                 <CardTitle className="text-xs uppercase tracking-wider font-semibold text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5">
                   <Compass className="h-3.5 w-3.5 text-primary" /> Attached Blueprint
@@ -414,7 +414,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
 
           {/* Photo Gallery Quick Preview (If Story Has Multiple Photos) */}
           {imagesList.length > 0 && (
-            <Card className="border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs rounded-md">
+            <Card className="border border-border dark:border-zinc-800 bg-card shadow-2xs rounded-md">
               <CardHeader className="pb-3 border-b border-border/60 dark:border-zinc-800/80 flex flex-row items-center justify-between">
                 <CardTitle className="text-xs uppercase tracking-wider font-semibold text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5">
                   <Camera className="h-3.5 w-3.5 text-primary" /> Gallery
@@ -449,7 +449,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
           )}
 
           {/* Quick Reading Stats */}
-          <Card className="border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs rounded-md">
+          <Card className="border border-border dark:border-zinc-800 bg-card shadow-2xs rounded-md">
             <CardHeader className="pb-2">
               <CardTitle className="text-xs uppercase tracking-wider font-semibold text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5">
                 <Sparkles className="h-3.5 w-3.5 text-primary" /> Story Details

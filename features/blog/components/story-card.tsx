@@ -45,7 +45,7 @@ export function StoryCard({ story }: { story: StoryCardItem }) {
   const coverUrl = story.coverImageUrl || DEFAULT_STORY_COVER;
 
   return (
-    <Card className="group relative flex flex-col justify-between overflow-hidden border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200 shadow-2xs hover:shadow-xs rounded-md">
+    <Card className="group relative flex flex-col justify-between overflow-hidden border border-border dark:border-zinc-800 bg-card hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200 shadow-2xs hover:shadow-xs rounded-md">
       {/* Cover Image Header */}
       <div className="relative h-44 w-full overflow-hidden bg-muted dark:bg-zinc-900 border-b border-border/60 dark:border-zinc-800/80">
         {/* eslint-disable-next-line @next/next/no-img-element */}
