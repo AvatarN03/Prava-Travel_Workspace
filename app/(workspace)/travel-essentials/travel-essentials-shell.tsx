@@ -36,7 +36,7 @@ function TabLoadingSkeleton() {
     <div className="space-y-4 animate-pulse">
       <div className="h-28 w-full bg-muted/40 rounded-sm border border-border/50 flex items-center justify-center">
         <div className="flex items-center gap-2 font-sans text-xs text-muted-foreground">
-          <Loader2 className="w-4 h-4 animate-spin text-[#2D9BF0]" />
+          <Loader2 className="w-4 h-4 animate-spin text-primary" />
           <span>Loading module...</span>
         </div>
       </div>
@@ -208,12 +208,12 @@ export function TravelEssentialsShell({
   return (
     <div className="w-full max-w-7xl mx-auto space-y-6">
       {/* ── Editorial Workspace Header ── */}
-      <div className="flex flex-col gap-1.5 pb-5 border-b border-border dark:border-[#1E293B]/70">
+      <div className="flex flex-col gap-1.5 pb-5 border-b border-border">
         <div className="flex items-center justify-between gap-2">
-          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block">
             Travel Toolkit
           </span>
-          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-[#2D9BF0]/10 border border-[#2D9BF0]/20 text-[#2D9BF0] text-xs font-semibold dark:bg-[#2D9BF0]/15 dark:border-[#2D9BF0]/30 dark:shadow-[0_0_12px_rgba(45,155,240,0.15)]">
+          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-primary/10 border border-primary/20 text-primary text-xs font-semibold dark:bg-primary/15 dark:border-primary/30">
             <ActiveIcon className="w-3.5 h-3.5" />
             <span>{activeTabMeta.label}</span>
           </div>
@@ -234,16 +234,16 @@ export function TravelEssentialsShell({
         {/* Mobile Tool Selector (< sm) */}
         <div className="sm:hidden space-y-1.5">
           <div className="flex items-center justify-between px-0.5">
-            <span className="font-sans text-[10px] font-semibold text-[#2D9BF0] uppercase tracking-widest">
+            <span className="font-sans text-[10px] font-semibold text-primary uppercase tracking-widest">
               Active Travel Tool
             </span>
-            <span className="font-sans text-[10px] font-medium text-[#2D9BF0] tabular-nums">
+            <span className="font-sans text-[10px] font-medium text-primary tabular-nums">
               {TABS.findIndex((t) => t.id === activeTab) + 1} of {TABS.length} tools
             </span>
           </div>
 
           <Select value={activeTab} onValueChange={handleTabChange}>
-            <SelectTrigger className="w-full h-12 bg-card dark:bg-[#0C1322] border-border dark:border-[#1E293B] shadow-xs px-3 rounded-sm text-left cursor-pointer focus:ring-[#2D9BF0]">
+            <SelectTrigger className="w-full h-12 bg-card border-border shadow-xs px-3 rounded-sm text-left cursor-pointer focus:ring-primary">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-muted/60 dark:bg-slate-800/60 shrink-0">
                   <ActiveIcon className={`w-4 h-4 ${activeTabMeta.iconColor}`} />
@@ -258,14 +258,14 @@ export function TravelEssentialsShell({
                 </div>
               </div>
             </SelectTrigger>
-            <SelectContent className="w-[calc(100vw-2rem)] max-w-sm dark:bg-[#0C1322] dark:border-[#1E293B]">
+            <SelectContent className="w-[calc(100vw-2rem)] max-w-sm bg-popover border-border">
               {TABS.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <SelectItem
                     key={tab.id}
                     value={tab.id}
-                    className="cursor-pointer py-2.5 font-sans text-xs font-medium dark:focus:bg-[#131F35]"
+                    className="cursor-pointer py-2.5 font-sans text-xs font-medium focus:bg-accent"
                   >
                     <div className="flex items-center gap-2.5">
                       <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-muted/50 dark:bg-slate-800/50 shrink-0">
@@ -290,14 +290,14 @@ export function TravelEssentialsShell({
             onValueChange={handleTabChange}
             className="w-full"
           >
-            <TabsList className="h-10 bg-muted/70 dark:bg-[#0C1322] p-1 rounded-sm border border-border/60 dark:border-[#1E293B] inline-flex items-center gap-1 w-auto min-w-full sm:min-w-0 justify-start">
+            <TabsList className="h-10 bg-muted/70 dark:bg-card p-1 rounded-sm border border-border/60 inline-flex items-center gap-1 w-auto min-w-full sm:min-w-0 justify-start">
               {TABS.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <TabsTrigger
                     key={tab.id}
                     value={tab.id}
-                    className="flex items-center gap-2 rounded-sm px-3.5 py-1.5 font-sans text-xs font-medium transition-all duration-150 data-[state=active]:bg-background dark:data-[state=active]:bg-[#131F35] data-[state=active]:text-foreground dark:data-[state=active]:text-white dark:data-[state=active]:border dark:data-[state=active]:border-[#2D9BF0]/40 dark:data-[state=active]:shadow-[0_0_12px_rgba(45,155,240,0.2)] dark:text-slate-400 dark:hover:text-white cursor-pointer select-none"
+                    className="flex items-center gap-2 rounded-sm px-3.5 py-1.5 font-sans text-xs font-medium transition-all duration-150 data-[state=active]:bg-background dark:data-[state=active]:bg-card-subtle data-[state=active]:text-foreground data-[state=active]:border data-[state=active]:border-primary/40 dark:text-slate-400 dark:hover:text-white cursor-pointer select-none"
                   >
                     <Icon className={`w-3.5 h-3.5 ${tab.iconColor} shrink-0`} />
                     <span>{tab.label}</span>

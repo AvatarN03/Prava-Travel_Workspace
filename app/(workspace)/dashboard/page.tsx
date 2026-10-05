@@ -51,23 +51,20 @@ export default async function DashboardPage() {
       subGreeting = `Your previous journey to ${upcomingTrip.destination || upcomingTrip.title} concluded ${daysText}. Ready for what's next? Plan a new trip!`;
     } else if (upcomingTrip.countdownDays !== null) {
       if (upcomingTrip.countdownDays > 0) {
-        subGreeting = `Ready for your next journey? 1 trip starting in ${upcomingTrip.countdownDays} ${
-          upcomingTrip.countdownDays === 1 ? "day" : "days"
-        }.`;
+        subGreeting = `Ready for your next journey? 1 trip starting in ${upcomingTrip.countdownDays} ${upcomingTrip.countdownDays === 1 ? "day" : "days"
+          }.`;
       } else if (upcomingTrip.countdownDays === 0) {
         subGreeting = "Ready for your next journey? 1 trip starting today.";
       } else {
         subGreeting = "Ready for your next journey? Start planning your next travel experience.";
       }
     } else {
-      subGreeting = `Ready for your next journey? You have ${metrics.totalTrips} ${
-        metrics.totalTrips === 1 ? "trip" : "trips"
-      } saved in your workspace.`;
+      subGreeting = `Ready for your next journey? You have ${metrics.totalTrips} ${metrics.totalTrips === 1 ? "trip" : "trips"
+        } saved in your workspace.`;
     }
   } else if (metrics.totalTrips > 0) {
-    subGreeting = `Ready for your next journey? You have ${metrics.totalTrips} ${
-      metrics.totalTrips === 1 ? "trip" : "trips"
-    } saved in your workspace.`;
+    subGreeting = `Ready for your next journey? You have ${metrics.totalTrips} ${metrics.totalTrips === 1 ? "trip" : "trips"
+      } saved in your workspace.`;
   }
 
   return (
@@ -92,7 +89,7 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-end self-end sm:self-auto gap-2.5">
           <CreateTripDialog
             trigger={
-              <Button className="dashboard-btn-primary h-9 px-4 py-1.5 gap-1.5">
+              <Button className=" h-9 px-4 py-1.5 gap-1.5">
                 <Plus className="w-3.5 h-3.5" />
                 <span>Create trip</span>
               </Button>
