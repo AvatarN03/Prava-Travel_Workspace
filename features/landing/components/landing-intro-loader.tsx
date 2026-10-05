@@ -24,19 +24,19 @@ export function LandingIntroLoader({ onDissolve, onComplete }: LandingIntroLoade
     // Stage 1: Brand Logo & Name appear smoothly
     const t1 = setTimeout(() => {
       setStage("brand");
-    }, 100);
+    }, 60);
 
     // Stage 2: "Travel Workspace" slides from center to right
     const t2 = setTimeout(() => {
       setStage("slide-tag");
-    }, 420);
+    }, 280);
 
     // Stage 3: Smooth dissolve transition starts
     const t3 = setTimeout(() => {
       setStage("dissolve");
       setIsVisible(false);
       onDissolveRef.current?.();
-    }, 1400);
+    }, 850);
 
     return () => {
       clearTimeout(t1);
@@ -55,7 +55,7 @@ export function LandingIntroLoader({ onDissolve, onComplete }: LandingIntroLoade
             opacity: 0,
             scale: 1.02,
             filter: "blur(6px)",
-            transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+            transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
           }}
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#070B12] text-zinc-50 overflow-hidden select-none pointer-events-auto touch-none"
         >
@@ -77,14 +77,14 @@ export function LandingIntroLoader({ onDissolve, onComplete }: LandingIntroLoade
             <motion.div
               initial={{ opacity: 0, y: 14, scale: 0.94 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               className="flex items-center gap-4"
             >
               <div className="relative flex items-center justify-center">
                 <motion.div
                   initial={{ rotate: -15, scale: 0.75, opacity: 0 }}
                   animate={{ rotate: 0, scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1], delay: 0.03 }}
                   className="relative z-10"
                 >
                   <Image
@@ -114,7 +114,7 @@ export function LandingIntroLoader({ onDissolve, onComplete }: LandingIntroLoade
                     ? { x: 0, opacity: 1 }
                     : { x: -26, opacity: 0 }
                 }
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 className="flex items-center gap-2.5"
               >
                 {/* Animated Horizontal Guide Line */}
@@ -125,7 +125,7 @@ export function LandingIntroLoader({ onDissolve, onComplete }: LandingIntroLoade
                       ? { width: 30, opacity: 1 }
                       : { width: 0, opacity: 0 }
                   }
-                  transition={{ duration: 0.45, ease: "easeOut" }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
                   className="h-px bg-gradient-to-r from-transparent via-[#2D9BF0] to-[#2D9BF0]"
                 />
 
@@ -140,7 +140,7 @@ export function LandingIntroLoader({ onDissolve, onComplete }: LandingIntroLoade
                       ? { width: 18, opacity: 0.7 }
                       : { width: 0, opacity: 0 }
                   }
-                  transition={{ duration: 0.45, ease: "easeOut", delay: 0.08 }}
+                  transition={{ duration: 0.3, ease: "easeOut", delay: 0.05 }}
                   className="h-px bg-gradient-to-r from-[#2D9BF0] to-transparent"
                 />
               </motion.div>
@@ -152,7 +152,7 @@ export function LandingIntroLoader({ onDissolve, onComplete }: LandingIntroLoade
             <motion.div
               initial={{ x: "-100%" }}
               animate={{ x: "0%" }}
-              transition={{ duration: 1.35, ease: [0.25, 0.1, 0.25, 1] }}
+              transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
               className="h-full w-full bg-gradient-to-r from-transparent via-[#2D9BF0] to-sky-300"
             />
           </div>

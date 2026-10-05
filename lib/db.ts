@@ -22,9 +22,7 @@ function createPrismaClient(): PrismaClient {
   };
 
   const pool = globalForPrisma.pgPool ?? new Pool(poolConfig);
-  if (process.env.NODE_ENV !== "production") {
-    globalForPrisma.pgPool = pool;
-  }
+  globalForPrisma.pgPool = pool;
 
   const adapter = new PrismaPg(pool);
 
@@ -44,10 +42,7 @@ if (
 }
 
 export const db = globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = db;
-}
+globalForPrisma.prisma = db;
 
 export function getDb(): PrismaClient {
   if (

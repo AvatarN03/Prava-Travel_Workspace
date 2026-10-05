@@ -1,8 +1,10 @@
+import { cache } from "react";
+
 import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { createClient } from "@/lib/supabase/server";
+import { getAuthenticatedUser } from "@/lib/supabase/server";
 
-export async function verifyTripOwnership(tripId: string) {
+export const verifyTripOwnership = cache(async (tripId: string) => {
   if (!tripId || typeof tripId !== "string") {
     return { authorized: false as const, user: null, trip: null, isOwner: false };
   }
@@ -13,13 +15,9 @@ export async function verifyTripOwnership(tripId: string) {
     return { authorized: false as const, user: null, trip: null, isOwner: false };
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  const user = await getAuthenticatedUser();
 
-  if (error || !user) {
+  if (!user) {
     // Unauthenticated user - check if trip is public
     try {
       const publicTrip = await db.trip.findFirst({
@@ -103,5 +101,4 @@ export async function verifyTripOwnership(tripId: string) {
   }
 
   return { authorized: false as const, user, trip: null, isOwner: false };
-  
-}
+});

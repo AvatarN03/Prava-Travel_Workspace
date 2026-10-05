@@ -1,11 +1,12 @@
 "use server";
 
+import { cache } from "react";
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import { deleteUserStorageFolder, pruneUnusedUserAvatars } from "@/lib/storage";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getAuthenticatedUser } from "@/lib/supabase/server";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
 import { validateUsername } from "./reserved-usernames";
 import { generateSmartUniqueUsername } from "./username-generator";
@@ -20,18 +21,11 @@ import type { ProfileWithStats, TopBarUserInfo } from "./types";
 
 export type { ProfileWithStats, TopBarUserInfo };
 
-/**
- * Get current authenticated user's profile with trip statistics.
- */
-export async function getCurrentProfile(): Promise<{ success: boolean; profile?: ProfileWithStats; error?: string }> {
+const getCachedProfile = cache(async (): Promise<{ success: boolean; profile?: ProfileWithStats; error?: string }> => {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const user = await getAuthenticatedUser();
 
-    if (authError || !user) {
+    if (!user) {
       return { success: false, error: "Unauthorized" };
     }
 
@@ -168,6 +162,13 @@ export async function getCurrentProfile(): Promise<{ success: boolean; profile?:
     console.error("Error fetching current profile:", error);
     return { success: false, error: "Failed to load profile" };
   }
+});
+
+/**
+ * Get current authenticated user's profile with trip statistics (cached per request).
+ */
+export async function getCurrentProfile(): Promise<{ success: boolean; profile?: ProfileWithStats; error?: string }> {
+  return getCachedProfile();
 }
 
 /**

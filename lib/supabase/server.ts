@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { cache } from "react";
 
 import { createServerClient } from "@supabase/ssr";
 
@@ -27,3 +28,24 @@ export async function createClient() {
     }
   );
 }
+
+/**
+ * Request-scoped memoized authenticated user retrieval.
+ * Deduplicates remote HTTPS roundtrips to Supabase Auth across nested layouts and server components.
+ */
+export const getAuthenticatedUser = cache(async () => {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      return null;
+    }
+    return user;
+  } catch {
+    return null;
+  }
+});

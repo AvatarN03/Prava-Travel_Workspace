@@ -25,23 +25,24 @@ export default async function ExpensesPage({ params }: ExpensesPageProps) {
     notFound();
   }
 
-  // Fetch user profile to get default preferred currency
-  const profile = user
-    ? await db.profile.findUnique({
-        where: { id: user.id },
-        select: { defaultCurrency: true },
-      })
-    : null;
-
-  const userCurrency = profile?.defaultCurrency || "INR";
-
-  const [items, fxRatesData] = await Promise.all([
+  // Run profile currency lookup and expense fetch in parallel — saves one sequential round-trip
+  const [profileRes, items] = await Promise.all([
+    user
+      ? db.profile.findUnique({
+          where: { id: user.id },
+          select: { defaultCurrency: true },
+        })
+      : Promise.resolve(null),
     db.expense.findMany({
       where: { tripId },
       orderBy: [{ date: "desc" }, { createdAt: "desc" }],
     }),
-    fetchFxRates(userCurrency),
   ]);
+
+  const userCurrency = profileRes?.defaultCurrency || "INR";
+
+  // FX rates need the currency known first, so one more network call
+  const fxRatesData = await fetchFxRates(userCurrency);
 
   return (
     <div className="space-y-4">
