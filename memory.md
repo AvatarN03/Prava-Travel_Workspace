@@ -40,8 +40,59 @@
 - **Phase 59: Instagram-Style Tabbed Creator Profile & 7XL Editorial Story Reading Architecture** (Complete)
 - **Phase 60: Account Session Dark Mode Modernization (Profile, Subscription & Usage)** (Complete)
 - **Phase 61: Supabase Database Row Level Security (RLS) Hardening & PostgREST Lockdown** (Complete)
+- **Phase 62: Post-Auth Page Performance, Route Streaming Skeletons & Landing Loader Optimization** (Complete)
+- **Phase 63: Supabase Auth Deduplication via React Cache, Serverless Connection Persistence & Pixel-Accurate Skeletons** (Complete)
 
 ## Current Task
+- **Phase 63 Complete**: Deep Performance Root-Cause Elimination & Layout-Accurate Skeletons:
+  - **Re-analyzed and Eliminated Deployed Latency Root Causes**:
+    - **Supabase Auth Network Waterfall**:
+      - Identified that on Vercel, nested Server Components (`(workspace)/layout.tsx`, `trips/[tripId]/layout.tsx`, and page tab `page.tsx`) each triggered independent HTTPS roundtrips to `supabase.co/auth/v1/user`. With inter-region latency (150-300ms each), 3-4 sequential roundtrips added 600-1200ms before rendering.
+      - Implemented `getAuthenticatedUser()` in `lib/supabase/server.ts` wrapped with React `cache()`, ensuring user authentication is fetched at most ONCE per HTTP request.
+      - Wrapped `verifyTripOwnership()` in `features/trip-workspace/common/auth-check.ts` with React `cache()`, memoizing trip ownership and relational counts between `layout.tsx` and child `page.tsx`.
+      - Memoized `getCurrentProfile()` in `features/profile/actions.ts` via React `cache()` for layout and account pages.
+    - **Serverless PostgreSQL Connection Pooling**:
+      - Fixed `lib/db.ts` to persist `globalForPrisma.prisma` and `globalForPrisma.pgPool` across warm lambda container invocations in production (`NODE_ENV === "production"`), preventing connection recreation and SSL renegotiation on warm requests.
+  - **Pixel-Accurate Loading Skeletons Matching Real Layouts**:
+    - Redesigned all 18 route `loading.tsx` skeletons to match the exact visual layout, grid columns, card containers, and typography of their destination components with zero layout shift (CLS = 0):
+      - `dashboard/loading.tsx`: Header, upcoming trip hero card, 7/5 productivity split (recent trips, budget, active context, 2x3 essentials tools, AI card), cross-trip metrics overview.
+      - `trips/loading.tsx`: Header, 4-stat metrics row, search and status filter toolbar, 3-column trip card grid with cover ratios.
+      - `trips/[tripId]/loading.tsx`: Cover banner, header, 7-tab navigation strip with badge slots.
+      - `overview/loading.tsx`: Header with destination/date badges, 4-stat metrics strip, 2x2 feature card grid.
+      - `itinerary/loading.tsx`: Header, day filter navigation pill strip, day banner, vertical timeline activity cards with timeline nodes.
+      - `accommodations/loading.tsx`: Header, 4-stat metrics strip, lodging cards grid with check-in/out badges and rates.
+      - `expenses/loading.tsx`: Header, 4-stat metrics strip, donut chart & FX split cards, expense table rows.
+      - `checklist/loading.tsx`: Header, 3-stat readiness strip, category group rows with checkboxes.
+      - `notes/loading.tsx`: Header, 3-stat metrics strip, category filter bar, 3-column note cards grid.
+      - `links/loading.tsx`: Header, 3-stat metrics strip, category filter bar, 3-column link cards grid.
+      - `travel-essentials/loading.tsx`: Header with tool badge, currency converter input/output card, 6-card currency watchlist grid.
+      - `templates/loading.tsx`: Top banner with search, filter toolbar, 3-column template cards grid.
+      - `forum/loading.tsx`: Banner with search and new topic button, category select, discussion thread cards feed.
+      - `stories/loading.tsx`: Banner, tags strip, featured story hero card, 3-column stories grid.
+      - `stories/manage/loading.tsx`: Banner, status filter strip, story item rows with cover thumbnails.
+      - `profile/loading.tsx`: Header, left navigation tab column (3 cols), right form card panel (9 cols).
+      - `subscription/loading.tsx`: Header, active subscription overview card, 2-column pricing comparison cards.
+      - `usage/loading.tsx`: Header, 2 quota meter cards, 6-month usage chart card, trip usage breakdown table.
+      - `(workspace)/loading.tsx`: Root fallback with header and 2-column card containers.
+  - **Full Production Build Verification**:
+    - Executed `npm run build`: Prisma generated in 992ms, Turbopack compiled in 47s, TypeScript passed in 76s, and all 28 static & dynamic routes generated with exit code 0.
+  - **Landing Page Loader Timing Reduction**:
+    - Tightened `features/landing/components/landing-intro-loader.tsx` animation milestones by ~50% so users see the brand name and tagline crisply without prolonged delays (brand appear 60ms, tagline slide 280ms, exit transition 400ms).
+  - **Identified Deployed Route Latency Root Causes**:
+    - Identified that dynamic Server Components without route-level `loading.tsx` suspended the entire page transition until all backend DB queries and SSR calls finished, making Vercel-deployed pages feel sluggish on cold or un-cached hits.
+    - Identified sequential DB waterfalls (notably in `trips/[tripId]/expenses/page.tsx`).
+  - **Added Instant Route Streaming Skeletons (`loading.tsx`)**:
+    - Implemented high-fidelity skeleton loading views across all protected routes and sub-tabs:
+      - Workspace default: `app/(workspace)/loading.tsx`
+      - Dashboard: `app/(workspace)/dashboard/loading.tsx`
+      - Trips & Workspace: `app/(workspace)/trips/loading.tsx`, `app/(workspace)/trips/[tripId]/loading.tsx`, and all 7 trip tabs (`overview`, `itinerary`, `accommodations`, `expenses`, `notes`, `checklist`, `links`)
+      - Travel Essentials: `app/(workspace)/travel-essentials/loading.tsx`
+      - Explore & Community: `templates/loading.tsx`, `forum/loading.tsx`, `stories/loading.tsx`, `stories/manage/loading.tsx`
+      - Account & Settings: `profile/loading.tsx`, `subscription/loading.tsx`, `usage/loading.tsx`
+  - **Eliminated Sequential Data Fetching Waterfalls**:
+    - Parallelized data-fetching in `trips/[tripId]/expenses/page.tsx` using `Promise.all` for profile currency resolution and expenses querying.
+  - **Production Build Verification**:
+    - Ran full production build (`npm run build`), verifying 100% clean compilation, zero TypeScript errors, and successful static/dynamic page generation.
 - **Phase 61 Complete**: Supabase Database Row Level Security (RLS) Hardening & PostgREST API Lockdown:
   - **Identified & Mitigated Threat Vector**:
     - Addressed Supabase Security Advisor automated alerts regarding public tables lacking Row Level Security (RLS).
