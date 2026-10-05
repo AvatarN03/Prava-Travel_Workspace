@@ -42,9 +42,63 @@
 - **Phase 61: Supabase Database Row Level Security (RLS) Hardening & PostgREST Lockdown** (Complete)
 - **Phase 62: Post-Auth Page Performance, Route Streaming Skeletons & Landing Loader Optimization** (Complete)
 - **Phase 63: Supabase Auth Deduplication via React Cache, Serverless Connection Persistence & Pixel-Accurate Skeletons** (Complete)
+- **Phase 64: AI Assistant Conversational Itinerary Context Resolution & Preferred Currency Personalization** (Complete)
+- **Phase 65: AI Assist Action Contextual Scoping & Empty-State Exclusivity** (Complete)
+- **Phase 66: Trips Page Unified Controls Bar & Status Select Integration** (Complete)
+- **Phase 67: High-Contrast Light Mode Skeleton Loading & Progressive 3-Day Itinerary Chunking Architecture** (Complete)
 
 ## Current Task
-- **Phase 63 Complete**: Deep Performance Root-Cause Elimination & Layout-Accurate Skeletons:
+- **Phase 67 Complete**: High-Contrast Light Mode Skeleton Loading & Progressive 3-Day Itinerary Chunking Architecture:
+  - **Light Mode Skeleton Loading Visibility (`app/globals.css`, `components/ui/skeleton.tsx`)**:
+    - Identified that `--muted: 244 247 250` (#F4F7FA) was too pale (97% lightness), causing loading skeletons with opacities (`bg-muted/80`, `bg-muted/60`, `bg-muted/50`) to wash out completely on white backgrounds in light mode.
+    - Updated light mode `--muted` to `226 232 240` (Slate-200), restoring distinct, elegant contrast matching dark mode's Slate-800 symmetry.
+    - Enhanced `components/ui/skeleton.tsx` default classes to `bg-slate-200 dark:bg-zinc-800` for guaranteed high-contrast shimmer pulses across all layout placeholders.
+  - **Progressive 3-Day Itinerary Chunking (`services/ai/prompts/proposals.ts`, `features/trip-workspace/itinerary/components/itinerary-view.tsx`)**:
+    - Added strict prompt guardrail in `proposals.ts`: multi-day trip generations are capped at 3 consecutive days max (6 to 9 activities total), eliminating 20-30s serverless latency spikes, token cutoffs, and 14-day credit consumption asymmetries.
+    - In `itinerary-view.tsx`, empty trips kickstart an initial 3-day foundation (Days 1–3).
+    - When scheduled days exist but fewer than total trip duration, a "Progressive Planning" continuation banner appears at the bottom of the timeline prompting: *"Ready to plan Days X to Y with AI?"*.
+  - **Full Production Build Verification**:
+    - Turbopack Next.js production build (`npm run build`) compiled successfully in 27.7s, TypeScript passed in 41s with 0 errors, and all 29 routes passed with exit code 0.
+  - **Status Select Consolidation (`features/trips/components/trip-list.tsx`)**:
+    - Replaced the redundant separate row of status filter chip buttons with a sleek, compact `<Select>` dropdown styled identically beside the Departure Sort `<Select>`.
+    - Features the `Filter` icon, the currently selected status label, and a count pill badge indicating how many trips match that status.
+  - **Integrated "New Trip" Dialog Trigger**:
+    - Placed `<CreateTripDialog trigger={<Button>New Trip</Button>} />` directly inside the unified desktop controls toolbar alongside Search, Status Select, Sort Select, and View Mode (Grid/Table).
+    - Added a matching icon-based `<CreateTripDialog>` trigger on mobile so users can create trips anywhere without scrolling to the top header.
+  - **Full Production Build Verification**:
+    - Verified compilation via `npm run build` with Turbopack (Prisma generated in 1.24s, TypeScript passed in 36.3s with 0 errors, 29 routes generated with exit code 0).
+  - **Itinerary AI Assist Scoping (`features/trip-workspace/itinerary/components/itinerary-view.tsx`)**:
+    - Removed the redundant "AI Assist" toolbar button (`<Button onClick={handleKickstartWithAi}><Sparkles /><span>AI Assist</span></Button>`) from the non-empty header (`items.length > 0`), ensuring users who already have planned stops only see operational controls ("Est. Cost", "Add to Calendar", "Add Activity").
+    - Retained and polished the "AI Assist" kickstart action strictly inside the empty-state card (`items.length === 0`), enabling single-click draft generation only when no itinerary stops exist.
+  - **Accommodations AI Assist Scoping (`features/trip-workspace/accommodations/components/accommodation-list.tsx`, `app/(workspace)/trips/[tripId]/accommodations/page.tsx`)**:
+    - Passed `destination={trip.destination}` and `tripTitle={trip.title}` into `<AccommodationList>` from the page server component.
+    - Added `useWorkspaceAi` and `handleSuggestStaysWithAi` to `AccommodationList`: when accommodations are empty (`items.length === 0`), provides an "AI Assist · Suggest Stays" button that prompts Ichinose to suggest 2-3 tailored lodgings with rates, addresses, and amenities formatted as structured proposals.
+    - Kept the non-empty header (`items.length > 0`) clean with only the "Add Stay" manual dialog trigger, preventing AI prompt triggers from cluttering confirmed lodgings.
+  - **Dead Import Cleanup Across Workspace**:
+    - Removed unused `Sparkles` icon imports in `overview-dashboard.tsx`, `notes-grid.tsx`, and `expense-tracker.tsx`.
+  - **Full Production Build Verification**:
+    - Ran full Turbopack Next.js production build (`npm run build`). Prisma client generated, TypeScript compilation passed in 24.6s with 0 errors, and all 29 dynamic and static routes compiled successfully with exit code 0.
+  - **Conversational Itinerary Amnesia Root-Cause Fixed**:
+    - Discovered that during prior token optimizations, `assembleConversationalPrompt` in `services/ai/prompts/index.ts` was separated from `assembleProposalPrompt` and only injected the trip title, destination, dates, and status. It omitted all trip entities (`itinerarySummary`, `accommodationsSummary`, `expensesSummary`, `notesSummary`, and `checklistSummary`).
+    - Consequently, when users asked conversational questions in the assistant panel (e.g. "What is my itinerary for this trip?", "Show my schedule for day 1", "Where am I staying?"), the LLM had zero itinerary context and falsely claimed "No activities scheduled yet."
+    - Fixed `assembleConversationalPrompt` in `services/ai/prompts/index.ts` to inject the full workspace context (`CURRENT SCHEDULED ITINERARY`, `CURRENT ACCOMMODATIONS & LODGING`, `EXPENSES & BUDGET`, `SAVED NOTES & RESEARCH`, `PACKING & PREPARATION CHECKLIST`).
+    - Added explicit instructions in `services/ai/prompts/conversation.ts` (`buildConversationalRules`): directed the assistant to consult `CURRENT SCHEDULED ITINERARY` and forbade it from ever claiming there is no itinerary when activities exist in the workspace context.
+    - Updated intent classification in `services/ai/trip-agent-graph.ts` (`isItineraryPlanningIntent`) with an explicit `isQueryOnly` guard so that users querying or asking to view/summarize their existing itinerary are routed to conversational Q&A rather than action proposal generation.
+  - **User Preferred Currency Personalization**:
+    - Addressed issue where AI accommodation and itinerary suggestions/proposals defaulted to USD rather than the user's currency preference configured in `Profile.defaultCurrency`.
+    - Updated `services/ai/context-builder.ts` (`buildTripContext`) to fetch `profile.defaultCurrency` in the initial trip query (supporting both owned trips and public trips) and format estimated activity costs, accommodation rates, and budget figures using the user's preferred currency rather than hardcoded `$` / `USD`.
+    - Added `userCurrency` and `budget` to `ActiveTripPromptContext`, dynamically injecting `User Preferred Currency: <currency>` into both conversational and proposal system prompts.
+    - Updated `services/ai/prompts/proposals.ts` (`buildProposalInstructions`) to instruct the LLM that the traveler's preferred currency is `<currency>` and mandate that the `"currency"` field in JSON proposals match `<currency>` with costs quoted in that currency.
+    - Updated `features/trip-workspace/ai/actions.ts`:
+      - In `sendTripMessage`: resolved user's preferred currency upfront and passed it to `buildTripContext`, returning `userCurrency` in response.
+      - In `getTripConversation`: returned `userCurrency` from user profile preferences.
+      - In `acceptAiProposal`: defaulted created accommodation currency to `trip.profile?.defaultCurrency || "INR"` instead of hardcoded `"USD"`.
+    - Updated `features/trip-workspace/ai/components/ai-proposal-card.tsx` & `workspace-ai-panel.tsx`:
+      - Passed `userCurrency` into `AiProposalCard`.
+      - Replaced hardcoded `$` and `"USD"` string concatenations with `getCurrencySymbol(currency)` mapped from `SUPPORTED_CURRENCIES` in `@/features/travel-essentials`, rendering clean symbols (e.g., `₹`, `€`, `£`, `$`) and currency codes across all proposed items.
+      - Removed obsolete `handleClear` function, dead `useTransition`/`isClearing`/`startClearing` state, unused `clearTripConversation` import, unused `userAvatarUrl` destructuring, and unused `Sparkles` icon import in `workspace-ai-panel.tsx`.
+  - **Full Production Build Verification**:
+    - Successfully ran full Next.js production build (`npm run build`): Prisma generated in 1.04s, Turbopack compiled in 22.9s, TypeScript passed with 0 errors in 21.1s, and all 29 routes generated with exit code 0.
   - **Re-analyzed and Eliminated Deployed Latency Root Causes**:
     - **Supabase Auth Network Waterfall**:
       - Identified that on Vercel, nested Server Components (`(workspace)/layout.tsx`, `trips/[tripId]/layout.tsx`, and page tab `page.tsx`) each triggered independent HTTPS roundtrips to `supabase.co/auth/v1/user`. With inter-region latency (150-300ms each), 3-4 sequential roundtrips added 600-1200ms before rendering.
