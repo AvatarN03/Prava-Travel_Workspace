@@ -3,7 +3,7 @@ export default function UsageLoading() {
     <div className="w-full max-w-7xl mx-auto space-y-6 animate-pulse">
       {/* Editorial Header */}
       <div className="space-y-1.5 pb-5 border-b border-border dark:border-zinc-800">
-        <div className="h-3 w-28 bg-[#2D9BF0]/30 rounded-xs" />
+        <div className="h-3 w-28 bg-primary/30 rounded-xs" />
         <div className="h-8 w-60 bg-muted/80 dark:bg-zinc-800/80 rounded-sm" />
         <div className="h-4 w-96 max-w-full bg-muted/60 dark:bg-zinc-800/50 rounded-xs" />
       </div>
@@ -14,7 +14,7 @@ export default function UsageLoading() {
         <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card p-6 space-y-4 shadow-2xs">
           <div className="flex items-center justify-between">
             <div className="h-4 w-36 bg-muted/80 dark:bg-zinc-800 rounded-xs" />
-            <div className="h-5 w-20 bg-[#2D9BF0]/20 rounded-full" />
+            <div className="h-5 w-20 bg-primary/20 rounded-full" />
           </div>
           <div className="space-y-1">
             <div className="h-9 w-28 bg-muted/80 dark:bg-zinc-800 rounded-sm" />

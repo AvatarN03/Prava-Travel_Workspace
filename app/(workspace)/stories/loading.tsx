@@ -4,14 +4,14 @@ export default function StoriesLoading() {
       {/* Top Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border dark:border-zinc-800 pb-5">
         <div className="space-y-1.5">
-          <div className="h-3 w-36 bg-[#2D9BF0]/30 rounded-xs" />
+          <div className="h-3 w-36 bg-primary/30 rounded-xs" />
           <div className="h-8 w-52 bg-muted/80 dark:bg-zinc-800/80 rounded-sm" />
           <div className="h-4 w-96 max-w-full bg-muted/60 dark:bg-zinc-800/50 rounded-xs" />
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
           <div className="h-9 w-24 bg-muted/50 dark:bg-card-subtle border border-border dark:border-zinc-800 rounded-sm" />
-          <div className="h-9 w-28 bg-[#2D9BF0]/50 rounded-sm" />
+          <div className="h-9 w-28 bg-primary/50 rounded-sm" />
         </div>
       </div>
 
@@ -31,7 +31,7 @@ export default function StoriesLoading() {
           <div className="lg:col-span-7 h-64 lg:h-80 bg-muted/60 dark:bg-zinc-800/60" />
           <div className="lg:col-span-5 p-6 flex flex-col justify-between space-y-4">
             <div className="space-y-3">
-              <div className="h-5 w-24 bg-[#2D9BF0]/20 rounded-full" />
+              <div className="h-5 w-24 bg-primary/20 rounded-full" />
               <div className="h-7 w-4/5 bg-muted/80 dark:bg-zinc-800 rounded-xs" />
               <div className="space-y-1.5 pt-1">
                 <div className="h-3.5 w-full bg-muted/50 dark:bg-zinc-800/50 rounded-xs" />

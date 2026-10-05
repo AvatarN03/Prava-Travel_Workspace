@@ -426,7 +426,7 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   trigger={
                     <Button
                       size="sm"
-                      className="h-9 gap-1.5 bg-[#2D9BF0] hover:bg-[#2087D6] text-white shadow-xs cursor-pointer text-xs font-semibold shrink-0"
+                      className="h-9 gap-1.5 bg-primary hover:bg-primary/90 text-white shadow-xs cursor-pointer text-xs font-semibold shrink-0"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>New Trip</span>
@@ -522,7 +522,7 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                 trigger={
                   <Button
                     size="sm"
-                    className="h-8.5 w-8.5 p-0 bg-[#2D9BF0] hover:bg-[#2087D6] text-white shadow-xs cursor-pointer shrink-0"
+                    className="h-8.5 w-8.5 p-0 bg-primary hover:bg-primary/90 text-white shadow-xs cursor-pointer shrink-0"
                     aria-label="Create Trip"
                   >
                     <Plus className="w-4 h-4" />

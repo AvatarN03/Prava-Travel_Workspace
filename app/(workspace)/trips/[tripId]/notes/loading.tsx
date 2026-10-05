@@ -5,14 +5,14 @@ export default function NotesLoading() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-1 border-b border-border/50 dark:border-zinc-800">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <div className="h-3 w-32 bg-[#2D9BF0]/30 rounded-xs" />
+            <div className="h-3 w-32 bg-primary/30 rounded-xs" />
             <div className="h-3 w-24 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
           </div>
           <div className="h-8 w-64 bg-muted/80 dark:bg-zinc-800/80 rounded-sm" />
           <div className="h-4 w-96 max-w-full bg-muted/60 dark:bg-zinc-800/50 rounded-xs" />
         </div>
 
-        <div className="h-9 w-28 bg-[#2D9BF0]/50 rounded-sm shrink-0" />
+        <div className="h-9 w-28 bg-primary/50 rounded-sm shrink-0" />
       </div>
 
       {/* 3-Stat Metric Strip */}

@@ -10,7 +10,7 @@ export default function TripWorkspaceRootLoading() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border dark:border-zinc-800">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <div className="h-5 w-20 bg-[#2D9BF0]/20 rounded-full" />
+              <div className="h-5 w-20 bg-primary/20 rounded-full" />
               <div className="h-5 w-28 bg-muted/50 dark:bg-zinc-800/50 rounded-full" />
             </div>
             <div className="h-8 w-64 bg-muted/80 dark:bg-zinc-800/80 rounded-sm" />
@@ -33,7 +33,7 @@ export default function TripWorkspaceRootLoading() {
             key={tab}
             className={`h-9 px-3.5 rounded-sm flex items-center gap-1.5 shrink-0 ${
               i === 0
-                ? "bg-[#2D9BF0]/20 border-b-2 border-[#2D9BF0] w-24"
+                ? "bg-primary/20 border-b-2 border-primary w-24"
                 : "bg-muted/40 dark:bg-card-subtle border border-border/50 dark:border-zinc-800/60 w-28"
             }`}
           />

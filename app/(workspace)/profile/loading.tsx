@@ -3,7 +3,7 @@ export default function ProfileLoading() {
     <div className="w-full max-w-7xl mx-auto space-y-6 animate-pulse">
       {/* Editorial Header */}
       <div className="space-y-1.5 pb-5 border-b border-border dark:border-zinc-800">
-        <div className="h-3 w-28 bg-[#2D9BF0]/30 rounded-xs" />
+        <div className="h-3 w-28 bg-primary/30 rounded-xs" />
         <div className="h-8 w-52 bg-muted/80 dark:bg-zinc-800/80 rounded-sm" />
         <div className="h-4 w-96 max-w-full bg-muted/60 dark:bg-zinc-800/50 rounded-xs" />
       </div>
@@ -59,7 +59,7 @@ export default function ProfileLoading() {
 
             {/* Bottom Save Action */}
             <div className="pt-2 flex justify-end">
-              <div className="h-9 w-28 bg-[#2D9BF0]/50 rounded-sm" />
+              <div className="h-9 w-28 bg-primary/50 rounded-sm" />
             </div>
           </div>
         </div>

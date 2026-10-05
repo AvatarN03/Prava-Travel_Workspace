@@ -4,11 +4,11 @@ export default function TripsLoading() {
       {/* Editorial Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-border/80 dark:border-zinc-800">
         <div className="space-y-1.5">
-          <div className="h-3 w-28 bg-[#2D9BF0]/30 rounded-xs" />
+          <div className="h-3 w-28 bg-primary/30 rounded-xs" />
           <div className="h-8 w-40 bg-muted/80 dark:bg-zinc-800/80 rounded-sm" />
           <div className="h-4 w-96 max-w-full bg-muted/60 dark:bg-zinc-800/50 rounded-xs" />
         </div>
-        <div className="h-9 w-32 bg-[#2D9BF0]/40 rounded-sm self-end sm:self-auto shrink-0" />
+        <div className="h-9 w-32 bg-primary/40 rounded-sm self-end sm:self-auto shrink-0" />
       </div>
 
       {/* Top Metrics Strip (4 cards) */}
@@ -35,7 +35,7 @@ export default function TripsLoading() {
               key={label}
               className={`h-8 px-3 rounded-xs ${
                 i === 0
-                  ? "bg-[#2D9BF0]/20 border border-[#2D9BF0]/40 w-14"
+                  ? "bg-primary/20 border border-primary/40 w-14"
                   : "bg-muted/40 dark:bg-card-subtle border border-border/60 dark:border-zinc-800/70 w-20"
               }`}
             />

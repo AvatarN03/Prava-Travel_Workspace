@@ -4,11 +4,11 @@ export default function DashboardLoading() {
       {/* Workspace Header with Editorial Typography */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-2">
-          <div className="h-3 w-28 bg-[#2D9BF0]/30 rounded-xs" />
+          <div className="h-3 w-28 bg-primary/30 rounded-xs" />
           <div className="h-8 w-64 bg-muted/80 dark:bg-zinc-800/80 rounded-sm" />
           <div className="h-4 w-96 max-w-full bg-muted/60 dark:bg-zinc-800/50 rounded-xs" />
         </div>
-        <div className="h-9 w-28 bg-[#2D9BF0]/40 rounded-sm self-end sm:self-auto shrink-0" />
+        <div className="h-9 w-28 bg-primary/40 rounded-sm self-end sm:self-auto shrink-0" />
       </div>
 
       {/* Hero Section: Upcoming Trip Card (Full Width) */}
@@ -16,7 +16,7 @@ export default function DashboardLoading() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-5 w-24 bg-emerald-500/20 rounded-full" />
-            <div className="h-5 w-32 bg-[#2D9BF0]/20 rounded-full" />
+            <div className="h-5 w-32 bg-primary/20 rounded-full" />
           </div>
           <div className="h-7 w-20 bg-muted/50 dark:bg-zinc-800/50 rounded-sm" />
         </div>
@@ -96,9 +96,9 @@ export default function DashboardLoading() {
           </div>
 
           {/* AI Assistant Card */}
-          <div className="rounded-lg border border-[#2D9BF0]/20 bg-card p-5 space-y-3 shadow-2xs">
+          <div className="rounded-lg border border-primary/20 bg-card p-5 space-y-3 shadow-2xs">
             <div className="flex items-center gap-2">
-              <div className="h-6 w-6 rounded-full bg-[#2D9BF0]/20" />
+              <div className="h-6 w-6 rounded-full bg-primary/20" />
               <div className="h-4 w-32 bg-muted/80 dark:bg-zinc-800 rounded-xs" />
             </div>
             <div className="h-12 bg-muted/30 dark:bg-card-subtle rounded-sm border border-border/40 dark:border-zinc-800/60" />

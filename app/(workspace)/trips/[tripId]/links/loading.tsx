@@ -5,7 +5,7 @@ export default function LinksLoading() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-1 border-b border-border/50 dark:border-zinc-800">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <div className="h-3 w-32 bg-[#2D9BF0]/30 rounded-xs" />
+            <div className="h-3 w-32 bg-primary/30 rounded-xs" />
             <div className="h-3 w-24 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
           </div>
           <div className="h-8 w-72 bg-muted/80 dark:bg-zinc-800/80 rounded-sm" />
@@ -14,7 +14,7 @@ export default function LinksLoading() {
 
         <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
           <div className="h-9 w-32 bg-muted/50 dark:bg-card-subtle border border-border dark:border-zinc-800 rounded-sm" />
-          <div className="h-9 w-28 bg-[#2D9BF0]/50 rounded-sm" />
+          <div className="h-9 w-28 bg-primary/50 rounded-sm" />
         </div>
       </div>
 

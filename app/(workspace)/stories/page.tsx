@@ -27,7 +27,7 @@ export default async function StoriesPage() {
       {/* Top Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border dark:border-zinc-800 pb-5">
         <div className="space-y-1">
-          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block">
             Community Chronicles
           </span>
           <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
@@ -48,7 +48,7 @@ export default async function StoriesPage() {
             </Button>
           </Link>
           <Link href="/stories/new">
-            <Button size="sm" className="gap-1.5 text-xs shadow-xs cursor-pointer rounded-sm bg-[#2D9BF0] hover:bg-[#2085d3] text-white font-medium">
+            <Button size="sm" className="gap-1.5 text-xs shadow-xs cursor-pointer rounded-sm bg-primary hover:bg-primary/90 text-white font-medium">
               <Plus className="h-3.5 w-3.5" /> Write Story
             </Button>
           </Link>
@@ -74,7 +74,7 @@ export default async function StoriesPage() {
 
       {/* Stories Grid */}
       {stories.length === 0 ? (
-        <div className="rounded-md border border-dashed border-border dark:border-zinc-800 bg-card/40 dark:bg-[#0F131C]/60 p-12 text-center space-y-4">
+        <div className="rounded-md border border-dashed border-border dark:border-zinc-800 bg-card/40 dark:bg-card/60 p-12 text-center space-y-4">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
             <Sparkles className="h-7 w-7 text-primary" />
           </div>
@@ -85,7 +85,7 @@ export default async function StoriesPage() {
             </p>
           </div>
           <Link href="/stories/new">
-            <Button size="sm" className="gap-1.5 text-xs bg-[#2D9BF0] hover:bg-[#2085d3] text-white font-medium">
+            <Button size="sm" className="gap-1.5 text-xs bg-primary hover:bg-primary/90 text-white font-medium">
               <Plus className="h-3.5 w-3.5" /> Write a Story
             </Button>
           </Link>

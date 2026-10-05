@@ -5,7 +5,7 @@ export default function ChecklistLoading() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-1 border-b border-border/50 dark:border-zinc-800">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <div className="h-3 w-32 bg-[#2D9BF0]/30 rounded-xs" />
+            <div className="h-3 w-32 bg-primary/30 rounded-xs" />
             <div className="h-3 w-28 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
           </div>
           <div className="h-8 w-72 bg-muted/80 dark:bg-zinc-800/80 rounded-sm" />
@@ -13,9 +13,9 @@ export default function ChecklistLoading() {
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 flex-wrap sm:flex-nowrap">
-          <div className="h-9 w-32 bg-[#2D9BF0]/20 border border-[#2D9BF0]/30 rounded-sm" />
+          <div className="h-9 w-32 bg-primary/20 border border-primary/30 rounded-sm" />
           <div className="h-9 w-28 bg-muted/50 dark:bg-card-subtle border border-border dark:border-zinc-800 rounded-sm" />
-          <div className="h-9 w-28 bg-[#2D9BF0]/50 rounded-sm" />
+          <div className="h-9 w-28 bg-primary/50 rounded-sm" />
         </div>
       </div>
 
@@ -41,7 +41,7 @@ export default function ChecklistLoading() {
         <div className="flex items-center justify-between gap-3">
           <div className="h-8 w-64 bg-muted/40 dark:bg-card-subtle rounded-sm border border-border/60 dark:border-zinc-800" />
           <div className="flex gap-1.5">
-            <div className="h-7 w-16 bg-[#2D9BF0]/20 rounded-xs" />
+            <div className="h-7 w-16 bg-primary/20 rounded-xs" />
             <div className="h-7 w-20 bg-muted/40 dark:bg-card-subtle rounded-xs" />
           </div>
         </div>

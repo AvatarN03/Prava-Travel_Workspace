@@ -47,8 +47,19 @@
 - **Phase 66: Trips Page Unified Controls Bar & Status Select Integration** (Complete)
 - **Phase 67: High-Contrast Light Mode Skeleton Loading & Progressive 3-Day Itinerary Chunking Architecture** (Complete)
 - **Phase 68: Centralized Card & Card-Subtle Theme Tokens for Skeletons and Surfaces** (Complete)
+- **Phase 69: System-Wide Primary Brand Tokenization (`#2D9BF0` → `primary`)** (Complete)
 
 ## Current Task
+- **Phase 69 Complete**: System-Wide Primary Brand Tokenization (`#2D9BF0` → `primary`):
+  - **Identified Hardcoded Brand Color**:
+    - `#2D9BF0` is Prava's core brand blue (RGB: `45 155 240`), which is already defined as `--primary: 45 155 240;` in `globals.css`.
+    - Multiple files were hardcoding `border-[#2D9BF0]/20`, `bg-[#2D9BF0]/...`, `text-[#2D9BF0]`, and custom hover hexes instead of utilizing semantic Tailwind `primary` utility classes (`border-primary/20`, `bg-primary/20`, `text-primary`, etc.).
+  - **Skeleton & Component Refactoring**:
+    - `app/(workspace)/dashboard/loading.tsx`: Cleaned all remaining `[#2D9BF0]` and `border-[#2D9BF0]/20` instances, converting them to `border-primary/20` and `bg-primary/*`.
+    - Refactored all other workspace `loading.tsx` routes to use `bg-primary/*` and `border-primary/*` exclusively, making all 19 loading skeleton files completely hex-free.
+    - Updated `app/(workspace)/trips/[tripId]/not-found.tsx`, `app/(workspace)/trips/page.tsx`, `app/(workspace)/stories/page.tsx`, and `features/trips/components/trip-list.tsx` to use semantic `primary` classes.
+  - **Full Production Build Verification**:
+    - Validated with `npm run build` with Turbopack (0 TypeScript errors, all routes passed).
 - **Phase 68 Complete**: Centralized Card & Card-Subtle Theme Tokens for Skeletons and Surfaces:
   - **Identified Hardcoding Root Cause**:
     - Developers previously hardcoded `dark:bg-[#0F131C]` (obsidian card surface) and `dark:bg-[#121622]` (subtle/inset card surface) across skeleton loaders and workspace components because `.dark` in `app/globals.css` previously mapped `--card` to `15 23 42` (Slate-900), which clashed with Prava's refined `#0F131C` obsidian design.

@@ -4,14 +4,14 @@ export default function ForumLoading() {
       {/* Top Banner */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-border dark:border-zinc-800">
         <div className="space-y-1.5">
-          <div className="h-3 w-36 bg-[#2D9BF0]/30 rounded-xs" />
+          <div className="h-3 w-36 bg-primary/30 rounded-xs" />
           <div className="h-8 w-52 bg-muted/80 dark:bg-zinc-800/80 rounded-sm" />
           <div className="h-4 w-96 max-w-full bg-muted/60 dark:bg-zinc-800/50 rounded-xs" />
         </div>
 
         <div className="flex items-center gap-2.5 shrink-0">
           <div className="h-9 w-48 sm:w-64 bg-background dark:bg-card border border-border dark:border-zinc-800 rounded-sm" />
-          <div className="h-9 w-32 bg-[#2D9BF0]/50 rounded-sm" />
+          <div className="h-9 w-32 bg-primary/50 rounded-sm" />
         </div>
       </div>
 

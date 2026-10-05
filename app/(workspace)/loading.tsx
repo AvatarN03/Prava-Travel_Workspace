@@ -4,7 +4,7 @@ export default function WorkspaceLoading() {
       {/* Editorial Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-border/80 dark:border-zinc-800">
         <div className="space-y-1.5">
-          <div className="h-3 w-28 bg-[#2D9BF0]/30 rounded-xs" />
+          <div className="h-3 w-28 bg-primary/30 rounded-xs" />
           <div className="h-8 w-56 bg-muted/80 dark:bg-zinc-800/80 rounded-sm" />
           <div className="h-4 w-80 max-w-full bg-muted/60 dark:bg-zinc-800/50 rounded-xs" />
         </div>

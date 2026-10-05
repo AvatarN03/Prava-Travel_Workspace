@@ -4,7 +4,7 @@ export default function TemplatesLoading() {
       {/* Top Banner */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-border dark:border-zinc-800">
         <div className="space-y-1.5">
-          <div className="h-3 w-28 bg-[#2D9BF0]/30 rounded-xs" />
+          <div className="h-3 w-28 bg-primary/30 rounded-xs" />
           <div className="h-8 w-60 bg-muted/80 dark:bg-zinc-800/80 rounded-sm" />
           <div className="h-4 w-96 max-w-full bg-muted/60 dark:bg-zinc-800/50 rounded-xs" />
         </div>
@@ -52,7 +52,7 @@ export default function TemplatesLoading() {
               {/* Counters & Clone CTA */}
               <div className="pt-3 border-t border-border/60 dark:border-zinc-800/60 flex items-center justify-between">
                 <div className="h-4 w-28 bg-muted/50 dark:bg-zinc-800/50 rounded-xs" />
-                <div className="h-8 w-24 bg-[#2D9BF0]/30 rounded-sm" />
+                <div className="h-8 w-24 bg-primary/30 rounded-sm" />
               </div>
             </div>
           </div>
