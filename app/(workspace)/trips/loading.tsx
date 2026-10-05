@@ -8,7 +8,7 @@ export default function TripsLoading() {
           <div className="h-8 w-40 bg-muted/80 dark:bg-zinc-800/80 rounded-sm" />
           <div className="h-4 w-96 max-w-full bg-muted/60 dark:bg-zinc-800/50 rounded-xs" />
         </div>
-        <div className="h-9 w-32 bg-primary/40 rounded-sm self-end sm:self-auto shrink-0" />
+        <div className="h-9 w-32 bg-muted/80 dark:bg-zinc-700/80 rounded-sm self-end sm:self-auto shrink-0" />
       </div>
 
       {/* Top Metrics Strip (4 cards) */}

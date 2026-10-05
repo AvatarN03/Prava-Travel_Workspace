@@ -47,9 +47,23 @@
 - **Phase 66: Trips Page Unified Controls Bar & Status Select Integration** (Complete)
 - **Phase 67: High-Contrast Light Mode Skeleton Loading & Progressive 3-Day Itinerary Chunking Architecture** (Complete)
 - **Phase 68: Centralized Card & Card-Subtle Theme Tokens for Skeletons and Surfaces** (Complete)
-- **Phase 69: System-Wide Primary Brand Tokenization (`#2D9BF0` → `primary`)** (Complete)
+- **Phase 70: High-Contrast Shadcn Button Theming & Filter Toolbar Simplification** (Complete)
 
 ## Current Task
+- **Phase 70 Complete**: High-Contrast Shadcn Button Theming & Filter Toolbar Simplification:
+  - **High-Contrast Button Design System (`.prava-btn-primary` & `.dashboard-btn-primary`)**:
+    - Centralized in `app/globals.css`: deep obsidian zinc-950 (`#09090b`) with white text in light mode, and clean light zinc (`#f4f4f5`) with dark text in dark mode.
+    - Eliminates harsh all-blue primary backgrounds on buttons while preserving Cerulean Blue (`#2D9BF0`) for selective badges, accents, icons, and text.
+  - **Trips List & Modals Button Update**:
+    - `features/trips/components/create-trip-dialog.tsx`: Default trigger and modal submit buttons use `.prava-btn-primary`.
+    - `features/trips/components/edit-trip-dialog.tsx`: Save Changes button uses `.prava-btn-primary`.
+    - `features/trips/components/trip-list.tsx`: Empty state "Create First Trip" button uses `.prava-btn-primary`.
+    - `app/(workspace)/trips/loading.tsx`: Updated button skeleton placeholder to match high-contrast styling.
+  - **Filter Toolbar Simplification**:
+    - Removed the redundant "New Trip" trigger button from both desktop and mobile filter/sort toolbars in `features/trips/components/trip-list.tsx`, streamlining the toolbar to focus on searching, filtering, sorting, and view mode switching while keeping the primary "Create Trip" button cleanly in the page header.
+  - **Dashboard Cleanup**:
+    - Removed artificial reference code (`PRV-*`) and `Synced with PostgreSQL` badge from `features/dashboard/components/upcoming-trip-card.tsx`.
+  - **Verification**: Verified zero compilation or type errors with `npm run build` (Turbopack).
 - **Phase 69 Complete**: System-Wide Primary Brand Tokenization (`#2D9BF0` → `primary`):
   - **Identified Hardcoded Brand Color**:
     - `#2D9BF0` is Prava's core brand blue (RGB: `45 155 240`), which is already defined as `--primary: 45 155 240;` in `globals.css`.

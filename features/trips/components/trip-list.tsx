@@ -315,7 +315,7 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
             <CardContent className="flex flex-col sm:flex-row items-center justify-center gap-3 pb-14">
               <CreateTripDialog
                 trigger={
-                  <Button size="sm" className="cursor-pointer gap-1.5">
+                  <Button size="sm" className="prava-btn-primary h-9 px-4 gap-1.5 cursor-pointer">
                     <Plus className="w-4 h-4" />
                     Create First Trip
                   </Button>
@@ -420,19 +420,6 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                     <List className="h-3.5 w-3.5" />
                   </button>
                 </div>
-
-                {/* Create Trip Trigger Button */}
-                <CreateTripDialog
-                  trigger={
-                    <Button
-                      size="sm"
-                      className="h-9 gap-1.5 bg-primary hover:bg-primary/90 text-white shadow-xs cursor-pointer text-xs font-semibold shrink-0"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>New Trip</span>
-                    </Button>
-                  }
-                />
               </div>
             </div>
 
@@ -516,19 +503,6 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   <List className="h-3.5 w-3.5" />
                 </button>
               </div>
-
-              {/* Mobile Create Trip Button */}
-              <CreateTripDialog
-                trigger={
-                  <Button
-                    size="sm"
-                    className="h-8.5 w-8.5 p-0 bg-primary hover:bg-primary/90 text-white shadow-xs cursor-pointer shrink-0"
-                    aria-label="Create Trip"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                }
-              />
             </div>
           </div>
 

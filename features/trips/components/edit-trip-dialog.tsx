@@ -470,7 +470,7 @@ export function EditTripDialog({
             type="submit"
             size="sm"
             disabled={isPending}
-            className="bg-[#2D9BF0] hover:bg-[#1279CE] text-white shadow-xs cursor-pointer"
+            className="prava-btn-primary h-8 px-4 text-xs font-semibold shadow-xs cursor-pointer"
           >
             {isPending && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
             Save Changes
