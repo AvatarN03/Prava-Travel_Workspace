@@ -30,20 +30,53 @@ import type {
   WeatherData,
 } from "@/features/travel-essentials/types";
 
-// Tab skeleton fallback for on-demand bundle loading
+// High-fidelity tab skeleton fallback for on-demand bundle loading
 function TabLoadingSkeleton() {
   return (
-    <div className="space-y-4 animate-pulse">
-      <div className="h-28 w-full bg-muted/40 rounded-sm border border-border/50 flex items-center justify-center">
-        <div className="flex items-center gap-2 font-sans text-xs text-muted-foreground">
-          <Loader2 className="w-4 h-4 animate-spin text-primary" />
-          <span>Loading module...</span>
+    <div className="space-y-6 animate-pulse w-full">
+      {/* Top Module Card Header */}
+      <div className="rounded-sm border border-border bg-card p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-sm bg-muted/60 shrink-0" />
+            <div className="space-y-1.5">
+              <div className="h-5 w-40 sm:w-52 bg-muted/80 rounded-xs" />
+              <div className="h-3.5 w-60 sm:w-80 max-w-full bg-muted/50 rounded-xs" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-24 bg-card-subtle border border-border rounded-xs" />
+            <div className="h-8 w-28 bg-primary/20 rounded-xs" />
+          </div>
+        </div>
+
+        {/* Search / Control Bar Placeholder */}
+        <div className="pt-2">
+          <div className="h-10 w-full max-w-lg bg-card-subtle border border-border rounded-sm" />
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="h-20 bg-muted/30 rounded-sm border border-border/40" />
-        <div className="h-20 bg-muted/30 rounded-sm border border-border/40" />
-        <div className="h-20 bg-muted/30 rounded-sm border border-border/40" />
+
+      {/* Grid of Metric / Content Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div
+            key={i}
+            className="rounded-sm border border-border bg-card p-4 space-y-3 shadow-2xs"
+          >
+            <div className="flex items-center justify-between">
+              <div className="h-3.5 w-24 bg-muted/70 rounded-xs" />
+              <div className="h-5 w-5 bg-muted/40 rounded-xs" />
+            </div>
+            <div className="h-7 w-32 bg-muted/80 rounded-sm" />
+            <div className="h-3 w-4/5 bg-muted/50 rounded-xs" />
+          </div>
+        ))}
+      </div>
+
+      {/* Bottom Main Content Surface */}
+      <div className="rounded-sm border border-border bg-card p-6 shadow-xs space-y-3">
+        <div className="h-4 w-44 bg-muted/70 rounded-xs" />
+        <div className="h-36 w-full bg-card-subtle/50 rounded-sm border border-border/60" />
       </div>
     </div>
   );

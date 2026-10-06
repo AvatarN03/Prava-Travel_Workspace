@@ -17,8 +17,8 @@ export default function ForumLoading() {
 
       {/* Filter Controls: Category Select + Bookmark Button */}
       <div className="flex items-center gap-2 w-full">
-        <div className="h-9 w-full sm:w-64 bg-card dark:bg-[#0F131C] border border-border dark:border-zinc-800 rounded-sm" />
-        <div className="h-9 w-32 bg-card dark:bg-[#0F131C] border border-border dark:border-zinc-800 rounded-sm shrink-0" />
+        <div className="h-9 w-full sm:w-64 bg-card border border-border rounded-sm" />
+        <div className="h-9 w-32 bg-card border border-border rounded-sm shrink-0" />
       </div>
 
       {/* Results Meta */}
@@ -31,7 +31,7 @@ export default function ForumLoading() {
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-md border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] overflow-hidden shadow-2xs flex flex-col justify-between"
+            className="rounded-md border border-border bg-card overflow-hidden shadow-2xs flex flex-col justify-between"
           >
             {/* Visual Thumbnail Cover */}
             <div className="h-32 w-full bg-muted/50 dark:bg-zinc-900/60 border-b border-border dark:border-zinc-800" />

@@ -35,7 +35,7 @@ export default function ProfileLoading() {
 
         {/* Right Content Panel */}
         <div className="flex-1 min-w-0">
-          <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-6 space-y-6 shadow-2xs">
+          <div className="rounded-sm border border-border/80 bg-card p-6 space-y-6 shadow-2xs">
             {/* Header & Avatar Row */}
             <div className="flex items-center gap-5 pb-5 border-b border-border/60 dark:border-zinc-800">
               <div className="h-20 w-20 rounded-full bg-muted/70 dark:bg-zinc-800 shrink-0" />
@@ -80,7 +80,7 @@ export default function ProfileLoading() {
             <div className="h-3 w-48 bg-muted/50 dark:bg-zinc-800/50 rounded-xs" />
           </div>
 
-          <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 space-y-5 shadow-2xs">
+          <div className="rounded-sm border border-border/80 bg-card p-4 space-y-5 shadow-2xs">
             <div className="flex items-center gap-4 pb-4 border-b border-border/60 dark:border-zinc-800">
               <div className="h-16 w-16 rounded-full bg-muted/70 dark:bg-zinc-800 shrink-0" />
               <div className="space-y-1.5 flex-1 min-w-0">
@@ -113,7 +113,7 @@ export default function ProfileLoading() {
             <div className="h-3 w-56 bg-muted/50 dark:bg-zinc-800/50 rounded-xs" />
           </div>
 
-          <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 space-y-4 shadow-2xs">
+          <div className="rounded-sm border border-border/80 bg-card p-4 space-y-4 shadow-2xs">
             <div className="h-9 w-full bg-muted/30 dark:bg-card-subtle rounded-sm border border-border/60 dark:border-zinc-800" />
             <div className="h-16 w-full bg-muted/20 dark:bg-zinc-900/30 rounded-sm" />
           </div>

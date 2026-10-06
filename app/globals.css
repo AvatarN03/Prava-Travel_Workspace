@@ -14,6 +14,9 @@
   --card-foreground: 17 24 39;
   --card-subtle: 244 247 250;
 
+  /* Editorial Landing & Auth Canvas Surfaces (#FAFAF9) */
+  --canvas: 250 250 249;
+
   --popover: 255 255 255;
   --popover-foreground: 17 24 39;
 
@@ -60,6 +63,9 @@
   /* Prava Inset / Subtle Card Surface — #121622 */
   --card-subtle: 18 22 34;
 
+  /* Editorial Landing & Auth Dark Canvas Surfaces (#070B12) */
+  --canvas: 7 11 18;
+
   --popover: 15 19 28;
   --popover-foreground: 241 245 249;
 
@@ -98,6 +104,9 @@
   --color-card: rgb(var(--card));
   --color-card-foreground: rgb(var(--card-foreground));
   --color-card-subtle: rgb(var(--card-subtle));
+  --color-canvas: rgb(var(--canvas));
+  --color-shell: #090E1A;
+  --color-shell-border: #152033;
 
   --color-popover: rgb(var(--popover));
   --color-popover-foreground: rgb(var(--popover-foreground));
@@ -166,50 +175,31 @@ html {
    CUSTOM SCROLLBAR UTILITIES (Prava Blue Theme)
    ========================================================= */
 
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(45, 155, 240, 0.4) transparent;
-}
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(45, 155, 240, 0.4);
-  border-radius: 9999px;
-  transition: background-color 0.2s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(45, 155, 240, 0.75);
-}
-
+*,
 .thin-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgba(45, 155, 240, 0.4) transparent;
 }
 
+::-webkit-scrollbar,
 .thin-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
+::-webkit-scrollbar-track,
 .thin-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 
+::-webkit-scrollbar-thumb,
 .thin-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(45, 155, 240, 0.4);
   border-radius: 9999px;
   transition: background-color 0.2s ease;
 }
 
+::-webkit-scrollbar-thumb:hover,
 .thin-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(45, 155, 240, 0.75);
 }
@@ -319,8 +309,8 @@ html {
 }
 
 :where(.dark, .dark *) .dashboard-card {
-  border-color: #27272a;
-  background-color: #0f131c;
+  border-color: rgb(var(--border));
+  background-color: rgb(var(--card));
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
 }
 
@@ -339,8 +329,8 @@ html {
 }
 
 :where(.dark, .dark *) .dashboard-card-hover {
-  border-color: #27272a;
-  background-color: #0f131c;
+  border-color: rgb(var(--border));
+  background-color: rgb(var(--card));
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
 }
 

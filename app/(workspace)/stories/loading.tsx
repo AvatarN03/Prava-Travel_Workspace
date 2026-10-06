@@ -10,7 +10,7 @@ export default function StoriesLoading() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <div className="h-9 w-24 bg-card dark:bg-[#0F131C] border border-border dark:border-zinc-800 rounded-sm" />
+          <div className="h-9 w-24 bg-card border border-border rounded-sm" />
           <div className="h-9 w-28 bg-primary/40 rounded-sm" />
         </div>
       </div>
@@ -31,7 +31,7 @@ export default function StoriesLoading() {
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-md border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] overflow-hidden shadow-2xs flex flex-col justify-between"
+            className="rounded-md border border-border bg-card overflow-hidden shadow-2xs flex flex-col justify-between"
           >
             {/* Visual Thumbnail Image */}
             <div className="h-44 sm:h-48 bg-muted/50 dark:bg-zinc-900/60 border-b border-border dark:border-zinc-800" />

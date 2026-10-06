@@ -222,7 +222,7 @@ function AuthForm() {
   const isActionDisabled = loading || oauthLoading;
 
   return (
-    <div className="relative min-h-screen bg-[#FAFAF9] dark:bg-[#070B12] text-zinc-950 dark:text-zinc-50 flex flex-col selection:bg-[#2D9BF0]/20 selection:text-[#2D9BF0] transition-colors overflow-hidden">
+    <div className="relative min-h-screen bg-canvas text-zinc-950 dark:text-zinc-50 flex flex-col selection:bg-primary/20 selection:text-primary transition-colors overflow-hidden">
       {/* Fluent Animated Canvas Waves & Ambient Radial Glow (Hero/CTA Style) */}
       <AuthBackgroundPattern />
 
@@ -233,7 +233,7 @@ function AuthForm() {
       />
 
       {/* Minimalist Top Navigation */}
-      <header className="relative z-20 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-white/70 dark:bg-[#070B12]/70 backdrop-blur-md">
+      <header className="relative z-20 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-card/70 dark:bg-canvas/70 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-8 lg:px-12">
           {/* Brand Wordmark */}
           <Link
@@ -279,7 +279,7 @@ function AuthForm() {
               <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-sm bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 font-semibold uppercase tracking-wider text-[10px] font-sans w-fit">
                 <span>Prava Access</span>
                 <span>·</span>
-                <span className="text-[#2D9BF0]">Workspace</span>
+                <span className="text-primary">Workspace</span>
               </div>
 
               <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-zinc-950 dark:text-zinc-50 leading-[1.18] break-words">
@@ -444,7 +444,7 @@ function AuthForm() {
               {authMode === "forgot" ? (
                 forgotSent ? (
                   <div className="space-y-4 py-2 text-center">
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#2D9BF0]/10 text-[#2D9BF0]">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                       <Mail className="h-6 w-6" />
                     </div>
                     <div className="space-y-1.5">
@@ -696,8 +696,8 @@ export default function AuthPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#FAFAF9] dark:bg-[#070B12] flex items-center justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-[#2D9BF0]" />
+        <div className="min-h-screen bg-canvas flex items-center justify-center">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
       }
     >

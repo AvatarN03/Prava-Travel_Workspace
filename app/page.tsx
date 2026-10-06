@@ -34,7 +34,7 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-[#FAFAF9] dark:bg-[#070B12] text-zinc-950 dark:text-zinc-50 flex flex-col selection:bg-[#2D9BF0]/20 selection:text-[#2D9BF0] transition-colors">
+    <div className="relative min-h-screen bg-canvas text-zinc-950 dark:text-zinc-50 flex flex-col selection:bg-primary/20 selection:text-primary transition-colors">
       <LandingContentWrapper>
         <LandingHeader user={user} />
         <main className="relative z-10 flex-1">

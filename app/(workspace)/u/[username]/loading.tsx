@@ -2,7 +2,7 @@ export default function CreatorProfileLoading() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-pulse w-full">
       {/* Creator Identity Hero (Compact on Mobile, Spacious on Desktop) */}
-      <div className="rounded-xl border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-8 shadow-xs">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-8 shadow-xs">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
           {/* Avatar Skeleton */}
           <div className="h-14 w-14 sm:h-24 sm:w-24 rounded-full bg-muted/60 dark:bg-zinc-800 shrink-0 border-2 border-border/80 dark:border-zinc-800" />
@@ -35,7 +35,7 @@ export default function CreatorProfileLoading() {
       <div className="space-y-6">
         {/* Mobile View: Select Dropdown Skeleton (< sm) */}
         <div className="sm:hidden w-full pb-1">
-          <div className="h-10 w-full bg-card dark:bg-[#0F131C] border border-border dark:border-zinc-800 rounded-sm shadow-xs" />
+          <div className="h-10 w-full bg-card border border-border rounded-sm shadow-xs" />
         </div>
 
         {/* Tablet & Desktop: Tabs Strip (sm and up) */}
@@ -51,7 +51,7 @@ export default function CreatorProfileLoading() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="rounded-md border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] overflow-hidden shadow-2xs"
+              className="rounded-md border border-border bg-card overflow-hidden shadow-2xs"
             >
               <div className="h-44 sm:h-48 bg-muted/50 dark:bg-zinc-900/60 border-b border-border dark:border-zinc-800" />
               <div className="p-4 space-y-3">

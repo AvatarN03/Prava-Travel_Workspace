@@ -72,9 +72,9 @@ export function AvatarUpload({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate size (max 5MB raw)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size must be under 5MB");
+    // Validate size (max 2MB raw)
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("File size must be under 2MB");
       return;
     }
 

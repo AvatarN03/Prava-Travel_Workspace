@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 
 import {
   ArrowLeft,
-  BookOpen,
   Camera,
   Clock,
   Compass,
@@ -93,10 +92,10 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
 
   const publishedDate = story.publishedAt
     ? new Date(story.publishedAt).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    })
     : "Draft";
 
   const imagesList = story.images || [];

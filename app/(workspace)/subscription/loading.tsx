@@ -10,13 +10,13 @@ export default function SubscriptionLoading() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <div className="h-8 w-28 bg-card dark:bg-[#0F131C] border border-border/80 dark:border-zinc-800 rounded-sm" />
+          <div className="h-8 w-28 bg-card border border-border/80 rounded-sm" />
           <div className="h-8 w-36 bg-primary/40 rounded-sm" />
         </div>
       </div>
 
       {/* ── Current Active Tier Summary Card ── */}
-      <div className="rounded-md border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-5 sm:p-6 shadow-xs">
+      <div className="rounded-md border border-border/80 bg-card p-5 sm:p-6 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2.5 flex-1 min-w-0">
             <div className="flex items-center gap-2">
@@ -29,13 +29,13 @@ export default function SubscriptionLoading() {
 
             {/* Quota Metric Chips */}
             <div className="flex flex-wrap items-center gap-2 pt-1">
-              <div className="h-7 w-28 bg-muted/50 dark:bg-[#121622] border border-border/70 dark:border-zinc-800 rounded-xs" />
-              <div className="h-7 w-44 bg-muted/50 dark:bg-[#121622] border border-border/70 dark:border-zinc-800 rounded-xs" />
+              <div className="h-7 w-28 bg-card-subtle border border-border/70 rounded-xs" />
+              <div className="h-7 w-44 bg-card-subtle border border-border/70 rounded-xs" />
             </div>
           </div>
 
           <div className="shrink-0 self-start md:self-center">
-            <div className="h-8 w-28 bg-card dark:bg-[#121622] border border-border/80 dark:border-zinc-800 rounded-sm" />
+            <div className="h-8 w-28 bg-card-subtle border border-border/80 rounded-sm" />
           </div>
         </div>
       </div>
@@ -50,8 +50,8 @@ export default function SubscriptionLoading() {
           </div>
 
           {/* Segmented Billing Switcher (50/50 on mobile, inline on desktop) */}
-          <div className="w-full sm:w-auto h-9 bg-muted/60 dark:bg-[#121622] rounded-sm border border-border/80 dark:border-zinc-800 p-1 flex gap-1">
-            <div className="flex-1 sm:w-28 bg-card dark:bg-[#0F131C] rounded-xs shadow-2xs" />
+          <div className="w-full sm:w-auto h-9 bg-card-subtle rounded-sm border border-border/80 p-1 flex gap-1">
+            <div className="flex-1 sm:w-28 bg-card rounded-xs shadow-2xs" />
             <div className="flex-1 sm:w-24 rounded-xs" />
           </div>
         </div>
@@ -59,7 +59,7 @@ export default function SubscriptionLoading() {
         {/* 2-Column Plan Comparison Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
           {/* Free Tier Card */}
-          <div className="rounded-md border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-6 space-y-5 shadow-2xs">
+          <div className="rounded-md border border-border/80 bg-card p-6 space-y-5 shadow-2xs">
             <div className="space-y-2">
               <div className="h-5 w-28 bg-muted/80 dark:bg-zinc-800 rounded-xs" />
               <div className="h-8 w-24 bg-muted/80 dark:bg-zinc-800 rounded-sm" />
@@ -73,11 +73,11 @@ export default function SubscriptionLoading() {
                 </div>
               ))}
             </div>
-            <div className="h-8 w-full bg-muted/40 dark:bg-[#121622] border border-border dark:border-zinc-800 rounded-sm" />
+            <div className="h-8 w-full bg-card-subtle border border-border rounded-sm" />
           </div>
 
           {/* Pro Tier Card */}
-          <div className="rounded-md border-2 border-primary/40 bg-card dark:bg-[#0F131C] p-6 space-y-5 shadow-2xs">
+          <div className="rounded-md border-2 border-primary/40 bg-card p-6 space-y-5 shadow-2xs">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <div className="h-5 w-28 bg-primary/60 rounded-xs" />

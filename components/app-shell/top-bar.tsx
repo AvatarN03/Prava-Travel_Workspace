@@ -49,7 +49,6 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
   const pathname = usePathname();
   const supabase = createClient();
 
-  const [mounted, setMounted] = useState(false);
   const [userInfo, setUserInfo] = useState<TopBarUserInfo>(() => {
     if (initialUserInfo) {
       cachedUserInfo = initialUserInfo;
@@ -68,10 +67,6 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
 
   const [loading, setLoading] = useState(!initialUserInfo && !cachedUserInfo);
   const [profileOpen, setProfileOpen] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -174,7 +169,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
   const PageIcon = pageInfo.icon;
 
   return (
-    <header className="sticky top-0 z-30 shrink-0 flex h-16 w-full items-center justify-between border-b border-slate-200/80 dark:border-slate-800 bg-transparent backdrop-blur-[2px] dark:bg-[#0A0F1D]/95 backdrop-blur-md px-2 sm:px-4 md:px-6 rounded-none md:rounded-tl-[24px] transition-colors">
+    <header className="sticky top-0 z-30 shrink-0 flex h-16 w-full items-center justify-between border-b border-slate-200/80 dark:border-slate-800 bg-transparent backdrop-blur-[2px] dark:bg-background/95 backdrop-blur-md px-2 sm:px-4 md:px-6 rounded-none md:rounded-tl-[24px] transition-colors">
         {/* Left: Mobile Trigger & Page Title */}
         <div className="flex items-center gap-1.5 sm:gap-4 min-w-0">
           <Button
@@ -204,7 +199,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
 
           {/* Theme Toggle Button with MorphIcons Transition (Sun <-> Moon) */}
           <ThemeToggle
-            className="text-slate-500 dark:text-slate-400 hover:text-[#2D9BF0] dark:hover:text-[#2D9BF0] hover:bg-sky-50 dark:hover:bg-slate-800"
+            className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary hover:bg-sky-50 dark:hover:bg-slate-800"
             iconSize={20}
           />
 
@@ -263,7 +258,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
               <PopoverContent
                 align="end"
                 sideOffset={8}
-                className="w-80 p-0 rounded-lg border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-[#0E1526] shadow-xl overflow-hidden"
+                className="w-80 p-0 rounded-lg border border-border bg-popover text-popover-foreground shadow-xl overflow-hidden"
               >
                 {/* Profile Identity Card */}
                 <div className="p-4 bg-slate-50/80 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800/80">
@@ -318,7 +313,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
                         )}
                       </div>
                       {userInfo.username && (
-                        <p className="text-xs text-[#2D9BF0] dark:text-[#55B8FF] font-medium truncate mt-0.5">
+                        <p className="text-xs text-primary font-medium truncate mt-0.5">
                           @{userInfo.username}
                         </p>
                       )}
@@ -382,7 +377,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
                   <Link
                     href="/profile"
                     onClick={() => setProfileOpen(false)}
-                    className="flex items-center justify-between w-full px-3 py-2 rounded-md text-xs font-semibold text-[#2D9BF0] hover:text-white bg-[#2D9BF0]/10 hover:bg-[#2D9BF0] transition-all duration-150 cursor-pointer group"
+                    className="flex items-center justify-between w-full px-3 py-2 rounded-md text-xs font-semibold text-primary hover:text-primary-foreground bg-primary/10 hover:bg-primary transition-all duration-150 cursor-pointer group"
                   >
                     <span className="flex items-center gap-2">
                       <User className="h-3.5 w-3.5" />

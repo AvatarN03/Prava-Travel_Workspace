@@ -185,7 +185,7 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
 
       {/* Grid of Story Cards */}
       {filteredPosts.length === 0 ? (
-        <div className="rounded-md border border-dashed border-border dark:border-zinc-800 p-12 text-center space-y-3 bg-card/40 dark:bg-[#0F131C]/60">
+        <div className="rounded-md border border-dashed border-border p-12 text-center space-y-3 bg-card/40 dark:bg-card/60">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
             <BookOpen className="h-6 w-6" />
           </div>
@@ -215,7 +215,7 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
             return (
               <Card
                 key={post.id}
-                className="group relative flex flex-col justify-between overflow-hidden border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200 shadow-2xs hover:shadow-xs rounded-md"
+                className="group relative flex flex-col justify-between overflow-hidden border border-border bg-card hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200 shadow-2xs hover:shadow-xs rounded-md"
               >
                 {/* Story Cover Image with Badges */}
                 <div className="relative h-44 w-full overflow-hidden bg-muted dark:bg-zinc-900 border-b border-border/60 dark:border-zinc-800/80">
@@ -236,14 +236,14 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
                     ) : post.status === "DRAFT" ? (
                       <Badge
                         variant="secondary"
-                        className="bg-background/90 dark:bg-[#121622]/90 text-foreground dark:text-zinc-200 text-[10px] font-bold uppercase tracking-wider shadow-xs backdrop-blur-xs border border-border dark:border-zinc-800"
+                        className="bg-background/90 dark:bg-card-subtle/90 text-foreground dark:text-zinc-200 text-[10px] font-bold uppercase tracking-wider shadow-xs backdrop-blur-xs border border-border"
                       >
                         Draft
                       </Badge>
                     ) : (
                       <Badge
                         variant="outline"
-                        className="bg-background/80 dark:bg-[#121622]/80 text-[10px] font-bold uppercase tracking-wider border-border dark:border-zinc-800"
+                        className="bg-background/80 dark:bg-card-subtle/80 text-[10px] font-bold uppercase tracking-wider border-border"
                       >
                         Archived
                       </Badge>

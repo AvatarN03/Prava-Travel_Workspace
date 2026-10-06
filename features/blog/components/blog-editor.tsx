@@ -335,7 +335,7 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
                   rows={18}
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="text-xs font-mono resize-y leading-relaxed min-h-[360px] bg-background dark:bg-[#121622] border-border dark:border-zinc-800 text-foreground dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                  className="text-xs font-mono resize-y leading-relaxed min-h-[360px] bg-background dark:bg-card-subtle border-border text-foreground dark:text-zinc-100 dark:placeholder:text-zinc-500"
                 />
                 <p className="text-[11px] text-muted-foreground dark:text-zinc-400">
                   Markdown formatting is supported. Use ## for sections, - for bullet lists, and **text** for bold.
@@ -348,7 +348,7 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
         {/* Right Column (Cover Image, Tags, Linked Trip, and Actions) */}
         <div className="lg:col-span-5 xl:col-span-4 space-y-5 lg:sticky lg:top-20">
           {/* Cover Image Upload Card */}
-          <Card className="border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs rounded-md overflow-hidden">
+          <Card className="border border-border bg-card shadow-2xs rounded-md overflow-hidden">
             <CardHeader className="pb-3 border-b border-border/60 dark:border-zinc-800/80">
               <CardTitle className="text-sm font-semibold text-foreground dark:text-zinc-100">Cover Image</CardTitle>
               <CardDescription className="text-xs text-muted-foreground dark:text-zinc-400">
@@ -366,7 +366,7 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
           </Card>
 
           {/* Story Photos & Trip Gallery Card */}
-          <Card className="border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs rounded-md overflow-hidden">
+          <Card className="border border-border bg-card shadow-2xs rounded-md overflow-hidden">
             <CardHeader className="pb-3 border-b border-border/60 dark:border-zinc-800/80">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm font-semibold flex items-center gap-1.5 text-foreground dark:text-zinc-100">
@@ -475,7 +475,7 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
           </Card>
 
           {/* Tags & Trip Link Card */}
-          <Card className="border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs rounded-md">
+          <Card className="border border-border bg-card shadow-2xs rounded-md">
             <CardHeader className="pb-3 border-b border-border/60 dark:border-zinc-800/80">
               <CardTitle className="text-sm font-semibold flex items-center gap-1.5 text-foreground dark:text-zinc-100">
                 <Tag className="h-3.5 w-3.5 text-primary" /> Tags & Trip Link

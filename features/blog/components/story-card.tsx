@@ -151,7 +151,7 @@ export function StoryCard({ story }: { story: StoryCardItem }) {
       </CardContent>
 
       {/* Footer CTA: Like Button + Read Story */}
-      <CardFooter className="p-3 border-t border-border dark:border-zinc-800 bg-muted/20 dark:bg-[#121622]/60 flex items-center justify-between rounded-b-md">
+      <CardFooter className="p-3 border-t border-border bg-muted/20 dark:bg-card-subtle/60 flex items-center justify-between rounded-b-md">
         <StoryLikeButton
           storyId={story.id}
           initialUpvotes={story.upvotes ?? 0}

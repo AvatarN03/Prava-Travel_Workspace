@@ -32,22 +32,22 @@ export default function TripsLoading() {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           {/* Search Bar */}
           <div className="relative flex-1 max-w-sm">
-            <div className="h-9 w-full bg-card dark:bg-[#121622] border border-border/80 dark:border-zinc-800 rounded-sm" />
+            <div className="h-9 w-full bg-card-subtle border border-border/80 rounded-sm" />
           </div>
 
           {/* Desktop Controls (hidden on mobile, flex on sm+) */}
           <div className="hidden sm:flex items-center gap-2">
-            <div className="h-9 w-[155px] bg-card dark:bg-[#0F131C] border border-border/80 dark:border-zinc-800 rounded-sm" />
-            <div className="h-9 w-[190px] bg-card dark:bg-[#0F131C] border border-border/80 dark:border-zinc-800 rounded-sm" />
-            <div className="h-8 w-16 bg-card dark:bg-[#121622] border border-border dark:border-zinc-800 rounded-md shrink-0" />
+            <div className="h-9 w-[155px] bg-card border border-border/80 rounded-sm" />
+            <div className="h-9 w-[190px] bg-card border border-border/80 rounded-sm" />
+            <div className="h-8 w-16 bg-card-subtle border border-border rounded-md shrink-0" />
           </div>
         </div>
 
         {/* Mobile Responsive Controls (< sm): 3 items in a single row */}
         <div className="flex sm:hidden items-center gap-2 w-full">
-          <div className="h-9 flex-1 bg-card dark:bg-[#0F131C] border border-border/80 dark:border-zinc-800 rounded-sm min-w-0" />
-          <div className="h-9 flex-1 bg-card dark:bg-[#0F131C] border border-border/80 dark:border-zinc-800 rounded-sm min-w-0" />
-          <div className="h-8 w-16 bg-card dark:bg-[#121622] border border-border dark:border-zinc-800 rounded-md shrink-0" />
+          <div className="h-9 flex-1 bg-card border border-border/80 rounded-sm min-w-0" />
+          <div className="h-9 flex-1 bg-card border border-border/80 rounded-sm min-w-0" />
+          <div className="h-8 w-16 bg-card-subtle border border-border rounded-md shrink-0" />
         </div>
       </div>
 

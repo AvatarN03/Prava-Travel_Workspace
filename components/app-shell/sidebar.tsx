@@ -147,7 +147,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
               "group flex items-center gap-2.5 rounded-l-none rounded-r-md pl-4 pr-3 py-2 font-sans text-xs font-medium transition-all duration-200 ease-in-out relative cursor-pointer",
               // Opposite-theme styling: In light mode, sidebar is dark; in dark mode, sidebar is light
               isActive
-                ? "bg-[#2D9BF0] text-white shadow-xs font-semibold"
+                ? "bg-primary text-primary-foreground shadow-xs font-semibold"
                 : "text-slate-300 hover:text-white hover:bg-slate-100/10 hover:translate-x-0.5 dark:text-slate-600 dark:hover:text-slate-950 dark:hover:bg-slate-200 dark:hover:translate-x-0.5"
             )}
           >
@@ -193,14 +193,14 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
         className={cn(
           "w-60 md:w-52 shrink-0 flex flex-col transition-transform duration-300 ease-in-out",
           // Mobile fixed drawer styling
-          "fixed inset-y-0 left-0 z-40 bg-[#090E1A] text-slate-200 border-r border-[#152033] dark:bg-slate-100 dark:text-slate-900 dark:border-slate-300",
+          "fixed inset-y-0 left-0 z-40 bg-shell text-slate-200 border-r border-shell-border dark:bg-slate-100 dark:text-slate-900 dark:border-slate-300",
           // Desktop flex child styling (seamless transparent background matching outer shell)
           "md:static md:translate-x-0 md:bg-transparent md:border-r-0 dark:md:bg-transparent dark:md:border-r-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
         {/* Brand / Logo Header */}
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-[#152033] dark:border-slate-300 px-4">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-shell-border dark:border-slate-300 px-4">
           <TooltipProvider delayDuration={150}>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -327,7 +327,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
         </div>
 
         {/* Bottom Area: Account Section (Preserved across all modes) */}
-        <div className="shrink-0 pt-2 pb-8 md:pb-10 border-t border-[#152033]/60 dark:border-slate-300/60 mt-auto">
+        <div className="shrink-0 pt-2 pb-8 md:pb-10 border-t border-shell-border/60 dark:border-slate-300/60 mt-auto">
           <div>
             <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 select-none">
               Account
