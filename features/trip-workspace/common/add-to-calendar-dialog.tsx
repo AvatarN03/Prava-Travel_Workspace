@@ -157,7 +157,7 @@ export function AddToCalendarDialog({
           <Button
             type="button"
             onClick={handleOpenGoogleCalendar}
-            className="w-full h-11 justify-between px-4 bg-[#2D9BF0] hover:bg-[#2087D6] text-white font-medium cursor-pointer shadow-xs"
+            className="w-full h-11 justify-between px-4 font-medium cursor-pointer shadow-xs"
           >
             <span className="flex items-center gap-2.5 text-sm">
               <Calendar className="w-4 h-4" />

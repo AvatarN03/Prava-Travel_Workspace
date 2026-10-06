@@ -28,7 +28,7 @@ export default function TripNotFound() {
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-2">
-          <Button size="sm" asChild className="cursor-pointer rounded-sm bg-primary hover:bg-primary/90 text-white font-medium">
+          <Button size="sm" asChild className="cursor-pointer rounded-sm font-medium">
             <Link href="/trips">
               <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
               Back to Trips List

@@ -309,7 +309,7 @@ export function OverviewSection({
             onClick={onSave}
             disabled={isSaving || !hasUnsavedChanges}
             size="sm"
-            className={`h-9 px-4 rounded-sm font-sans text-xs font-semibold gap-1.5 shadow-xs hover:shadow transition-all active:scale-[0.99] bg-[#2D9BF0] hover:bg-[#2587D3] text-white border border-[#2D9BF0]/30 w-full sm:w-auto ${
+            className={`h-9 px-4 rounded-sm font-sans text-xs font-semibold gap-1.5 shadow-xs hover:shadow transition-all active:scale-[0.99] w-full sm:w-auto ${
               isSaving || !hasUnsavedChanges
                 ? "cursor-not-allowed opacity-60"
                 : "cursor-pointer"

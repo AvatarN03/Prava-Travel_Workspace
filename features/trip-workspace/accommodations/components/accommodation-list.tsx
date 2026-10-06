@@ -101,7 +101,7 @@ export function AccommodationList({
             <Button
               size="sm"
               onClick={handleSuggestStaysWithAi}
-              className="w-full sm:w-auto cursor-pointer gap-2 bg-[#2D9BF0] hover:bg-[#2087D6] text-white shadow-xs font-semibold"
+              className="w-full sm:w-auto cursor-pointer gap-2 shadow-xs font-semibold"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
               <span>AI Assist · Suggest Stays</span>
@@ -164,7 +164,7 @@ export function AccommodationList({
         <AddAccommodationDialog
           tripId={tripId}
           trigger={
-            <Button size="sm" className="h-8 gap-1.5 text-xs font-semibold cursor-pointer bg-[#2D9BF0] hover:bg-[#2087D6] text-white shadow-xs shrink-0">
+            <Button size="sm" className="h-8 gap-1.5 text-xs font-semibold cursor-pointer shadow-xs shrink-0">
               <Plus className="w-3.5 h-3.5" />
               Add Stay
             </Button>

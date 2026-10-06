@@ -259,7 +259,7 @@ export function AddAccommodationDialog({
             >
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={isPending} className="bg-[#2D9BF0] hover:bg-[#2087D6] text-white">
+            <Button type="submit" size="sm" disabled={isPending} className="cursor-pointer">
               {isPending && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               Save Stay
             </Button>

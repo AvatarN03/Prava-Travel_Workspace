@@ -49,8 +49,58 @@
 - **Phase 68: Centralized Card & Card-Subtle Theme Tokens for Skeletons and Surfaces** (Complete)
 - **Phase 70: High-Contrast Shadcn Button Theming & Filter Toolbar Simplification** (Complete)
 - **Phase 71: Inbuilt Shadcn Button High-Contrast Theme & Travel Essentials Integration** (Complete)
+- **Phase 72: Trip Workspace Inside Pages & Mobile Skeleton Loading Refactor** (Complete)
+- **Phase 73: Workspace-Wide High-Contrast Button Theme Unification** (Complete)
 
 ## Current Task
+- **Phase 73 Complete**: Workspace-Wide High-Contrast Button Theme Unification:
+  - **Core Objective**: Implement the unified shadcn high-contrast button styling (`bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-white`) across all remaining pages, dialogs, and workspace components without modifying unrelated code, while strictly maintaining Cerulean Blue (`#2D9BF0`) accents for badges, icons, borders, and text.
+  - **Updated Modules & Surfaces**:
+    - **Trip Workspace Sub-Modules**:
+      - `itinerary-view.tsx`, `add-itinerary-dialog.tsx`, `edit-itinerary-dialog.tsx`: Kickstart AI, Add Activity, Plan Next Chunk, and Save buttons.
+      - `accommodation-list.tsx`, `add-accommodation-dialog.tsx`, `edit-accommodation-dialog.tsx`: AI Suggest Stays, Add Stay, and Save buttons.
+      - `expense-tracker.tsx`, `add-expense-dialog.tsx`, `edit-expense-dialog.tsx`: Record Expense, Save Budget, and Expense Dialog actions.
+      - `notes-grid.tsx`, `add-note-dialog.tsx`, `edit-note-dialog.tsx`: Create First Note, New Note, and Note save actions.
+      - `checklist-view.tsx`, `add-task-dialog.tsx`, `edit-task-dialog.tsx`: Add Task and Task mutation actions.
+      - `links-grid.tsx`, `add-link-dialog.tsx`, `edit-link-dialog.tsx`: Save Link and Add Bookmark actions.
+      - `add-to-calendar-dialog.tsx`: Google Calendar push action.
+      - `ai-proposal-card.tsx` & `workspace-ai-panel.tsx`: Accept All Proposals and interactive assistant tool links.
+    - **Community & Forum**:
+      - `community-forum-view.tsx`, `new-discussion-dialog.tsx`, `edit-discussion-dialog.tsx`, `forum-thread-view.tsx`, `save-tip-dialog.tsx`: Discussion creation, reply submission, and Tip saving.
+    - **Stories & Blog**:
+      - `my-stories-list.tsx`, `blog-editor.tsx`, `app/(workspace)/stories/page.tsx`: Write Story and Publish actions.
+    - **Pricing, Subscriptions & Profile**:
+      - `usage-view.tsx`, `upgrade-dialog.tsx`, `account-usage-view.tsx`: Upgrade to Pro and Polar checkout triggers.
+      - `overview-section.tsx`, `general-section.tsx`: Profile configuration save actions.
+    - **Trips Route**:
+      - `app/(workspace)/trips/[tripId]/not-found.tsx`: Back to Trips List navigation action.
+  - **Verification**: `npm run build` executed and passed with 0 errors across all routes and components.
+
+- **Phase 72 Complete**: Trip Workspace Inside Pages & Mobile Skeleton Loading Refactor:
+  - **Identified Skeleton & Mobile Issues Across Trip Workspace**:
+    - **Root Trip Skeleton (`app/(workspace)/trips/[tripId]/loading.tsx`)**:
+      - `WorkspaceHeader` was completely mismatched: the real header renders the cover banner with title and destination overlay inside the banner image, plus a "Back to Trips" link above it and an actions control bar below it (status select, calendar sync, Ichinose assistant, options menu).
+      - `WorkspaceNav` was previously rendering 7 static tabs unconditionally across desktop and mobile. In reality, `WorkspaceNav` is hidden on desktop (`md:hidden`), renders a full-width 1-tap select dropdown on mobile (`sm:hidden`), and a tab strip on tablet (`hidden sm:flex md:hidden`).
+    - **Overview Skeleton (`app/(workspace)/trips/[tripId]/overview/loading.tsx`)**:
+      - Fixed rigid badge flex headers causing overflow on mobile.
+      - Refactored Stay, Expense, and Checklist cards in the 2x2 grid to match actual component surfaces and progress bars.
+      - Restored missing bottom row (Notes & Memos, Saved Links & Vault) to eliminate cumulative layout shift (CLS).
+    - **Itinerary Skeleton (`app/(workspace)/trips/[tripId]/itinerary/loading.tsx`)**:
+      - Fixed severe mobile timeline bug where negative margins (`-left-[25px]`) and offset borders caused timeline node circles to clip and overflow screens on mobile.
+      - Rebuilt skeleton to match `ItineraryView` & `ItineraryCard` with flex node alignment and pseudo-element vertical timeline lines.
+      - Adjusted header action buttons to mirror real responsive sizes (icon-only calendar button on mobile, full width on desktop).
+    - **Accommodations Skeleton (`app/(workspace)/trips/[tripId]/accommodations/loading.tsx`)**:
+      - Corrected card grid layout from 3 columns (`lg:grid-cols-3`) to 2 columns (`grid-cols-1 md:grid-cols-2`), matching `AccommodationList`.
+      - Mirrored realistic accommodation card details (check-in/check-out dates box, confirmation code badge, and nightly rate).
+    - **Expenses Skeleton (`app/(workspace)/trips/[tripId]/expenses/loading.tsx`)**:
+      - Purged obsolete 144px circular donut chart and non-existent multi-input FX converter form.
+      - Mirrored real Linear-style multi-category progress bar, responsive search input, category dropdown, and receipt cards.
+    - **Checklist, Notes & Links Skeletons (`checklist/loading.tsx`, `notes/loading.tsx`, `links/loading.tsx`)**:
+      - Fixed search inputs from static `w-64` to full-width responsive inputs on mobile (`w-full sm:max-w-sm`).
+      - Corrected category pill heights to `h-8` with horizontal scrolling (`no-scrollbar`).
+      - Added responsive multi-line subtitle placeholders to prevent horizontal squishing on small mobile displays.
+  - **Full Production Build Verification**:
+    - Ran `npm run build` with Turbopack. Zero TypeScript errors, zero lint regressions, all 28 dynamic and static routes passed.
 - **Phase 71 Complete**: Inbuilt Shadcn Button High-Contrast Theme & Travel Essentials Integration:
   - **Inbuilt Shadcn Button Theming (`components/ui/button.tsx`)**:
     - Refactored `buttonVariants` `default` variant to natively render high-contrast shadcn colors: `bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-white shadow-xs border border-white/10 dark:border-black/15`.

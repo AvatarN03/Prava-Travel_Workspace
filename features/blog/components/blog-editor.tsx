@@ -228,7 +228,7 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
           <Button
             type="button"
             size="sm"
-            className="h-8 text-xs gap-1.5 shadow-xs cursor-pointer rounded-sm bg-[#2D9BF0] hover:bg-[#2085d3] text-white font-medium"
+            className="h-8 text-xs gap-1.5 shadow-xs cursor-pointer rounded-sm font-medium"
             onClick={() => handleSave("PUBLISHED")}
             disabled={isSaving || !title.trim() || !content.trim()}
           >

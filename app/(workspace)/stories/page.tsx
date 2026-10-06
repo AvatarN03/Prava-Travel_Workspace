@@ -48,7 +48,7 @@ export default async function StoriesPage() {
             </Button>
           </Link>
           <Link href="/stories/new">
-            <Button size="sm" className="gap-1.5 text-xs shadow-xs cursor-pointer rounded-sm bg-primary hover:bg-primary/90 text-white font-medium">
+            <Button size="sm" className="gap-1.5 text-xs shadow-xs cursor-pointer rounded-sm font-medium">
               <Plus className="h-3.5 w-3.5" /> Write Story
             </Button>
           </Link>
@@ -85,7 +85,7 @@ export default async function StoriesPage() {
             </p>
           </div>
           <Link href="/stories/new">
-            <Button size="sm" className="gap-1.5 text-xs bg-primary hover:bg-primary/90 text-white font-medium">
+            <Button size="sm" className="gap-1.5 text-xs font-medium">
               <Plus className="h-3.5 w-3.5" /> Write a Story
             </Button>
           </Link>

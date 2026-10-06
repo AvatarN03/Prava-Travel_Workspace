@@ -77,7 +77,7 @@ export function NotesGrid({ tripId, items }: NotesGridProps) {
           <AddNoteDialog
             tripId={tripId}
             trigger={
-              <Button size="sm" className="h-9 gap-1.5 text-xs font-semibold rounded-sm bg-[#2D9BF0] hover:bg-[#2587d4] text-white cursor-pointer shadow-2xs">
+              <Button size="sm" className="h-9 gap-1.5 text-xs font-semibold rounded-sm cursor-pointer shadow-2xs">
                 <Plus className="w-3.5 h-3.5" />
                 <span>Create First Note</span>
               </Button>
@@ -98,7 +98,7 @@ export function NotesGrid({ tripId, items }: NotesGridProps) {
             <AddNoteDialog
               tripId={tripId}
               trigger={
-                <Button size="sm" className="h-8 gap-1.5 text-xs font-semibold rounded-sm bg-[#2D9BF0] hover:bg-[#2587d4] text-white cursor-pointer shadow-2xs">
+                <Button size="sm" className="h-8 gap-1.5 text-xs font-semibold rounded-sm cursor-pointer shadow-2xs">
                   <Plus className="w-3.5 h-3.5" />
                   Create First Note
                 </Button>
@@ -139,7 +139,7 @@ export function NotesGrid({ tripId, items }: NotesGridProps) {
             trigger={
               <Button
                 size="sm"
-                className="h-9 gap-1.5 text-xs font-semibold rounded-sm bg-[#2D9BF0] hover:bg-[#2587d4] text-white cursor-pointer shadow-2xs"
+                className="h-9 gap-1.5 text-xs font-semibold rounded-sm cursor-pointer shadow-2xs"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>New Note</span>

@@ -253,7 +253,7 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
             <Button
               onClick={handleStartPolarCheckout}
               disabled={isCheckingOut}
-              className="bg-[#2D9BF0] hover:bg-[#2587D3] text-white font-sans text-xs font-semibold h-8 px-3.5 rounded-sm shadow-xs gap-1.5 cursor-pointer active:scale-[0.99] transition-all"
+              className="font-sans text-xs font-semibold h-8 px-3.5 rounded-sm shadow-xs gap-1.5 cursor-pointer active:scale-[0.99] transition-all"
             >
               {isCheckingOut ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -533,7 +533,7 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
                     <Button
                       onClick={handleStartPolarCheckout}
                       disabled={isCheckingOut}
-                      className="w-full h-8 text-xs rounded-sm font-sans font-semibold bg-[#2D9BF0] text-white hover:bg-[#2587D3] shadow-xs cursor-pointer gap-1.5 active:scale-[0.99] transition-all"
+                      className="w-full h-8 text-xs rounded-sm font-sans font-semibold shadow-xs cursor-pointer gap-1.5 active:scale-[0.99] transition-all"
                     >
                       {isCheckingOut ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -737,7 +737,7 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
               size="sm"
               onClick={handleConfirmSimulationUpgrade}
               disabled={isCheckingOut}
-              className="bg-[#2D9BF0] hover:bg-[#2587D3] text-white font-semibold text-xs rounded-sm gap-1.5 cursor-pointer shadow-xs active:scale-[0.99] transition-all"
+              className="font-semibold text-xs rounded-sm gap-1.5 cursor-pointer shadow-xs active:scale-[0.99] transition-all"
             >
               {isCheckingOut ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />

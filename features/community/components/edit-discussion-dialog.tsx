@@ -311,7 +311,7 @@ export function EditDiscussionDialog({
               type="submit"
               size="sm"
               disabled={isPending}
-              className="h-8 text-xs rounded-sm gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-xs cursor-pointer"
+              className="h-8 text-xs rounded-sm gap-1.5 font-semibold shadow-xs cursor-pointer"
             >
               {isPending ? (
                 <>

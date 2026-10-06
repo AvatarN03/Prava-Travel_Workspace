@@ -148,7 +148,7 @@ function renderInlineSpans(text: string): React.ReactNode {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-1 my-1.5 text-xs font-semibold rounded-md bg-[#2D9BF0] text-white hover:bg-[#2087D6] transition-all cursor-pointer no-underline shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1 my-1.5 text-xs font-semibold rounded-md bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-white shadow-xs border border-white/10 dark:border-black/15 transition-all cursor-pointer no-underline"
           >
             {label}
             <span aria-hidden="true">&rarr;</span>
@@ -1176,7 +1176,7 @@ export function WorkspaceAiPanel({
                   <Button
                     size="sm"
                     variant="default"
-                    className="h-6 text-[11px] px-2 gap-1 cursor-pointer shrink-0 bg-[#2D9BF0] text-white hover:bg-[#2087D6] rounded-md"
+                    className="h-6 text-[11px] px-2 gap-1 cursor-pointer shrink-0 rounded-md"
                     onClick={handleNewChat}
                     disabled={isCreatingThread}
                   >

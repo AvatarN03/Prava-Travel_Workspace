@@ -176,7 +176,7 @@ export function ItineraryView({
             <Button
               size="sm"
               onClick={handleKickstartWithAi}
-              className="w-full sm:w-auto cursor-pointer gap-2 bg-[#2D9BF0] hover:bg-[#2087D6] text-white shadow-xs font-semibold"
+              className="w-full sm:w-auto cursor-pointer gap-2 font-semibold shadow-xs"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
               <span>
@@ -268,7 +268,7 @@ export function ItineraryView({
             tripId={tripId}
             defaultDayNumber={typeof selectedDay === "number" ? selectedDay : 1}
             trigger={
-              <Button size="sm" className="h-8 gap-1.5 text-xs font-semibold cursor-pointer bg-[#2D9BF0] hover:bg-[#2087D6] text-white shadow-xs">
+              <Button size="sm" className="h-8 gap-1.5 text-xs font-semibold cursor-pointer shadow-xs">
                 <Plus className="w-3.5 h-3.5" />
                 Add Activity
               </Button>
@@ -395,7 +395,7 @@ export function ItineraryView({
             <Button
               size="sm"
               onClick={() => handlePlanNextDaysChunk(nextChunkStart, nextChunkEnd)}
-              className="w-full sm:w-auto gap-2 bg-[#2D9BF0] hover:bg-[#2087D6] text-white shadow-xs font-semibold cursor-pointer shrink-0"
+              className="w-full sm:w-auto gap-2 font-semibold cursor-pointer shrink-0 shadow-xs"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
               <span>Plan Days {nextChunkStart}–{nextChunkEnd} with AI</span>

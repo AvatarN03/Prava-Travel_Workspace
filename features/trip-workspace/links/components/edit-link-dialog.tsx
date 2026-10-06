@@ -162,7 +162,7 @@ export function EditLinkDialog({ item, open, onOpenChange }: EditLinkDialogProps
             >
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={isPending} className="bg-[#2D9BF0] hover:bg-[#2587d4] text-white cursor-pointer shadow-2xs">
+            <Button type="submit" size="sm" disabled={isPending} className="cursor-pointer shadow-2xs">
               {isPending && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               Save Changes
             </Button>

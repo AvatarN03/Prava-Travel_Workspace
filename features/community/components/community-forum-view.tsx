@@ -226,7 +226,7 @@ export function CommunityForumView({
           <Button
             size="sm"
             onClick={() => setNewDiscussionOpen(true)}
-            className="h-9 gap-1.5 text-xs bg-[#2D9BF0] hover:bg-[#2085d3] text-white font-medium shadow-xs cursor-pointer shrink-0 rounded-sm"
+            className="h-9 gap-1.5 text-xs font-medium shadow-xs cursor-pointer shrink-0 rounded-sm"
           >
             <Plus className="h-3.5 w-3.5" />
             <span className="hidden xs:inline">Start Discussion</span>
@@ -363,7 +363,7 @@ export function CommunityForumView({
             <Button
               size="sm"
               onClick={() => setNewDiscussionOpen(true)}
-              className="gap-1.5 text-xs bg-primary text-primary-foreground cursor-pointer shadow-xs rounded-md"
+              className="gap-1.5 text-xs cursor-pointer shadow-xs rounded-md"
             >
               <Plus className="h-3.5 w-3.5" />
               Start First Discussion

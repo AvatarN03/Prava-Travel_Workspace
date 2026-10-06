@@ -137,7 +137,7 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
 
         <div className="flex items-center gap-2 shrink-0">
           <Link href="/stories/new">
-            <Button size="sm" className="gap-1.5 text-xs shadow-xs cursor-pointer rounded-sm bg-[#2D9BF0] hover:bg-[#2085d3] text-white font-medium">
+            <Button size="sm" className="gap-1.5 text-xs shadow-xs cursor-pointer rounded-sm font-medium">
               <Plus className="h-3.5 w-3.5" /> Write Story
             </Button>
           </Link>
@@ -200,7 +200,7 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
             Inspire other travelers by sharing your journey, itineraries, travel hacks, and destination reviews.
           </p>
           <Link href="/stories/new">
-            <Button size="sm" className="gap-1.5 text-xs mt-2 shadow-xs cursor-pointer bg-[#2D9BF0] hover:bg-[#2085d3] text-white">
+            <Button size="sm" className="gap-1.5 text-xs mt-2 shadow-xs cursor-pointer font-medium">
               <Plus className="h-3.5 w-3.5" /> Write Story
             </Button>
           </Link>

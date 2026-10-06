@@ -212,7 +212,7 @@ export function UpgradeDialog({
           {/* Action Button: Routes directly to subscription page */}
           <div className="pt-0.5 flex flex-col gap-2.5">
             <Button
-              className="w-full bg-[#2D9BF0] hover:bg-[#2587D3] text-white font-semibold text-xs h-9 rounded-sm gap-1.5 shadow-xs cursor-pointer active:scale-[0.99] transition-all"
+              className="w-full font-semibold text-xs h-9 rounded-sm gap-1.5 shadow-xs cursor-pointer active:scale-[0.99] transition-all"
               onClick={handleProceedToSubscription}
             >
               <CreditCard className="h-3.5 w-3.5" />

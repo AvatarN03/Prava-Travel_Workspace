@@ -343,7 +343,7 @@ export function ExpenseTracker({
             trigger={
               <Button
                 size="sm"
-                className="h-9 gap-1.5 text-xs font-semibold rounded-sm bg-[#2D9BF0] hover:bg-[#2587d4] text-white cursor-pointer shadow-2xs"
+                className="h-9 gap-1.5 text-xs font-semibold rounded-sm cursor-pointer shadow-2xs"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Record Expense</span>
@@ -441,7 +441,7 @@ export function ExpenseTracker({
                 type="submit"
                 size="sm"
                 disabled={isSavingBudget}
-                className="h-7 px-2.5 text-xs rounded-xs cursor-pointer shrink-0 bg-[#2D9BF0] hover:bg-[#2087D6] text-white"
+                className="h-7 px-2.5 text-xs rounded-xs cursor-pointer shrink-0 font-medium"
               >
                 {isSavingBudget ? "..." : "Save"}
               </Button>
@@ -678,7 +678,7 @@ export function ExpenseTracker({
                 tripId={tripId}
                 defaultCurrency={userCurrency}
                 trigger={
-                  <Button size="sm" className="h-8 gap-1.5 text-xs font-semibold rounded-sm bg-[#2D9BF0] hover:bg-[#2587d4] text-white cursor-pointer shadow-2xs">
+                  <Button size="sm" className="h-8 gap-1.5 text-xs font-semibold rounded-sm cursor-pointer shadow-2xs">
                     <Plus className="w-3.5 h-3.5" />
                     Record First Expense
                   </Button>

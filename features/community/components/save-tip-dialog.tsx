@@ -157,7 +157,7 @@ export function SaveTipDialog({
             size="sm"
             onClick={handleSave}
             disabled={isPending || userTrips.length === 0}
-            className="text-xs gap-1.5 bg-primary text-primary-foreground font-semibold shadow-xs"
+            className="text-xs gap-1.5 font-semibold shadow-xs cursor-pointer"
           >
             {isPending ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />

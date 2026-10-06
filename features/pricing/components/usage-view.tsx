@@ -86,7 +86,7 @@ export function UsageView({ initialUsage }: UsageViewProps) {
           {!isPro ? (
             <Button
               onClick={() => setUpgradeOpen(true)}
-              className="bg-[#2D9BF0] hover:bg-[#2587D3] text-white font-sans text-xs font-semibold h-8 px-3.5 rounded-sm shadow-xs gap-1.5 cursor-pointer active:scale-[0.99] transition-all"
+              className="font-sans text-xs font-semibold h-8 px-3.5 rounded-sm shadow-xs gap-1.5 cursor-pointer active:scale-[0.99] transition-all"
             >
               <Zap className="h-3.5 w-3.5 text-amber-300 fill-amber-300" />
               Upgrade to Pro (150 Credits)

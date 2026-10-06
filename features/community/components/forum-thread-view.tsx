@@ -505,7 +505,7 @@ export function ForumThreadView({
                   type="submit"
                   size="sm"
                   disabled={isSubmittingReply || !newReplyText.trim()}
-                  className="h-7 text-xs gap-1.5 bg-primary text-primary-foreground font-semibold shadow-xs cursor-pointer rounded-md"
+                  className="h-7 text-xs gap-1.5 font-semibold shadow-xs cursor-pointer rounded-md"
                 >
                   {isSubmittingReply ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -636,7 +636,7 @@ export function ForumThreadView({
                           <Button
                             size="sm"
                             onClick={() => handleSaveReplyEdit(reply.id)}
-                            className="text-xs h-6 px-2.5 bg-primary text-primary-foreground rounded-md"
+                            className="text-xs h-6 px-2.5 rounded-md cursor-pointer"
                           >
                             Save
                           </Button>

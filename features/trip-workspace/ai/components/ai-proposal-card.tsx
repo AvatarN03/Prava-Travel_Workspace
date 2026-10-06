@@ -332,7 +332,7 @@ export function AiProposalCard({
               size="sm"
               onClick={() => handleAccept(true)}
               disabled={loading}
-              className="h-7 px-3 text-xs font-semibold rounded-lg bg-[#2D9BF0] hover:bg-[#2087D6] text-white shadow-xs cursor-pointer shrink-0 transition-colors"
+              className="h-7 px-3 text-xs font-semibold rounded-lg shadow-xs cursor-pointer shrink-0 transition-colors"
             >
               {loading ? (
                 <Loader2 className="h-3 w-3 animate-spin mr-1" />
