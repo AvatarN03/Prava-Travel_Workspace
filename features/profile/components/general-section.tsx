@@ -32,6 +32,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
 import { useOfflineSyncContext } from "@/lib/offline";
+import { SUPPORTED_CURRENCIES } from "@/features/travel-essentials";
 
 import type { ProfileWithStats } from "../actions";
 
@@ -87,7 +88,7 @@ export function GeneralSection({
       <Card className="rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-xs">
         <CardHeader className="p-4 pb-3">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-[#2D9BF0]/10 border border-[#2D9BF0]/20 text-[#2D9BF0]">
+            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-primary/10 border border-primary/20 text-primary">
               <Globe className="h-3.5 w-3.5" />
             </div>
             <div>
@@ -115,30 +116,11 @@ export function GeneralSection({
                   <SelectValue placeholder="Select currency" />
                 </SelectTrigger>
                 <SelectContent className="rounded-sm font-sans text-xs max-h-64 bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800">
-                  <SelectItem value="USD" className="cursor-pointer text-xs">USD ($) — US Dollar</SelectItem>
-                  <SelectItem value="EUR" className="cursor-pointer text-xs">EUR (€) — Euro</SelectItem>
-                  <SelectItem value="GBP" className="cursor-pointer text-xs">GBP (£) — British Pound</SelectItem>
-                  <SelectItem value="JPY" className="cursor-pointer text-xs">JPY (¥) — Japanese Yen</SelectItem>
-                  <SelectItem value="INR" className="cursor-pointer text-xs">INR (₹) — Indian Rupee</SelectItem>
-                  <SelectItem value="AUD" className="cursor-pointer text-xs">AUD ($) — Australian Dollar</SelectItem>
-                  <SelectItem value="CAD" className="cursor-pointer text-xs">CAD ($) — Canadian Dollar</SelectItem>
-                  <SelectItem value="CHF" className="cursor-pointer text-xs">CHF (Fr) — Swiss Franc</SelectItem>
-                  <SelectItem value="SGD" className="cursor-pointer text-xs">SGD ($) — Singapore Dollar</SelectItem>
-                  <SelectItem value="NZD" className="cursor-pointer text-xs">NZD ($) — New Zealand Dollar</SelectItem>
-                  <SelectItem value="AED" className="cursor-pointer text-xs">AED (د.إ) — UAE Dirham</SelectItem>
-                  <SelectItem value="THB" className="cursor-pointer text-xs">THB (฿) — Thai Baht</SelectItem>
-                  <SelectItem value="KRW" className="cursor-pointer text-xs">KRW (₩) — South Korean Won</SelectItem>
-                  <SelectItem value="HKD" className="cursor-pointer text-xs">HKD ($) — Hong Kong Dollar</SelectItem>
-                  <SelectItem value="SEK" className="cursor-pointer text-xs">SEK (kr) — Swedish Krona</SelectItem>
-                  <SelectItem value="NOK" className="cursor-pointer text-xs">NOK (kr) — Norwegian Krone</SelectItem>
-                  <SelectItem value="MXN" className="cursor-pointer text-xs">MXN ($) — Mexican Peso</SelectItem>
-                  <SelectItem value="BRL" className="cursor-pointer text-xs">BRL (R$) — Brazilian Real</SelectItem>
-                  <SelectItem value="ZAR" className="cursor-pointer text-xs">ZAR (R) — South African Rand</SelectItem>
-                  <SelectItem value="MYR" className="cursor-pointer text-xs">MYR (RM) — Malaysian Ringgit</SelectItem>
-                  <SelectItem value="IDR" className="cursor-pointer text-xs">IDR (Rp) — Indonesian Rupiah</SelectItem>
-                  <SelectItem value="VND" className="cursor-pointer text-xs">VND (₫) — Vietnamese Dong</SelectItem>
-                  <SelectItem value="TRY" className="cursor-pointer text-xs">TRY (₺) — Turkish Lira</SelectItem>
-                  <SelectItem value="SAR" className="cursor-pointer text-xs">SAR (﷼) — Saudi Riyal</SelectItem>
+                  {SUPPORTED_CURRENCIES.map((c) => (
+                    <SelectItem key={c.code} value={c.code} className="cursor-pointer text-xs">
+                      {c.code} ({c.symbol}) — {c.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -150,7 +132,7 @@ export function GeneralSection({
       <Card className="rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-xs">
         <CardHeader className="p-4 pb-3">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-[#2D9BF0]/10 border border-[#2D9BF0]/20 text-[#2D9BF0]">
+            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-primary/10 border border-primary/20 text-primary">
               <Sparkles className="h-3.5 w-3.5" />
             </div>
             <div>
@@ -220,7 +202,7 @@ export function GeneralSection({
                     variant="ghost"
                     size="sm"
                     onClick={() => triggerSync()}
-                    className="h-6 px-2 font-sans text-[11px] gap-1 text-[#2D9BF0] hover:text-[#2D9BF0] hover:bg-[#2D9BF0]/10 cursor-pointer"
+                    className="h-6 px-2 font-sans text-[11px] gap-1 text-primary hover:text-primary hover:bg-primary/10 cursor-pointer"
                   >
                     <RefreshCw className="h-3 w-3" />
                     Sync Now
@@ -234,7 +216,7 @@ export function GeneralSection({
 
           <div className="space-y-1.5 py-1">
             <div className="flex items-center gap-1.5">
-              <Compass className="h-3.5 w-3.5 text-[#2D9BF0]" />
+              <Compass className="h-3.5 w-3.5 text-primary" />
               <p className="font-sans font-semibold text-foreground dark:text-zinc-200">AI Travel Style & Dietary Guidance</p>
             </div>
             <p className="font-sans text-muted-foreground dark:text-zinc-400 text-[11px]">
@@ -298,7 +280,7 @@ export function GeneralSection({
       <Card className="rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-xs">
         <CardHeader className="p-4 pb-3">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-[#2D9BF0]/10 border border-[#2D9BF0]/20 text-[#2D9BF0]">
+            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-primary/10 border border-primary/20 text-primary">
               <Bell className="h-3.5 w-3.5" />
             </div>
             <div>

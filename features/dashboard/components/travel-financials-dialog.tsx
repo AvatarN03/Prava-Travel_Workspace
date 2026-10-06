@@ -42,6 +42,7 @@ import {
   createGeneralTravelExpense,
   deleteGeneralTravelExpense,
 } from "@/features/trip-workspace";
+import { SUPPORTED_CURRENCIES } from "@/features/travel-essentials";
 
 const OVERHEAD_CATEGORIES = [
   { value: "GEAR", label: "Travel Gear & Bags", icon: Package, badge: "bg-blue-500/10 text-blue-600 border-blue-200 dark:border-blue-800" },
@@ -50,8 +51,6 @@ const OVERHEAD_CATEGORIES = [
   { value: "SUBSCRIPTION_SIM", label: "SIM Cards & Tech", icon: Coins, badge: "bg-purple-500/10 text-purple-600 border-purple-200 dark:border-purple-800" },
   { value: "OTHER", label: "General Overhead", icon: Wallet, badge: "bg-slate-500/10 text-slate-600 border-slate-200 dark:border-slate-800" },
 ];
-
-const CURRENCIES = ["INR", "USD", "EUR", "GBP", "JPY", "AED", "SGD", "CAD", "AUD", "CHF"];
 
 interface TravelFinancialsDialogProps {
   metrics: {
@@ -268,9 +267,9 @@ export function TravelFinancialsDialog({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {CURRENCIES.map((c) => (
-                          <SelectItem key={c} value={c} className="text-xs">
-                            {c}
+                        {SUPPORTED_CURRENCIES.map((c) => (
+                          <SelectItem key={c.code} value={c.code} className="text-xs">
+                            {c.code} ({c.symbol})
                           </SelectItem>
                         ))}
                       </SelectContent>

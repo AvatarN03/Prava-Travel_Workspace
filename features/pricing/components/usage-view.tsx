@@ -59,7 +59,7 @@ export function UsageView({ initialUsage }: UsageViewProps) {
       {/* ── Top Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 dark:border-zinc-800 pb-5">
         <div className="space-y-1">
-          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block">
             Workspace Metrics
           </span>
           <div className="flex items-center gap-2.5">
@@ -166,7 +166,7 @@ export function UsageView({ initialUsage }: UsageViewProps) {
                       ? "bg-rose-600"
                       : aiPct > 75
                         ? "bg-amber-500"
-                        : "bg-[#2D9BF0]"
+                        : "bg-primary"
                   }`}
                   style={{ width: `${aiPct}%` }}
                 />
@@ -225,7 +225,7 @@ export function UsageView({ initialUsage }: UsageViewProps) {
             <div className="space-y-1.5">
               <div className="h-2 w-full rounded-xs bg-muted dark:bg-[#121622] overflow-hidden">
                 <div
-                  className="h-full bg-[#2D9BF0] transition-all duration-300"
+                  className="h-full bg-primary transition-all duration-300"
                   style={{ width: `${tripsPct}%` }}
                 />
               </div>
@@ -312,7 +312,7 @@ export function UsageView({ initialUsage }: UsageViewProps) {
                     </div>
                     <div className="h-1.5 w-full bg-muted dark:bg-[#121622] rounded-xs overflow-hidden">
                       <div
-                        className="h-full bg-[#2D9BF0]"
+                        className="h-full bg-primary"
                         style={{ width: `${trip.percentageOfQuota}%` }}
                       />
                     </div>
@@ -417,7 +417,7 @@ export function UsageView({ initialUsage }: UsageViewProps) {
                                   ? "bg-rose-600"
                                   : creditsPct > 75
                                     ? "bg-amber-500"
-                                    : "bg-[#2D9BF0]"
+                                    : "bg-primary"
                               }`}
                               style={{ width: `${creditsPct}%` }}
                             />

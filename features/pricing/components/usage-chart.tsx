@@ -132,8 +132,8 @@ export function UsageChart({ history, quota, tierName }: UsageChartProps) {
                           : pct > 75
                             ? "bg-amber-500"
                             : isCurrentCycle
-                              ? "bg-[#2D9BF0]"
-                              : "bg-[#2D9BF0]/80 dark:bg-[#2D9BF0]/70"
+                              ? "bg-primary"
+                              : "bg-primary/80 dark:bg-primary/70"
                     } ${isHovered ? "brightness-110" : ""}`}
                     style={{ height: used === 0 ? "3px" : `${fillHeightPct}%` }}
                   />
@@ -221,7 +221,7 @@ export function UsageChart({ history, quota, tierName }: UsageChartProps) {
         {/* Legend */}
         <div className="flex items-center gap-3 self-end sm:self-auto shrink-0 select-none text-[10px]">
           <div className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-2xs bg-[#2D9BF0]" />
+            <span className="h-2 w-2 rounded-2xs bg-primary" />
             <span>Used</span>
           </div>
           <div className="flex items-center gap-1">

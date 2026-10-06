@@ -302,7 +302,7 @@ export function DeleteAccountDialog({
                   type="button"
                   disabled={resendCooldown > 0 || isSendingOtp || isDeleting}
                   onClick={handleSendOtp}
-                  className="text-[11px] font-medium text-[#2D9BF0] hover:underline cursor-pointer disabled:text-muted-foreground disabled:no-underline"
+                  className="text-[11px] font-medium text-primary hover:underline cursor-pointer disabled:text-muted-foreground disabled:no-underline"
                 >
                   {resendCooldown > 0 ? `Resend code in ${resendCooldown}s` : "Resend code"}
                 </button>
@@ -352,7 +352,7 @@ export function DeleteAccountDialog({
 
         {step === 3 && (
           <div className="space-y-5 text-center py-3">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#2D9BF0]/10 text-[#2D9BF0]">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Compass className="h-6 w-6" />
             </div>
 

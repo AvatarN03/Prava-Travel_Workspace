@@ -284,7 +284,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
       <div className="hidden md:flex items-start gap-8">
         {/* Left Vertical Navigation Sidebar */}
         <aside className="w-56 shrink-0 space-y-1 sticky top-24">
-          <p className="px-3 py-1.5 font-sans text-[10px] font-semibold uppercase tracking-widest text-[#2D9BF0]">
+          <p className="px-3 py-1.5 font-sans text-[10px] font-semibold uppercase tracking-widest text-primary">
             Account
           </p>
           <nav className="space-y-0.5" aria-label="Account Settings Navigation">
@@ -299,7 +299,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
                   className={cn(
                     "flex w-full items-center gap-2.5 px-3 py-2 font-sans text-xs rounded-sm transition-colors text-left cursor-pointer",
                     isActive
-                      ? "bg-[#2D9BF0]/10 text-[#2D9BF0] font-semibold border-l-2 border-[#2D9BF0]"
+                      ? "bg-primary/10 text-primary font-semibold border-l-2 border-primary"
                       : "text-muted-foreground dark:text-zinc-400 hover:bg-accent dark:hover:bg-zinc-800/60 hover:text-foreground dark:hover:text-zinc-100 font-medium border-l-2 border-transparent"
                   )}
                   aria-current={isActive ? "page" : undefined}
@@ -307,7 +307,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
                   <Icon
                     className={cn(
                       "h-4 w-4 shrink-0",
-                      isActive ? "text-[#2D9BF0]" : "text-muted-foreground dark:text-zinc-500"
+                      isActive ? "text-primary" : "text-muted-foreground dark:text-zinc-500"
                     )}
                   />
                   <span>{item.label}</span>
@@ -370,7 +370,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
         <div className="space-y-4">
           <div className="pb-2 border-b border-border dark:border-zinc-800">
             <h2 className="font-sans text-sm font-semibold text-foreground dark:text-zinc-100 flex items-center gap-2">
-              <User className="h-4 w-4 text-[#2D9BF0]" />
+              <User className="h-4 w-4 text-primary" />
               Overview
             </h2>
             <p className="font-sans text-xs text-muted-foreground dark:text-zinc-400 mt-0.5">
@@ -395,7 +395,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
         <div className="space-y-4">
           <div className="pb-2 border-b border-border dark:border-zinc-800">
             <h2 className="font-sans text-sm font-semibold text-foreground dark:text-zinc-100 flex items-center gap-2">
-              <SlidersHorizontal className="h-4 w-4 text-[#2D9BF0]" />
+              <SlidersHorizontal className="h-4 w-4 text-primary" />
               General Preferences
             </h2>
             <p className="font-sans text-xs text-muted-foreground dark:text-zinc-400 mt-0.5">
@@ -425,7 +425,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
         <div className="space-y-4">
           <div className="pb-2 border-b border-border dark:border-zinc-800">
             <h2 className="font-sans text-sm font-semibold text-foreground dark:text-zinc-100 flex items-center gap-2">
-              <Shield className="h-4 w-4 text-[#2D9BF0]" />
+              <Shield className="h-4 w-4 text-primary" />
               Security & Session
             </h2>
             <p className="font-sans text-xs text-muted-foreground dark:text-zinc-400 mt-0.5">

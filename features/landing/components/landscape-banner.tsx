@@ -7,6 +7,11 @@ import { ArrowRight } from "lucide-react";
 
 const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
+const BANNER_IMAGE = {
+  src: "https://images.unsplash.com/photo-1506461883276-594a12b11cf3?auto=format&fit=crop&w=2000&q=85",
+  alt: "Scenic tea hills mist and mountain highway",
+} as const;
+
 export function LandscapeBanner() {
   return (
     <section
@@ -17,8 +22,8 @@ export function LandscapeBanner() {
       {/* Background Scenic Himalayan Pass / Tea Estate Landscape */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="https://images.unsplash.com/photo-1506461883276-594a12b11cf3?auto=format&fit=crop&w=2000&q=85"
-        alt="Scenic tea hills mist and mountain highway"
+        src={BANNER_IMAGE.src}
+        alt={BANNER_IMAGE.alt}
         className="absolute inset-0 h-full w-full object-cover object-center brightness-[0.55] contrast-[1.08]"
       />
 
@@ -27,7 +32,7 @@ export function LandscapeBanner() {
       {/* Center Editorial Content with Responsive Typography */}
       <div className="relative z-10 mx-auto max-w-3xl px-4 sm:px-6 text-center space-y-4 sm:space-y-5">
         <motion.span
-          className="inline-block text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase font-sans"
+          className="inline-block text-[11px] font-semibold tracking-widest text-primary uppercase font-sans"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}

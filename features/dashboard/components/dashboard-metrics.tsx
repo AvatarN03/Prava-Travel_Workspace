@@ -61,7 +61,7 @@ export function DashboardMetrics({
             </span>
             <Link
               href="/trips"
-              className="text-primary dark:text-[#38BDF8] hover:underline inline-flex items-center font-medium"
+              className="text-primary hover:underline inline-flex items-center font-medium"
             >
               View all <ArrowUpRight className="w-2.5 h-2.5 ml-0.5" />
             </Link>

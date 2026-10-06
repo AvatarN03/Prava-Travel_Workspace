@@ -44,7 +44,7 @@ export function SettingsSection({
       <Card className="rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-xs">
         <CardHeader className="p-4 pb-3">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-[#2D9BF0]/10 border border-[#2D9BF0]/20 text-[#2D9BF0]">
+            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-primary/10 border border-primary/20 text-primary">
               <Shield className="h-3.5 w-3.5" />
             </div>
             <div>
@@ -79,7 +79,7 @@ export function SettingsSection({
           <div className="rounded-sm border border-border dark:border-zinc-800 p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-card dark:bg-[#121622]/60">
             <div className="space-y-0.5">
               <div className="flex items-center gap-2">
-                <KeyRound className="h-3.5 w-3.5 text-[#2D9BF0]" />
+                <KeyRound className="h-3.5 w-3.5 text-primary" />
                 <p className="font-sans font-semibold text-foreground dark:text-zinc-200">Authentication Provider</p>
               </div>
               <p className="font-sans text-muted-foreground dark:text-zinc-400 text-[11px]">

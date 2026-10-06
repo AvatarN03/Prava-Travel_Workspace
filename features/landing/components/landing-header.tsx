@@ -211,7 +211,7 @@ export function LandingHeader({ user }: LandingHeaderProps) {
                 className={cn(
                   "text-xs font-medium px-3.5 h-8 rounded-sm cursor-pointer shadow-none transition-all duration-300",
                   isNavDark
-                    ? "text-zinc-300 hover:text-white hover:bg-white/10"
+                    ? "text-zinc-300 hover:text-white hover:bg-white/30"
                     : "text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100"
                 )}
               >

@@ -121,7 +121,7 @@ export function OverviewSection({
                 className="rounded-sm border border-border dark:border-zinc-800 bg-muted/30 dark:bg-[#121622] px-3 py-1.5 text-center min-w-[80px]"
                 title="Trips published to Community Templates"
               >
-                <div className="font-sans text-sm font-bold text-[#2D9BF0] tabular-nums">
+                <div className="font-sans text-sm font-bold text-primary tabular-nums">
                   {profile.publishedTrips ?? 0}
                 </div>
                 <div className="font-sans text-[10px] font-medium text-muted-foreground dark:text-zinc-400">Trip Templates</div>
@@ -228,7 +228,7 @@ export function OverviewSection({
             <div className="flex items-center justify-between">
               <div className="space-y-0.5 pr-4">
                 <div className="font-sans text-xs font-semibold text-foreground dark:text-zinc-100 flex items-center gap-1.5">
-                  <Globe className="h-3.5 w-3.5 text-[#2D9BF0]" />
+                  <Globe className="h-3.5 w-3.5 text-primary" />
                   Public Creator Profile
                 </div>
                 <p className="font-sans text-[11px] text-muted-foreground dark:text-zinc-400 leading-relaxed">
@@ -268,7 +268,7 @@ export function OverviewSection({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="h-7 px-2 font-sans text-[11px] gap-1 text-[#2D9BF0] hover:text-[#2D9BF0] hover:bg-[#2D9BF0]/10 cursor-pointer"
+                    className="h-7 px-2 font-sans text-[11px] gap-1 text-primary hover:text-primary hover:bg-primary/10 cursor-pointer"
                   >
                     <Globe className="h-3 w-3" />
                     View as Public Visitor

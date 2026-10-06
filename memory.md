@@ -57,9 +57,36 @@
 - **Phase 77: Global CSS Deduplication, Theme Token Consolidation & Skeleton Modernization** (Complete)
 - **Phase 78: Shell & Blog Design Tokens, Avatar Upload Limit & TopBar Unused State Elimination** (Complete)
 - **Phase 79: Community Forum Design Token Modernization & Forum Actions Prisma Migration** (Complete)
+- **Phase 80: Dashboard Vector Extraction, Global Currency Alignment & Pricing Token Modernization** (Complete)
+- **Phase 81: Profile Global Currency Mapping & Design Token Harmonization** (Complete)
 
 ## Current Task
-- **Phase 79 Complete**: Community Forum Design Token Modernization & Forum Actions Prisma Migration:
+- **Phase 81 Complete**: Profile Global Currency Mapping & Design Token Harmonization:
+  - **Profile Currency Dynamic Mapping (`general-section.tsx`)**:
+    - Replaced 24 hardcoded, repetitive `<SelectItem>` tags in the Default Currency dropdown with dynamic mapping over `SUPPORTED_CURRENCIES` from `@/features/travel-essentials`.
+    - Formatted entries consistently: `{c.code} ({c.symbol}) — {c.name}`.
+  - **Profile Token Modernization (`general-section.tsx`, `overview-section.tsx`, `profile-editor.tsx`, `settings-section.tsx`, `delete-account-dialog.tsx`)**:
+    - Replaced hardcoded `#2D9BF0` with semantic design tokens (`text-primary`, `bg-primary/10`, `border-primary/20`, `hover:bg-primary/10`).
+    - Standardized active sidebar indicators in `profile-editor.tsx` to `border-primary text-primary bg-primary/10`.
+    - Sanitized farewell icon container in `delete-account-dialog.tsx` to `bg-primary/10 text-primary`.
+  - **Full Production Build Verification**:
+    - Ran `npm run build` with Turbopack: Prisma generated (1.63s), TypeScript passed in 46s with 0 errors, static pages generated in 2.5s, exit code 0.
+- **Phase 80 Complete**: Dashboard Vector Extraction, Global Currency Alignment & Pricing Token Modernization:
+  - **Dashboard Empty State Vector Extraction (`dashboard-empty-state.tsx`, `dashboard-empty-vector.tsx`)**:
+    - Created `public/illustrations/empty-travel.svg` containing the extracted vector asset.
+    - Extracted the theme-aware vector into `features/dashboard/components/dashboard-empty-vector.tsx`, preserving dark-mode adaptivity and `var(--card)` fill.
+    - Replaced 110+ lines of inline SVG code and hardcoded glows in `dashboard-empty-state.tsx` with `<DashboardEmptyVector />` and `bg-primary/10`.
+  - **Global Currency Alignment (`travel-financials-dialog.tsx`, `dashboard-metrics.tsx`)**:
+    - Removed redundant local currency array and bound `travel-financials-dialog.tsx` to `SUPPORTED_CURRENCIES` from `@/features/travel-essentials`.
+    - Sanitized `dashboard-metrics.tsx` link colors to `text-primary`.
+  - **Landscape Banner Image Object (`landscape-banner.tsx`)**:
+    - Extracted scenic image reference into typed `BANNER_IMAGE` object and replaced `#2D9BF0` with `text-primary`.
+  - **Pricing & Usage State & Token Modernization (`account-usage-view.tsx`, `usage-chart.tsx`, `usage-view.tsx`)**:
+    - Removed unused `setUsage` state setter from `account-usage-view.tsx` while safely preserving `usage = initialUsage`.
+    - Wired `isPending` into the currency selector dropdown button with visual loading spinner.
+    - Replaced hardcoded `#2D9BF0` with `text-primary`, `bg-primary`, and `text-primary-foreground` across `account-usage-view.tsx`, `usage-chart.tsx`, and `usage-view.tsx`.
+  - **Full Production Build Verification**:
+    - Ran `npm run build` with Turbopack: Prisma generated (3.63s), TypeScript passed in 78s with 0 errors, static pages generated in 8.3s, exit code 0.
   - **Community Forum Design Token Cleanup (`features/community/components/`)**:
     - `community-forum-view.tsx`: Replaced hardcoded `#2D9BF0` with `text-primary`, replaced dark background `#0F131C` on search inputs and category select with `bg-background` and `bg-card`, replaced `#121622` in attached trip pill with `dark:bg-card-subtle`, removed `dark:border-zinc-800` across cards, badges, and empty states.
     - `edit-discussion-dialog.tsx`: Standardized dialog shell, header, inputs, selects, textarea, and footer to `bg-card`, `bg-background`, `bg-popover`, and `border-border`.

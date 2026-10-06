@@ -78,7 +78,7 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
   const searchParams = useSearchParams();
   const checkoutSuccess = searchParams?.get("checkout") === "success";
 
-  const [usage, setUsage] = useState<AccountUsageData>(initialUsage);
+  const usage = initialUsage;
   const [pricing, setPricing] = useState<ConvertedPricingDTO | null>(initialPricing || null);
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
   const [openFaqItems, setOpenFaqItems] = useState<string[]>([]);
@@ -205,7 +205,7 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
       {/* ── Top Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 dark:border-zinc-800 pb-5">
         <div className="space-y-1">
-          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block">
             Membership & Quotas
           </span>
           <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
@@ -223,9 +223,10 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
               <Button
                 variant="outline"
                 size="sm"
+                disabled={isPending}
                 className="h-8 text-xs rounded-sm gap-1.5 font-sans font-medium tabular-nums border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] text-foreground dark:text-zinc-200 hover:bg-muted/70 dark:hover:bg-zinc-800/60 cursor-pointer shadow-2xs"
               >
-                <Globe className="h-3.5 w-3.5 text-primary" />
+                <Globe className={`h-3.5 w-3.5 text-primary ${isPending ? "animate-spin" : ""}`} />
                 <span>{activeCurrencyCode} ({currencySymbol})</span>
                 <span className="text-[10px] text-muted-foreground dark:text-zinc-400 ml-0.5">▼</span>
               </Button>
@@ -238,9 +239,8 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
                 <DropdownMenuItem
                   key={c.code}
                   onClick={() => handleCurrencyChange(c.code)}
-                  className={`text-xs cursor-pointer font-sans flex items-center justify-between text-foreground dark:text-zinc-200 dark:hover:bg-zinc-800/60 ${
-                    c.code === activeCurrencyCode ? "font-semibold text-primary bg-primary/5 dark:bg-primary/10" : ""
-                  }`}
+                  className={`text-xs cursor-pointer font-sans flex items-center justify-between text-foreground dark:text-zinc-200 dark:hover:bg-zinc-800/60 ${c.code === activeCurrencyCode ? "font-semibold text-primary bg-primary/5 dark:bg-primary/10" : ""
+                    }`}
                 >
                   <span>{c.name}</span>
                   <span className="font-sans font-medium tabular-nums text-muted-foreground dark:text-zinc-400">{c.symbol} {c.code}</span>
@@ -321,11 +321,10 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
               </span>
               <Badge
                 variant="secondary"
-                className={`font-sans text-xs font-semibold rounded-xs px-2 py-0.5 ${
-                  isPro
+                className={`font-sans text-xs font-semibold rounded-xs px-2 py-0.5 ${isPro
                     ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30"
                     : "bg-muted dark:bg-zinc-800/80 text-foreground dark:text-zinc-200 border-border/80 dark:border-zinc-700"
-                }`}
+                  }`}
               >
                 {usage.tierName}
               </Badge>
@@ -394,11 +393,10 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
             <button
               type="button"
               onClick={() => setBillingCycle("annual")}
-              className={`py-1.5 px-3 rounded-xs font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer border ${
-                isAnnual
+              className={`py-1.5 px-3 rounded-xs font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer border ${isAnnual
                   ? "bg-card dark:bg-[#0F131C] text-foreground dark:text-zinc-100 shadow-2xs border-border/80 dark:border-zinc-800"
                   : "border-transparent text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
-              }`}
+                }`}
             >
               <span>Yearly</span>
               <span className="font-sans text-[9px] font-semibold tabular-nums bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 px-1 py-0.2 rounded-xs shrink-0">
@@ -409,11 +407,10 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
             <button
               type="button"
               onClick={() => setBillingCycle("monthly")}
-              className={`py-1.5 px-3 rounded-xs font-semibold text-xs transition-colors flex items-center justify-center cursor-pointer border ${
-                !isAnnual
+              className={`py-1.5 px-3 rounded-xs font-semibold text-xs transition-colors flex items-center justify-center cursor-pointer border ${!isAnnual
                   ? "bg-card dark:bg-[#0F131C] text-foreground dark:text-zinc-100 shadow-2xs border-border/80 dark:border-zinc-800"
                   : "border-transparent text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
-              }`}
+                }`}
             >
               <span>Monthly</span>
             </button>
@@ -442,14 +439,13 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
             return (
               <Card
                 key={plan.id}
-                className={`relative flex flex-col justify-between rounded-md border transition-all ${
-                  isPlanPro
+                className={`relative flex flex-col justify-between rounded-md border transition-all ${isPlanPro
                     ? "border-primary/60 dark:border-primary/50 shadow-sm bg-card dark:bg-[#0F131C] ring-1 ring-primary/20"
                     : "border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-xs"
-                }`}
+                  }`}
               >
                 {isPlanPro && (
-                  <div className="absolute -top-2.5 right-4 rounded-xs bg-[#2D9BF0] px-2.5 py-0.5 font-sans text-[10px] font-semibold uppercase tracking-wider text-white shadow-xs">
+                  <div className="absolute -top-2.5 right-4 rounded-xs bg-primary px-2.5 py-0.5 font-sans text-[10px] font-semibold uppercase tracking-wider text-primary-foreground shadow-xs">
                     {plan.badge || "Recommended"}
                   </div>
                 )}
@@ -744,7 +740,7 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
               ) : (
                 <Zap className="h-3.5 w-3.5 text-amber-300 fill-amber-300" />
               )}
-              Activate Pro Wanderer (Test Mode)
+              Activate Pro Wanderer
             </Button>
           </DialogFooter>
         </DialogContent>
