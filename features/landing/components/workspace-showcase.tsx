@@ -205,7 +205,7 @@ export function WorkspaceShowcase() {
 
               {/* Right Window Meta */}
               <div className="hidden sm:block text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums shrink-0 tracking-wide">
-                NOV 14 – 22 · 2 travelers
+                NOV 14 – 22 · Rajasthan, India
               </div>
             </div>
 
@@ -284,19 +284,8 @@ export function WorkspaceShowcase() {
                   </nav>
                 </div>
 
-                {/* Bottom Offline Status and Collaborators */}
-                <div className="pt-4 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-3">
-                  <div className="flex items-center justify-between text-[11px] text-zinc-500">
-                    <span>Trip members</span>
-                    <div className="flex -space-x-1.5">
-                      <span className="h-5 w-5 rounded-full bg-[#2D9BF0] text-white text-[9px] font-semibold flex items-center justify-center ring-1 ring-white dark:ring-zinc-900">
-                        AR
-                      </span>
-                      <span className="h-5 w-5 rounded-full bg-amber-500 text-white text-[9px] font-semibold flex items-center justify-center ring-1 ring-white dark:ring-zinc-900">
-                        KD
-                      </span>
-                    </div>
-                  </div>
+                {/* Bottom Offline Status */}
+                <div className="pt-4 border-t border-zinc-200/80 dark:border-zinc-800/80">
                   <div className="flex items-center justify-between text-[10px] text-zinc-400 dark:text-zinc-500">
                     <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />

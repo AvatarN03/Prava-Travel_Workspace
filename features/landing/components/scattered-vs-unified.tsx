@@ -93,8 +93,8 @@ export function ScatteredVsUnified() {
     {
       icon: Receipt,
       header: "Expenses Tab",
-      title: "Multi-Currency Ledger & Splits",
-      detail: "Logged ₹54,200 with automatic USD conversion · 50/50 split among travelers",
+      title: "Multi-Currency Ledger & Categories",
+      detail: "Logged ₹54,200 with automatic USD conversion · Categorized & tracked against budget",
     },
     {
       icon: FileText,

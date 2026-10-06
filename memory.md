@@ -53,8 +53,19 @@
 - **Phase 73: Workspace-Wide High-Contrast Button Theme Unification** (Complete)
 - **Phase 74: Desktop/Mobile Skeleton Alignment & Creator Profile Responsive Enhancements** (Complete)
 - **Phase 75: Trip Workspace Single-Row Action Strip & Template Preview Readability Redesign** (Complete)
+- **Phase 76: Header Bell Notification Cleanup & Landing Page Multi-User Copy Realignment** (Complete)
 
 ## Current Task
+- **Phase 76 Complete**: Header Bell Notification Cleanup & Landing Page Multi-User Copy Realignment:
+  - **TopBar Bell Removal (`components/app-shell/top-bar.tsx`)**:
+    - Removed non-functional static `Bell` notification button, tooltip, and unused `Tooltip` imports from the persistent workspace header.
+    - Prevents dead-end interactive UI and leaves top navigation focused on active utilities (Search, Live Weather, Theme Toggle, Profile).
+  - **Landing Page Multi-User UI & Copy Realignment**:
+    - `features/landing/components/workspace-showcase.tsx`: Removed the simulated "Trip members" avatar stack (`AR`, `KD`) and updated the top window meta from `2 travelers` to `Rajasthan, India`.
+    - `features/landing/components/expenses-section.tsx`: Replaced mock payment types (`Shared · 2 travelers`) with authentic single-traveler payment instruments (`Credit Card`, `UPI`, `Personal`).
+    - `features/landing/components/scattered-vs-unified.tsx`: Realigned expenses copy from `50/50 split among travelers` to `Categorized & tracked against budget`.
+  - **Full Production Build Verification**:
+    - Verified compilation via `npm run build` (Turbopack + Next.js 16.3.3): 0 TypeScript errors, all 29 routes passed with exit code 0.
 - **Phase 75 Complete**: Trip Workspace Single-Row Action Strip & Template Preview Readability Redesign:
   - **Trip Workspace Header Single-Row Alignment (`features/trip-workspace/common/workspace-header.tsx`)**:
     - Removed redundant separate "Add to Calendar" button from the main header controls strip (which is already accessible inside the 3-dot options dropdown menu).
@@ -3710,5 +3721,28 @@
        - Adds a secondary `Create new trip` CTA button directly in the bottom action bar.
     5. **Workspace Archive Card (`ActiveTripWorkspaceCard`)**:
        - Displays `"{destination} Archive"` and an `Archived` badge when rendering a concluded trip.
+- **Task 207 (Comprehensive README.md Documentation Overhaul & Screenshot Slot Architecture)**:
+  - **Context & Requirement**:
+    - User requested an overhaul of `README.md` to reflect the actual features, functionality, and architecture of Prava Travel Workspace.
+    - Specifically requested clear, human-centric documentation answering **What it is**, **Why it was built**, and **How it works**, along with pre-configured slots for drop-in screenshots of the core pages.
+    - User requested removing "V2" branding, embedding `public/logo.png`, clarifying the AI model architecture (Gemini Primary + Multi-Model Routing for simple tasks), and fixing the diagram so it renders cleanly everywhere without raw Mermaid code.
+  - **Implementation**:
+    1. **What, Why, and How Documentation**:
+       - Articulated the core vision of Prava as a **Workspace-First Travel Operating System**.
+       - Detailed the problems with fragmented travel tools (spreadsheets, chat apps, separate note taking) and the shortcomings of conversational "AI slop" without persistent workspace state.
+       - Detailed the 4 core tenets: "Workspace First, AI Second", "The Application Remembers, The LLM Does Not", Transactional AI Proposals, and Productivity-Grade Craftsmanship.
+       - Replaced raw Mermaid code with a universal Unicode box architecture flowchart illustrating the full lifecycle from trip creation to manual planning, AI co-piloting, calendar sync, travel essentials, and community publishing.
+    2. **Screenshot Gallery Slots (`docs/screenshots/`)**:
+       - Structured 12 dedicated screenshot preview sections covering: Cross-Trip Dashboard, Trip Overview & Calendar Sync, Curated Daily Itinerary Timeline, Accommodations Manager, Financials & Expense Tracker, Notes & Markdown Docs, Checklist & AI Packing Lists, Links Vault, Docked Ichinose AI Panel & Proposal Cards, Live Travel Essentials Suite, Community Hub & Forum, and Subscription & Usage.
+       - Created [`docs/screenshots/README.md`](file:///e:/Projects/Web-Dev/NextJS/prava_v2/docs/screenshots/README.md) listing the expected screenshot file names.
+    3. **Exhaustive Module & Technical Reference**:
+       - Documented all 7 Trip Workspace sub-modules, calendar sync (Google Calendar & RFC 5545 `.ics`), and Unsplash tour-vibe photography.
+       - Embedded Prava logo (`public/logo.png`) in top centered banner, removed all "V2" naming across repo guides and headers.
+       - Clarified AI Architecture: Google Gemini (3.x & 2.5 Flash) highlighted as the **Primary Engine** for structured planning, complemented by a **Multi-Model Routing Architecture** (Gemini Flash Lite for conversational Q&A and OpenRouter free models for quota fallback).
+       - Documented Ichinose AI assistant's 3-column companion layout, opposite-theme mirroring, 4-tier complexity evaluator, 15-message ceiling, and atomic Prisma `$transaction` proposal engine.
+       - Documented the Max-Width 7XL Obsidian Live Travel Essentials suite (Weather, ECB exchange rates with interactive SVG charts, 250+ country guides, Leaflet OSM maps, emergency hub, phrasebook).
+       - Documented Polar billing integration, dynamic currency localization (24+ currencies), and Free vs. Pro quota meters.
+       - Included comprehensive technical architecture table, environment variables guide, codebase tree, and key CLI scripts.
   - **Verification**:
-    - `npm run build` executed with exit code 0, 0 TypeScript errors across all routes.
+    - Verified markdown formatting, universal box diagram rendering, logo embedding, and links in [`README.md`](file:///e:/Projects/Web-Dev/NextJS/prava_v2/README.md).
+

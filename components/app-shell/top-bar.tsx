@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 
 import {
   ArrowRight,
-  Bell,
   BookOpen,
   Calendar,
   Coins,
@@ -30,12 +29,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
 import { ThemeToggle } from "./theme-toggle";
 import { TopBarWeather } from "./top-bar-weather";
 
@@ -180,8 +174,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
   const PageIcon = pageInfo.icon;
 
   return (
-    <TooltipProvider>
-      <header className="sticky top-0 z-30 shrink-0 flex h-16 w-full items-center justify-between border-b border-slate-200/80 dark:border-slate-800 bg-transparent backdrop-blur-[2px] dark:bg-[#0A0F1D]/95 backdrop-blur-md px-2 sm:px-4 md:px-6 rounded-none md:rounded-tl-[24px] transition-colors">
+    <header className="sticky top-0 z-30 shrink-0 flex h-16 w-full items-center justify-between border-b border-slate-200/80 dark:border-slate-800 bg-transparent backdrop-blur-[2px] dark:bg-[#0A0F1D]/95 backdrop-blur-md px-2 sm:px-4 md:px-6 rounded-none md:rounded-tl-[24px] transition-colors">
         {/* Left: Mobile Trigger & Page Title */}
         <div className="flex items-center gap-1.5 sm:gap-4 min-w-0">
           <Button
@@ -214,23 +207,6 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
             className="text-slate-500 dark:text-slate-400 hover:text-[#2D9BF0] dark:hover:text-[#2D9BF0] hover:bg-sky-50 dark:hover:bg-slate-800"
             iconSize={20}
           />
-
-          {/* Notifications Tooltip */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 sm:h-9 sm:w-9 text-slate-500 dark:text-slate-400 hover:text-[#2D9BF0] hover:bg-sky-50 dark:hover:bg-slate-800 cursor-pointer"
-              >
-                <Bell className="h-4 w-4" />
-                <span className="sr-only">Notifications</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-xs">Notifications &amp; Alerts</p>
-            </TooltipContent>
-          </Tooltip>
 
           {/* User Profile (Avatar and Name collected in a single interactive Popover trigger) */}
           {loading ? (
@@ -419,8 +395,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
             </Popover>
           )}
         </div>
-      </header>
-    </TooltipProvider>
+    </header>
   );
 }
 
