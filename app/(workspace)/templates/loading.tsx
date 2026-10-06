@@ -17,10 +17,10 @@ export default function TemplatesLoading() {
       {/* Filter Toolbar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 py-1">
         <div className="h-4 w-44 bg-muted/60 dark:bg-zinc-800 rounded-xs" />
-        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          <div className="h-8 w-36 bg-background dark:bg-card border border-border dark:border-zinc-800 rounded-sm" />
-          <div className="h-8 w-32 bg-background dark:bg-card border border-border dark:border-zinc-800 rounded-sm" />
-          <div className="h-8 w-32 bg-background dark:bg-card border border-border dark:border-zinc-800 rounded-sm" />
+        <div className="flex items-center gap-2 w-full md:w-auto shrink-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none flex-nowrap">
+          <div className="h-8 w-36 bg-background dark:bg-card border border-border dark:border-zinc-800 rounded-sm shrink-0" />
+          <div className="h-8 w-32 bg-background dark:bg-card border border-border dark:border-zinc-800 rounded-sm shrink-0" />
+          <div className="h-8 w-32 bg-background dark:bg-card border border-border dark:border-zinc-800 rounded-sm shrink-0" />
         </div>
       </div>
 

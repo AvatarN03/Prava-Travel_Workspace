@@ -51,8 +51,30 @@
 - **Phase 71: Inbuilt Shadcn Button High-Contrast Theme & Travel Essentials Integration** (Complete)
 - **Phase 72: Trip Workspace Inside Pages & Mobile Skeleton Loading Refactor** (Complete)
 - **Phase 73: Workspace-Wide High-Contrast Button Theme Unification** (Complete)
+- **Phase 74: Desktop/Mobile Skeleton Alignment & Creator Profile Responsive Enhancements** (Complete)
 
 ## Current Task
+- **Phase 74 Complete**: Desktop/Mobile Skeleton Alignment & Creator Profile Responsive Enhancements:
+  - **Forum Loading Skeleton (`app/(workspace)/forum/loading.tsx`)**:
+    - Replaced obsolete full-width single-column list with a 3-column card grid (`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5`), thumbnail images, badges, and post meta matching `CommunityForumView`.
+  - **Stories Loading Skeleton (`app/(workspace)/stories/loading.tsx`)**:
+    - Removed non-existent full-width "Featured Story Hero Card" which caused massive layout shift on desktop.
+    - Aligned with `app/(workspace)/stories/page.tsx` rendering tags filter strip followed immediately by 3-column stories grid.
+  - **Username Profile Skeleton & Mobile UI (`features/profile/components/creator-profile-view.tsx` & `app/(workspace)/u/[username]/loading.tsx`)**:
+    - Created dedicated, pixel-accurate `loading.tsx` for `/u/[username]` to replace fallback to root workspace skeleton.
+    - Compacted creator bio card on mobile (`p-4 sm:p-8`, `h-14 w-14 sm:h-24 sm:w-24` avatar, responsive typography) to prevent oversized height on small screens.
+    - Integrated native 1-tap `<Select>` tabs dropdown for mobile navigation (`sm:hidden`) while preserving tab strip on tablet and desktop (`hidden sm:flex`).
+  - **Trips List Loading Skeleton (`app/(workspace)/trips/loading.tsx`)**:
+    - Removed outdated status pills skeleton with blue borders and extraneous 4th element.
+    - Synchronized toolbar skeleton with `trip-list.tsx`: search bar on left, Status and Sort dropdowns + View Mode toggle on right for desktop, and 3-element single row on mobile.
+  - **Templates Page Single-Row Mobile Filter (`features/templates/components/templates-view.tsx` & `templates/loading.tsx`)**:
+    - Replaced `flex-wrap` with `overflow-x-auto scrollbar-none flex-nowrap` and `shrink-0` min-widths so all 3 filter dropdowns (Inclusions, Durations, Sort) stay in a single horizontal row on mobile without breaking onto two rows.
+  - **Profile Page Mobile Skeleton (`app/(workspace)/profile/loading.tsx`)**:
+    - Hidden desktop vertical sidebar navigation on mobile (`hidden md:flex`), rendering stacked section skeletons on mobile (`md:hidden`) to match actual mobile `profile-editor.tsx`.
+  - **Subscription Page Skeleton (`app/(workspace)/subscription/loading.tsx`)**:
+    - Realigned with `AccountUsageView`: added currency dropdown skeleton, active tier quota chips, View Usage button, segmented yearly/monthly billing switcher, and dual plan comparison cards.
+  - **Verification**: `npm run build` executed and passed with 0 errors across all routes and components.
+
 - **Phase 73 Complete**: Workspace-Wide High-Contrast Button Theme Unification:
   - **Core Objective**: Implement the unified shadcn high-contrast button styling (`bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-white`) across all remaining pages, dialogs, and workspace components without modifying unrelated code, while strictly maintaining Cerulean Blue (`#2D9BF0`) accents for badges, icons, borders, and text.
   - **Updated Modules & Surfaces**:

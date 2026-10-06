@@ -28,23 +28,26 @@ export default function TripsLoading() {
       </div>
 
       {/* Search & Filter Toolbar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 py-1">
-        <div className="flex flex-wrap items-center gap-1.5">
-          {["All", "Active", "Planning", "Completed", "Archived"].map((label, i) => (
-            <div
-              key={label}
-              className={`h-8 px-3 rounded-xs ${
-                i === 0
-                  ? "bg-primary/20 border border-primary/40 w-14"
-                  : "bg-muted/40 dark:bg-card-subtle border border-border/60 dark:border-zinc-800/70 w-20"
-              }`}
-            />
-          ))}
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          {/* Search Bar */}
+          <div className="relative flex-1 max-w-sm">
+            <div className="h-9 w-full bg-card dark:bg-[#121622] border border-border/80 dark:border-zinc-800 rounded-sm" />
+          </div>
+
+          {/* Desktop Controls (hidden on mobile, flex on sm+) */}
+          <div className="hidden sm:flex items-center gap-2">
+            <div className="h-9 w-[155px] bg-card dark:bg-[#0F131C] border border-border/80 dark:border-zinc-800 rounded-sm" />
+            <div className="h-9 w-[190px] bg-card dark:bg-[#0F131C] border border-border/80 dark:border-zinc-800 rounded-sm" />
+            <div className="h-8 w-16 bg-card dark:bg-[#121622] border border-border dark:border-zinc-800 rounded-md shrink-0" />
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
-          <div className="h-8 w-48 bg-muted/50 dark:bg-card border border-border/80 dark:border-zinc-800 rounded-sm" />
-          <div className="h-8 w-24 bg-muted/50 dark:bg-card border border-border/80 dark:border-zinc-800 rounded-sm" />
+        {/* Mobile Responsive Controls (< sm): 3 items in a single row */}
+        <div className="flex sm:hidden items-center gap-2 w-full">
+          <div className="h-9 flex-1 bg-card dark:bg-[#0F131C] border border-border/80 dark:border-zinc-800 rounded-sm min-w-0" />
+          <div className="h-9 flex-1 bg-card dark:bg-[#0F131C] border border-border/80 dark:border-zinc-800 rounded-sm min-w-0" />
+          <div className="h-8 w-16 bg-card dark:bg-[#121622] border border-border dark:border-zinc-800 rounded-md shrink-0" />
         </div>
       </div>
 

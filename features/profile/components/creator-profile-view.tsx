@@ -28,6 +28,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StoryCard, type StoryCardItem } from "@/features/blog";
 import { CloneTripButton } from "@/features/templates";
@@ -92,10 +99,10 @@ export function CreatorProfileView({ creator }: CreatorProfileViewProps) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 selection:bg-primary/20 selection:text-primary w-full">
       {/* Instagram-Inspired Creator Identity Hero */}
-      <section className="rounded-xl border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-6 sm:p-8 shadow-xs">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-          {/* Large Avatar */}
-          <div className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-full overflow-hidden border-2 border-border dark:border-zinc-800 bg-muted dark:bg-zinc-900 shadow-xs shrink-0 flex items-center justify-center text-xl font-bold text-foreground dark:text-zinc-100">
+      <section className="rounded-xl border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-8 shadow-xs">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+          {/* Avatar (Compact on mobile) */}
+          <div className="relative h-14 w-14 sm:h-24 sm:w-24 rounded-full overflow-hidden border-2 border-border dark:border-zinc-800 bg-muted dark:bg-zinc-900 shadow-xs shrink-0 flex items-center justify-center text-base sm:text-xl font-bold text-foreground dark:text-zinc-100">
             {creator.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -109,28 +116,28 @@ export function CreatorProfileView({ creator }: CreatorProfileViewProps) {
           </div>
 
           {/* Identity Info & Metrics */}
-          <div className="space-y-3 flex-1 min-w-0">
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50 truncate">
+          <div className="space-y-2 sm:space-y-3 flex-1 min-w-0 w-full">
+            <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+              <h1 className="font-sans text-xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50 truncate">
                 {creator.fullName}
               </h1>
-              <Badge variant="secondary" className="gap-1 text-[11px] font-mono rounded-sm border-border dark:border-zinc-800">
+              <Badge variant="secondary" className="gap-1 text-[10px] sm:text-[11px] font-mono rounded-sm border-border dark:border-zinc-800">
                 <Globe className="h-3 w-3 text-primary" /> @{creator.username}
               </Badge>
             </div>
 
             {creator.bio ? (
-              <p className="text-sm text-muted-foreground dark:text-zinc-300 leading-relaxed max-w-3xl">
+              <p className="text-xs sm:text-sm text-muted-foreground dark:text-zinc-300 leading-relaxed max-w-3xl">
                 {creator.bio}
               </p>
             ) : (
-              <p className="text-sm text-muted-foreground dark:text-zinc-500 italic">
+              <p className="text-xs sm:text-sm text-muted-foreground dark:text-zinc-500 italic">
                 Traveler and trip architect on Prava.
               </p>
             )}
 
             {/* Instagram-Style Horizontal Metrics Bar */}
-            <div className="flex items-center gap-6 pt-1 text-xs text-muted-foreground dark:text-zinc-400">
+            <div className="flex items-center gap-4 sm:gap-6 pt-1 text-xs text-muted-foreground dark:text-zinc-400">
               <button
                 type="button"
                 onClick={() => setActiveTab("itineraries")}
@@ -181,9 +188,43 @@ export function CreatorProfileView({ creator }: CreatorProfileViewProps) {
 
       {/* Instagram-Style Clean Tabbed Layout */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        {/* Navigation Tabs Bar */}
-        <div className="border-b border-border dark:border-zinc-800 pb-px">
-          <TabsList className="bg-transparent h-11 p-0 gap-2 sm:gap-6 flex justify-start sm:justify-center w-full overflow-x-auto scrollbar-none">
+        {/* Mobile View: 1-Tap Select Dropdown (< sm) */}
+        <div className="sm:hidden w-full pb-1">
+          <Select value={activeTab} onValueChange={setActiveTab}>
+            <SelectTrigger className="h-10 text-xs w-full bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800 text-foreground dark:text-zinc-200 rounded-sm shadow-xs cursor-pointer">
+              <div className="flex items-center gap-2">
+                {activeTab === "itineraries" && <Compass className="h-3.5 w-3.5 text-primary" />}
+                {activeTab === "stories" && <BookOpen className="h-3.5 w-3.5 text-primary" />}
+                {activeTab === "forum" && <MessageSquare className="h-3.5 w-3.5 text-primary" />}
+                {activeTab === "about" && <Sparkles className="h-3.5 w-3.5 text-primary" />}
+                <span className="font-semibold">
+                  {activeTab === "itineraries" && `Itineraries (${creator.trips.length})`}
+                  {activeTab === "stories" && `Stories (${creator.stories.length})`}
+                  {activeTab === "forum" && `Discussions (${forumPosts.length})`}
+                  {activeTab === "about" && "About & DNA"}
+                </span>
+              </div>
+            </SelectTrigger>
+            <SelectContent className="dark:bg-[#0F131C] dark:border-zinc-800">
+              <SelectItem value="itineraries" className="text-xs cursor-pointer">
+                Itineraries ({creator.trips.length})
+              </SelectItem>
+              <SelectItem value="stories" className="text-xs cursor-pointer">
+                Stories ({creator.stories.length})
+              </SelectItem>
+              <SelectItem value="forum" className="text-xs cursor-pointer">
+                Discussions ({forumPosts.length})
+              </SelectItem>
+              <SelectItem value="about" className="text-xs cursor-pointer">
+                About & DNA
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Tablet & Desktop View: Navigation Tabs Bar (sm and up) */}
+        <div className="hidden sm:block border-b border-border dark:border-zinc-800 pb-px">
+          <TabsList className="bg-transparent h-11 p-0 gap-2 sm:gap-6 flex justify-center w-full overflow-x-auto scrollbar-none">
             <TabsTrigger
               value="itineraries"
               className="gap-2 text-xs font-semibold px-4 py-2.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent hover:text-foreground dark:hover:text-zinc-200 transition-all cursor-pointer shrink-0"

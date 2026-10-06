@@ -176,14 +176,14 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
           </span>
         </div>
 
-        {/* Right: Inclusions Select, Duration Select, Sort Select & Reset */}
-        <div className="flex items-center gap-2 self-start md:self-auto shrink-0 flex-wrap sm:flex-nowrap">
+        {/* Right: Inclusions Select, Duration Select, Sort Select & Reset (Single Horizontal Row) */}
+        <div className="flex items-center gap-2 w-full md:w-auto shrink-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none flex-nowrap">
           {/* Inclusion Filter Dropdown */}
           <Select
             value={inclusionFilter}
             onValueChange={(val) => setInclusionFilter(val as InclusionFilter)}
           >
-            <SelectTrigger className="h-8 text-xs w-[155px] bg-background dark:bg-[#0F131C] border-border dark:border-zinc-800 text-foreground dark:text-zinc-200 rounded-sm">
+            <SelectTrigger className="h-8 text-xs min-w-[130px] sm:w-[155px] shrink-0 bg-background dark:bg-[#0F131C] border-border dark:border-zinc-800 text-foreground dark:text-zinc-200 rounded-sm">
               <Filter className="w-3.5 h-3.5 mr-1.5 text-muted-foreground shrink-0" />
               <SelectValue placeholder="Inclusions" />
             </SelectTrigger>
@@ -201,7 +201,7 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
             value={durationFilter}
             onValueChange={(val) => setDurationFilter(val as DurationFilter)}
           >
-            <SelectTrigger className="h-8 text-xs w-[155px] bg-background dark:bg-[#0F131C] border-border dark:border-zinc-800 text-foreground dark:text-zinc-200 rounded-sm">
+            <SelectTrigger className="h-8 text-xs min-w-[130px] sm:w-[155px] shrink-0 bg-background dark:bg-[#0F131C] border-border dark:border-zinc-800 text-foreground dark:text-zinc-200 rounded-sm">
               <Clock className="w-3.5 h-3.5 mr-1.5 text-muted-foreground shrink-0" />
               <SelectValue placeholder="Duration" />
             </SelectTrigger>
@@ -219,7 +219,7 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
             value={sortBy}
             onValueChange={(val) => setSortBy(val as SortOption)}
           >
-            <SelectTrigger className="h-8 text-xs w-[145px] bg-background dark:bg-[#0F131C] border-border dark:border-zinc-800 text-foreground dark:text-zinc-200 rounded-sm">
+            <SelectTrigger className="h-8 text-xs min-w-[125px] sm:w-[145px] shrink-0 bg-background dark:bg-[#0F131C] border-border dark:border-zinc-800 text-foreground dark:text-zinc-200 rounded-sm">
               <ArrowUpDown className="w-3.5 h-3.5 mr-1.5 text-muted-foreground shrink-0" />
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
@@ -235,7 +235,7 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
               variant="ghost"
               size="sm"
               onClick={handleResetFilters}
-              className="h-8 px-2 text-xs text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 cursor-pointer rounded-sm"
+              className="h-8 px-2 text-xs text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 cursor-pointer rounded-sm shrink-0"
             >
               Reset
             </Button>
