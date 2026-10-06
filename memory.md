@@ -52,8 +52,20 @@
 - **Phase 72: Trip Workspace Inside Pages & Mobile Skeleton Loading Refactor** (Complete)
 - **Phase 73: Workspace-Wide High-Contrast Button Theme Unification** (Complete)
 - **Phase 74: Desktop/Mobile Skeleton Alignment & Creator Profile Responsive Enhancements** (Complete)
+- **Phase 75: Trip Workspace Single-Row Action Strip & Template Preview Readability Redesign** (Complete)
 
 ## Current Task
+- **Phase 75 Complete**: Trip Workspace Single-Row Action Strip & Template Preview Readability Redesign:
+  - **Trip Workspace Header Single-Row Alignment (`features/trip-workspace/common/workspace-header.tsx`)**:
+    - Removed redundant separate "Add to Calendar" button from the main header controls strip (which is already accessible inside the 3-dot options dropdown menu).
+    - Made the actions strip strictly single-row across all screen sizes (`flex items-center justify-between gap-2 w-full flex-nowrap`), preventing the two-row wrapping on mobile that was crowding the top of the itinerary workspace.
+    - Updated `app/(workspace)/trips/[tripId]/loading.tsx` to match this single-row layout without the calendar button skeleton.
+  - **Template Preview Dialog Readability Redesign (`features/templates/components/template-preview-dialog.tsx`)**:
+    - Solved issue where oversized title and wrapped badges consumed half the dialog height on mobile, rendering the schedule unreadable.
+    - Compacted `DialogHeader` with right padding (`pr-11`) to prevent close button collision, organized badges into a single compact row, clamped title to a clean `text-base sm:text-lg truncate`, and description to single-line.
+    - Reduced `TabsList` height to `h-8 sm:h-9` and gave the scrollable schedule/stays/packing tabs 75%+ of the vertical space for optimal readability on mobile and desktop.
+  - **Verification**: `npm run build` executed and passed with 0 errors across all routes and components.
+
 - **Phase 74 Complete**: Desktop/Mobile Skeleton Alignment & Creator Profile Responsive Enhancements:
   - **Forum Loading Skeleton (`app/(workspace)/forum/loading.tsx`)**:
     - Replaced obsolete full-width single-column list with a 3-column card grid (`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5`), thumbnail images, badges, and post meta matching `CommunityForumView`.

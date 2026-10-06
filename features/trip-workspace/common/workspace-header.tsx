@@ -342,26 +342,26 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
 
         {/* 3. Action Control Strip & Metadata Below the Banner */}
         <div className="space-y-2 pt-0.5">
-          {/* Main Controls Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          {/* Main Controls Row: Kept strictly in ONE single row across all screen sizes */}
+          <div className="flex items-center justify-between gap-2 w-full flex-nowrap">
             {/* Left: Workspace Eyebrow */}
-            <div className="flex items-center gap-2">
-              <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase flex items-center gap-1.5">
-                <Compass className="w-3.5 h-3.5 text-[#2D9BF0]" />
+            <div className="flex items-center gap-1.5 min-w-0">
+              <Compass className="w-3.5 h-3.5 text-[#2D9BF0] shrink-0" />
+              <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase truncate">
                 Trip Workspace
               </span>
             </div>
 
-            {/* Right: Actions Row (Public badge beside AI Assistant, Status, Calendar, Menu) */}
-            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            {/* Right: Actions Row (Public badge, Status, AI Assistant, Menu) */}
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap shrink-0">
               {/* Public Community Trip Badge */}
               {isPublic && (
                 <Badge
                   variant="outline"
-                  className="gap-1 font-sans text-[11px] font-semibold tracking-wide border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shadow-2xs h-8 px-2.5 rounded-xs"
+                  className="gap-1 font-sans text-[10px] sm:text-[11px] font-semibold tracking-wide border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shadow-2xs h-7 sm:h-8 px-2 sm:px-2.5 rounded-xs shrink-0"
                 >
-                  <Globe className="w-3 h-3 text-emerald-500" />
-                  <span>Public</span>
+                  <Globe className="w-3 h-3 text-emerald-500 shrink-0" />
+                  <span className="hidden xs:inline">Public</span>
                 </Badge>
               )}
 
@@ -371,7 +371,7 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                 onValueChange={(val) => handleStatusChange(val as TripStatus)}
                 disabled={isStatusChanging}
               >
-                <SelectTrigger className="h-8 font-sans text-xs font-medium w-[120px] rounded-xs cursor-pointer dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-200">
+                <SelectTrigger className="h-7 sm:h-8 font-sans text-xs font-medium w-[105px] sm:w-[120px] rounded-xs cursor-pointer shrink-0 dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-200">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent className="rounded-sm dark:bg-[#0F131C] dark:border-zinc-800">
@@ -390,27 +390,6 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                 </SelectContent>
               </Select>
 
-              {/* Calendar Sync Button */}
-              <TooltipProvider delayDuration={150}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-8 gap-1.5 font-sans text-xs font-medium cursor-pointer transition-all rounded-xs border-border/80 dark:border-zinc-800 hover:bg-muted dark:hover:bg-[#121622] text-foreground dark:text-zinc-200 dark:bg-[#0F131C]"
-                      onClick={() => setIsCalendarOpen(true)}
-                      aria-label="Add Trip to Calendar"
-                    >
-                      <Calendar className="h-3.5 w-3.5 text-[#2D9BF0]" />
-                      <span className="hidden sm:inline">Add to Calendar</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="text-xs dark:bg-[#0F131C] dark:border-zinc-800 dark:text-zinc-200">
-                    Sync trip to Google Calendar or download .ics
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
               {/* AI Assistant Button (Ichinose - Prava AI Assistant) */}
               <TooltipProvider delayDuration={150}>
                 <Tooltip>
@@ -418,7 +397,7 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                     <Button
                       variant={isAiOpen ? "default" : "outline"}
                       size="sm"
-                      className={`h-8 gap-1.5 font-sans text-xs font-medium cursor-pointer transition-all rounded-xs ${
+                      className={`h-7 sm:h-8 px-2 sm:px-3 gap-1.5 font-sans text-xs font-medium cursor-pointer transition-all rounded-xs shrink-0 ${
                         isAiOpen
                           ? "bg-[#2D9BF0] text-white shadow-xs hover:bg-[#2587d4]"
                           : "border-[#2D9BF0]/40 hover:border-[#2D9BF0] hover:bg-[#2D9BF0]/10 text-[#2D9BF0] dark:border-[#2D9BF0]/50 dark:hover:bg-[#2D9BF0]/20 dark:bg-[#0F131C]"
@@ -489,7 +468,7 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 cursor-pointer rounded-xs"
+                    className="h-7 sm:h-8 w-7 sm:w-8 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 cursor-pointer rounded-xs shrink-0"
                   >
                     <MoreHorizontal className="h-4 w-4" />
                     <span className="sr-only">Trip Settings</span>

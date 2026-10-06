@@ -91,29 +91,31 @@ export function TemplatePreviewDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden rounded-sm sm:rounded-sm dark:bg-[#0F131C] dark:border-zinc-800">
-        {/* Modal Header */}
-        <DialogHeader className="p-5 pb-3 border-b border-border dark:border-zinc-800 bg-muted/20 dark:bg-[#090D16]">
-          <div className="flex items-center gap-2 flex-wrap mb-1.5">
-            <Badge variant="secondary" className="text-xs px-2 py-0.5 dark:border-zinc-800">
+      <DialogContent className="max-w-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden rounded-sm sm:rounded-sm dark:bg-[#0F131C] dark:border-zinc-800">
+        {/* Modal Header: Space-efficient, left-aligned, won't crowd the close button */}
+        <DialogHeader className="p-3.5 sm:p-4 pb-2.5 sm:pb-3 pr-11 border-b border-border dark:border-zinc-800 bg-muted/20 dark:bg-[#090D16] text-left">
+          {/* Top Metadata Badges in a single compact row */}
+          <div className="flex items-center gap-1.5 flex-wrap sm:flex-nowrap mb-1">
+            <Badge variant="secondary" className="text-[10px] sm:text-[11px] px-1.5 py-0.2 shrink-0 dark:border-zinc-800">
               <Clock className="w-3 h-3 mr-1 text-primary" />
               {trip.durationDays} {trip.durationDays === 1 ? "Day" : "Days"}
             </Badge>
 
             {trip.isOwn && (
-              <Badge className="bg-primary/15 text-primary border border-primary/30 text-xs px-2 py-0.5">
+              <Badge className="bg-primary/15 text-primary border border-primary/30 text-[10px] sm:text-[11px] px-1.5 py-0.2 shrink-0">
                 <User className="w-3 h-3 mr-1" /> Your Template
               </Badge>
             )}
 
             {trip.destination && (
-              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground dark:text-zinc-400 font-medium">
-                <MapPin className="w-3.5 h-3.5 text-primary" /> {trip.destination}
+              <span className="inline-flex items-center gap-1 text-[11px] sm:text-xs text-muted-foreground dark:text-zinc-400 font-medium truncate">
+                <MapPin className="w-3 h-3 text-primary shrink-0" />
+                <span className="truncate">{trip.destination}</span>
               </span>
             )}
 
             {trip.metrics.expenseTotal > 0 && (
-              <Badge className="ml-auto bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs">
+              <Badge className="sm:ml-auto bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[10px] sm:text-[11px] px-1.5 py-0.2 shrink-0">
                 <Wallet className="w-3 h-3 mr-1" />
                 Est. ~{trip.metrics.expenseTotal.toLocaleString()}{" "}
                 {trip.metrics.currency}
@@ -121,32 +123,32 @@ export function TemplatePreviewDialog({
             )}
           </div>
 
-          <DialogTitle className="text-lg font-bold text-foreground dark:text-zinc-100">
+          <DialogTitle className="text-base sm:text-lg font-bold text-foreground dark:text-zinc-100 truncate text-left">
             {trip.title}
           </DialogTitle>
 
-          <DialogDescription className="text-xs text-muted-foreground dark:text-zinc-400 line-clamp-2">
+          <DialogDescription className="text-[11px] sm:text-xs text-muted-foreground dark:text-zinc-400 line-clamp-1 text-left mt-0.5">
             {trip.description ||
               "Review the full day-by-day schedule, stays, and packing list before cloning."}
           </DialogDescription>
         </DialogHeader>
 
         {/* Modal Body with Tabs */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4">
+        <div className="flex-1 min-h-0 overflow-y-auto p-3.5 sm:p-5 space-y-3">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-3 h-9 mb-4 rounded-sm dark:bg-zinc-900 dark:border-zinc-800">
-              <TabsTrigger value="itinerary" className="text-xs gap-1.5 rounded-sm">
-                <Calendar className="h-3.5 w-3.5" />
+            <TabsList className="grid grid-cols-3 h-8 sm:h-9 mb-3 rounded-sm dark:bg-zinc-900 dark:border-zinc-800">
+              <TabsTrigger value="itinerary" className="text-[11px] sm:text-xs gap-1 sm:gap-1.5 rounded-sm py-1">
+                <Calendar className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 <span>Itinerary ({trip.metrics.activityCount})</span>
               </TabsTrigger>
 
-              <TabsTrigger value="stays" className="text-xs gap-1.5 rounded-sm">
-                <Compass className="h-3.5 w-3.5" />
+              <TabsTrigger value="stays" className="text-[11px] sm:text-xs gap-1 sm:gap-1.5 rounded-sm py-1">
+                <Compass className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 <span>Stays ({trip.metrics.accommodationCount})</span>
               </TabsTrigger>
 
-              <TabsTrigger value="prep" className="text-xs gap-1.5 rounded-sm">
-                <CheckSquare className="h-3.5 w-3.5" />
+              <TabsTrigger value="prep" className="text-[11px] sm:text-xs gap-1 sm:gap-1.5 rounded-sm py-1">
+                <CheckSquare className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 <span>Packing & Tips</span>
               </TabsTrigger>
             </TabsList>

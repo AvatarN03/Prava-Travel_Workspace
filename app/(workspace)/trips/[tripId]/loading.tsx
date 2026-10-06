@@ -20,21 +20,20 @@ export default function TripWorkspaceRootLoading() {
         </div>
       </div>
 
-      {/* 3. Action Control Strip & Metadata Below Banner */}
+      {/* 3. Action Control Strip & Metadata Below Banner (Single Row) */}
       <div className="space-y-2 pt-0.5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2 w-full flex-nowrap">
           {/* Left: Workspace Eyebrow */}
-          <div className="flex items-center gap-1.5">
-            <div className="h-3.5 w-3.5 rounded-xs bg-primary/40" />
-            <div className="h-3.5 w-24 rounded-xs bg-primary/30" />
+          <div className="flex items-center gap-1.5 min-w-0">
+            <div className="h-3.5 w-3.5 rounded-xs bg-primary/40 shrink-0" />
+            <div className="h-3.5 w-24 rounded-xs bg-primary/30 truncate" />
           </div>
 
-          {/* Right: Actions Row (Status, Calendar, AI Assistant, Menu) */}
-          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-            <div className="h-8 w-[120px] rounded-xs bg-card dark:bg-card-subtle border border-border/80 dark:border-zinc-800" />
-            <div className="h-8 w-8 sm:w-32 rounded-xs bg-card dark:bg-card-subtle border border-border/80 dark:border-zinc-800" />
-            <div className="h-8 w-24 rounded-xs bg-card dark:bg-card-subtle border border-primary/40" />
-            <div className="h-8 w-8 rounded-xs bg-card dark:bg-card-subtle border border-border/80 dark:border-zinc-800" />
+          {/* Right: Actions Row (Status, AI Assistant, Menu) */}
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap shrink-0">
+            <div className="h-7 sm:h-8 w-[105px] sm:w-[120px] rounded-xs bg-card dark:bg-card-subtle border border-border/80 dark:border-zinc-800 shrink-0" />
+            <div className="h-7 sm:h-8 w-20 sm:w-24 rounded-xs bg-card dark:bg-card-subtle border border-primary/40 shrink-0" />
+            <div className="h-7 sm:h-8 w-7 sm:w-8 rounded-xs bg-card dark:bg-card-subtle border border-border/80 dark:border-zinc-800 shrink-0" />
           </div>
         </div>
       </div>
