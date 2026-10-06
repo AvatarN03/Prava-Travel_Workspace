@@ -54,8 +54,69 @@
 - **Phase 74: Desktop/Mobile Skeleton Alignment & Creator Profile Responsive Enhancements** (Complete)
 - **Phase 75: Trip Workspace Single-Row Action Strip & Template Preview Readability Redesign** (Complete)
 - **Phase 76: Header Bell Notification Cleanup & Landing Page Multi-User Copy Realignment** (Complete)
+- **Phase 77: Global CSS Deduplication, Theme Token Consolidation & Skeleton Modernization** (Complete)
+- **Phase 78: Shell & Blog Design Tokens, Avatar Upload Limit & TopBar Unused State Elimination** (Complete)
+- **Phase 79: Community Forum Design Token Modernization & Forum Actions Prisma Migration** (Complete)
 
 ## Current Task
+- **Phase 79 Complete**: Community Forum Design Token Modernization & Forum Actions Prisma Migration:
+  - **Community Forum Design Token Cleanup (`features/community/components/`)**:
+    - `community-forum-view.tsx`: Replaced hardcoded `#2D9BF0` with `text-primary`, replaced dark background `#0F131C` on search inputs and category select with `bg-background` and `bg-card`, replaced `#121622` in attached trip pill with `dark:bg-card-subtle`, removed `dark:border-zinc-800` across cards, badges, and empty states.
+    - `edit-discussion-dialog.tsx`: Standardized dialog shell, header, inputs, selects, textarea, and footer to `bg-card`, `bg-background`, `bg-popover`, and `border-border`.
+    - `forum-thread-view.tsx`: Cleaned up 3-dot options dropdown, main post card, attached workspace trip badge (`dark:bg-card-subtle`), advice composer textarea, and inline reply editor to use semantic tokens.
+    - `new-discussion-dialog.tsx`: Removed all `#0F131C`, `#121622`, and `dark:border-zinc-800` hardcoded styles, binding all controls directly to semantic tokens.
+    - `save-tip-dialog.tsx`: Replaced preview card and select styles with `bg-card`, `dark:bg-card-subtle`, and `border-border`.
+  - **Forum Actions Complete Prisma ORM Migration (`features/community/forum-actions.ts`)**:
+    - Removed `pg` and `Pool` entirely from the community module, eliminating the second unmanaged database connection pool (`globalForPg.pgPool`).
+    - Migrated `getForumDiscussions` from raw multi-table SQL with string-interpolated subqueries to `db.communityPost.findMany` with typed relations (`profile`, `linkedTrip`, `_count: { select: { replies: true } }`, `upvoteRecords`, `savedRecords`).
+    - Migrated `getForumPostBySlug` from raw SQL to `db.communityPost.findFirst` with eager relation loading and `db.communityPost.updateMany` for background view increments.
+    - Replaced all raw subqueries (`EXISTS (SELECT 1 FROM community_post_upvotes...)`) with relation array checks, providing 100% type safety and compile-time verification.
+  - **Production Build Verification**:
+    - Full Turbopack Next.js production build (`npm run build`) passed with 0 TypeScript errors and exit code 0 across all 29 routes.
+- **Phase 78 Complete**: Shell & Blog Design Tokens, Avatar Upload Limit & TopBar Unused State Elimination:
+  - **Avatar Upload Size Limit (`components/storage/avatar-upload.tsx`)**:
+    - Reduced maximum raw file size threshold from 5MB (`5 * 1024 * 1024`) to 2MB (`2 * 1024 * 1024`).
+    - Updated toast notification message to reflect `"File size must be under 2MB"`.
+  - **TopBar Unused State & Design Tokens (`components/app-shell/top-bar.tsx`)**:
+    - Eliminated dead `mounted` state (`const [mounted, setMounted] = useState(false);`) and its mounting `useEffect`.
+    - Replaced hardcoded dark background `dark:bg-[#0A0F1D]/95` with semantic `dark:bg-background/95`.
+    - Replaced hardcoded hover text `hover:text-[#2D9BF0]` with `hover:text-primary`.
+    - Replaced hardcoded popover colors `bg-white dark:bg-[#0E1526]` with `bg-popover text-popover-foreground`.
+    - Replaced username text color `text-[#2D9BF0] dark:text-[#55B8FF]` with `text-primary`.
+    - Replaced profile menu bottom link colors `text-[#2D9BF0] ... bg-[#2D9BF0]/10 hover:bg-[#2D9BF0]` with `text-primary ... bg-primary/10 hover:bg-primary`.
+  - **Theme Toggle Token Alignment (`components/app-shell/theme-toggle.tsx`)**:
+    - Replaced hardcoded hover colors `hover:text-[#2D9BF0] dark:hover:text-[#2D9BF0]` with `hover:text-primary dark:hover:text-primary`.
+  - **Shell Theme Tokens (`app/globals.css`, `components/app-shell/app-shell.tsx`, `components/app-shell/sidebar.tsx`)**:
+    - Defined `--color-shell: #090E1A;` and `--color-shell-border: #152033;` in `@theme inline` in `app/globals.css`.
+    - Replaced hardcoded `#090E1A` and `#152033` in `app-shell.tsx` and `sidebar.tsx` with semantic Tailwind classes `bg-shell` and `border-shell-border`.
+    - Replaced `dark:bg-[#0A0F1D]` in `app-shell.tsx` with `dark:bg-background` and `border-blue-500` with `border-primary/80`.
+    - Replaced active nav item `bg-[#2D9BF0] text-white` in `sidebar.tsx` with `bg-primary text-primary-foreground`.
+  - **Blog Studio & Stories Design Tokens (`features/blog/components/`)**:
+    - `blog-editor.tsx`: Replaced `dark:bg-[#121622]` with `dark:bg-card-subtle`, removed `dark:border-zinc-800` from markdown editor, and standardized Cover Image, Gallery, and Tags cards to `border border-border bg-card`.
+    - `my-stories-list.tsx`: Replaced `dark:bg-[#0F131C]` with `bg-card`, and badge backgrounds `dark:bg-[#121622]/90` / `/80` with `dark:bg-card-subtle/90` / `/80`.
+    - `story-card.tsx`: Replaced hardcoded `dark:bg-[#121622]/60 border-border dark:border-zinc-800` with `bg-muted/20 dark:bg-card-subtle/60 border-border`.
+  - **Full Production Build Verification**:
+    - Turbopack Next.js production build (`npm run build`) passed with 0 TypeScript errors and exit code 0 across all 29 routes.
+- **Phase 77 Complete**: Global CSS Deduplication, Theme Token Consolidation & Skeleton Modernization:
+  - **Global CSS Token Architecture & Deduplication (`app/globals.css`)**:
+    - Introduced `--canvas` token in `:root` (`250 250 249` / `#FAFAF9`) and `.dark` (`7 11 18` / `#070B12`) mapped to `--color-canvas` in `@theme inline`, eliminating repeated hardcoded canvas hex colors.
+    - Consolidated duplicated scrollbar rules: merged `.thin-scrollbar` with global scrollbar rules to eliminate 24 lines of repetitive CSS.
+    - Bound `.dashboard-card` and `.dashboard-card-hover` to semantic CSS variables (`rgb(var(--card))` and `rgb(var(--border))`) instead of hardcoded hex values.
+  - **Travel Essentials Loading Skeleton Modernization (`travel-essentials-shell.tsx`)**:
+    - Upgraded `TabLoadingSkeleton` from a basic spinner and grey blocks to a high-fidelity workspace blueprint matching the module's real layout: header with icon pill, title/description placeholders, action button skeletons, search/control placeholder, 3-column metric cards, and lower content surface.
+  - **Auth Layout Metadata Optimization (`app/auth/layout.tsx`)**:
+    - Simplified metadata to strictly the required `title` and `description`, pruning redundant OpenGraph, Twitter, canonical, and robots blocks that are already inherited from the root layout.
+  - **Workspace & Auth Hardcoded Color Refactoring**:
+    - `app/(workspace)/forum/loading.tsx`: Replaced `dark:bg-[#0F131C]` with `bg-card` and `dark:border-zinc-800` with `border-border`.
+    - `app/(workspace)/profile/loading.tsx`: Replaced `dark:bg-[#0F131C]` with `bg-card` across overview and preferences panels.
+    - `app/(workspace)/stories/loading.tsx`: Replaced `dark:bg-[#0F131C]` with `bg-card`.
+    - `app/(workspace)/subscription/loading.tsx`: Replaced `dark:bg-[#0F131C]` with `bg-card` and `dark:bg-[#121622]` with `bg-card-subtle`.
+    - `app/(workspace)/trips/loading.tsx`: Replaced `dark:bg-[#0F131C]` with `bg-card` and `dark:bg-[#121622]` with `bg-card-subtle`.
+    - `app/(workspace)/u/[username]/loading.tsx`: Replaced `dark:bg-[#0F131C]` with `bg-card`.
+    - `app/auth/page.tsx` & `app/auth/reset-password/page.tsx`: Replaced hardcoded `bg-[#FAFAF9] dark:bg-[#070B12]` with `bg-canvas`, and `text-[#2D9BF0]` / `bg-[#2D9BF0]/10` with `text-primary` / `bg-primary/10`.
+    - `app/page.tsx`: Replaced hardcoded canvas colors with `bg-canvas` and selection colors with `selection:bg-primary/20 selection:text-primary`.
+  - **Full Production Build Verification**:
+    - Turbopack Next.js production build (`npm run build`) passed with 0 TypeScript errors and exit code 0 across all 29 routes.
 - **Phase 76 Complete**: Header Bell Notification Cleanup & Landing Page Multi-User Copy Realignment:
   - **TopBar Bell Removal (`components/app-shell/top-bar.tsx`)**:
     - Removed non-functional static `Bell` notification button, tooltip, and unused `Tooltip` imports from the persistent workspace header.

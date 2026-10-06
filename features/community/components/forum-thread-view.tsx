@@ -311,15 +311,15 @@ export function ForumThreadView({
                 <Button
                   variant="outline"
                   size="icon"
-                  className="h-8 w-8 cursor-pointer border-border dark:border-zinc-800 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 dark:hover:bg-zinc-800/60"
+                  className="h-8 w-8 cursor-pointer border-border text-muted-foreground hover:text-foreground"
                 >
                   <MoreVertical className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-popover dark:bg-[#0F131C] border-border dark:border-zinc-800 text-xs">
+              <DropdownMenuContent align="end" className="bg-popover border-border text-xs">
                 <DropdownMenuItem
                   onClick={() => setEditDialogOpen(true)}
-                  className="gap-2 cursor-pointer dark:hover:bg-zinc-800/60"
+                  className="gap-2 cursor-pointer"
                 >
                   <Edit3 className="h-3.5 w-3.5" />
                   Edit Discussion
@@ -341,17 +341,17 @@ export function ForumThreadView({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Section: Main Post & Workspace Context (Cols 7/12) */}
         <div className="lg:col-span-7 xl:col-span-7 space-y-4">
-          <Card className="border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs rounded-md overflow-hidden">
+          <Card className="border border-border bg-card shadow-2xs rounded-md overflow-hidden">
             <CardContent className="p-5 sm:p-6 space-y-5">
               {/* Post Title */}
-              <h1 className="font-sans text-xl sm:text-2xl font-semibold tracking-tight text-foreground dark:text-zinc-50 leading-snug">
+              <h1 className="font-sans text-xl sm:text-2xl font-semibold tracking-tight text-foreground leading-snug">
                 {post.title}
               </h1>
 
               {/* Author & Timestamp Bar */}
-              <div className="flex items-center justify-between gap-3 pt-1 pb-3 border-b border-border dark:border-zinc-800">
+              <div className="flex items-center justify-between gap-3 pt-1 pb-3 border-b border-border">
                 <div className="flex items-center gap-2.5">
-                  <Avatar className="h-8 w-8 border border-border dark:border-zinc-800">
+                  <Avatar className="h-8 w-8 border border-border">
                     {post.authorAvatarUrl && (
                       <AvatarImage src={post.authorAvatarUrl} alt={post.authorName} />
                     )}
@@ -416,7 +416,7 @@ export function ForumThreadView({
 
               {/* Attached Workspace Trip Card */}
               {post.linkedTrip && (
-                <div className="rounded-md border border-border dark:border-zinc-800 bg-muted/20 dark:bg-[#121622] p-3.5 space-y-2">
+                <div className="rounded-md border border-border bg-muted/20 dark:bg-card-subtle p-3.5 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-primary flex items-center gap-1.5">
                       <Compass className="h-3.5 w-3.5" />
@@ -427,7 +427,7 @@ export function ForumThreadView({
                       variant="outline"
                       onClick={handleCloneLinkedTrip}
                       disabled={isCloningTrip}
-                      className="h-7 text-xs gap-1.5 border-border dark:border-zinc-800 hover:bg-muted dark:hover:bg-zinc-800/60 cursor-pointer rounded-md"
+                      className="h-7 text-xs gap-1.5 border-border hover:bg-muted cursor-pointer rounded-md"
                     >
                       {isCloningTrip ? (
                         <Loader2 className="h-3 w-3 animate-spin" />
@@ -440,10 +440,10 @@ export function ForumThreadView({
 
                   <div className="flex items-center justify-between gap-2">
                     <div>
-                      <h3 className="text-xs sm:text-sm font-semibold text-foreground dark:text-zinc-200">
+                      <h3 className="text-xs sm:text-sm font-semibold text-foreground">
                         {post.linkedTrip.title}
                       </h3>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground dark:text-zinc-400 mt-0.5">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                         <span className="flex items-center gap-0.5">
                           <MapPin className="h-3 w-3 text-primary" />
                           {post.linkedTrip.destination}
@@ -463,7 +463,7 @@ export function ForumThreadView({
                     <Badge
                       key={tag}
                       variant="outline"
-                      className="text-[11px] font-normal border-border dark:border-zinc-800 bg-muted/30 dark:bg-zinc-800/50 text-muted-foreground dark:text-zinc-400 rounded-sm"
+                      className="text-[11px] font-normal border-border bg-muted/30 text-muted-foreground rounded-sm"
                     >
                       #{tag}
                     </Badge>
@@ -477,7 +477,7 @@ export function ForumThreadView({
         {/* Right Section: Comments & Travel Advice Stream (Cols 5/12) */}
         <div className="lg:col-span-5 xl:col-span-5 space-y-4 lg:sticky lg:top-16">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-sm font-bold tracking-tight text-foreground dark:text-zinc-100 flex items-center gap-2">
+            <h2 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2">
               <MessageSquare className="h-4 w-4 text-primary" />
               Traveler Advice & Comments
             </h2>
@@ -487,18 +487,18 @@ export function ForumThreadView({
           </div>
 
           {/* Quick Reply Composer */}
-          <Card className="border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs rounded-md p-3.5 space-y-2.5">
+          <Card className="border border-border bg-card shadow-2xs rounded-md p-3.5 space-y-2.5">
             <form onSubmit={handleSendReply} className="space-y-2.5">
               <Textarea
                 rows={3}
                 placeholder="Share your advice, route recommendations, or answer this question..."
                 value={newReplyText}
                 onChange={(e) => setNewReplyText(e.target.value)}
-                className="text-xs resize-none bg-background dark:bg-[#121622] border-border dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 focus-visible:ring-primary rounded-md"
+                className="text-xs resize-none bg-background border-border focus-visible:ring-primary rounded-md"
                 disabled={isSubmittingReply}
               />
               <div className="flex items-center justify-between">
-                <span className="text-[10px] text-muted-foreground dark:text-zinc-500">
+                <span className="text-[10px] text-muted-foreground">
                   Be supportive & constructive
                 </span>
                 <Button
@@ -519,7 +519,7 @@ export function ForumThreadView({
           </Card>
 
           {/* Single Parent Card for Advice Stream (No repetitive cards or borders) */}
-          <Card className="border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs rounded-md overflow-hidden">
+          <Card className="border border-border bg-card shadow-2xs rounded-md overflow-hidden">
             {replies.length === 0 ? (
               <div className="text-center py-8 p-4 space-y-1">
                 <p className="text-xs font-semibold text-foreground dark:text-zinc-200">No advice posted yet</p>
@@ -574,16 +574,16 @@ export function ForumThreadView({
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-5 w-5 cursor-pointer text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
+                              className="h-5 w-5 cursor-pointer text-muted-foreground hover:text-foreground"
                               title="Comment options"
                             >
                               <MoreVertical className="h-3 w-3" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-popover dark:bg-[#0F131C] border-border dark:border-zinc-800 text-xs rounded-md shadow-md">
+                          <DropdownMenuContent align="end" className="bg-popover border-border text-xs rounded-md shadow-md">
                             <DropdownMenuItem
                               onClick={() => handleOpenSaveTip(reply.content, reply.authorName)}
-                              className="gap-2 cursor-pointer dark:hover:bg-zinc-800/60"
+                              className="gap-2 cursor-pointer"
                             >
                               <Bookmark className="h-3.5 w-3.5 text-primary" />
                               Save Tip to Trip
@@ -596,7 +596,7 @@ export function ForumThreadView({
                                     setEditingReplyId(reply.id);
                                     setEditingReplyContent(reply.content);
                                   }}
-                                  className="gap-2 cursor-pointer dark:hover:bg-zinc-800/60"
+                                  className="gap-2 cursor-pointer"
                                 >
                                   <Edit3 className="h-3.5 w-3.5" />
                                   Edit Reply
@@ -622,14 +622,14 @@ export function ForumThreadView({
                           rows={3}
                           value={editingReplyContent}
                           onChange={(e) => setEditingReplyContent(e.target.value)}
-                          className="text-xs bg-background dark:bg-[#121622] border-border dark:border-zinc-800 dark:text-zinc-100 rounded-md"
+                          className="text-xs bg-background border-border rounded-md"
                         />
                         <div className="flex justify-end gap-1.5">
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => setEditingReplyId(null)}
-                            className="text-xs h-6 px-2 rounded-md border-border dark:border-zinc-800 dark:hover:bg-zinc-800/60"
+                            className="text-xs h-6 px-2 rounded-md border-border"
                           >
                             Cancel
                           </Button>

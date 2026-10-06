@@ -2,8 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 
-import { Pool } from "pg";
-
 import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
@@ -18,18 +16,6 @@ import type {
   UpdateDiscussionInput,
   UserTripOption,
 } from "@/features/community/forum-types";
-
-// Shared connection pool singleton for forum SQL queries to prevent connection exhaustion
-const globalForPg = globalThis as unknown as { pgPool?: Pool };
-const pool =
-  globalForPg.pgPool ||
-  new Pool({
-    connectionString: process.env.DATABASE_URL || process.env.DIRECT_URL,
-  });
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPg.pgPool = pool;
-}
 
 /**
  * Format category identifier to human-readable label
@@ -52,9 +38,8 @@ function getCategoryLabel(category: string): string {
   }
 }
 
-
 /**
- * Fetch forum discussions with author profiles, attached trips, and reply counts
+ * Fetch forum discussions with author profiles, attached trips, and reply counts using Prisma
  */
 export async function getForumDiscussions(
   category?: ForumCategory,
@@ -70,128 +55,113 @@ export async function getForumDiscussions(
       currentUserId = null;
     }
 
-    const conditions: string[] = [];
-    const values: unknown[] = [];
+    const trimmedSearch = searchQuery?.trim();
 
-    if (category && category !== "ALL") {
-      values.push(category);
-      conditions.push(`cp.category = $${values.length}`);
-    }
+    const posts = await db.communityPost.findMany({
+      where: {
+        ...(category && category !== "ALL" ? { category } : {}),
+        ...(trimmedSearch
+          ? {
+              OR: [
+                { title: { contains: trimmedSearch, mode: "insensitive" } },
+                { content: { contains: trimmedSearch, mode: "insensitive" } },
+                { destination: { contains: trimmedSearch, mode: "insensitive" } },
+              ],
+            }
+          : {}),
+      },
+      include: {
+        profile: {
+          select: {
+            id: true,
+            fullName: true,
+            username: true,
+            avatarUrl: true,
+            isPublic: true,
+            bio: true,
+          },
+        },
+        linkedTrip: {
+          select: {
+            id: true,
+            title: true,
+            destination: true,
+            startDate: true,
+            endDate: true,
+            coverImageUrl: true,
+          },
+        },
+        _count: {
+          select: { replies: true },
+        },
+        ...(currentUserId
+          ? {
+              upvoteRecords: {
+                where: { profileId: currentUserId },
+                select: { profileId: true },
+              },
+              savedRecords: {
+                where: { profileId: currentUserId },
+                select: { profileId: true },
+              },
+            }
+          : {}),
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    });
 
-    if (searchQuery && searchQuery.trim()) {
-      values.push(`%${searchQuery.trim().toLowerCase()}%`);
-      const searchIdx = values.length;
-      conditions.push(
-        `(LOWER(cp.title) LIKE $${searchIdx} OR LOWER(cp.content) LIKE $${searchIdx} OR LOWER(COALESCE(cp.destination, '')) LIKE $${searchIdx})`
-      );
-    }
-
-    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
-
-    const upvoteSubquery = currentUserId
-      ? `EXISTS (SELECT 1 FROM community_post_upvotes cpu WHERE cpu.post_id = cp.id AND cpu.profile_id = '${currentUserId}')`
-      : `false`;
-
-    const savedSubquery = currentUserId
-      ? `EXISTS (SELECT 1 FROM community_saved_posts csp WHERE csp.post_id = cp.id AND csp.profile_id = '${currentUserId}')`
-      : `false`;
-
-    const isAuthorSubquery = currentUserId
-      ? `(cp.profile_id = '${currentUserId}')`
-      : `false`;
-
-    const sql = `
-      SELECT 
-        cp.id,
-        cp.slug,
-        cp.profile_id,
-        cp.title,
-        cp.content,
-        cp.category,
-        cp.destination,
-        cp.tags,
-        cp.cover_image_url,
-        cp.images,
-        cp.is_edited,
-        cp.upvotes,
-        cp.views,
-        cp.created_at,
-        p.full_name AS author_name,
-        p.username AS author_username,
-        p.avatar_url AS author_avatar_url,
-        p.is_public AS is_creator_public,
-        p.bio AS author_bio,
-        t.id AS trip_id,
-        t.title AS trip_title,
-        t.destination AS trip_destination,
-        t.start_date AS trip_start_date,
-        t.end_date AS trip_end_date,
-        t.cover_image_url AS trip_cover_image_url,
-        (SELECT COUNT(*)::int FROM community_replies cr WHERE cr.post_id = cp.id) AS replies_count,
-        ${upvoteSubquery} AS has_upvoted,
-        ${savedSubquery} AS has_saved,
-        ${isAuthorSubquery} AS is_author
-      FROM community_posts cp
-      LEFT JOIN profiles p ON cp.profile_id = p.id
-      LEFT JOIN trips t ON cp.linked_trip_id = t.id
-      ${whereClause}
-      ORDER BY cp.created_at DESC
-      LIMIT 50;
-    `;
-
-    const res = await pool.query(sql, values);
-
-    return res.rows.map((row) => {
+    return posts.map((post) => {
       let linkedTrip = null;
-      if (row.trip_id) {
+      if (post.linkedTrip) {
         const days =
-          row.trip_start_date && row.trip_end_date
+          post.linkedTrip.startDate && post.linkedTrip.endDate
             ? Math.max(
                 1,
                 Math.ceil(
-                  (new Date(row.trip_end_date).getTime() -
-                    new Date(row.trip_start_date).getTime()) /
+                  (new Date(post.linkedTrip.endDate).getTime() -
+                    new Date(post.linkedTrip.startDate).getTime()) /
                     (1000 * 60 * 60 * 24)
                 ) + 1
               )
             : 5;
 
         linkedTrip = {
-          id: row.trip_id,
-          title: row.trip_title,
-          destination: row.trip_destination || "Global",
+          id: post.linkedTrip.id,
+          title: post.linkedTrip.title,
+          destination: post.linkedTrip.destination || "Global",
           durationDays: days,
           activityCount: 4,
           accommodationCount: 1,
-          coverImageUrl: row.trip_cover_image_url,
+          coverImageUrl: post.linkedTrip.coverImageUrl,
         };
       }
 
       return {
-        id: row.id,
-        slug: row.slug || row.id,
-        authorId: row.profile_id,
-        title: row.title,
-        content: row.content,
-        category: row.category as ForumCategory,
-        categoryLabel: getCategoryLabel(row.category),
-        tags: Array.isArray(row.tags) ? row.tags : [],
-        destination: row.destination,
-        coverImageUrl: row.cover_image_url || (row.images && row.images[0]) || null,
-        images: Array.isArray(row.images) ? row.images : [],
-        isEdited: Boolean(row.is_edited),
-        authorName: row.author_name || row.author_username || "Traveler",
-        authorUsername: row.author_username,
-        authorAvatarUrl: row.author_avatar_url,
-        isCreatorPublic: Boolean(row.is_creator_public),
-        authorBio: row.author_bio,
-        createdAt: formatRelativeTime(row.created_at),
-        upvotes: Number(row.upvotes) || 0,
-        views: Number(row.views) || 0,
-        repliesCount: Number(row.replies_count) || 0,
-        hasUpvoted: Boolean(row.has_upvoted),
-        hasSaved: Boolean(row.has_saved),
-        isAuthor: Boolean(row.is_author),
+        id: post.id,
+        slug: post.slug || post.id,
+        authorId: post.profileId,
+        title: post.title,
+        content: post.content,
+        category: post.category as ForumCategory,
+        categoryLabel: getCategoryLabel(post.category),
+        tags: Array.isArray(post.tags) ? post.tags : [],
+        destination: post.destination,
+        coverImageUrl: post.coverImageUrl || (post.images && post.images[0]) || null,
+        images: Array.isArray(post.images) ? post.images : [],
+        isEdited: Boolean(post.isEdited),
+        authorName: post.profile?.fullName || post.profile?.username || "Traveler",
+        authorUsername: post.profile?.username || null,
+        authorAvatarUrl: post.profile?.avatarUrl || null,
+        isCreatorPublic: Boolean(post.profile?.isPublic),
+        authorBio: post.profile?.bio || null,
+        createdAt: post.createdAt ? formatRelativeTime(post.createdAt) : "Just now",
+        upvotes: Number(post.upvotes) || 0,
+        views: Number(post.views) || 0,
+        repliesCount: Number(post._count.replies) || 0,
+        hasUpvoted: Boolean(post.upvoteRecords && post.upvoteRecords.length > 0),
+        hasSaved: Boolean(post.savedRecords && post.savedRecords.length > 0),
+        isAuthor: Boolean(currentUserId && post.profileId === currentUserId),
         linkedTrip,
       };
     });
@@ -202,7 +172,7 @@ export async function getForumDiscussions(
 }
 
 /**
- * Fetch a single discussion thread by slug or UUID
+ * Fetch a single discussion thread by slug or UUID using Prisma
  */
 export async function getForumPostBySlug(slugOrId: string): Promise<ForumPost | null> {
   try {
@@ -220,161 +190,142 @@ export async function getForumPostBySlug(slugOrId: string): Promise<ForumPost | 
       decoded
     );
 
-    const updateCondition = isValidUuid ? "id = $1 OR slug = $1" : "slug = $1";
-
-    // Increment view count safely without invalid table alias
+    // Increment view count safely in background
     try {
-      await pool.query(`UPDATE community_posts SET views = views + 1 WHERE ${updateCondition}`, [
-        decoded,
-      ]);
+      await db.communityPost.updateMany({
+        where: isValidUuid ? { OR: [{ id: decoded }, { slug: decoded }] } : { slug: decoded },
+        data: { views: { increment: 1 } },
+      });
     } catch (viewError) {
       console.warn("Non-fatal error incrementing discussion views:", viewError);
     }
 
-    const upvoteSubquery = currentUserId
-      ? `EXISTS (SELECT 1 FROM community_post_upvotes cpu WHERE cpu.post_id = cp.id AND cpu.profile_id = '${currentUserId}')`
-      : `false`;
+    const post = await db.communityPost.findFirst({
+      where: isValidUuid
+        ? {
+            OR: [
+              { id: decoded },
+              { slug: { equals: decoded, mode: "insensitive" } },
+            ],
+          }
+        : { slug: { equals: decoded, mode: "insensitive" } },
+      include: {
+        profile: {
+          select: {
+            id: true,
+            fullName: true,
+            username: true,
+            avatarUrl: true,
+            isPublic: true,
+            bio: true,
+          },
+        },
+        linkedTrip: {
+          select: {
+            id: true,
+            title: true,
+            destination: true,
+            startDate: true,
+            endDate: true,
+            coverImageUrl: true,
+          },
+        },
+        replies: {
+          include: {
+            profile: {
+              select: {
+                id: true,
+                fullName: true,
+                username: true,
+                avatarUrl: true,
+                isPublic: true,
+              },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+        },
+        ...(currentUserId
+          ? {
+              upvoteRecords: {
+                where: { profileId: currentUserId },
+                select: { profileId: true },
+              },
+              savedRecords: {
+                where: { profileId: currentUserId },
+                select: { profileId: true },
+              },
+            }
+          : {}),
+      },
+    });
 
-    const savedSubquery = currentUserId
-      ? `EXISTS (SELECT 1 FROM community_saved_posts csp WHERE csp.post_id = cp.id AND csp.profile_id = '${currentUserId}')`
-      : `false`;
+    if (!post) return null;
 
-    const isAuthorSubquery = currentUserId
-      ? `(cp.profile_id = '${currentUserId}')`
-      : `false`;
-
-    const selectCondition = isValidUuid
-      ? "cp.id = $1::uuid OR LOWER(cp.slug) = LOWER($1)"
-      : "LOWER(cp.slug) = LOWER($1)";
-
-    const postSql = `
-      SELECT 
-        cp.id,
-        cp.slug,
-        cp.profile_id,
-        cp.title,
-        cp.content,
-        cp.category,
-        cp.destination,
-        cp.tags,
-        cp.cover_image_url,
-        cp.images,
-        cp.is_edited,
-        cp.upvotes,
-        cp.views,
-        cp.created_at,
-        p.full_name AS author_name,
-        p.username AS author_username,
-        p.avatar_url AS author_avatar_url,
-        p.is_public AS is_creator_public,
-        p.bio AS author_bio,
-        t.id AS trip_id,
-        t.title AS trip_title,
-        t.destination AS trip_destination,
-        t.start_date AS trip_start_date,
-        t.end_date AS trip_end_date,
-        t.cover_image_url AS trip_cover_image_url,
-        ${upvoteSubquery} AS has_upvoted,
-        ${savedSubquery} AS has_saved,
-        ${isAuthorSubquery} AS is_author
-      FROM community_posts cp
-      LEFT JOIN profiles p ON cp.profile_id = p.id
-      LEFT JOIN trips t ON cp.linked_trip_id = t.id
-      WHERE ${selectCondition};
-    `;
-
-    const postRes = await pool.query(postSql, [decoded]);
-    if (postRes.rows.length === 0) return null;
-    const row = postRes.rows[0];
-
-    // Fetch replies
-    const repliesSql = `
-      SELECT 
-        cr.id,
-        cr.post_id,
-        cr.profile_id,
-        cr.content,
-        cr.upvotes,
-        cr.is_edited,
-        cr.created_at,
-        p.full_name AS author_name,
-        p.username AS author_username,
-        p.avatar_url AS author_avatar_url,
-        p.is_public AS is_creator_public,
-        ${currentUserId ? `(cr.profile_id = '${currentUserId}')` : `false`} AS is_author
-      FROM community_replies cr
-      LEFT JOIN profiles p ON cr.profile_id = p.id
-      WHERE cr.post_id = $1
-      ORDER BY cr.created_at DESC;
-    `;
-
-    const repliesRes = await pool.query(repliesSql, [row.id]);
-
-    const replies: ForumReply[] = repliesRes.rows.map((r) => ({
+    const replies: ForumReply[] = post.replies.map((r) => ({
       id: r.id,
-      postId: r.post_id,
-      authorId: r.profile_id,
-      authorName: r.author_name || r.author_username || "Traveler",
-      authorUsername: r.author_username,
-      authorAvatarUrl: r.author_avatar_url,
-      isCreatorPublic: Boolean(r.is_creator_public),
+      postId: r.postId,
+      authorId: r.profileId,
+      authorName: r.profile?.fullName || r.profile?.username || "Traveler",
+      authorUsername: r.profile?.username || null,
+      authorAvatarUrl: r.profile?.avatarUrl || null,
+      isCreatorPublic: Boolean(r.profile?.isPublic),
       content: r.content,
-      createdAt: formatRelativeTime(r.created_at),
+      createdAt: r.createdAt ? formatRelativeTime(r.createdAt) : "Just now",
       upvotes: Number(r.upvotes) || 0,
-      isEdited: Boolean(r.is_edited),
-      isAuthor: Boolean(r.is_author),
+      isEdited: Boolean(r.isEdited),
+      isAuthor: Boolean(currentUserId && r.profileId === currentUserId),
     }));
 
     let linkedTrip = null;
-    if (row.trip_id) {
+    if (post.linkedTrip) {
       const days =
-        row.trip_start_date && row.trip_end_date
+        post.linkedTrip.startDate && post.linkedTrip.endDate
           ? Math.max(
               1,
               Math.ceil(
-                (new Date(row.trip_end_date).getTime() -
-                  new Date(row.trip_start_date).getTime()) /
+                (new Date(post.linkedTrip.endDate).getTime() -
+                  new Date(post.linkedTrip.startDate).getTime()) /
                   (1000 * 60 * 60 * 24)
               ) + 1
             )
           : 5;
 
       linkedTrip = {
-        id: row.trip_id,
-        title: row.trip_title,
-        destination: row.trip_destination || "Global",
+        id: post.linkedTrip.id,
+        title: post.linkedTrip.title,
+        destination: post.linkedTrip.destination || "Global",
         durationDays: days,
         activityCount: 4,
         accommodationCount: 1,
-        coverImageUrl: row.trip_cover_image_url,
+        coverImageUrl: post.linkedTrip.coverImageUrl,
       };
     }
 
     return {
-      id: row.id,
-      slug: row.slug || row.id,
-      authorId: row.profile_id,
-      title: row.title,
-      content: row.content,
-      category: row.category as ForumCategory,
-      categoryLabel: getCategoryLabel(row.category),
-      tags: Array.isArray(row.tags) ? row.tags : [],
-      destination: row.destination,
-      coverImageUrl: row.cover_image_url || (row.images && row.images[0]) || null,
-      images: Array.isArray(row.images) ? row.images : [],
-      isEdited: Boolean(row.is_edited),
-      authorName: row.author_name || row.author_username || "Traveler",
-      authorUsername: row.author_username,
-      authorAvatarUrl: row.author_avatar_url,
-      isCreatorPublic: Boolean(row.is_creator_public),
-      authorBio: row.author_bio,
-      createdAt: formatRelativeTime(row.created_at),
-      upvotes: Number(row.upvotes) || 0,
-      views: Number(row.views) || 0,
+      id: post.id,
+      slug: post.slug || post.id,
+      authorId: post.profileId,
+      title: post.title,
+      content: post.content,
+      category: post.category as ForumCategory,
+      categoryLabel: getCategoryLabel(post.category),
+      tags: Array.isArray(post.tags) ? post.tags : [],
+      destination: post.destination,
+      coverImageUrl: post.coverImageUrl || (post.images && post.images[0]) || null,
+      images: Array.isArray(post.images) ? post.images : [],
+      isEdited: Boolean(post.isEdited),
+      authorName: post.profile?.fullName || post.profile?.username || "Traveler",
+      authorUsername: post.profile?.username || null,
+      authorAvatarUrl: post.profile?.avatarUrl || null,
+      isCreatorPublic: Boolean(post.profile?.isPublic),
+      authorBio: post.profile?.bio || null,
+      createdAt: post.createdAt ? formatRelativeTime(post.createdAt) : "Just now",
+      upvotes: Number(post.upvotes) || 0,
+      views: Number(post.views) || 0,
       repliesCount: replies.length,
-      hasUpvoted: Boolean(row.has_upvoted),
-      hasSaved: Boolean(row.has_saved),
-      isAuthor: Boolean(row.is_author),
+      hasUpvoted: Boolean(post.upvoteRecords && post.upvoteRecords.length > 0),
+      hasSaved: Boolean(post.savedRecords && post.savedRecords.length > 0),
+      isAuthor: Boolean(currentUserId && post.profileId === currentUserId),
       replies,
       linkedTrip,
     };

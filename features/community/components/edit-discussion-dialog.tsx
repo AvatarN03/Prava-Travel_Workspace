@@ -127,12 +127,12 @@ export function EditDiscussionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[92vw] max-w-[92vw] sm:w-full sm:max-w-xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden rounded-sm sm:rounded-md border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] text-card-foreground shadow-xl">
-        <DialogHeader className="px-5 py-4 border-b border-border dark:border-zinc-800 shrink-0 text-left bg-card dark:bg-[#0F131C] space-y-1">
-          <DialogTitle className="text-base font-semibold text-foreground dark:text-zinc-50">
+      <DialogContent className="w-[92vw] max-w-[92vw] sm:w-full sm:max-w-xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden rounded-sm sm:rounded-md border border-border bg-card text-card-foreground shadow-xl">
+        <DialogHeader className="px-5 py-4 border-b border-border shrink-0 text-left bg-card space-y-1">
+          <DialogTitle className="text-base font-semibold text-foreground">
             Edit Discussion
           </DialogTitle>
-          <DialogDescription className="text-xs text-muted-foreground dark:text-zinc-400">
+          <DialogDescription className="text-xs text-muted-foreground">
             Update your discussion topic, details, destination, or attached trip.
           </DialogDescription>
         </DialogHeader>
@@ -141,13 +141,13 @@ export function EditDiscussionDialog({
           <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 space-y-3.5 ultra-thin-scrollbar">
             {/* Title */}
             <div className="space-y-1">
-              <Label className="text-xs font-semibold text-foreground dark:text-zinc-200">
+              <Label className="text-xs font-semibold text-foreground">
                 Title <span className="text-destructive">*</span>
               </Label>
               <Input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="text-xs h-9 rounded-sm bg-background dark:bg-[#121622] border-border dark:border-zinc-800 dark:text-zinc-100"
+                className="text-xs h-9 rounded-sm bg-background border-border"
                 disabled={isPending}
                 required
               />
@@ -156,7 +156,7 @@ export function EditDiscussionDialog({
             {/* Category & Destination Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label className="text-xs font-semibold text-foreground dark:text-zinc-200">
+                <Label className="text-xs font-semibold text-foreground">
                   Category <span className="text-destructive">*</span>
                 </Label>
                 <Select
@@ -164,12 +164,12 @@ export function EditDiscussionDialog({
                   onValueChange={(val) => setCategory(val as ForumCategory)}
                   disabled={isPending}
                 >
-                  <SelectTrigger className="text-xs h-9 rounded-sm bg-background dark:bg-[#121622] border-border dark:border-zinc-800 dark:text-zinc-100">
+                  <SelectTrigger className="text-xs h-9 rounded-sm bg-background border-border">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-popover dark:bg-[#0F131C] border-border dark:border-zinc-800">
+                  <SelectContent className="bg-popover border-border">
                     {selectableCategories.map((c) => (
-                      <SelectItem key={c.id} value={c.id} className="text-xs cursor-pointer dark:hover:bg-zinc-800/60">
+                      <SelectItem key={c.id} value={c.id} className="text-xs cursor-pointer">
                         {c.label}
                       </SelectItem>
                     ))}
@@ -178,15 +178,15 @@ export function EditDiscussionDialog({
               </div>
 
               <div className="space-y-1">
-                <Label className="text-xs font-semibold text-foreground dark:text-zinc-200 flex items-center gap-1">
-                  <MapPin className="h-3 w-3 text-muted-foreground dark:text-zinc-400" />
-                  Destination <span className="text-muted-foreground dark:text-zinc-500 font-normal text-[11px]">(Optional)</span>
+                <Label className="text-xs font-semibold text-foreground flex items-center gap-1">
+                  <MapPin className="h-3 w-3 text-muted-foreground" />
+                  Destination <span className="text-muted-foreground font-normal text-[11px]">(Optional)</span>
                 </Label>
                 <Input
                   placeholder="e.g., Kyoto, Japan"
                   value={destination}
                   onChange={(e) => setDestination(e.target.value)}
-                  className="text-xs h-9 rounded-sm bg-background dark:bg-[#121622] border-border dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                  className="text-xs h-9 rounded-sm bg-background border-border"
                   disabled={isPending}
                 />
               </div>
@@ -194,14 +194,14 @@ export function EditDiscussionDialog({
 
             {/* Content / Detailed Questions (In the middle as requested!) */}
             <div className="space-y-1">
-              <Label className="text-xs font-semibold text-foreground dark:text-zinc-200">
+              <Label className="text-xs font-semibold text-foreground">
                 Details & Questions <span className="text-destructive">*</span>
               </Label>
               <Textarea
                 rows={4}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                className="text-xs resize-none rounded-sm bg-background dark:bg-[#121622] border-border dark:border-zinc-800 dark:text-zinc-100 focus-visible:ring-primary leading-relaxed"
+                className="text-xs resize-none rounded-sm bg-background border-border focus-visible:ring-primary leading-relaxed"
                 disabled={isPending}
                 required
               />
@@ -210,38 +210,38 @@ export function EditDiscussionDialog({
             {/* Optional Attachments: Tags & Attach Workspace Trip */}
             <div className={`grid grid-cols-1 ${userTrips.length > 0 ? "sm:grid-cols-2" : ""} gap-3 pt-0.5`}>
               <div className="space-y-1">
-                <Label className="text-xs font-semibold text-foreground dark:text-zinc-200 flex items-center gap-1">
-                  <Tag className="h-3 w-3 text-muted-foreground dark:text-zinc-400" />
-                  Tags <span className="text-muted-foreground dark:text-zinc-500 font-normal text-[11px]">(Optional)</span>
+                <Label className="text-xs font-semibold text-foreground flex items-center gap-1">
+                  <Tag className="h-3 w-3 text-muted-foreground" />
+                  Tags <span className="text-muted-foreground font-normal text-[11px]">(Optional)</span>
                 </Label>
                 <Input
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
-                  className="text-xs h-9 rounded-sm bg-background dark:bg-[#121622] border-border dark:border-zinc-800 dark:text-zinc-100"
+                  className="text-xs h-9 rounded-sm bg-background border-border"
                   disabled={isPending}
                 />
               </div>
 
               {userTrips.length > 0 && (
                 <div className="space-y-1">
-                  <Label className="text-xs font-semibold text-foreground dark:text-zinc-200 flex items-center gap-1">
+                  <Label className="text-xs font-semibold text-foreground flex items-center gap-1">
                     <Compass className="h-3 w-3 text-primary" />
-                    Attached Trip <span className="text-muted-foreground dark:text-zinc-500 font-normal text-[11px]">(Optional)</span>
+                    Attached Trip <span className="text-muted-foreground font-normal text-[11px]">(Optional)</span>
                   </Label>
                   <Select
                     value={selectedTripId}
                     onValueChange={setSelectedTripId}
                     disabled={isPending}
                   >
-                    <SelectTrigger className="text-xs h-9 rounded-sm bg-background dark:bg-[#121622] border-border dark:border-zinc-800 dark:text-zinc-100">
+                    <SelectTrigger className="text-xs h-9 rounded-sm bg-background border-border">
                       <SelectValue placeholder="Choose a trip to link" />
                     </SelectTrigger>
-                    <SelectContent className="bg-popover dark:bg-[#0F131C] border-border dark:border-zinc-800">
-                      <SelectItem value="NONE" className="text-xs text-muted-foreground dark:text-zinc-400 cursor-pointer">
+                    <SelectContent className="bg-popover border-border">
+                      <SelectItem value="NONE" className="text-xs text-muted-foreground cursor-pointer">
                         No linked trip
                       </SelectItem>
                       {userTrips.map((trip) => (
-                        <SelectItem key={trip.id} value={trip.id} className="text-xs cursor-pointer dark:hover:bg-zinc-800/60">
+                        <SelectItem key={trip.id} value={trip.id} className="text-xs cursor-pointer">
                           {trip.title} {trip.destination ? `(${trip.destination})` : ""}
                         </SelectItem>
                       ))}
@@ -254,8 +254,8 @@ export function EditDiscussionDialog({
             {/* Cover Image Upload (Compact toggleable trigger instead of bulky empty banner) */}
             <div className="space-y-1.5 pt-0.5">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-semibold text-foreground dark:text-zinc-200">
-                  Cover Photo <span className="text-muted-foreground dark:text-zinc-500 font-normal text-[11px]">(Optional)</span>
+                <Label className="text-xs font-semibold text-foreground">
+                  Cover Photo <span className="text-muted-foreground font-normal text-[11px]">(Optional)</span>
                 </Label>
                 {imageUrl && (
                   <button
@@ -287,22 +287,22 @@ export function EditDiscussionDialog({
                 <button
                   type="button"
                   onClick={() => setShowImageUpload(true)}
-                  className="w-full h-8.5 text-xs border border-dashed border-border dark:border-zinc-800 rounded-sm bg-muted/20 dark:bg-zinc-900/40 hover:bg-muted/50 dark:hover:bg-zinc-900/70 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                  className="w-full h-8.5 text-xs border border-dashed border-border rounded-sm bg-muted/20 hover:bg-muted/50 text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
                 >
-                  <ImageIcon className="h-3.5 w-3.5 text-muted-foreground dark:text-zinc-500" />
+                  <ImageIcon className="h-3.5 w-3.5 text-muted-foreground" />
                   <span>Add optional cover photo</span>
                 </button>
               )}
             </div>
           </div>
 
-          <DialogFooter className="px-5 py-3 border-t border-border dark:border-zinc-800 shrink-0 bg-muted/20 dark:bg-[#0F131C] flex flex-row items-center justify-end gap-2">
+          <DialogFooter className="px-5 py-3 border-t border-border shrink-0 bg-muted/20 dark:bg-card flex flex-row items-center justify-end gap-2">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={() => onOpenChange(false)}
-              className="h-8 text-xs rounded-sm cursor-pointer border-border dark:border-zinc-800 dark:hover:bg-zinc-800/60"
+              className="h-8 text-xs rounded-sm cursor-pointer border-border"
               disabled={isPending}
             >
               Cancel

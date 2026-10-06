@@ -74,50 +74,50 @@ export function SaveTipDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-6 rounded-lg border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] text-card-foreground shadow-lg">
+      <DialogContent className="max-w-md p-6 rounded-lg border border-border bg-card text-card-foreground shadow-lg">
         <DialogHeader className="space-y-1 pb-2">
           <div className="flex items-center gap-2">
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
               <Bookmark className="h-4 w-4" />
             </span>
-            <DialogTitle className="text-base font-bold text-foreground dark:text-zinc-50">
+            <DialogTitle className="text-base font-bold text-foreground">
               Save Advice to Trip Workspace
             </DialogTitle>
           </div>
-          <DialogDescription className="text-xs text-muted-foreground dark:text-zinc-400">
+          <DialogDescription className="text-xs text-muted-foreground">
             Inject this community recommendation directly into your personal trip notes so you can reference it on the road.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           {/* Tip Excerpt */}
-          <div className="rounded-lg bg-muted/40 dark:bg-[#121622] border border-border dark:border-zinc-800 p-3 space-y-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground dark:text-zinc-500">
+          <div className="rounded-lg bg-muted/40 dark:bg-card-subtle border border-border p-3 space-y-1">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               Advice Preview
             </span>
-            <p className="text-xs text-foreground dark:text-zinc-200 line-clamp-3 italic">
+            <p className="text-xs text-foreground line-clamp-3 italic">
               &ldquo;{tipContent}&rdquo;
             </p>
-            <span className="text-[10px] text-muted-foreground dark:text-zinc-400 block pt-0.5">
+            <span className="text-[10px] text-muted-foreground block pt-0.5">
               — Shared by @{authorName}
             </span>
           </div>
 
           {/* Select Target Trip */}
           {userTrips.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-border dark:border-zinc-800 p-4 text-center space-y-2">
-              <p className="text-xs text-muted-foreground dark:text-zinc-400">
+            <div className="rounded-lg border border-dashed border-border p-4 text-center space-y-2">
+              <p className="text-xs text-muted-foreground">
                 You don&apos;t have any active trip workspaces yet.
               </p>
               <Link href="/trips">
-                <Button size="sm" variant="outline" className="text-xs border-border dark:border-zinc-800 dark:hover:bg-zinc-800/60">
+                <Button size="sm" variant="outline" className="text-xs border-border">
                   Create a Trip First
                 </Button>
               </Link>
             </div>
           ) : (
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-foreground dark:text-zinc-200 flex items-center gap-1.5">
+              <Label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                 <Compass className="h-3.5 w-3.5 text-primary" />
                 Select Workspace Trip
               </Label>
@@ -126,12 +126,12 @@ export function SaveTipDialog({
                 onValueChange={setSelectedTripId}
                 disabled={isPending}
               >
-                <SelectTrigger className="text-xs h-9 bg-background dark:bg-[#121622] border-border dark:border-zinc-800 dark:text-zinc-100">
+                <SelectTrigger className="text-xs h-9 bg-background border-border">
                   <SelectValue placeholder="Choose a trip" />
                 </SelectTrigger>
-                <SelectContent className="bg-popover dark:bg-[#0F131C] border-border dark:border-zinc-800">
+                <SelectContent className="bg-popover border-border">
                   {userTrips.map((trip) => (
-                    <SelectItem key={trip.id} value={trip.id} className="text-xs cursor-pointer dark:hover:bg-zinc-800/60">
+                    <SelectItem key={trip.id} value={trip.id} className="text-xs cursor-pointer">
                       {trip.title} {trip.destination ? `(${trip.destination})` : ""}
                     </SelectItem>
                   ))}
@@ -141,13 +141,13 @@ export function SaveTipDialog({
           )}
         </div>
 
-        <DialogFooter className="gap-2 sm:gap-0 pt-2 border-t border-border dark:border-zinc-800">
+        <DialogFooter className="gap-2 sm:gap-0 pt-2 border-t border-border">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={() => onOpenChange(false)}
-            className="text-xs border-border dark:border-zinc-800 dark:hover:bg-zinc-800/60"
+            className="text-xs border-border"
             disabled={isPending}
           >
             Cancel

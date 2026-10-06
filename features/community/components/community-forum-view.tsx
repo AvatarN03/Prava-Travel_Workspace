@@ -31,7 +31,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { NewDiscussionDialog } from "@/features/community/components/new-discussion-dialog";
 
@@ -139,10 +138,10 @@ export function CommunityForumView({
       prev.map((p) =>
         p.id === post.id
           ? {
-              ...p,
-              hasUpvoted: !prevUpvoted,
-              upvotes: prevUpvoted ? Math.max(0, prevCount - 1) : prevCount + 1,
-            }
+            ...p,
+            hasUpvoted: !prevUpvoted,
+            upvotes: prevUpvoted ? Math.max(0, prevCount - 1) : prevCount + 1,
+          }
           : p
       )
     );
@@ -196,28 +195,28 @@ export function CommunityForumView({
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-12">
       {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-border dark:border-zinc-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-border">
         <div className="space-y-1">
-          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block">
             Community Discussions
           </span>
-          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
             Traveler{" "}
-            <span className="font-serif italic font-normal text-foreground dark:text-zinc-100">
+            <span className="font-serif italic font-normal text-foreground">
               Forum
             </span>
           </h1>
-          <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 font-normal leading-relaxed max-w-2xl">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
             Ask for route advice, share secret viewpoints and culinary spots, discuss gear packing, or inspect fellow travelers&apos; itineraries.
           </p>
         </div>
 
         <div className="flex items-center gap-2.5 shrink-0">
           <div className="relative w-full sm:w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground dark:text-zinc-500" />
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search topics, destinations..."
-              className="pl-8.5 h-9 text-xs bg-background dark:bg-[#0F131C] border-border dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 rounded-sm"
+              className="pl-8.5 h-9 text-xs bg-background border-border rounded-sm"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -245,7 +244,7 @@ export function CommunityForumView({
               setShowBookmarkedOnly(false);
             }}
           >
-            <SelectTrigger className="h-9 text-xs bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800 dark:text-zinc-200 w-full flex items-center justify-between cursor-pointer rounded-sm shadow-xs">
+            <SelectTrigger className="h-9 text-xs bg-card border-border w-full flex items-center justify-between cursor-pointer rounded-sm shadow-xs">
               <div className="flex items-center gap-2 truncate">
                 {(() => {
                   const ActiveIcon = CATEGORY_ICON_MAP[activeCategory] || MessageSquare;
@@ -256,13 +255,13 @@ export function CommunityForumView({
                 </span>
               </div>
             </SelectTrigger>
-            <SelectContent className="bg-popover dark:bg-[#0F131C] border-border dark:border-zinc-800">
+            <SelectContent className="bg-popover border-border">
               {FORUM_CATEGORIES.map((cat) => {
                 const Icon = CATEGORY_ICON_MAP[cat.id] || MessageSquare;
                 return (
-                  <SelectItem key={cat.id} value={cat.id} className="text-xs cursor-pointer dark:hover:bg-zinc-800/60">
+                  <SelectItem key={cat.id} value={cat.id} className="text-xs cursor-pointer">
                     <div className="flex items-center gap-2">
-                      <Icon className="h-3.5 w-3.5 text-muted-foreground dark:text-zinc-400" />
+                      <Icon className="h-3.5 w-3.5 text-muted-foreground" />
                       <span>{cat.label}</span>
                     </div>
                   </SelectItem>
@@ -278,22 +277,20 @@ export function CommunityForumView({
           variant={showBookmarkedOnly ? "default" : "outline"}
           size="sm"
           onClick={() => setShowBookmarkedOnly((prev) => !prev)}
-          className={`h-9 px-3 gap-1.5 text-xs shrink-0 cursor-pointer font-medium rounded-sm ${
-            showBookmarkedOnly
+          className={`h-9 px-3 gap-1.5 text-xs shrink-0 cursor-pointer font-medium rounded-sm ${showBookmarkedOnly
               ? "bg-primary text-primary-foreground shadow-xs"
-              : "bg-card dark:bg-[#0F131C] hover:bg-muted dark:hover:bg-zinc-800/60 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 border-border dark:border-zinc-800"
-          }`}
+              : "bg-card hover:bg-muted text-muted-foreground hover:text-foreground border-border"
+            }`}
           title="Filter saved and bookmarked discussions"
         >
           <Bookmark className={`h-3.5 w-3.5 ${showBookmarkedOnly ? "fill-current" : ""}`} />
           <span>Saved</span>
           {bookmarkedCount > 0 && (
             <span
-              className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold leading-none ${
-                showBookmarkedOnly
+              className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold leading-none ${showBookmarkedOnly
                   ? "bg-primary-foreground/20 text-primary-foreground"
                   : "bg-primary/10 text-primary"
-              }`}
+                }`}
             >
               {bookmarkedCount}
             </span>
@@ -309,8 +306,8 @@ export function CommunityForumView({
           {showBookmarkedOnly
             ? " (Bookmarked only)"
             : activeCategory !== "ALL"
-            ? ` in ${FORUM_CATEGORIES.find((c) => c.id === activeCategory)?.label}`
-            : ""}
+              ? ` in ${FORUM_CATEGORIES.find((c) => c.id === activeCategory)?.label}`
+              : ""}
         </span>
         {(searchQuery || activeCategory !== "ALL" || showBookmarkedOnly) && (
           <Button
@@ -330,7 +327,7 @@ export function CommunityForumView({
 
       {/* Discussions Grid Layout (2–3 Columns) */}
       {filteredPosts.length === 0 ? (
-        <div className="rounded-md border border-dashed border-border dark:border-zinc-800 bg-card/40 dark:bg-[#0F131C]/60 p-12 text-center space-y-4">
+        <div className="rounded-md border border-dashed border-border bg-card/40 dark:bg-card/60 p-12 text-center space-y-4">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
             {showBookmarkedOnly ? (
               <Bookmark className="h-6 w-6" />
@@ -339,12 +336,12 @@ export function CommunityForumView({
             )}
           </div>
           <div className="space-y-1">
-            <h3 className="text-sm font-bold text-foreground dark:text-zinc-100">
+            <h3 className="text-sm font-bold text-foreground">
               {showBookmarkedOnly
                 ? "No bookmarked discussions yet"
                 : "No discussions yet in this topic"}
             </h3>
-            <p className="text-xs text-muted-foreground dark:text-zinc-400 max-w-sm mx-auto">
+            <p className="text-xs text-muted-foreground max-w-sm mx-auto">
               {showBookmarkedOnly
                 ? "Click the bookmark icon on any discussion card to quickly save it for later review."
                 : "Be the first traveler to start a conversation, ask for pacing advice, or share hidden gems!"}
@@ -355,7 +352,7 @@ export function CommunityForumView({
               size="sm"
               variant="outline"
               onClick={() => setShowBookmarkedOnly(false)}
-              className="text-xs cursor-pointer shadow-xs rounded-md border-border dark:border-zinc-800 dark:hover:bg-zinc-800/60"
+              className="text-xs cursor-pointer shadow-xs rounded-md border-border"
             >
               View All Discussions
             </Button>
@@ -386,10 +383,10 @@ export function CommunityForumView({
             return (
               <Card
                 key={post.id}
-                className="group flex flex-col justify-between border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200 shadow-2xs hover:shadow-xs rounded-md overflow-hidden"
+                className="group flex flex-col justify-between border border-border bg-card hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200 shadow-2xs hover:shadow-xs rounded-md overflow-hidden"
               >
                 {/* Cover Visual Thumbnail with Default Fallback */}
-                <div className="relative h-32 w-full overflow-hidden border-b border-border dark:border-zinc-800 bg-muted/40 dark:bg-zinc-900/50">
+                <div className="relative h-32 w-full overflow-hidden border-b border-border bg-muted/40 dark:bg-muted/20">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={coverImage}
@@ -407,7 +404,7 @@ export function CommunityForumView({
                           {post.categoryLabel}
                         </Badge>
                         {post.destination && (
-                          <span className="flex items-center gap-0.5 text-[11px] text-muted-foreground dark:text-zinc-400 truncate max-w-[120px]">
+                          <span className="flex items-center gap-0.5 text-[11px] text-muted-foreground truncate max-w-[120px]">
                             <MapPin className="h-3 w-3 text-primary shrink-0" />
                             <span className="truncate">{post.destination}</span>
                           </span>
@@ -417,11 +414,10 @@ export function CommunityForumView({
                       <button
                         type="button"
                         onClick={(e) => handleToggleBookmark(e, post)}
-                        className={`p-1 rounded-md transition-colors cursor-pointer ${
-                          post.hasSaved
+                        className={`p-1 rounded-md transition-colors cursor-pointer ${post.hasSaved
                             ? "text-primary bg-primary/10"
-                            : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 hover:bg-muted dark:hover:bg-zinc-800/60"
-                        }`}
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                          }`}
                         title={post.hasSaved ? "Remove Bookmark" : "Bookmark Discussion"}
                       >
                         <Bookmark className={`h-3.5 w-3.5 ${post.hasSaved ? "fill-current" : ""}`} />
@@ -430,25 +426,25 @@ export function CommunityForumView({
 
                     {/* Title */}
                     <Link href={postHref} className="block">
-                      <h3 className="text-sm font-bold text-foreground dark:text-zinc-100 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                      <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                         {post.title}
                       </h3>
                     </Link>
 
                     {/* Content Excerpt */}
-                    <p className="text-xs text-muted-foreground dark:text-zinc-400 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                       {post.content}
                     </p>
 
                     {/* Attached Workspace Trip Badge */}
                     {post.linkedTrip && (
-                      <div className="flex items-center gap-1.5 rounded-md bg-muted/40 dark:bg-[#121622] border border-border dark:border-zinc-800 px-2 py-1 text-[11px] text-foreground dark:text-zinc-200">
+                      <div className="flex items-center gap-1.5 rounded-md bg-muted/40 dark:bg-card-subtle border border-border px-2 py-1 text-[11px] text-foreground">
                         <Compass className="h-3 w-3 text-primary shrink-0" />
                         <span className="font-semibold text-primary truncate max-w-[140px]">
                           {post.linkedTrip.title}
                         </span>
-                        <span className="text-muted-foreground dark:text-zinc-500">•</span>
-                        <span className="text-muted-foreground dark:text-zinc-400 text-[10px]">
+                        <span className="text-muted-foreground">•</span>
+                        <span className="text-muted-foreground text-[10px]">
                           {post.linkedTrip.durationDays}d
                         </span>
                       </div>
@@ -495,11 +491,10 @@ export function CommunityForumView({
                         <button
                           type="button"
                           onClick={(e) => handleCardUpvote(e, post)}
-                          className={`flex items-center gap-1 text-[11px] px-1.5 py-0.5 rounded transition-colors cursor-pointer ${
-                            post.hasUpvoted
+                          className={`flex items-center gap-1 text-[11px] px-1.5 py-0.5 rounded transition-colors cursor-pointer ${post.hasUpvoted
                               ? "bg-primary/10 text-primary font-semibold"
                               : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 hover:bg-muted dark:hover:bg-zinc-800/60"
-                          }`}
+                            }`}
                         >
                           <ThumbsUp className={`h-3 w-3 ${post.hasUpvoted ? "fill-current" : ""}`} />
                           <span>{post.upvotes}</span>
