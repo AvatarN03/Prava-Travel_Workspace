@@ -145,38 +145,38 @@ export function AiProposalCard({
   };
 
   return (
-    <div className="my-3 rounded-xl border border-[#1E2B45] bg-[#0B1322] text-slate-200 dark:border-slate-200/90 dark:bg-white dark:text-slate-900 p-3.5 space-y-3 text-xs shadow-sm transition-colors">
+    <div className="my-3 rounded-xl border border-border bg-card text-card-foreground p-3.5 space-y-3 text-xs shadow-xs transition-colors">
       {/* Header */}
-      <div className="flex items-center justify-between gap-2 border-b border-[#152033] dark:border-slate-100 pb-2.5">
-        <div className="flex items-center gap-1.5 font-bold text-[#2D9BF0] dark:text-[#1e82cc]">
-          <Sparkles className="h-3.5 w-3.5 text-[#2D9BF0]" />
+      <div className="flex items-center justify-between gap-2 border-b border-border pb-2.5">
+        <div className="flex items-center gap-1.5 font-bold text-primary">
+          <Sparkles className="h-3.5 w-3.5 text-primary" />
           <span>Workspace Action Proposal</span>
         </div>
 
         {status === "PENDING" && (
-          <Badge variant="outline" className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border-amber-500/30 dark:bg-amber-50 dark:text-amber-800 dark:border-amber-200">
+          <Badge variant="outline" className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30">
             Pending Review
           </Badge>
         )}
         {status === "ACCEPTED" && (
-          <Badge variant="outline" className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border-emerald-500/30 dark:bg-emerald-50 dark:text-emerald-800 dark:border-emerald-200 flex items-center gap-1">
+          <Badge variant="outline" className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 flex items-center gap-1">
             <CheckCircle2 className="h-2.5 w-2.5" /> Accepted
           </Badge>
         )}
         {status === "PARTIAL" && (
-          <Badge variant="outline" className="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border-sky-500/30 dark:bg-blue-50 dark:text-blue-800 dark:border-blue-200">
+          <Badge variant="outline" className="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30">
             Partially Applied
           </Badge>
         )}
         {status === "REJECTED" && (
-          <Badge variant="outline" className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border-rose-500/30 dark:bg-rose-50 dark:text-rose-800 dark:border-rose-200">
+          <Badge variant="outline" className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30">
             Rejected
           </Badge>
         )}
       </div>
 
       {/* Proposal Summary */}
-      <p className="font-medium text-slate-100 dark:text-slate-800 leading-snug text-xs sm:text-[13px]">
+      <p className="font-medium text-foreground leading-snug text-xs sm:text-[13px]">
         {proposal.summary}
       </p>
 
@@ -199,8 +199,8 @@ export function AiProposalCard({
                 "group flex items-start gap-2.5 p-3 rounded-lg border transition-all duration-150",
                 status === "PENDING" ? "cursor-pointer" : "",
                 isSelected
-                  ? "bg-[#131F37]/90 border-[#2D9BF0]/50 text-slate-100 shadow-2xs ring-1 ring-[#2D9BF0]/30 dark:bg-blue-50/70 dark:border-blue-300 dark:text-slate-900 dark:ring-1 dark:ring-blue-400/20"
-                  : "bg-[#090E1A]/60 border-[#152033] text-slate-400 opacity-60 hover:opacity-90 dark:bg-slate-50/70 dark:border-slate-200 dark:text-slate-500 dark:opacity-60 dark:hover:opacity-90"
+                  ? "bg-primary/10 border-primary/40 text-foreground shadow-2xs ring-1 ring-primary/20"
+                  : "bg-muted/30 border-border text-muted-foreground opacity-70 hover:opacity-100"
               )}
             >
               {status === "PENDING" && (
@@ -209,7 +209,7 @@ export function AiProposalCard({
                   checked={isSelected}
                   onChange={() => toggleSelect(change.id)}
                   aria-label={`Select ${change.data.title || change.data.name || "item"}`}
-                  className="mt-0.5 h-3.5 w-3.5 rounded-xs border-slate-600 dark:border-slate-300 text-[#2D9BF0] focus:ring-[#2D9BF0] bg-[#0E1729] dark:bg-white cursor-pointer shrink-0"
+                  className="mt-0.5 h-3.5 w-3.5 rounded-xs border-border text-primary focus:ring-primary cursor-pointer shrink-0"
                 />
               )}
 
@@ -217,11 +217,11 @@ export function AiProposalCard({
                 <div className="flex items-center gap-2 flex-wrap justify-between">
                   <div className="flex items-center gap-2 flex-wrap min-w-0">
                     {renderActionBadge(change.action)}
-                    <span className="font-semibold text-xs text-white dark:text-slate-900 break-words">
+                    <span className="font-semibold text-xs text-foreground break-words">
                       {change.data.title || change.data.name || (change.action === "delete" ? "Target Item" : "New Item")}
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider shrink-0">
                     {change.domain === "itinerary" ? "Activity" : "Stay"}
                   </span>
                 </div>
@@ -230,23 +230,23 @@ export function AiProposalCard({
                 {change.domain === "itinerary" && (
                   <div className="flex flex-wrap gap-1.5 text-[11px] pt-0.5">
                     {change.data.dayNumber && (
-                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700">
-                        <Calendar className="h-3 w-3 text-[#2D9BF0]" /> Day {change.data.dayNumber}
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-muted text-muted-foreground">
+                        <Calendar className="h-3 w-3 text-primary" /> Day {change.data.dayNumber}
                       </span>
                     )}
                     {change.data.time && (
-                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700">
-                        <Clock className="h-3 w-3 text-[#2D9BF0]" /> {change.data.time}
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-muted text-muted-foreground">
+                        <Clock className="h-3 w-3 text-primary" /> {change.data.time}
                       </span>
                     )}
                     {change.data.location && (
-                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700">
-                        <MapPin className="h-3 w-3 text-[#2D9BF0]" /> {change.data.location}
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-muted text-muted-foreground">
+                        <MapPin className="h-3 w-3 text-primary" /> {change.data.location}
                       </span>
                     )}
                     {change.data.cost !== undefined && change.data.cost !== null && (
-                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700 font-mono">
-                        <DollarSign className="h-3 w-3 text-[#2D9BF0]" />
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-muted text-muted-foreground font-mono">
+                        <DollarSign className="h-3 w-3 text-primary" />
                         {Number(change.data.cost) === 0
                           ? "Free"
                           : `${getCurrencySymbol(change.data.currency || userCurrency)} ${change.data.cost} ${change.data.currency || userCurrency}`}
@@ -259,28 +259,28 @@ export function AiProposalCard({
                 {change.domain === "accommodation" && (
                   <div className="flex flex-wrap gap-1.5 text-[11px] pt-0.5">
                     {change.data.type && (
-                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700">
-                        <Hotel className="h-3 w-3 text-[#2D9BF0]" /> {change.data.type}
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-muted text-muted-foreground">
+                        <Hotel className="h-3 w-3 text-primary" /> {change.data.type}
                       </span>
                     )}
                     {change.data.address && (
-                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700">
-                        <MapPin className="h-3 w-3 text-[#2D9BF0]" /> {change.data.address}
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-muted text-muted-foreground">
+                        <MapPin className="h-3 w-3 text-primary" /> {change.data.address}
                       </span>
                     )}
                     {change.data.checkIn && (
-                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700">
-                        <Calendar className="h-3 w-3 text-[#2D9BF0]" /> In: {change.data.checkIn}
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-muted text-muted-foreground">
+                        <Calendar className="h-3 w-3 text-primary" /> In: {change.data.checkIn}
                       </span>
                     )}
                     {change.data.checkOut && (
-                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700">
-                        <Calendar className="h-3 w-3 text-[#2D9BF0]" /> Out: {change.data.checkOut}
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-muted text-muted-foreground">
+                        <Calendar className="h-3 w-3 text-primary" /> Out: {change.data.checkOut}
                       </span>
                     )}
                     {change.data.cost !== undefined && change.data.cost !== null && (
-                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-white/5 text-slate-300 dark:bg-slate-100 dark:text-slate-700 font-mono">
-                        <DollarSign className="h-3 w-3 text-[#2D9BF0]" />
+                      <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 bg-muted text-muted-foreground font-mono">
+                        <DollarSign className="h-3 w-3 text-primary" />
                         {Number(change.data.cost) === 0
                           ? "Free"
                           : `${getCurrencySymbol(change.data.currency || userCurrency)} ${change.data.cost} ${change.data.currency || userCurrency}`}
@@ -290,7 +290,7 @@ export function AiProposalCard({
                 )}
 
                 {change.data.description && (
-                  <p className="text-[11px] text-slate-300/90 dark:text-slate-600 leading-relaxed pt-0.5">
+                  <p className="text-[11px] text-muted-foreground leading-relaxed pt-0.5">
                     {change.data.description}
                   </p>
                 )}
@@ -302,13 +302,13 @@ export function AiProposalCard({
 
       {/* Action Buttons for Pending Proposals */}
       {status === "PENDING" && (
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-[#152033] dark:border-slate-100">
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-border">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleReject}
             disabled={loading}
-            className="h-7 px-2.5 text-xs rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 dark:text-slate-500 dark:hover:text-rose-600 dark:hover:bg-rose-50 cursor-pointer shrink-0 transition-colors"
+            className="h-7 px-2.5 text-xs rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer shrink-0 transition-colors"
           >
             <X className="h-3.5 w-3.5 mr-1" />
             Reject
@@ -321,9 +321,9 @@ export function AiProposalCard({
                 size="sm"
                 onClick={() => handleAccept(false)}
                 disabled={loading}
-                className="h-7 px-2.5 text-xs rounded-lg border-[#1E2B45] text-slate-200 hover:bg-white/5 dark:border-slate-300 dark:text-slate-800 dark:hover:bg-slate-100 cursor-pointer shrink-0"
+                className="h-7 px-2.5 text-xs rounded-lg border-border text-foreground hover:bg-muted cursor-pointer shrink-0"
               >
-                {loading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Check className="h-3 w-3 mr-1 text-[#2D9BF0]" />}
+                {loading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Check className="h-3 w-3 mr-1 text-primary" />}
                 Apply ({selectedIds.length})
               </Button>
             )}

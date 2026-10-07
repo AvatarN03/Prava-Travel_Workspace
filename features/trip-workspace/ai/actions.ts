@@ -9,11 +9,7 @@ import { evaluatePromptComplexity } from "@/services/ai/credit-evaluator";
 import { isItineraryPlanningIntent, runTripAgentGraph } from "@/services/ai/trip-agent-graph";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
 
-import {
-  aiProposalPayloadSchema,
-  type AiProposalDTO,
-  type AiProposalPayload,
-} from "./schema";
+import type { AiProposalDTO, AiProposalPayload } from "./schema";
 
 export interface UserAiQuotaDTO {
   used: number;
@@ -689,7 +685,7 @@ export async function acceptAiProposal(
 
     // Filter changes to apply
     const changesToApply = selectedChangeIds && selectedChangeIds.length > 0
-      ? payload.changes.filter((c) => selectedChangeIds.includes(c.id))
+      ? payload.changes.filter((c: { id: string }) => selectedChangeIds.includes(c.id))
       : payload.changes;
 
     if (changesToApply.length === 0) {

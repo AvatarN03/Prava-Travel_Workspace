@@ -84,15 +84,15 @@ export function AccommodationList({
         </div>
 
         {/* Actionable Empty State */}
-        <div className="rounded-sm border border-dashed border-border/80 dark:border-zinc-800 bg-card/60 dark:bg-[#0F131C] p-8 sm:p-12 text-center space-y-4">
+        <div className="rounded-sm border border-dashed border-border bg-card/60 p-8 sm:p-12 text-center space-y-4">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-sm bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
             <BedDouble className="h-6 w-6" />
           </div>
           <div className="space-y-1.5 max-w-md mx-auto">
-            <h3 className="text-base font-semibold text-foreground dark:text-zinc-100">
+            <h3 className="text-base font-semibold text-foreground">
               No accommodations added yet
             </h3>
-            <p className="text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               Record your booked stays, check-in windows, confirmation codes, and addresses for offline reference during travel.
             </p>
           </div>
@@ -113,7 +113,7 @@ export function AccommodationList({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full sm:w-auto cursor-pointer gap-1.5 border-border dark:border-zinc-800 dark:bg-[#121622] hover:bg-muted dark:hover:bg-zinc-800 text-foreground dark:text-zinc-100"
+                  className="w-full sm:w-auto cursor-pointer gap-1.5 border-border hover:bg-muted text-foreground"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Add First Stay</span>
@@ -125,9 +125,9 @@ export function AccommodationList({
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full sm:w-auto cursor-pointer gap-1.5 border-border dark:border-zinc-800 dark:bg-[#121622] hover:bg-muted dark:hover:bg-zinc-800 text-foreground dark:text-zinc-100"
+                className="w-full sm:w-auto cursor-pointer gap-1.5 border-border hover:bg-muted text-foreground"
               >
-                <Compass className="w-3.5 h-3.5 text-muted-foreground dark:text-zinc-400" />
+                <Compass className="w-3.5 h-3.5 text-muted-foreground" />
                 <span>Explore Stays on Maps</span>
               </Button>
             </Link>
@@ -140,23 +140,23 @@ export function AccommodationList({
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* ── Editorial Workspace Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-border dark:border-zinc-800">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-border">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+            <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block">
               Accommodations & Stays
             </span>
             <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
               {items.length} Confirmed {items.length === 1 ? "Stay" : "Stays"}
             </span>
           </div>
-          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
             Confirmed{" "}
-            <span className="font-serif italic font-normal text-foreground dark:text-zinc-100">
+            <span className="font-serif italic font-normal text-foreground">
               Lodgings
             </span>
           </h1>
-          <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 font-normal leading-relaxed max-w-2xl">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
             Hotel reservations, apartments, check-in instructions, confirmation codes, and concierge contact details.
           </p>
         </div>
@@ -174,42 +174,42 @@ export function AccommodationList({
 
       {/* ── Stays Metric Strip ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="p-3.5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs space-y-1">
-          <div className="flex items-center justify-between text-muted-foreground dark:text-zinc-400">
+        <div className="p-3.5 rounded-sm border border-border bg-card shadow-2xs space-y-1">
+          <div className="flex items-center justify-between text-muted-foreground">
             <span className="text-[11px] font-medium uppercase tracking-wider">Total Stays</span>
             <BedDouble className="w-3.5 h-3.5 text-indigo-500" />
           </div>
-          <div className="text-xl font-bold text-foreground dark:text-zinc-50 tabular-nums">
-            {items.length} <span className="text-xs font-normal text-muted-foreground dark:text-zinc-400">properties</span>
+          <div className="text-xl font-bold text-foreground tabular-nums">
+            {items.length} <span className="text-xs font-normal text-muted-foreground">properties</span>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs space-y-1">
-          <div className="flex items-center justify-between text-muted-foreground dark:text-zinc-400">
+        <div className="p-3.5 rounded-sm border border-border bg-card shadow-2xs space-y-1">
+          <div className="flex items-center justify-between text-muted-foreground">
             <span className="text-[11px] font-medium uppercase tracking-wider">Nights Booked</span>
             <Moon className="w-3.5 h-3.5 text-sky-500" />
           </div>
-          <div className="text-xl font-bold text-foreground dark:text-zinc-50 tabular-nums">
-            {totalNights} <span className="text-xs font-normal text-muted-foreground dark:text-zinc-400">nights</span>
+          <div className="text-xl font-bold text-foreground tabular-nums">
+            {totalNights} <span className="text-xs font-normal text-muted-foreground">nights</span>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs space-y-1">
-          <div className="flex items-center justify-between text-muted-foreground dark:text-zinc-400">
+        <div className="p-3.5 rounded-sm border border-border bg-card shadow-2xs space-y-1">
+          <div className="flex items-center justify-between text-muted-foreground">
             <span className="text-[11px] font-medium uppercase tracking-wider">Lodging Spend</span>
             <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
           </div>
-          <div className="text-xl font-bold font-mono text-foreground dark:text-zinc-50 tabular-nums">
+          <div className="text-xl font-bold font-mono text-foreground tabular-nums">
             ${totalLodgingCost.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
           </div>
         </div>
 
-        <div className="p-3.5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs space-y-1">
-          <div className="flex items-center justify-between text-muted-foreground dark:text-zinc-400">
+        <div className="p-3.5 rounded-sm border border-border bg-card shadow-2xs space-y-1">
+          <div className="flex items-center justify-between text-muted-foreground">
             <span className="text-[11px] font-medium uppercase tracking-wider">Avg Nightly Rate</span>
             <Calendar className="w-3.5 h-3.5 text-amber-500" />
           </div>
-          <div className="text-xl font-bold font-mono text-foreground dark:text-zinc-50 tabular-nums">
+          <div className="text-xl font-bold font-mono text-foreground tabular-nums">
             {avgNightlyCost > 0 ? `$${avgNightlyCost}/night` : "—"}
           </div>
         </div>

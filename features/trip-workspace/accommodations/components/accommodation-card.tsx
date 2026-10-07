@@ -89,7 +89,7 @@ export function AccommodationCard({ item }: AccommodationCardProps) {
 
   return (
     <>
-      <div className="group relative flex flex-col justify-between p-4 sm:p-5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] hover:border-[#2D9BF0]/50 hover:shadow-xs transition-all duration-200 space-y-4">
+      <div className="group relative flex flex-col justify-between p-4 sm:p-5 rounded-sm border border-border bg-card hover:border-primary/50 hover:shadow-xs transition-all duration-200 space-y-4">
         <div className="space-y-3">
           {/* Header Row: Type Badge, Nights Pill & Actions */}
           <div className="flex items-start justify-between gap-3">
@@ -103,8 +103,8 @@ export function AccommodationCard({ item }: AccommodationCardProps) {
                 </Badge>
 
                 {nightsCount && (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground dark:text-zinc-400 bg-muted/60 dark:bg-[#121622] px-2 py-0.5 rounded-xs tabular-nums">
-                    <Moon className="w-3 h-3 text-[#2D9BF0]" />
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-xs tabular-nums">
+                    <Moon className="w-3 h-3 text-primary" />
                     {nightsCount} night{nightsCount === 1 ? "" : "s"}
                   </span>
                 )}
@@ -117,7 +117,7 @@ export function AccommodationCard({ item }: AccommodationCardProps) {
                 )}
               </div>
 
-              <h4 className="text-base font-bold text-foreground dark:text-zinc-100 leading-snug pt-0.5">
+              <h4 className="text-base font-bold text-foreground leading-snug pt-0.5">
                 {item.name}
               </h4>
             </div>
@@ -127,7 +127,7 @@ export function AccommodationCard({ item }: AccommodationCardProps) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 text-muted-foreground hover:text-foreground dark:hover:text-zinc-100 shrink-0 cursor-pointer"
+                  className="h-7 w-7 text-muted-foreground hover:text-foreground shrink-0 cursor-pointer"
                   disabled={isDeleting}
                 >
                   {isDeleting ? (
@@ -137,24 +137,24 @@ export function AccommodationCard({ item }: AccommodationCardProps) {
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800">
-                <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="cursor-pointer dark:hover:bg-[#121622]">
+              <DropdownMenuContent align="end" className="bg-card border-border">
+                <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="cursor-pointer">
                   <Pencil className="h-3.5 w-3.5 mr-2" />
                   Edit Stay
                 </DropdownMenuItem>
 
                 {item.confirmationCode && (
-                  <DropdownMenuItem onClick={handleCopyCode} className="cursor-pointer dark:hover:bg-[#121622]">
+                  <DropdownMenuItem onClick={handleCopyCode} className="cursor-pointer">
                     <Copy className="h-3.5 w-3.5 mr-2" />
                     Copy Confirmation Code
                   </DropdownMenuItem>
                 )}
 
-                <DropdownMenuSeparator className="dark:bg-zinc-800" />
+                <DropdownMenuSeparator />
 
                 <DropdownMenuItem
                   onClick={() => setIsDeleteOpen(true)}
-                  className="text-destructive focus:text-destructive cursor-pointer dark:hover:bg-[#121622]"
+                  className="text-destructive focus:text-destructive cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5 mr-2" />
                   Delete Stay
@@ -165,34 +165,34 @@ export function AccommodationCard({ item }: AccommodationCardProps) {
 
           {/* Address */}
           {item.address && (
-            <p className="flex items-center gap-1.5 text-xs text-muted-foreground dark:text-zinc-400">
-              <MapPin className="w-3.5 h-3.5 text-[#2D9BF0] shrink-0" />
+            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
               <span className="truncate">{item.address}</span>
             </p>
           )}
 
           {/* Dates Strip */}
           {(item.checkIn || item.checkOut) && (
-            <div className="flex items-center gap-4 text-xs text-muted-foreground dark:text-zinc-400 p-2.5 rounded-sm bg-muted/40 dark:bg-[#121622] border border-border/60 dark:border-zinc-800 font-mono">
+            <div className="flex items-center gap-4 text-xs text-muted-foreground p-2.5 rounded-sm bg-muted/40 border border-border/60 font-mono">
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 dark:text-zinc-400 font-sans font-semibold">In:</span>
-                <span className="font-semibold text-foreground dark:text-zinc-200">{formatDate(item.checkIn) || "Unset"}</span>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-sans font-semibold">In:</span>
+                <span className="font-semibold text-foreground">{formatDate(item.checkIn) || "Unset"}</span>
               </div>
-              <span className="text-muted-foreground/40 dark:text-zinc-600">•</span>
+              <span className="text-muted-foreground/40">•</span>
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 dark:text-zinc-400 font-sans font-semibold">Out:</span>
-                <span className="font-semibold text-foreground dark:text-zinc-200">{formatDate(item.checkOut) || "Unset"}</span>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-sans font-semibold">Out:</span>
+                <span className="font-semibold text-foreground">{formatDate(item.checkOut) || "Unset"}</span>
               </div>
             </div>
           )}
 
           {/* Confirmation Code Pill with 1-Click Copy */}
           {item.confirmationCode && (
-            <div className="flex items-center justify-between gap-2 p-2.5 rounded-sm bg-muted/50 dark:bg-[#121622] border border-border/70 dark:border-zinc-800 text-xs">
+            <div className="flex items-center justify-between gap-2 p-2.5 rounded-sm bg-muted/50 border border-border/70 text-xs">
               <div className="flex items-center gap-1.5 min-w-0">
-                <KeyRound className="w-3.5 h-3.5 text-[#2D9BF0] shrink-0" />
-                <span className="text-[11px] text-muted-foreground dark:text-zinc-400">Voucher:</span>
-                <span className="font-mono font-bold text-foreground dark:text-zinc-200 truncate">
+                <KeyRound className="w-3.5 h-3.5 text-primary shrink-0" />
+                <span className="text-[11px] text-muted-foreground">Voucher:</span>
+                <span className="font-mono font-bold text-foreground truncate">
                   {item.confirmationCode}
                 </span>
               </div>
@@ -200,7 +200,7 @@ export function AccommodationCard({ item }: AccommodationCardProps) {
               <button
                 type="button"
                 onClick={handleCopyCode}
-                className="text-[11px] text-[#2D9BF0] hover:underline flex items-center gap-1 font-medium cursor-pointer"
+                className="text-[11px] text-primary hover:underline flex items-center gap-1 font-medium cursor-pointer"
               >
                 <Copy className="w-3 h-3" /> Copy
               </button>
@@ -209,20 +209,20 @@ export function AccommodationCard({ item }: AccommodationCardProps) {
 
           {/* Notes */}
           {item.notes && (
-            <p className="text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed pt-1.5 border-t border-border/60 dark:border-zinc-800">
+            <p className="text-xs text-muted-foreground leading-relaxed pt-1.5 border-t border-border/60">
               {item.notes}
             </p>
           )}
         </div>
 
         {/* Quick Action Links Footer */}
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-border/60 dark:border-zinc-800 text-xs">
+        <div className="flex items-center justify-end gap-2 pt-3 border-t border-border/60 text-xs">
           {item.contactPhone && (
             <a
               href={`tel:${item.contactPhone}`}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm border border-border/70 dark:border-zinc-800 bg-background dark:bg-[#121622] hover:bg-muted dark:hover:bg-zinc-800 text-foreground dark:text-zinc-200 transition-colors font-medium text-[11px]"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm border border-border/70 bg-background hover:bg-muted text-foreground transition-colors font-medium text-[11px]"
             >
-              <Phone className="w-3 h-3 text-[#2D9BF0]" />
+              <Phone className="w-3 h-3 text-primary" />
               Call Stay
             </a>
           )}
@@ -232,9 +232,9 @@ export function AccommodationCard({ item }: AccommodationCardProps) {
               href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm border border-border/70 dark:border-zinc-800 bg-background dark:bg-[#121622] hover:bg-muted dark:hover:bg-zinc-800 text-foreground dark:text-zinc-200 transition-colors font-medium text-[11px]"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm border border-border/70 bg-background hover:bg-muted text-foreground transition-colors font-medium text-[11px]"
             >
-              <ExternalLink className="w-3 h-3 text-[#2D9BF0]" />
+              <ExternalLink className="w-3 h-3 text-primary" />
               Open in Maps
             </a>
           )}

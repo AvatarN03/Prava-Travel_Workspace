@@ -4,11 +4,9 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import {
-  Calendar,
   CheckCircle2,
   CheckSquare,
   Clock,
-  Filter,
   ListTodo,
   Loader2,
   Plus,
@@ -68,13 +66,13 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
         filter === "PENDING"
           ? !item.isCompleted
           : filter === "COMPLETED"
-          ? item.isCompleted
-          : true;
+            ? item.isCompleted
+            : true;
       const matchesSearch =
         searchQuery === ""
           ? true
           : item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.category && item.category.toLowerCase().includes(searchQuery.toLowerCase()));
+          (item.category && item.category.toLowerCase().includes(searchQuery.toLowerCase()));
       return matchesFilter && matchesSearch;
     });
   }, [items, filter, searchQuery]);
@@ -184,12 +182,12 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
         </div>
 
         {/* Empty State Card */}
-        <Card className="rounded-sm border border-dashed border-border/80 dark:border-zinc-800 p-12 text-center bg-card/40 dark:bg-[#0F131C] shadow-2xs">
-          <div className="w-12 h-12 rounded-full bg-muted/60 dark:bg-zinc-800/80 flex items-center justify-center mx-auto mb-3 text-muted-foreground">
-            <CheckSquare className="w-6 h-6 text-[#2D9BF0]" />
+        <Card className="rounded-sm border border-dashed border-border p-12 text-center bg-card/40 shadow-2xs">
+          <div className="w-12 h-12 rounded-full bg-muted/60 flex items-center justify-center mx-auto mb-3 text-muted-foreground">
+            <CheckSquare className="w-6 h-6 text-primary" />
           </div>
-          <h3 className="text-base font-bold text-foreground dark:text-zinc-100">No checklist tasks created</h3>
-          <p className="text-xs text-muted-foreground dark:text-zinc-400 mt-1 max-w-md mx-auto">
+          <h3 className="text-base font-bold text-foreground">No checklist tasks created</h3>
+          <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto">
             Stay on track with packing lists, passport validity checks, visa documents, and departure day reminders.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
@@ -198,9 +196,9 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
               size="sm"
               onClick={handleSeedEssentials}
               disabled={isSeeding}
-              className="h-9 gap-1.5 text-xs font-semibold rounded-sm border-border dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800/60 cursor-pointer hover:bg-muted/80 shadow-2xs"
+              className="h-9 gap-1.5 text-xs font-semibold rounded-sm border-border cursor-pointer hover:bg-muted/80 shadow-2xs"
             >
-              {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-[#2D9BF0]" />}
+              {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-primary" />}
               <span>Load 10 Essential Travel Tasks</span>
             </Button>
             <AddTaskDialog
@@ -221,21 +219,21 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Editorial Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-1 border-b border-border/50 dark:border-zinc-800">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-1 border-b border-border/50">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground dark:text-zinc-400 font-semibold">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
               Preparation Roadmap
             </span>
-            <span className="text-muted-foreground/40 dark:text-zinc-600 text-xs">•</span>
-            <span className="text-[11px] font-mono text-muted-foreground dark:text-zinc-400">
+            <span className="text-muted-foreground/40 text-xs">•</span>
+            <span className="text-[11px] font-mono text-muted-foreground">
               {completedCount} of {items.length} completed ({percentage}%)
             </span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-zinc-100 font-serif">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground font-serif">
             Checklist & Tasks · <span className="italic font-normal">Readiness & Packing</span>
           </h1>
-          <p className="text-xs text-muted-foreground dark:text-zinc-400 mt-1 max-w-xl">
+          <p className="text-xs text-muted-foreground mt-1 max-w-xl">
             Keep track of gear packing, visa approvals, transit tickets, and pre-departure duties.
           </p>
         </div>
@@ -247,11 +245,11 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
             size="sm"
             onClick={handleGenerateAi}
             disabled={isAiGenerating}
-            className="h-9 gap-1.5 text-xs font-semibold rounded-sm border-[#2D9BF0]/40 text-[#2D9BF0] hover:bg-[#2D9BF0]/10 dark:bg-[#2D9BF0]/10 dark:hover:bg-[#2D9BF0]/20 cursor-pointer shadow-2xs"
+            className="h-9 gap-1.5 text-xs font-semibold rounded-sm border-primary/40 text-primary hover:bg-primary/10 cursor-pointer shadow-2xs"
           >
-            {isAiGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-[#2D9BF0]" />}
+            {isAiGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-primary" />}
             <span>AI Packing List</span>
-            <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 bg-[#2D9BF0]/15 text-[#2D9BF0] font-mono">
+            <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 bg-primary/15 text-primary font-mono">
               -3
             </Badge>
           </Button>
@@ -261,7 +259,7 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
             size="sm"
             onClick={handleSeedEssentials}
             disabled={isSeeding}
-            className="h-9 gap-1.5 text-xs font-medium rounded-sm border-border dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800/60 cursor-pointer hover:bg-muted/80 shadow-2xs"
+            className="h-9 gap-1.5 text-xs font-medium rounded-sm border-border cursor-pointer hover:bg-muted/80 shadow-2xs"
           >
             {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckSquare className="w-3.5 h-3.5 text-muted-foreground dark:text-zinc-400" />}
             <span>+ Essentials</span>
@@ -301,9 +299,8 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
           </div>
           <div className="h-1.5 w-full rounded-xs bg-muted dark:bg-zinc-800 overflow-hidden mt-2.5">
             <div
-              className={`h-full rounded-xs transition-all duration-300 ${
-                percentage === 100 ? "bg-emerald-500" : percentage >= 50 ? "bg-[#2D9BF0]" : "bg-sky-500"
-              }`}
+              className={`h-full rounded-xs transition-all duration-300 ${percentage === 100 ? "bg-emerald-500" : percentage >= 50 ? "bg-[#2D9BF0]" : "bg-sky-500"
+                }`}
               style={{ width: `${percentage}%` }}
             />
           </div>
@@ -347,7 +344,7 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground dark:text-zinc-500" />
           <Input
             placeholder="Search tasks..."
-            className="pl-8.5 h-9 text-xs rounded-sm bg-background dark:bg-[#121622] border-border dark:border-zinc-800 text-foreground dark:text-zinc-100 dark:placeholder:text-zinc-500"
+            className="pl-8.5 h-9 text-xs rounded-sm bg-background border-border text-foreground"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -375,17 +372,15 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
                 key={value}
                 type="button"
                 onClick={() => setFilter(value)}
-                className={`px-2.5 py-1 rounded-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 text-xs ${
-                  isActive
+                className={`px-2.5 py-1 rounded-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 text-xs ${isActive
                     ? "bg-[#2D9BF0] text-white font-semibold shadow-2xs"
                     : "bg-muted/50 dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 hover:bg-muted dark:hover:bg-zinc-800/60 dark:border dark:border-zinc-800"
-                }`}
+                  }`}
               >
                 <span>{label}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-semibold font-mono ${
-                    isActive ? "bg-white/20 text-white" : "bg-muted dark:bg-zinc-800 text-muted-foreground dark:text-zinc-300"
-                  }`}
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-semibold font-mono ${isActive ? "bg-white/20 text-white" : "bg-muted dark:bg-zinc-800 text-muted-foreground dark:text-zinc-300"
+                    }`}
                 >
                   {count}
                 </span>

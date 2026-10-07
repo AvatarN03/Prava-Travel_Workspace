@@ -18,8 +18,23 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { createChecklistItem } from "../actions";
+
+const CHECKLIST_CATEGORIES = [
+  { value: "Packing", label: "Packing" },
+  { value: "Documents", label: "Documents & Visas" },
+  { value: "Bookings", label: "Reservations & Tickets" },
+  { value: "Health", label: "Health & Insurance" },
+  { value: "General", label: "General To-Do" },
+];
 
 interface AddTaskDialogProps {
   tripId: string;
@@ -89,11 +104,11 @@ export function AddTaskDialog({
         </DialogTrigger>
       )}
 
-      <DialogContent className="sm:max-w-[420px] dark:bg-[#0F131C] dark:border-zinc-800 text-foreground dark:text-zinc-100">
+      <DialogContent className="sm:max-w-[420px]">
         <form onSubmit={handleSubmit} className="space-y-3.5">
           <DialogHeader>
-            <DialogTitle className="dark:text-zinc-100">Add Checklist Item</DialogTitle>
-            <DialogDescription className="dark:text-zinc-400">
+            <DialogTitle>Add Checklist Item</DialogTitle>
+            <DialogDescription>
               Create a packing reminder, pre-trip booking, or essential document task.
             </DialogDescription>
           </DialogHeader>
@@ -106,7 +121,7 @@ export function AddTaskDialog({
 
           <div className="space-y-3">
             <div className="space-y-1">
-              <Label htmlFor="task-title" className="dark:text-zinc-300">Task Title *</Label>
+              <Label htmlFor="task-title">Task Title *</Label>
               <Input
                 id="task-title"
                 placeholder="e.g. Passport validity check, Universal travel adapter"
@@ -114,37 +129,38 @@ export function AddTaskDialog({
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
                 disabled={isPending}
-                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="task-cat" className="dark:text-zinc-300">Category</Label>
-                <select
-                  id="task-cat"
-                  className="flex h-9 w-full rounded-sm border border-border bg-background dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100 px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
+                <Label htmlFor="task-cat">Category</Label>
+                <Select
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  onValueChange={(val) => setFormData({ ...formData, category: val })}
                   disabled={isPending}
                 >
-                  <option value="Packing" className="dark:bg-[#121622] dark:text-zinc-100">Packing</option>
-                  <option value="Documents" className="dark:bg-[#121622] dark:text-zinc-100">Documents & Visas</option>
-                  <option value="Bookings" className="dark:bg-[#121622] dark:text-zinc-100">Reservations & Tickets</option>
-                  <option value="Health" className="dark:bg-[#121622] dark:text-zinc-100">Health & Insurance</option>
-                  <option value="General" className="dark:bg-[#121622] dark:text-zinc-100">General To-Do</option>
-                </select>
+                  <SelectTrigger id="task-cat" className="w-full h-9">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CHECKLIST_CATEGORIES.map((cat) => (
+                      <SelectItem key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="task-due" className="dark:text-zinc-300">Due Date</Label>
+                <Label htmlFor="task-due">Due Date</Label>
                 <Input
                   id="task-due"
                   type="date"
                   value={formData.dueDate}
                   onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
                   disabled={isPending}
-                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
@@ -157,7 +173,7 @@ export function AddTaskDialog({
               size="sm"
               onClick={() => setOpen(false)}
               disabled={isPending}
-              className="cursor-pointer dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800/60"
+              className="cursor-pointer"
             >
               Cancel
             </Button>

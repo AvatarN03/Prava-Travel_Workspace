@@ -161,7 +161,7 @@ function renderInlineSpans(text: string): React.ReactNode {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#2D9BF0] underline hover:text-[#5ab1f5] font-medium cursor-pointer"
+            className="text-primary underline hover:opacity-80 font-medium cursor-pointer"
           >
             {label}
           </a>
