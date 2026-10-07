@@ -191,16 +191,18 @@ async function customizeItineraryWithAi(
     return rawItinerary;
   }
 
-  const systemMessage = `You are a professional travel planner assistant for Prava AI.
-The user wants to customize an existing travel itinerary for "${sourceTitle}" (${destination || "Destination"}).
+  const systemMessage = `You are a professional travel planner assistant for Prava.
+The user wants to customize an existing travel blueprint for "${sourceTitle}" (${destination || "Destination"}).
 User customization request: "${prompt}".
 
-Review the original activities and return a customized JSON array of activities tailored to the user's instructions.
-Keep the structure identical:
+CRITICAL INSTRUCTIONS:
+1. Retain the complete day-by-day scope and sequence of the original itinerary. Do NOT truncate or drop days unless the user explicitly requested shortening the trip.
+2. Adapt the activities, dining, or attractions in direct alignment with the user's customization request while keeping logistical feasibility intact.
+3. Every single output activity MUST strictly follow this exact JSON schema:
 [
-  { "dayNumber": 1, "title": "Short Activity Name", "category": "Food|Sightseeing|Transit|Activity", "description": "Crisp helpful description" }
+  { "dayNumber": 1, "title": "Concise Activity Name", "category": "Food" | "Sightseeing" | "Transit" | "Activity", "description": "Crisp, practical details and tips" }
 ]
-Output strictly valid JSON only. No markdown formatting, no codeblocks.`;
+4. Return ONLY the raw JSON array. Never include markdown codeblocks, conversational commentary, or explanations.`;
 
   const res = await callOpenRouterFree({
     systemInstruction: systemMessage,

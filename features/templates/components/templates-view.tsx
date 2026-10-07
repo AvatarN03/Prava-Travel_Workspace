@@ -33,6 +33,28 @@ import type {
   TemplateTripItem,
 } from "../types";
 
+const INCLUSION_OPTIONS: { value: InclusionFilter; label: string }[] = [
+  { value: "ALL", label: "All Inclusions" },
+  { value: "HAS_STAYS", label: "Has Stays" },
+  { value: "HAS_EXPENSES", label: "Has Budget" },
+  { value: "HAS_CHECKLIST", label: "Has Packing List" },
+  { value: "HAS_STORY", label: "Has Creator Story" },
+];
+
+const DURATION_OPTIONS: { value: DurationFilter; label: string }[] = [
+  { value: "ALL", label: "All Durations" },
+  { value: "WEEKEND", label: "Weekend (1–3d)" },
+  { value: "SHORT", label: "Short Trip (4–7d)" },
+  { value: "EXTENDED", label: "Extended (8–14d)" },
+  { value: "LONG", label: "Long Journey (15+d)" },
+];
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: "NEWEST", label: "Newest First" },
+  { value: "MOST_ACTIONABLE", label: "Most Actionable" },
+  { value: "DURATION", label: "Trip Duration" },
+];
+
 interface TemplatesViewProps {
   initialTrips: TemplateTripItem[];
 }
@@ -128,9 +150,9 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-12">
       {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-border dark:border-zinc-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-border">
         <div className="space-y-1">
-          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] dark:text-[#38BDF8] uppercase block select-none">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block select-none">
             Trip Blueprints
           </span>
           <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
@@ -183,16 +205,16 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
             value={inclusionFilter}
             onValueChange={(val) => setInclusionFilter(val as InclusionFilter)}
           >
-            <SelectTrigger className="h-8 text-xs min-w-[130px] sm:w-[155px] shrink-0 bg-background dark:bg-[#0F131C] border-border dark:border-zinc-800 text-foreground dark:text-zinc-200 rounded-sm">
+            <SelectTrigger className="h-8 text-xs min-w-[130px] sm:w-[155px] shrink-0 bg-background border-border text-foreground rounded-sm">
               <Filter className="w-3.5 h-3.5 mr-1.5 text-muted-foreground shrink-0" />
               <SelectValue placeholder="Inclusions" />
             </SelectTrigger>
-            <SelectContent className="rounded-sm dark:bg-[#0F131C] dark:border-zinc-800">
-              <SelectItem value="ALL" className="text-xs">All Inclusions</SelectItem>
-              <SelectItem value="HAS_STAYS" className="text-xs">Has Stays</SelectItem>
-              <SelectItem value="HAS_EXPENSES" className="text-xs">Has Budget</SelectItem>
-              <SelectItem value="HAS_CHECKLIST" className="text-xs">Has Packing List</SelectItem>
-              <SelectItem value="HAS_STORY" className="text-xs">Has Creator Story</SelectItem>
+            <SelectContent className="rounded-sm">
+              {INCLUSION_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value} className="text-xs">
+                  {opt.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
@@ -201,16 +223,16 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
             value={durationFilter}
             onValueChange={(val) => setDurationFilter(val as DurationFilter)}
           >
-            <SelectTrigger className="h-8 text-xs min-w-[130px] sm:w-[155px] shrink-0 bg-background dark:bg-[#0F131C] border-border dark:border-zinc-800 text-foreground dark:text-zinc-200 rounded-sm">
+            <SelectTrigger className="h-8 text-xs min-w-[130px] sm:w-[155px] shrink-0 bg-background border-border text-foreground rounded-sm">
               <Clock className="w-3.5 h-3.5 mr-1.5 text-muted-foreground shrink-0" />
               <SelectValue placeholder="Duration" />
             </SelectTrigger>
-            <SelectContent className="rounded-sm dark:bg-[#0F131C] dark:border-zinc-800">
-              <SelectItem value="ALL" className="text-xs">All Durations</SelectItem>
-              <SelectItem value="WEEKEND" className="text-xs">Weekend (1–3d)</SelectItem>
-              <SelectItem value="SHORT" className="text-xs">Short Trip (4–7d)</SelectItem>
-              <SelectItem value="EXTENDED" className="text-xs">Extended (8–14d)</SelectItem>
-              <SelectItem value="LONG" className="text-xs">Long Journey (15+d)</SelectItem>
+            <SelectContent className="rounded-sm">
+              {DURATION_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value} className="text-xs">
+                  {opt.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
@@ -219,14 +241,16 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
             value={sortBy}
             onValueChange={(val) => setSortBy(val as SortOption)}
           >
-            <SelectTrigger className="h-8 text-xs min-w-[125px] sm:w-[145px] shrink-0 bg-background dark:bg-[#0F131C] border-border dark:border-zinc-800 text-foreground dark:text-zinc-200 rounded-sm">
+            <SelectTrigger className="h-8 text-xs min-w-[125px] sm:w-[145px] shrink-0 bg-background border-border text-foreground rounded-sm">
               <ArrowUpDown className="w-3.5 h-3.5 mr-1.5 text-muted-foreground shrink-0" />
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
-            <SelectContent className="rounded-sm dark:bg-[#0F131C] dark:border-zinc-800">
-              <SelectItem value="NEWEST" className="text-xs">Newest First</SelectItem>
-              <SelectItem value="MOST_ACTIONABLE" className="text-xs">Most Actionable</SelectItem>
-              <SelectItem value="DURATION" className="text-xs">Trip Duration</SelectItem>
+            <SelectContent className="rounded-sm">
+              {SORT_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value} className="text-xs">
+                  {opt.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
@@ -245,7 +269,7 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
 
       {/* Grid of Templates */}
       {filteredTrips.length === 0 ? (
-        <div className="rounded-md border border-dashed border-border dark:border-zinc-800 bg-card/40 dark:bg-[#0F131C]/60 p-12 text-center space-y-4">
+        <div className="rounded-md border border-dashed border-border bg-card/40 dark:bg-card-subtle/60 p-12 text-center space-y-4">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
             <Compass className="h-7 w-7 text-primary" />
           </div>

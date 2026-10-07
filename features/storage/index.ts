@@ -1,11 +1,9 @@
-// Server Actions
+// Server Actions & Types
 export {
   deleteProfileAvatarAction,
   deleteUnusedTripCoverImage,
   updateProfileAvatar,
   updateTripCoverImage,
   uploadImageAction,
+  type StorageFolder,
 } from "./actions";
-
-// Types
-export type * from "./types";

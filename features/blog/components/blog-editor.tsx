@@ -38,7 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { uploadImageAction } from "@/features/storage/actions";
+import { uploadImageAction } from "@/features/storage";
 
 import { createBlogPost, updateBlogPost } from "../actions";
 import { generateSlug } from "../schema";

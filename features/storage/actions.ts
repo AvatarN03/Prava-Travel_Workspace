@@ -12,7 +12,13 @@ import {
 import { createClient } from "@/lib/supabase/server";
 
 import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE_BYTES } from "@/lib/storage";
-import type { StorageFolder } from "./types";
+
+export type StorageFolder =
+  | "trips"
+  | "avatars"
+  | "posts"
+  | "community"
+  | "stories";
 
 /**
  * Server action to upload an image to Supabase Storage.

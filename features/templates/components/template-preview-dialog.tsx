@@ -93,7 +93,7 @@ export function TemplatePreviewDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden rounded-sm sm:rounded-sm dark:bg-[#0F131C] dark:border-zinc-800">
         {/* Modal Header: Space-efficient, left-aligned, won't crowd the close button */}
-        <DialogHeader className="p-3.5 sm:p-4 pb-2.5 sm:pb-3 pr-11 border-b border-border dark:border-zinc-800 bg-muted/20 dark:bg-[#090D16] text-left">
+        <DialogHeader className="p-3.5 sm:p-4 pb-2.5 sm:pb-3 pr-11 border-b border-border bg-muted/20 dark:bg-card-subtle text-left">
           {/* Top Metadata Badges in a single compact row */}
           <div className="flex items-center gap-1.5 flex-wrap sm:flex-nowrap mb-1">
             <Badge variant="secondary" className="text-[10px] sm:text-[11px] px-1.5 py-0.2 shrink-0 dark:border-zinc-800">
@@ -295,7 +295,7 @@ export function TemplatePreviewDialog({
                     {trip.tips.map((tip, idx) => (
                       <div
                         key={idx}
-                        className="p-2.5 rounded-sm bg-primary/5 dark:bg-[#2D9BF0]/10 border border-primary/20 dark:border-[#2D9BF0]/30 text-xs text-foreground dark:text-zinc-200"
+                        className="p-2.5 rounded-sm bg-primary/5 dark:bg-primary/10 border border-primary/20 dark:border-primary/30 text-xs text-foreground dark:text-zinc-200"
                       >
                         {tip}
                       </div>
@@ -313,7 +313,7 @@ export function TemplatePreviewDialog({
           </Tabs>
 
           {/* Optional AI Tailor Accordion */}
-          <div className="rounded-sm border border-primary/30 dark:border-[#2D9BF0]/40 bg-primary/5 dark:bg-[#2D9BF0]/10 p-3.5 space-y-2">
+          <div className="rounded-sm border border-primary/30 dark:border-primary/40 bg-primary/5 dark:bg-primary/10 p-3.5 space-y-2">
             <div
               onClick={() => setShowAiCustomizer(!showAiCustomizer)}
               className="flex items-center justify-between cursor-pointer text-xs font-bold text-foreground dark:text-zinc-100 hover:text-primary transition-colors"

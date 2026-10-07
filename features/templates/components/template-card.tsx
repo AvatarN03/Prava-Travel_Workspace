@@ -218,7 +218,7 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
         {trip.linkedStory && (
           <Link
             href={`/stories/${trip.linkedStory.slug}`}
-            className="flex items-center justify-between gap-2 p-2 rounded-sm border border-primary/20 bg-primary/5 dark:bg-[#2D9BF0]/10 hover:bg-primary/10 transition-colors text-[11px] text-primary"
+            className="flex items-center justify-between gap-2 p-2 rounded-sm border border-primary/20 bg-primary/5 dark:bg-primary/10 hover:bg-primary/10 transition-colors text-[11px] text-primary"
           >
             <div className="flex items-center gap-1.5 min-w-0">
               <BookOpen className="h-3.5 w-3.5 shrink-0" />
