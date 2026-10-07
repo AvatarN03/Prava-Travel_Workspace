@@ -59,8 +59,35 @@
 - **Phase 79: Community Forum Design Token Modernization & Forum Actions Prisma Migration** (Complete)
 - **Phase 80: Dashboard Vector Extraction, Global Currency Alignment & Pricing Token Modernization** (Complete)
 - **Phase 81: Profile Global Currency Mapping & Design Token Harmonization** (Complete)
+- **Phase 82: Storage Module Consolidation & Boilerplate Reduction** (Complete)
+- **Phase 83: Trip Workspace Design System Alignment, Currency Deduplication & Select Mapping** (Complete)
+- **Phase 84: Trip Workspace Select Normalization, Theme Token Harmonization & Dead Code Cleanup** (Complete)
 
 ## Current Task
+- **Phase 84 Complete**: Trip Workspace Select Normalization, Theme Token Harmonization & Dead Code Cleanup:
+  - **Itinerary Module Refactoring (`add-itinerary-dialog.tsx`, `edit-itinerary-dialog.tsx`, `itinerary-card.tsx`, `itinerary-view.tsx`)**:
+    - Replaced raw HTML `<select>` in `add-itinerary-dialog.tsx` and `edit-itinerary-dialog.tsx` with official shadcn/ui `<Select>`, mapped over reusable `ITINERARY_CATEGORIES`.
+    - Stripped hardcoded dark hex codes (`#0F131C`, `#121622`, `zinc-800`, `zinc-100`) and replaced hardcoded blue (`#2D9BF0`) with `primary` design tokens.
+    - Cleaned unused imports (`Badge`, `DollarSign`) in `itinerary-view.tsx` and normalized progress banner styles.
+  - **Links Module Refactoring (`add-link-dialog.tsx`, `edit-link-dialog.tsx`, `import-from-vault-dialog.tsx`, `link-card.tsx`, `links-grid.tsx`)**:
+    - Replaced raw HTML `<select>` in `add-link-dialog.tsx` and `edit-link-dialog.tsx` with shadcn/ui `<Select>`, mapped over exported `LINK_CATEGORIES`.
+    - Cleaned dark hex tokens (`#0F131C`, `#121622`, `zinc-800`, `zinc-100`) and `#2D9BF0` in `add-link-dialog.tsx`, `edit-link-dialog.tsx`, `import-from-vault-dialog.tsx`, `link-card.tsx`, and `links-grid.tsx`.
+    - Standardized filter button and metric card accents to `bg-primary`, `text-primary`, and system tokens.
+  - **Notes Module Refactoring (`add-note-dialog.tsx`, `edit-note-dialog.tsx`, `note-card.tsx`, `notes-grid.tsx`)**:
+    - Replaced raw HTML `<select>` in `add-note-dialog.tsx` and `edit-note-dialog.tsx` with shadcn/ui `<Select>`, mapped over exported `NOTE_CATEGORIES`.
+    - Removed unused `Badge` import from `note-card.tsx`.
+    - Cleaned dark hex codes and normalized color tokens across `note-card.tsx` and `notes-grid.tsx`.
+  - **Overview Dashboard & Trips CRUD Cleanup (`overview-dashboard.tsx`, `trip-list.tsx`)**:
+    - Removed unused `Badge` import from `overview-dashboard.tsx`.
+    - Consolidated duplicate `@/lib/offline` imports in `trip-list.tsx`.
+    - Verified `edit-trip-dialog.tsx` and `trip-card.tsx` already strictly adhere to semantic theme tokens with zero dead tokens.
+- **Phase 83 Complete**: Trip Workspace Design System Alignment, Currency Deduplication & Select Mapping:
+  - **Storage Feature File Consolidation (`features/storage`)**:
+    - Consolidated `features/storage` from 3 files to 2 files: merged the 7-line single type definition from `types.ts` directly into `actions.ts` alongside its consuming server action.
+    - Exported `type StorageFolder` from `actions.ts` and re-exported it cleanly from the public barrel `index.ts`.
+    - Safely eliminated redundant `features/storage/types.ts` without breaking external consumers (`components/storage/image-upload.tsx`, etc.).
+  - **Full Production Build Verification**:
+    - Ran `npm run build` with Turbopack: Prisma generated (1.11s), TypeScript passed in 33.2s with 0 errors, static pages generated in 2.7s, exit code 0.
 - **Phase 81 Complete**: Profile Global Currency Mapping & Design Token Harmonization:
   - **Profile Currency Dynamic Mapping (`general-section.tsx`)**:
     - Replaced 24 hardcoded, repetitive `<SelectItem>` tags in the Default Currency dropdown with dynamic mapping over `SUPPORTED_CURRENCIES` from `@/features/travel-essentials`.
@@ -185,6 +212,25 @@
   - **Subscription Page Skeleton (`app/(workspace)/subscription/loading.tsx`)**:
     - Realigned with `AccountUsageView`: added currency dropdown skeleton, active tier quota chips, View Usage button, segmented yearly/monthly billing switcher, and dual plan comparison cards.
   - **Verification**: `npm run build` executed and passed with 0 errors across all routes and components.
+
+- **Phase 83 Complete**: Trip Workspace Design System Alignment, Currency Deduplication & Color Token Normalization:
+  - **Accommodations Sub-Module**:
+    - Normalized color tokens across `accommodation-card.tsx`, `accommodation-list.tsx`, `add-accommodation-dialog.tsx`, and `edit-accommodation-dialog.tsx`.
+    - Stripped hardcoded dark hex codes (`#0F131C`, `#121622`, `#2D9BF0`, `zinc-800`), replacing them with standard design system tokens (`border-border`, `bg-card`, `text-primary`, `bg-primary`).
+  - **AI Sub-Module**:
+    - Fixed inverted light/dark styles and stripped hardcoded hex codes (`#1E2B45`, `#0B1322`, `#2D9BF0`) in `ai-proposal-card.tsx`.
+    - Normalized markdown link colors in `workspace-ai-panel.tsx` to `text-primary`.
+    - Removed dead schema imports (`aiProposalPayloadSchema`, `AiProposalPayload`) from `features/trip-workspace/ai/actions.ts`.
+  - **Checklist Sub-Module**:
+    - Replaced raw browser `<select>` with shadcn/ui `<Select>` mapped over `CHECKLIST_CATEGORIES` in both `add-task-dialog.tsx` and `edit-task-dialog.tsx`.
+    - Cleaned unused imports (`Calendar`, `Clock`, `Filter`) and dark hex tokens in `checklist-view.tsx`.
+    - Standardized task interaction styling in `task-item.tsx` (`bg-primary`, `border-primary`, `text-primary`).
+  - **Trip Workspace Common Components**:
+    - Refactored status dropdown in `workspace-header.tsx` to map over `TRIP_STATUS_OPTIONS` rather than hardcoded items, and cleaned tokens across AI toggle, dropdown menu, and date badges.
+    - Normalized tokens across `add-to-calendar-dialog.tsx` and `workspace-nav.tsx` (mobile and tablet viewports).
+  - **Expenses Sub-Module**:
+    - Deduplicated currency lists in `add-expense-dialog.tsx` and `edit-expense-dialog.tsx` by importing and mapping global `SUPPORTED_CURRENCIES` from `@/features/travel-essentials`.
+    - Cleaned hardcoded tokens and zinc classes in `add-expense-dialog.tsx`, `edit-expense-dialog.tsx`, and `expense-tracker.tsx`.
 
 - **Phase 73 Complete**: Workspace-Wide High-Contrast Button Theme Unification:
   - **Core Objective**: Implement the unified shadcn high-contrast button styling (`bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-white`) across all remaining pages, dialogs, and workspace components without modifying unrelated code, while strictly maintaining Cerulean Blue (`#2D9BF0`) accents for badges, icons, borders, and text.

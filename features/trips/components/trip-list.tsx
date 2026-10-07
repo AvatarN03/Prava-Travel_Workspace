@@ -39,9 +39,7 @@ import { CreateTripDialog } from "./create-trip-dialog";
 import { TripCard } from "./trip-card";
 import { TripTableView } from "./trip-table-view";
 
-import { useOfflineSyncContext } from "@/lib/offline";
-
-import { getOfflineTrips } from "@/lib/offline";
+import { getOfflineTrips, useOfflineSyncContext } from "@/lib/offline";
 import { isTripDatesPassed } from "@/lib/utils";
 
 import type {
@@ -280,13 +278,12 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
               </div>
               <div className="mt-1.5 h-1.5 w-full rounded-full bg-muted dark:bg-[#121622] overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all duration-300 ${
-                    usagePercentage >= 90
+                  className={`h-full rounded-full transition-all duration-300 ${usagePercentage >= 90
                       ? "bg-destructive"
                       : usagePercentage >= 70
-                      ? "bg-amber-500"
-                      : "bg-primary"
-                  }`}
+                        ? "bg-amber-500"
+                        : "bg-primary"
+                    }`}
                   style={{ width: `${usagePercentage}%` }}
                 />
               </div>
@@ -399,11 +396,10 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                     type="button"
                     onClick={() => setViewMode("grid")}
                     aria-label="Grid view"
-                    className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${
-                      viewMode === "grid"
+                    className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${viewMode === "grid"
                         ? "bg-primary text-primary-foreground shadow-2xs"
                         : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
-                    }`}
+                      }`}
                   >
                     <LayoutGrid className="h-3.5 w-3.5" />
                   </button>
@@ -411,11 +407,10 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                     type="button"
                     onClick={() => setViewMode("table")}
                     aria-label="Table view"
-                    className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${
-                      viewMode === "table"
+                    className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${viewMode === "table"
                         ? "bg-primary text-primary-foreground shadow-2xs"
                         : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
-                    }`}
+                      }`}
                   >
                     <List className="h-3.5 w-3.5" />
                   </button>
@@ -482,11 +477,10 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   type="button"
                   onClick={() => setViewMode("grid")}
                   aria-label="Grid view"
-                  className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${
-                    viewMode === "grid"
+                  className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${viewMode === "grid"
                       ? "bg-primary text-primary-foreground shadow-2xs"
                       : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
-                  }`}
+                    }`}
                 >
                   <LayoutGrid className="h-3.5 w-3.5" />
                 </button>
@@ -494,11 +488,10 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   type="button"
                   onClick={() => setViewMode("table")}
                   aria-label="Table view"
-                  className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${
-                    viewMode === "table"
+                  className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${viewMode === "table"
                       ? "bg-primary text-primary-foreground shadow-2xs"
                       : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
-                  }`}
+                    }`}
                 >
                   <List className="h-3.5 w-3.5" />
                 </button>
