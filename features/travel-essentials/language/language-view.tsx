@@ -408,7 +408,7 @@ export function LanguageView() {
       case "Greetings":
         return <HandMetal className="w-3 h-3 text-amber-500" />;
       case "Essentials":
-        return <HelpCircle className="w-3 h-3 text-indigo-500" />;
+        return <HelpCircle className="w-3 h-3 text-primary" />;
       case "Dining":
         return <Utensils className="w-3 h-3 text-emerald-500" />;
       case "Transit":
@@ -416,7 +416,7 @@ export function LanguageView() {
       case "Emergency":
         return <ShieldAlert className="w-3 h-3 text-rose-500" />;
       case "Numbers":
-        return <Hash className="w-3 h-3 text-purple-500" />;
+        return <Hash className="w-3 h-3 text-primary" />;
       default:
         return <Globe className="w-3 h-3 text-primary" />;
     }
@@ -425,10 +425,10 @@ export function LanguageView() {
   return (
     <div className="space-y-6">
       {/* Header & Language Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/80 dark:border-[#1E293B]/70">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border">
         <div>
           <h2 className="text-base font-semibold text-foreground dark:text-zinc-100 flex items-center gap-2">
-            <Languages className="w-4 h-4 text-violet-500 dark:text-[#2D9BF0]" />
+            <Languages className="w-4 h-4 text-primary" />
             Travel Language Phrasebook & Voice Guide
           </h2>
           <p className="text-xs text-muted-foreground dark:text-slate-400 mt-0.5">
@@ -478,12 +478,12 @@ export function LanguageView() {
               setAiTranslation(null); // Reset custom translation on language switch
             }}
           >
-            <SelectTrigger id="language-select" className="w-[180px] sm:w-[210px] h-9 text-xs cursor-pointer bg-background dark:bg-[#060A14] dark:border-[#1E293B] dark:text-white">
+            <SelectTrigger id="language-select" className="w-[180px] sm:w-[210px] h-9 text-xs cursor-pointer bg-background border-border text-foreground">
               <SelectValue placeholder="Select Language" />
             </SelectTrigger>
-            <SelectContent className="dark:bg-[#0C1322] dark:border-[#1E293B]">
+            <SelectContent>
               {LANGUAGE_GUIDES.map((guide) => (
-                <SelectItem key={guide.language} value={guide.language} className="text-xs cursor-pointer dark:hover:bg-[#131F35]">
+                <SelectItem key={guide.language} value={guide.language} className="text-xs cursor-pointer">
                   <span className="mr-2 text-sm">{guide.flag}</span>
                   <span>{guide.language}</span>
                   {guide.nativeName && (
@@ -499,14 +499,14 @@ export function LanguageView() {
       </div>
 
       {/* AI Custom Sentence Translator (Google Translate-Style Auto-Detect & Bidirectional) */}
-      <Card className="border-violet-500/30 dark:border-violet-500/30 bg-gradient-to-br from-violet-500/5 via-card to-card dark:from-violet-500/10 dark:via-[#0C1322] dark:to-[#0C1322] shadow-xs overflow-hidden">
-        <CardHeader className="p-4 pb-2.5 border-b border-violet-500/20 bg-violet-500/5 dark:border-violet-500/20 dark:bg-violet-500/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <Card className="border-border bg-gradient-to-br from-card via-card to-muted/20 dark:from-card dark:via-card dark:to-card-subtle shadow-xs overflow-hidden">
+        <CardHeader className="p-4 pb-2.5 border-b border-border/60 bg-muted/20 dark:bg-card-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
               <Bot className="w-4 h-4" />
             </div>
             <div>
-              <CardTitle className="text-xs font-bold uppercase tracking-wider text-violet-700 dark:text-violet-400 flex items-center gap-1.5">
+              <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground dark:text-zinc-100 flex items-center gap-1.5">
                 AI Travel Translator & Keypad Reader
                 <Sparkles className="w-3 h-3 text-amber-500" />
               </CardTitle>
@@ -517,13 +517,13 @@ export function LanguageView() {
           </div>
 
           {/* Google Translate Style Direction Selector */}
-          <div className="flex items-center gap-1 bg-background/80 dark:bg-[#060A14] p-0.5 rounded-lg border border-violet-500/20 dark:border-violet-500/30 self-start sm:self-auto overflow-x-auto">
+          <div className="flex items-center gap-1 bg-background p-0.5 rounded-lg border border-border self-start sm:self-auto overflow-x-auto">
             <button
               type="button"
               onClick={() => setTranslateMode("auto")}
               className={`px-2.5 py-1 text-[11px] font-medium rounded-md transition-all cursor-pointer whitespace-nowrap ${
                 translateMode === "auto"
-                  ? "bg-violet-600 text-white shadow-xs font-semibold"
+                  ? "bg-primary text-primary-foreground shadow-xs font-semibold"
                   : "text-muted-foreground hover:text-foreground dark:text-slate-400 dark:hover:text-white"
               }`}
             >
@@ -534,7 +534,7 @@ export function LanguageView() {
               onClick={() => setTranslateMode("to-english")}
               className={`px-2.5 py-1 text-[11px] font-medium rounded-md transition-all cursor-pointer whitespace-nowrap ${
                 translateMode === "to-english"
-                  ? "bg-violet-600 text-white shadow-xs font-semibold"
+                  ? "bg-primary text-primary-foreground shadow-xs font-semibold"
                   : "text-muted-foreground hover:text-foreground dark:text-slate-400 dark:hover:text-white"
               }`}
             >
@@ -545,17 +545,17 @@ export function LanguageView() {
               onClick={() =>
                 setTranslateMode(translateMode === "to-target" ? "to-english" : "to-target")
               }
-              className="p-1 text-muted-foreground hover:text-violet-600 dark:text-slate-400 dark:hover:text-violet-400 transition-colors cursor-pointer"
+              className="p-1 text-muted-foreground hover:text-primary transition-colors cursor-pointer"
               title="Swap translation direction"
             >
-              <ArrowLeftRight className="w-3 h-3" />
+              <ArrowLeftRight className="w-3.5 h-3.5" />
             </button>
             <button
               type="button"
               onClick={() => setTranslateMode("to-target")}
               className={`px-2.5 py-1 text-[11px] font-medium rounded-md transition-all cursor-pointer whitespace-nowrap ${
                 translateMode === "to-target"
-                  ? "bg-violet-600 text-white shadow-xs font-semibold"
+                  ? "bg-primary text-primary-foreground shadow-xs font-semibold"
                   : "text-muted-foreground hover:text-foreground dark:text-slate-400 dark:hover:text-white"
               }`}
             >
@@ -603,19 +603,19 @@ export function LanguageView() {
 
           {/* Translation Result Card */}
           {aiTranslation && (
-            <div className="p-3.5 rounded-xl border border-violet-500/30 bg-violet-500/10 dark:bg-violet-500/15 space-y-2.5 animate-in fade-in-50 duration-150">
+            <div className="p-3.5 rounded-xl border border-primary/30 bg-primary/5 dark:bg-primary/10 space-y-2.5 animate-in fade-in-50 duration-150">
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <Badge variant="outline" className="text-[10px] font-mono border-violet-500/30 bg-background/80 dark:bg-[#0C1322] dark:text-zinc-200">
+                  <Badge variant="outline" className="text-[10px] font-mono border-primary/30 bg-background/80 dark:bg-card-subtle dark:text-zinc-200">
                     🌐 Detected: {aiTranslation.detectedLanguage || "Native"}
                   </Badge>
-                  <span className="text-[10px] text-violet-700 dark:text-violet-400 font-medium">
+                  <span className="text-[10px] text-primary font-medium">
                     {aiTranslation.direction === "to-english"
                       ? "→ Translated to English"
                       : `→ Translated to ${aiTranslation.targetLanguage}`}
                   </span>
                 </div>
-                <Badge variant="secondary" className="text-[9px] font-mono dark:bg-[#131F35] dark:text-zinc-200 dark:border dark:border-[#1E293B]">
+                <Badge variant="secondary" className="text-[9px] font-mono">
                   {aiTranslation.provider || "AI Translator"}
                 </Badge>
               </div>
@@ -638,7 +638,7 @@ export function LanguageView() {
 
               {/* Phonetic Pronunciation */}
               {aiTranslation.pronunciation && aiTranslation.pronunciation !== aiTranslation.translated && (
-                <div className="text-xs font-mono text-violet-700 dark:text-violet-300 flex items-center gap-1.5">
+                <div className="text-xs font-mono text-primary flex items-center gap-1.5">
                   <span className="text-muted-foreground dark:text-slate-400 font-sans">Pronunciation:</span>
                   <strong>&quot;{aiTranslation.pronunciation}&quot;</strong>
                 </div>
@@ -646,8 +646,8 @@ export function LanguageView() {
 
               {/* Cultural nuance note */}
               {aiTranslation.culturalNote && (
-                <div className="text-[11px] text-muted-foreground dark:text-slate-400 flex items-start gap-1.5 pt-1 border-t border-violet-500/20">
-                  <Info className="w-3.5 h-3.5 text-violet-500 shrink-0 mt-0.5" />
+                <div className="text-[11px] text-muted-foreground dark:text-slate-400 flex items-start gap-1.5 pt-1 border-t border-border/60">
+                  <Info className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
                   <span>{aiTranslation.culturalNote}</span>
                 </div>
               )}
@@ -695,7 +695,7 @@ export function LanguageView() {
                     )
                   ) : (
                     <>
-                      <Volume2 className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" />
+                      <Volume2 className="w-3.5 h-3.5 text-primary" />
                       <span>Pronounce {aiTranslation.direction === "to-english" ? "English" : currentGuide.language}</span>
                     </>
                   )}
@@ -911,7 +911,7 @@ export function LanguageView() {
                         )
                       ) : (
                         <>
-                          <Volume2 className="w-3 h-3 text-violet-600 dark:text-violet-400" />
+                          <Volume2 className="w-3 h-3 text-primary" />
                           <span>Listen</span>
                         </>
                       )}

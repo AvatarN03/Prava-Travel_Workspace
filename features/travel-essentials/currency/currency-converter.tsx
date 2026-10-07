@@ -35,7 +35,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { SUPPORTED_CURRENCIES } from "./currency-service";
+import {
+  DEFAULT_WATCHLIST_CURRENCIES,
+  SUPPORTED_CURRENCIES,
+} from "./currency-service";
 import type {
   CurrencyPerformanceData,
   FxRates,
@@ -101,7 +104,6 @@ export function CurrencyConverter({
 
   // Watchlist state persisted in localStorage
   const [watchlist, setWatchlist] = useState<string[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
 
   // Performance historical chart state
   const [range, setRange] = useState<TimeRange>("1M");
@@ -111,7 +113,6 @@ export function CurrencyConverter({
 
   // Currency search filter for ratings table
   const [searchQuery, setSearchQuery] = useState("");
-  const [addWatchlistOpen, setAddWatchlistOpen] = useState(false);
   const [currencyToAdd, setCurrencyToAdd] = useState("");
 
   // Load persisted watchlist from localStorage
@@ -122,7 +123,6 @@ export function CurrencyConverter({
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
           setWatchlist(parsed.filter((c) => c !== baseCurrency));
-          setIsLoaded(true);
           return;
         }
       }
@@ -130,12 +130,11 @@ export function CurrencyConverter({
       // Ignore parse error
     }
 
-    // Default watchlist if none stored (popular destinations for Indian and global travelers)
-    const defaults = ["USD", "EUR", "AED", "GBP", "THB", "SGD", "JPY", "CAD"].filter(
+    // Default watchlist if none stored (popular destinations for global travelers)
+    const defaults = DEFAULT_WATCHLIST_CURRENCIES.filter(
       (c) => c !== baseCurrency
     );
-    setWatchlist(defaults);
-    setIsLoaded(true);
+    setWatchlist([...defaults]);
   }, [baseCurrency]);
 
   // Persist watchlist changes
@@ -320,7 +319,7 @@ export function CurrencyConverter({
   return (
     <div className="space-y-6">
       {/* Top Header & Base Preference Strip */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/80 dark:border-[#1E293B]/70">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border">
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-base font-semibold text-foreground dark:text-zinc-100 flex items-center gap-2">
@@ -338,19 +337,19 @@ export function CurrencyConverter({
 
         {/* Base Currency Selector & Reset */}
         <div className="flex items-center gap-2 self-end sm:self-auto ml-auto sm:ml-0">
-          <div className="flex items-center gap-1.5 bg-muted/60 dark:bg-[#0C1322] border border-border/70 dark:border-[#1E293B] rounded-lg p-1 text-xs">
+          <div className="flex items-center gap-1.5 bg-muted/60 dark:bg-card-subtle border border-border rounded-lg p-1 text-xs">
             <span className="text-muted-foreground dark:text-slate-400 text-[11px] font-medium pl-1.5 hidden sm:inline">
               Base:
             </span>
             <Select value={baseCurrency} onValueChange={handleBaseChange}>
-              <SelectTrigger className="h-7 w-20 shrink-0 text-xs font-semibold bg-background dark:bg-[#080D18] border-border/60 dark:border-[#1E293B] dark:text-zinc-100 cursor-pointer px-2.5">
+              <SelectTrigger className="h-7 w-20 shrink-0 text-xs font-semibold bg-background border-border text-foreground cursor-pointer px-2.5">
                 <SelectValue placeholder={baseCurrency}>
                   {baseCurrency}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="max-h-60 w-64 thin-scrollbar dark:bg-[#0C1322] dark:border-[#1E293B]">
+              <SelectContent className="max-h-60 w-64 thin-scrollbar">
                 {SUPPORTED_CURRENCIES.map((c) => (
-                  <SelectItem key={c.code} value={c.code} className="text-xs cursor-pointer dark:focus:bg-[#131F35]">
+                  <SelectItem key={c.code} value={c.code} className="text-xs cursor-pointer">
                     <span className="font-semibold">{c.code}</span> - {c.name}
                   </SelectItem>
                 ))}
@@ -373,7 +372,7 @@ export function CurrencyConverter({
           <Button
             variant="outline"
             size="sm"
-            className="h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground dark:bg-[#0C1322] dark:border-[#1E293B] dark:text-slate-300 dark:hover:text-white dark:hover:border-[#2D9BF0]/40 cursor-pointer"
+            className="h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground dark:bg-card-subtle border-border cursor-pointer"
             onClick={() => handleBaseChange(baseCurrency, true)}
             disabled={isRefreshing}
             title="Refresh exchange rates"
@@ -385,7 +384,7 @@ export function CurrencyConverter({
       </div>
 
       {/* Quick Converter Bar */}
-      <Card className="border-border/80 dark:border-[#1E293B] bg-gradient-to-br from-card via-card to-muted/20 dark:from-[#0C1322] dark:via-[#090E1A] dark:to-[#0C1322] shadow-xs dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)]">
+      <Card className="border-border bg-gradient-to-br from-card via-card to-muted/20 dark:from-card dark:via-card dark:to-card-subtle shadow-xs">
         <CardContent className="p-4 sm:p-5">
           <div className="grid grid-cols-1 sm:grid-cols-11 gap-3 items-center">
             {/* Pay Amount */}
@@ -401,7 +400,7 @@ export function CurrencyConverter({
                   step="any"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="text-base font-mono font-bold h-10 pr-16 bg-background dark:bg-[#060A14] dark:border-[#1E293B] dark:text-white dark:focus-visible:border-[#2D9BF0]"
+                  className="text-base font-mono font-bold h-10 pr-16 bg-background border-border text-foreground"
                   placeholder="1000"
                 />
                 <span className="absolute right-3 top-2.5 text-xs font-semibold text-muted-foreground dark:text-slate-400 font-mono">
@@ -422,7 +421,7 @@ export function CurrencyConverter({
                     className={`px-2 py-0.5 rounded-md text-[10px] font-mono transition-all cursor-pointer border ${
                       amount === chipVal
                         ? "bg-primary text-primary-foreground border-primary font-bold shadow-xs dark:shadow-[0_0_10px_rgba(45,155,240,0.3)]"
-                        : "bg-muted/50 border-border/70 text-muted-foreground hover:text-foreground hover:bg-muted dark:bg-[#080D18] dark:border-[#1E293B] dark:text-slate-400 dark:hover:text-white dark:hover:border-[#2D9BF0]/30"
+                        : "bg-muted/50 border-border/70 text-muted-foreground hover:text-foreground hover:bg-muted dark:bg-card-subtle dark:border-border dark:text-slate-400 dark:hover:text-white dark:hover:border-primary/30"
                     }`}
                   >
                     {baseCurrency === "INR" ? `₹${Number(chipVal).toLocaleString("en-IN")}` : chipVal}
@@ -436,7 +435,7 @@ export function CurrencyConverter({
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full h-8 w-8 border-border dark:border-[#1E293B] dark:bg-[#0C1322] dark:text-slate-300 hover:bg-primary/10 hover:text-primary dark:hover:border-[#2D9BF0]/40 dark:hover:text-[#2D9BF0] cursor-pointer"
+                className="rounded-full h-8 w-8 border-border dark:bg-card-subtle dark:text-slate-300 hover:bg-primary/10 hover:text-primary cursor-pointer"
                 onClick={handleSwapCalculator}
                 disabled={isRefreshing}
                 title="Swap currencies"
@@ -451,15 +450,15 @@ export function CurrencyConverter({
                 <span className="font-semibold text-foreground dark:text-zinc-100">You Receive (Est.)</span>
                 <span className="text-[11px] text-muted-foreground dark:text-slate-400">{targetCurrencyMeta.name}</span>
               </div>
-              <div className="flex items-center justify-between gap-2 h-10 px-3 rounded-md border border-border dark:border-[#1E293B] bg-muted/40 dark:bg-[#080D18] font-mono text-base font-bold text-foreground dark:text-white">
+              <div className="flex items-center justify-between gap-2 h-10 px-3 rounded-md border border-border bg-muted/40 dark:bg-card-subtle font-mono text-base font-bold text-foreground">
                 <span className="truncate">{convertedValue}</span>
                 <Select value={selectedTarget} onValueChange={setSelectedTarget}>
-                  <SelectTrigger className="h-7 w-20 shrink-0 text-xs font-semibold bg-background dark:bg-[#060A14] border-border/60 dark:border-[#1E293B] dark:text-zinc-100 cursor-pointer">
+                  <SelectTrigger className="h-7 w-20 shrink-0 text-xs font-semibold bg-background border-border text-foreground cursor-pointer">
                     <SelectValue placeholder={selectedTarget}>{selectedTarget}</SelectValue>
                   </SelectTrigger>
-                  <SelectContent className="max-h-60 w-60 thin-scrollbar dark:bg-[#0C1322] dark:border-[#1E293B]">
+                  <SelectContent className="max-h-60 w-60 thin-scrollbar">
                     {SUPPORTED_CURRENCIES.filter((c) => c.code !== baseCurrency).map((c) => (
-                      <SelectItem key={c.code} value={c.code} className="text-xs cursor-pointer dark:focus:bg-[#131F35]">
+                      <SelectItem key={c.code} value={c.code} className="text-xs cursor-pointer">
                         <span className="font-semibold">{c.code}</span> - {c.name}
                       </SelectItem>
                     ))}
@@ -535,8 +534,8 @@ export function CurrencyConverter({
                   onClick={() => setSelectedTarget(code)}
                   className={`p-2.5 rounded-xl border transition-all cursor-pointer relative group flex flex-col justify-between space-y-1.5 select-none ${
                     isSelected
-                      ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/40 dark:bg-[#2D9BF0]/15 dark:border-[#2D9BF0] dark:ring-[#2D9BF0]/40 dark:shadow-[0_0_12px_rgba(45,155,240,0.2)]"
-                      : "border-border/70 bg-card hover:bg-muted/40 hover:border-border dark:bg-[#0C1322] dark:border-[#1E293B] dark:hover:border-[#2D9BF0]/40 dark:hover:bg-[#121B2D]"
+                      ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/40 dark:bg-primary/15 dark:border-primary dark:ring-primary/40"
+                      : "border-border/70 bg-card hover:bg-muted/40 hover:border-border dark:bg-card dark:border-border dark:hover:border-primary/40 dark:hover:bg-card-subtle"
                   }`}
                 >
                   <button
@@ -586,8 +585,8 @@ export function CurrencyConverter({
       {/* 3. Currency Performance & "Is My Currency Getting Stronger?" Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Performance Line Chart (2 Cols) */}
-        <Card className="lg:col-span-2 border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs">
-          <CardHeader className="p-4 sm:p-5 pb-2 border-b border-border/50 dark:border-[#1E293B]/70">
+        <Card className="lg:col-span-2 border-border bg-card shadow-xs">
+          <CardHeader className="p-4 sm:p-5 pb-2 border-b border-border/60">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
@@ -798,8 +797,8 @@ export function CurrencyConverter({
         </Card>
 
         {/* 4. “Is My Currency Getting Stronger?” Section (1 Col) */}
-        <Card className="border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs flex flex-col justify-between">
-          <CardHeader className="p-4 sm:p-5 pb-3 border-b border-border/50 dark:border-[#1E293B]/70">
+        <Card className="border-border bg-card shadow-xs flex flex-col justify-between">
+          <CardHeader className="p-4 sm:p-5 pb-3 border-b border-border/60">
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-500" />
               <CardTitle className="text-sm font-semibold dark:text-zinc-100">
@@ -821,7 +820,7 @@ export function CurrencyConverter({
                       ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-400"
                       : perfData.changePercent < 0
                       ? "bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-400"
-                      : "bg-muted dark:bg-[#080D18] border-border dark:border-[#1E293B] text-muted-foreground dark:text-slate-400"
+                      : "bg-muted dark:bg-card-subtle border-border text-muted-foreground dark:text-slate-400"
                   }`}
                 >
                   <div
@@ -944,8 +943,8 @@ export function CurrencyConverter({
             <thead className="bg-muted/40 border-b border-border text-muted-foreground text-[11px] font-semibold">
               <tr>
                 <th className="py-2.5 px-4">Currency</th>
-                <th className="py-2.5 px-4 font-mono">1 {baseCurrency} Buys / Inverse</th>
-                <th className="py-2.5 px-4 font-mono">Period Change</th>
+                <th className="py-2.5 px-4 font-sans font-semibold">1 {baseCurrency} Buys / Inverse</th>
+                <th className="py-2.5 px-4 font-sans font-semibold">Period Change</th>
                 <th className="py-2.5 px-4 text-right">Actions</th>
               </tr>
             </thead>

@@ -72,29 +72,32 @@ export async function translateCustomTravelPhrase(
     };
   }
 
-  const prompt = `You are a professional travel translator like Google Translate.
-User input text: "${cleanInput}"
+  const prompt = `You are a high-accuracy multilingual travel translator and pronunciation assistant for Prava.
+Input text: "${cleanInput}"
 Mode: ${mode}
 Selected Destination Language: ${targetLanguage}
 
-Rules:
-1. Detect the source language of the input text accurately (e.g. "Japanese", "Hindi", "Thai", "Spanish", "French", "Arabic", "English", etc.).
-2. If Mode is "to-english" OR (Mode is "auto" and input is NOT English):
-   - Translate the text into natural, clear English.
-   - Set "direction" to "to-english".
-   - Provide "pronunciation" for the original non-English text so the traveler knows how to say it.
-3. If Mode is "to-target" OR (Mode is "auto" and input IS English):
-   - Translate the text into ${targetLanguage} using accurate native script.
-   - Set "direction" to "to-foreign".
-   - Provide "pronunciation" for the ${targetLanguage} translation.
+CRITICAL RULES:
+1. Accurately detect the source language of the input (e.g. Japanese, Hindi, Spanish, French, Mandarin, Thai, Arabic, English).
+2. Translation & Direction:
+   - If Mode is "to-english" OR (Mode is "auto" and input is NOT English):
+     * Translate faithfully into clear, natural, idiomatic English.
+     * Set "direction" to "to-english".
+     * Provide phonetic romanization in "pronunciation" for the original non-English input text so travelers can read/pronounce it.
+   - If Mode is "to-target" OR (Mode is "auto" and input IS English):
+     * Translate into ${targetLanguage} using authentic, culturally appropriate native script.
+     * Set "direction" to "to-foreign".
+     * Provide phonetic romanization in "pronunciation" for the ${targetLanguage} translation.
+3. Pronunciation: Use standard, intuitive romanization (e.g. Romaji for Japanese, Pinyin for Chinese, Devanagari transliteration for Hindi).
+4. Cultural Note: Provide 1 brief, practical sentence highlighting context, politeness register (e.g. formal vs informal), or local usage tip.
 
-Respond strictly with valid JSON conforming to this schema:
+Output strictly valid JSON with no markdown wrapping or conversational commentary:
 {
-  "detectedLanguage": "Name of input language",
-  "translated": "Accurate translated text",
-  "pronunciation": "Easy phonetic romanization",
-  "culturalNote": "Short 1-sentence tip on meaning or travel etiquette",
-  "direction": "to-english" or "to-foreign"
+  "detectedLanguage": "Name of source language",
+  "translated": "Exact translation text",
+  "pronunciation": "Clear phonetic romanization",
+  "culturalNote": "Brief 1-sentence etiquette or usage tip",
+  "direction": "to-english" | "to-foreign"
 }`;
 
   // 1. Try Groq (Active Models: qwen/qwen3.8-27b, qwen/qwen3.6-27b, groq/compound-mini, openai/gpt-oss-20b)

@@ -38,6 +38,17 @@ export const SUPPORTED_CURRENCIES: SupportedCurrency[] = [
   { code: "CNY", name: "Chinese Yuan", symbol: "¥", flag: "🇨🇳" },
 ];
 
+export const DEFAULT_WATCHLIST_CURRENCIES = [
+  "USD",
+  "EUR",
+  "AED",
+  "GBP",
+  "THB",
+  "SGD",
+  "JPY",
+  "CAD",
+] as const;
+
 function formatDate(d: Date): string {
   return d.toISOString().split("T")[0];
 }

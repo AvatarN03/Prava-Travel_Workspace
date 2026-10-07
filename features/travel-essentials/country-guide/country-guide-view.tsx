@@ -384,10 +384,10 @@ export function CountryGuideView() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-base font-semibold text-foreground dark:text-zinc-100 flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-indigo-500 dark:text-[#2D9BF0]" />
+                <BookOpen className="w-4 h-4 text-primary" />
                 Country Guide & Emergency Directory
               </h2>
-              <Badge variant="secondary" className="text-[10px] font-mono px-2 py-0 dark:bg-[#131F35] dark:text-zinc-200 dark:border dark:border-[#1E293B]">
+              <Badge variant="secondary" className="text-[10px] font-mono px-2 py-0">
                 250+ Countries
               </Badge>
             </div>
@@ -405,7 +405,7 @@ export function CountryGuideView() {
                 <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground dark:text-slate-400" />
                 <Input
                   placeholder="Search countries (e.g. Poland, Japan, France, Brazil)..."
-                  className="pl-8 pr-8 h-9 text-xs bg-background dark:bg-[#060A14] dark:border-[#1E293B] dark:text-white dark:placeholder:text-slate-500 dark:focus-visible:border-[#2D9BF0]"
+                  className="pl-8 pr-8 h-9 text-xs bg-background border-border text-foreground"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -424,7 +424,7 @@ export function CountryGuideView() {
                   disabled={isSearching}
                 />
                 {(isSuggesting || isSearching) && (
-                  <Loader2 className="absolute right-2.5 top-2.5 h-3.5 w-3.5 text-primary dark:text-[#2D9BF0] animate-spin" />
+                  <Loader2 className="absolute right-2.5 top-2.5 h-3.5 w-3.5 text-primary animate-spin" />
                 )}
               </div>
               <Button
@@ -439,17 +439,17 @@ export function CountryGuideView() {
 
             {/* Compact Autocomplete Suggestions Dropdown */}
             {showDropdown && suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-full mt-1 z-50 rounded-xl border border-border/80 dark:border-[#1E293B] bg-popover/95 dark:bg-[#0C1322]/95 backdrop-blur-md shadow-xl overflow-hidden py-1 divide-y divide-border/40 dark:divide-[#1E293B] animate-in fade-in-50 zoom-in-95 duration-100 max-h-56 overflow-y-auto thin-scrollbar">
+              <div className="absolute left-0 right-0 top-full mt-1 z-50 rounded-xl border border-border bg-popover/95 dark:bg-card/95 backdrop-blur-md shadow-xl overflow-hidden py-1 divide-y divide-border/40 animate-in fade-in-50 zoom-in-95 duration-100 max-h-56 overflow-y-auto thin-scrollbar">
                 {suggestions.map((item) => (
                   <button
                     key={`${item.code}-${item.name}`}
                     type="button"
                     onClick={() => handleSelectCountry(item.name)}
-                    className="w-full text-left px-3 py-2 text-xs flex items-center justify-between gap-3 hover:bg-primary/10 hover:text-primary dark:hover:bg-[#131F35] dark:hover:text-[#2D9BF0] transition-colors cursor-pointer group select-none"
+                    className="w-full text-left px-3 py-2 text-xs flex items-center justify-between gap-3 hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer group select-none"
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-sm leading-none">{item.flag}</span>
-                      <span className="font-semibold text-foreground dark:text-zinc-100 group-hover:text-primary dark:group-hover:text-[#2D9BF0] truncate">
+                      <span className="font-semibold text-foreground dark:text-zinc-100 group-hover:text-primary truncate">
                         {item.name}
                       </span>
                       <span className="text-muted-foreground dark:text-slate-400 text-[10px] truncate hidden sm:inline">
@@ -474,8 +474,8 @@ export function CountryGuideView() {
                 type="button"
                 onClick={() => setActiveRegion(reg)}
                 className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer border ${activeRegion === reg
-                  ? "bg-primary text-primary-foreground border-primary font-semibold shadow-xs dark:bg-[#2D9BF0] dark:border-[#2D9BF0] dark:text-white dark:shadow-[0_0_12px_rgba(45,155,240,0.3)]"
-                  : "bg-muted/40 text-muted-foreground hover:text-foreground border-border/60 hover:bg-muted dark:bg-[#0C1322] dark:border-[#1E293B] dark:text-slate-400 dark:hover:text-white dark:hover:border-[#2D9BF0]/30"
+                  ? "bg-primary text-primary-foreground border-primary font-semibold shadow-xs"
+                  : "bg-muted/40 text-muted-foreground hover:text-foreground border-border/60 hover:bg-muted dark:bg-card-subtle dark:border-border dark:text-slate-400 dark:hover:text-white"
                   }`}
               >
                 {reg}
@@ -495,8 +495,8 @@ export function CountryGuideView() {
               type="button"
               onClick={() => handleSelectCountry(pick.name)}
               className={`px-2.5 py-1 text-xs rounded-full border font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${country.name.toLowerCase() === pick.name.toLowerCase() || country.code === pick.code
-                ? "bg-indigo-500/10 text-indigo-700 dark:text-[#2D9BF0] border-indigo-500/40 dark:border-[#2D9BF0]/40 dark:bg-[#2D9BF0]/15 dark:shadow-[0_0_10px_rgba(45,155,240,0.2)] font-semibold shadow-xs"
-                : "bg-muted/50 text-muted-foreground hover:text-foreground border-border hover:bg-muted dark:bg-[#0C1322] dark:border-[#1E293B] dark:text-slate-400 dark:hover:text-white dark:hover:border-[#2D9BF0]/30"
+                ? "bg-primary/10 text-primary border-primary/40 font-semibold shadow-xs"
+                : "bg-muted/50 text-muted-foreground hover:text-foreground border-border hover:bg-muted dark:bg-card-subtle dark:border-border dark:text-slate-400 dark:hover:text-white"
                 }`}
             >
               <span>{pick.flag || "🌐"}</span>
@@ -588,10 +588,10 @@ export function CountryGuideView() {
             </div>
 
             {/* Links and Action Buttons */}
-            <div className="flex flex-col items-start sm:items-end gap-2 shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0 border-border/60 dark:border-[#1E293B] w-full sm:w-auto">
+            <div className="flex flex-col items-start sm:items-end gap-2 shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0 border-border/60 w-full sm:w-auto">
               {country.bestSeasons && (
-                <div className="flex items-start gap-1.5 text-xs text-indigo-700 dark:text-indigo-300 bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/20 dark:border-indigo-500/30 px-2.5 py-1.5 rounded-lg w-full sm:max-w-xs">
-                  <Calendar className="w-3.5 h-3.5 text-indigo-500 dark:text-[#2D9BF0] shrink-0 mt-0.5" />
+                <div className="flex items-start gap-1.5 text-xs text-primary bg-primary/10 border border-primary/20 px-2.5 py-1.5 rounded-lg w-full sm:max-w-xs">
+                  <Calendar className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
                   <span className="leading-snug text-left">{country.bestSeasons}</span>
                 </div>
               )}
@@ -601,9 +601,9 @@ export function CountryGuideView() {
                     href={country.googleMapsUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs text-muted-foreground hover:text-primary dark:text-slate-300 dark:hover:text-[#2D9BF0] transition-colors flex items-center gap-1 font-medium bg-muted/40 dark:bg-[#080D18] px-2.5 py-1 rounded-md border border-border/50 dark:border-[#1E293B] dark:hover:border-[#2D9BF0]/40"
+                    className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 font-medium bg-muted/40 dark:bg-card-subtle px-2.5 py-1 rounded-md border border-border"
                   >
-                    <MapPin className="h-3 w-3 text-primary dark:text-[#2D9BF0]" /> Maps <ExternalLink className="h-2.5 w-2.5" />
+                    <MapPin className="h-3 w-3 text-primary" /> Maps <ExternalLink className="h-2.5 w-2.5" />
                   </a>
                 )}
                 {country.wikipediaUrl && (
@@ -611,7 +611,7 @@ export function CountryGuideView() {
                     href={country.wikipediaUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs text-muted-foreground hover:text-primary dark:text-slate-300 dark:hover:text-[#2D9BF0] transition-colors flex items-center gap-1 font-medium bg-muted/40 dark:bg-[#080D18] px-2.5 py-1 rounded-md border border-border/50 dark:border-[#1E293B] dark:hover:border-[#2D9BF0]/40"
+                    className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 font-medium bg-muted/40 dark:bg-card-subtle px-2.5 py-1 rounded-md border border-border"
                   >
                     <Globe className="h-3 w-3 text-sky-500" /> Wikipedia <ExternalLink className="h-2.5 w-2.5" />
                   </a>
@@ -621,7 +621,7 @@ export function CountryGuideView() {
                     href={country.officialUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs text-muted-foreground hover:text-primary dark:text-slate-300 dark:hover:text-[#2D9BF0] transition-colors flex items-center gap-1 font-medium bg-muted/40 dark:bg-[#080D18] px-2.5 py-1 rounded-md border border-border/50 dark:border-[#1E293B] dark:hover:border-[#2D9BF0]/40"
+                    className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 font-medium bg-muted/40 dark:bg-card-subtle px-2.5 py-1 rounded-md border border-border"
                   >
                     <Landmark className="h-3 w-3 text-emerald-500" /> Portal <ExternalLink className="h-2.5 w-2.5" />
                   </a>
@@ -768,7 +768,7 @@ export function CountryGuideView() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 w-full">
               {/* Left: Bot Icon + Title */}
               <div className="flex items-center gap-2 min-w-0">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-[#2D9BF0]">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Bot className="w-4 h-4" />
                 </div>
                 <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground dark:text-white truncate">
@@ -782,10 +782,10 @@ export function CountryGuideView() {
                 {aiSummary?.isAiGenerated ? (
                   <Badge
                     variant="outline"
-                    className="text-[10px] font-mono border-purple-500/40 text-purple-600 dark:text-purple-400 bg-purple-500/10 flex items-center gap-1.5 shadow-xs px-2 py-0.5"
+                    className="text-[10px] font-mono border-primary/40 text-primary bg-primary/10 flex items-center gap-1.5 shadow-xs px-2 py-0.5"
                     title={aiSummary.provider}
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                     <span>{aiSummary.provider}</span>
                   </Badge>
                 ) : aiSummary?.hasError ? (
@@ -794,7 +794,7 @@ export function CountryGuideView() {
                     <span>AI Service Notice</span>
                   </Badge>
                 ) : (
-                  <Badge variant="outline" className="text-[10px] font-mono border-border dark:border-[#1E293B] text-muted-foreground dark:text-slate-400 bg-muted/40 dark:bg-[#080D18] flex items-center gap-1 px-2 py-0.5">
+                  <Badge variant="outline" className="text-[10px] font-mono border-border text-muted-foreground dark:text-slate-400 bg-muted/40 dark:bg-card-subtle flex items-center gap-1 px-2 py-0.5">
                     <Info className="w-3 h-3" />
                     <span>Curated Data</span>
                   </Badge>
@@ -813,10 +813,10 @@ export function CountryGuideView() {
                   size="sm"
                   onClick={handleRegenerateAi}
                   disabled={isLoadingAi}
-                  className="h-6 text-[11px] px-2 gap-1 cursor-pointer hover:bg-purple-500/10 hover:text-purple-600 dark:hover:text-purple-400 shrink-0"
+                  className="h-6 text-[11px] px-2 gap-1 cursor-pointer hover:bg-primary/10 hover:text-primary shrink-0"
                   title="Generate live travel summary via AI"
                 >
-                  <Sparkles className={`w-3 h-3 ${isLoadingAi ? "animate-spin text-purple-500" : "text-purple-500"}`} />
+                  <Sparkles className={`w-3 h-3 ${isLoadingAi ? "animate-spin text-primary" : "text-primary"}`} />
                   <span>{isLoadingAi ? "Connecting..." : aiSummary?.hasError ? "Retry AI" : "Regenerate"}</span>
                 </Button>
               </div>
@@ -883,7 +883,7 @@ export function CountryGuideView() {
                   <div className="space-y-1.5">
                     {aiSummary.newsDigest.map((item, idx) => (
                       <div key={idx} className="flex items-start gap-2 text-[11px] text-muted-foreground dark:text-slate-400">
-                        <span className="text-indigo-500 dark:text-[#2D9BF0] font-bold shrink-0">•</span>
+                        <span className="text-primary font-bold shrink-0">•</span>
                         <span className="leading-snug">{item}</span>
                       </div>
                     ))}
@@ -1108,7 +1108,7 @@ export function CountryGuideView() {
                     : visaSnapshot.status === "Visa on Arrival"
                       ? "bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30"
                       : visaSnapshot.status === "eVisa"
-                        ? "bg-purple-500/15 text-purple-600 dark:text-purple-400 border-purple-500/30"
+                        ? "bg-primary/15 text-primary border-primary/30"
                         : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30"
                     }`}
                 >
@@ -1119,7 +1119,7 @@ export function CountryGuideView() {
           </CardHeader>
           <CardContent className="p-4 space-y-3 text-xs">
             {visaSnapshot?.duration && (
-              <div className="flex items-center justify-between text-[11px] pb-2 border-b border-border/40 dark:border-[#1E293B]">
+              <div className="flex items-center justify-between text-[11px] pb-2 border-b border-border/40">
                 <span className="text-muted-foreground dark:text-slate-400 font-medium">Permitted Stay:</span>
                 <strong className="font-semibold text-foreground dark:text-zinc-100 font-mono">{visaSnapshot.duration}</strong>
               </div>
@@ -1127,17 +1127,17 @@ export function CountryGuideView() {
             <p className="text-[11px] text-foreground dark:text-zinc-200 leading-relaxed">
               {visaSnapshot?.note || country.visaInfo}
             </p>
-            <p className="text-[10px] text-muted-foreground dark:text-slate-400 border-t border-border/40 dark:border-[#1E293B] pt-2.5 leading-normal">
+            <p className="text-[10px] text-muted-foreground dark:text-slate-400 border-t border-border/40 pt-2.5 leading-normal">
               Passports must have at least <strong>6 months</strong> remaining validity from departure date.
             </p>
           </CardContent>
         </Card>
 
         {/* 5. Payment & Cash Culture */}
-        <Card className="border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322] shadow-xs">
-          <CardHeader className="p-4 pb-2.5 border-b border-border/50 dark:border-[#1E293B]">
+        <Card className="border-border bg-card shadow-xs">
+          <CardHeader className="p-4 pb-2.5 border-b border-border/60">
             <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-purple-500/10 text-purple-600">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <CreditCard className="w-4 h-4" />
               </div>
               <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground dark:text-white">

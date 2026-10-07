@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { createClient } from "@/lib/supabase/server";
+import { getAuthenticatedUser } from "@/lib/supabase/server";
 
 import {
   attachVaultLinkToTripSchema,
@@ -20,13 +20,8 @@ import {
  */
 export async function getVaultLinks() {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-
-    if (error || !user) {
+    const user = await getAuthenticatedUser();
+    if (!user) {
       return { success: false, error: "Unauthorized", data: [] };
     }
 
@@ -52,13 +47,8 @@ export async function getVaultLinks() {
  */
 export async function getUserTripOptions() {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-
-    if (error || !user) {
+    const user = await getAuthenticatedUser();
+    if (!user) {
       return { success: false, error: "Unauthorized", data: [] };
     }
 
@@ -99,13 +89,8 @@ export async function createVaultLink(input: CreateVaultLinkInput) {
       };
     }
 
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-
-    if (error || !user) {
+    const user = await getAuthenticatedUser();
+    if (!user) {
       return { success: false, error: "Unauthorized" };
     }
 
@@ -149,13 +134,8 @@ export async function updateVaultLink(input: UpdateVaultLinkInput) {
       };
     }
 
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-
-    if (error || !user) {
+    const user = await getAuthenticatedUser();
+    if (!user) {
       return { success: false, error: "Unauthorized" };
     }
 
@@ -197,13 +177,8 @@ export async function updateVaultLink(input: UpdateVaultLinkInput) {
  */
 export async function deleteVaultLink(linkId: string) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-
-    if (error || !user) {
+    const user = await getAuthenticatedUser();
+    if (!user) {
       return { success: false, error: "Unauthorized" };
     }
 
@@ -242,13 +217,8 @@ export async function attachVaultLinkToTrip(input: AttachVaultLinkToTripInput) {
       return { success: false, error: "Invalid parameters" };
     }
 
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-
-    if (error || !user) {
+    const user = await getAuthenticatedUser();
+    if (!user) {
       return { success: false, error: "Unauthorized" };
     }
 

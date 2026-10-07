@@ -380,35 +380,35 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
   return (
     <div className="space-y-6">
       {/* Top Controls: Search Bar & Quick Indian Pick Pills */}
-      <div className="flex flex-col gap-3 pb-3 border-b border-border/80 dark:border-[#1E293B]/70">
+      <div className="flex flex-col gap-3 pb-3 border-b border-border">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-semibold text-foreground dark:text-zinc-100 flex items-center gap-2">
+              <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
                 <CloudSun className="w-4 h-4 text-amber-500" />
                 Live Weather & Forecasts
               </h2>
               {data?.source && (
-                <Badge variant="secondary" className="text-[10px] font-mono font-medium px-2 py-0 h-5 dark:bg-amber-500/10 dark:text-amber-400 dark:border dark:border-amber-500/20">
+                <Badge variant="secondary" className="text-[10px] font-mono font-medium px-2 py-0 h-5">
                   {data.source === "OpenWeather" ? "OpenWeather" : "Live Forecast"}
                 </Badge>
               )}
             </div>
-            <p className="text-xs text-muted-foreground dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               Live atmospheric radar, multi-day forecasting, and hourly schedules for top destinations.
             </p>
           </div>
 
           {/* Unit Switcher & Refresh Button (Right-aligned on mobile) */}
           <div className="flex items-center gap-2 self-end sm:self-auto">
-            <div className="inline-flex rounded-lg border border-border dark:border-[#1E293B] p-0.5 bg-muted/60 dark:bg-[#0C1322] text-xs font-semibold">
+            <div className="inline-flex rounded-lg border border-border p-0.5 bg-muted/60 text-xs font-semibold">
               <button
                 type="button"
                 onClick={() => setUnit("C")}
                 className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
                   unit === "C"
-                    ? "bg-background dark:bg-[#121E36] text-foreground dark:text-white shadow-xs font-medium dark:border dark:border-[#2D9BF0]/40 dark:shadow-[0_0_10px_rgba(45,155,240,0.2)]"
-                    : "text-muted-foreground dark:text-slate-400 hover:text-foreground dark:hover:text-white"
+                    ? "bg-background text-foreground shadow-xs font-medium border border-border"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 °C
@@ -418,8 +418,8 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
                 onClick={() => setUnit("F")}
                 className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
                   unit === "F"
-                    ? "bg-background dark:bg-[#121E36] text-foreground dark:text-white shadow-xs font-medium dark:border dark:border-[#2D9BF0]/40 dark:shadow-[0_0_10px_rgba(45,155,240,0.2)]"
-                    : "text-muted-foreground dark:text-slate-400 hover:text-foreground dark:hover:text-white"
+                    ? "bg-background text-foreground shadow-xs font-medium border border-border"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 °F
@@ -430,7 +430,7 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground dark:bg-[#0C1322] dark:border-[#1E293B] dark:text-slate-300 dark:hover:text-white dark:hover:border-[#2D9BF0]/40 cursor-pointer"
+                className="h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
                 onClick={() => handleSearchCity(data.city)}
                 disabled={isSearching}
                 title="Refresh current forecast"
@@ -447,10 +447,10 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
           <div ref={searchContainerRef} className="relative flex-1 max-w-lg">
             <form onSubmit={handleFormSubmit} className="flex items-center gap-2">
               <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground dark:text-slate-400" />
+                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
                 <Input
                   placeholder="Search city (e.g. Mumbai, Delhi, Bengaluru)..."
-                  className="pl-8 pr-8 h-9 text-xs bg-background dark:bg-[#060A14] dark:border-[#1E293B] dark:text-white dark:placeholder:text-slate-500 dark:focus-visible:border-[#2D9BF0]"
+                  className="pl-8 pr-8 h-9 text-xs bg-background border-border text-foreground"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -471,7 +471,7 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
                   disabled={isSearching}
                 />
                 {isSuggesting && (
-                  <Loader2 className="absolute right-2.5 top-2.5 h-3.5 w-3.5 text-primary dark:text-[#2D9BF0] animate-spin" />
+                  <Loader2 className="absolute right-2.5 top-2.5 h-3.5 w-3.5 text-primary animate-spin" />
                 )}
               </div>
 
@@ -490,13 +490,13 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
                 size="sm"
                 onClick={handleLocateMe}
                 disabled={isSearching}
-                className="h-9 px-2.5 text-xs gap-1.5 cursor-pointer shrink-0 border-border/80 dark:border-[#1E293B] dark:bg-[#0C1322] hover:border-primary/40 dark:hover:border-[#2D9BF0]/40 text-muted-foreground dark:text-slate-300 hover:text-foreground dark:hover:text-white"
+                className="h-9 px-2.5 text-xs gap-1.5 cursor-pointer shrink-0 border-border text-muted-foreground hover:text-foreground hover:border-primary/40"
                 title="Locate Me (Current GPS / Network Location)"
               >
                 {isSearching ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-primary dark:text-[#2D9BF0]" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
                 ) : (
-                  <Crosshair className="w-3.5 h-3.5 text-primary dark:text-[#2D9BF0]" />
+                  <Crosshair className="w-3.5 h-3.5 text-primary" />
                 )}
                 <span className="hidden sm:inline">Locate Me</span>
               </Button>
@@ -504,10 +504,10 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
 
             {/* Suggestions Dropdown (Closes reliably on selection) */}
             {showDropdown && suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-full mt-1.5 z-50 rounded-xl border border-border/80 dark:border-[#1E293B] bg-popover/95 dark:bg-[#0C1322]/95 backdrop-blur-md shadow-xl overflow-hidden py-1 divide-y divide-border/40 dark:divide-[#1E293B] animate-in fade-in-50 duration-100">
-                <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground dark:text-slate-400 bg-muted/30 dark:bg-[#080D18] flex items-center justify-between">
+              <div className="absolute left-0 right-0 top-full mt-1.5 z-50 rounded-xl border border-border bg-popover/95 backdrop-blur-md shadow-xl overflow-hidden py-1 divide-y divide-border/40 animate-in fade-in-50 duration-100">
+                <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground bg-muted/30 flex items-center justify-between">
                   <span>Location Suggestions</span>
-                  <span className="text-[9px] font-normal lowercase text-muted-foreground/70 dark:text-slate-500">
+                  <span className="text-[9px] font-normal lowercase text-muted-foreground/70">
                     {suggestions.length} places
                   </span>
                 </div>
@@ -516,18 +516,18 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
                     key={`${item.name}-${item.lat}-${item.lon}-${index}`}
                     type="button"
                     onClick={() => handleSelectSuggestion(item)}
-                    className="w-full text-left px-3 py-2 text-xs flex items-center justify-between gap-3 hover:bg-primary/10 hover:text-primary dark:hover:bg-[#131F35] dark:hover:text-[#2D9BF0] transition-colors cursor-pointer group select-none"
+                    className="w-full text-left px-3 py-2 text-xs flex items-center justify-between gap-3 hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer group select-none"
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-muted dark:bg-[#080D18] text-muted-foreground dark:text-slate-400 group-hover:bg-primary/20 dark:group-hover:bg-[#2D9BF0]/20 group-hover:text-primary dark:group-hover:text-[#2D9BF0]">
+                      <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary">
                         <MapPin className="h-3 w-3" />
                       </div>
                       <div className="truncate">
-                        <span className="font-semibold text-foreground dark:text-zinc-100 group-hover:text-primary dark:group-hover:text-[#2D9BF0]">
+                        <span className="font-semibold text-foreground group-hover:text-primary">
                           {item.name}
                         </span>
                         {item.state && (
-                          <span className="text-muted-foreground dark:text-slate-400 text-[11px] ml-1">
+                          <span className="text-muted-foreground text-[11px] ml-1">
                             ({item.state})
                           </span>
                         )}
@@ -535,10 +535,10 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
                     </div>
 
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <Badge variant="outline" className="text-[9px] px-1 py-0 font-mono text-muted-foreground dark:text-slate-400 dark:border-[#1E293B] group-hover:border-primary/40 group-hover:text-primary">
+                      <Badge variant="outline" className="text-[9px] px-1 py-0 font-mono text-muted-foreground group-hover:border-primary/40 group-hover:text-primary">
                         {item.country}
                       </Badge>
-                      <ChevronRight className="w-3 h-3 text-muted-foreground/50 dark:text-slate-500 group-hover:text-primary dark:group-hover:text-[#2D9BF0] transition-transform" />
+                      <ChevronRight className="w-3 h-3 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </button>
                 ))}
@@ -548,7 +548,7 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
 
           {/* Curated Tier-1 Indian Metro Quick Picks */}
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-            <span className="text-[11px] text-muted-foreground dark:text-slate-400 whitespace-nowrap mr-1 font-medium">Quick pick:</span>
+            <span className="text-[11px] text-muted-foreground whitespace-nowrap mr-1 font-medium">Quick pick:</span>
             {QUICK_DESTINATIONS.map((dest) => (
               <button
                 key={dest}
@@ -557,8 +557,8 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
                 disabled={isSearching}
                 className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap cursor-pointer border ${
                   data?.city.toLowerCase() === dest.toLowerCase()
-                    ? "bg-primary/10 border-primary/30 text-primary font-semibold dark:bg-[#2D9BF0]/15 dark:border-[#2D9BF0]/40 dark:text-[#2D9BF0] dark:shadow-[0_0_10px_rgba(45,155,240,0.2)]"
-                    : "bg-muted/50 border-border text-muted-foreground hover:text-foreground hover:bg-muted dark:bg-[#0C1322] dark:border-[#1E293B] dark:text-slate-400 dark:hover:text-white dark:hover:border-[#2D9BF0]/30"
+                    ? "bg-primary/10 border-primary/30 text-primary font-semibold"
+                    : "bg-muted/50 border-border text-muted-foreground hover:text-foreground hover:bg-muted"
                 }`}
               >
                 {dest}
@@ -580,18 +580,18 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
       {data && (
         <div className="space-y-6">
           {/* Main Hero Card: Current Weather + Atmospheric Matrix */}
-          <Card className="border-border/80 dark:border-[#1E293B] bg-gradient-to-br from-card via-card to-muted/20 dark:from-[#0C1322] dark:via-[#090E1A] dark:to-[#0C1322] dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)] shadow-xs overflow-hidden">
+          <Card className="border-border bg-card shadow-xs overflow-hidden">
             <CardContent className="p-5 sm:p-6">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 {/* Left: Location & Main Temperature */}
                 <div className="space-y-3 flex-1">
-                  <div className="flex items-center gap-2 text-primary dark:text-[#2D9BF0] font-medium text-xs">
+                  <div className="flex items-center gap-2 text-primary font-medium text-xs">
                     <MapPin className="w-3.5 h-3.5 shrink-0" />
-                    <span className="font-semibold text-sm text-foreground dark:text-white">
+                    <span className="font-semibold text-sm text-foreground">
                       {data.city}{data.country ? `, ${data.country}` : ""}
                     </span>
                     {formattedUpdatedAt && (
-                      <span className="text-[10px] text-muted-foreground dark:text-slate-400 ml-auto sm:ml-2">
+                      <span className="text-[10px] text-muted-foreground ml-auto sm:ml-2">
                         Updated {formattedUpdatedAt}
                       </span>
                     )}
@@ -599,25 +599,25 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
 
                   <div className="flex items-center gap-4 sm:gap-5">
                     {/* Clean Vector Weather Icon */}
-                    <div className={`flex h-16 w-16 items-center justify-center rounded-2xl ${currentIconMeta?.bg} ${currentIconMeta?.color} border border-border/50 dark:border-[#1E293B]/70 shrink-0`}>
+                    <div className={`flex h-16 w-16 items-center justify-center rounded-2xl ${currentIconMeta?.bg} ${currentIconMeta?.color} border border-border/50 shrink-0`}>
                       <CurrentIcon className="w-9 h-9" />
                     </div>
 
                     <div>
                       <div className="flex items-baseline gap-2">
-                        <span className="text-4xl sm:text-5xl font-extrabold tracking-tight text-foreground dark:text-white font-mono">
+                        <span className="text-4xl sm:text-5xl font-extrabold tracking-tight text-foreground font-mono">
                           {formatTemp(data.temperature)}
                         </span>
-                        <span className="text-xs sm:text-sm text-muted-foreground dark:text-slate-400 font-medium">
+                        <span className="text-xs sm:text-sm text-muted-foreground font-medium">
                           Feels like {formatTemp(data.apparentTemperature)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="secondary" className="text-xs font-semibold dark:bg-[#131F35] dark:text-zinc-200 dark:border dark:border-[#2D9BF0]/30">
+                        <Badge variant="secondary" className="text-xs font-semibold">
                           {data.weatherDescription}
                         </Badge>
                         {selectedDay && (
-                          <span className="text-[11px] text-muted-foreground dark:text-slate-400 font-medium">
+                          <span className="text-[11px] text-muted-foreground font-medium">
                             High {formatTemp(selectedDay.temperatureMax)} / Low {formatTemp(selectedDay.temperatureMin)}
                           </span>
                         )}
@@ -627,19 +627,19 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
                 </div>
 
                 {/* Right: Concise Atmospheric Matrix Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 border-t lg:border-t-0 lg:border-l border-border/80 dark:border-[#1E293B] pt-4 lg:pt-0 lg:pl-6 text-xs">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 border-t lg:border-t-0 lg:border-l border-border pt-4 lg:pt-0 lg:pl-6 text-xs">
                   {atmosphericStats.map((stat) => {
                     const StatIcon = stat.icon;
                     return (
                       <div
                         key={stat.label}
-                        className="p-2.5 rounded-lg bg-muted/40 dark:bg-[#080D18] border border-border/50 dark:border-[#1E293B] space-y-1 hover:bg-muted/60 dark:hover:bg-[#101A2D] dark:hover:border-[#2D9BF0]/30 transition-colors"
+                        className="p-2.5 rounded-lg bg-muted/40 border border-border/50 space-y-1 hover:bg-muted/60 transition-colors"
                       >
-                        <div className="flex items-center gap-1.5 text-muted-foreground dark:text-slate-400 font-medium text-[11px]">
+                        <div className="flex items-center gap-1.5 text-muted-foreground font-medium text-[11px]">
                           <StatIcon className={`w-3.5 h-3.5 ${stat.color} shrink-0`} />
                           <span>{stat.label}</span>
                         </div>
-                        <div className="font-semibold text-foreground dark:text-zinc-100 font-mono text-xs truncate">
+                        <div className="font-semibold text-foreground font-mono text-xs truncate">
                           {stat.value}
                         </div>
                       </div>
@@ -653,11 +653,11 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
           {/* 7-Day Multi-Day Forecast Selector Strip */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-semibold text-foreground dark:text-zinc-200 uppercase tracking-wider flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-primary dark:text-[#2D9BF0]" />
+              <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-primary" />
                 Select Date for Detailed Forecast
               </h3>
-              <span className="text-[11px] text-muted-foreground dark:text-slate-400 hidden sm:inline">
+              <span className="text-[11px] text-muted-foreground hidden sm:inline">
                 Click any day to inspect conditions & hourly schedule
               </span>
             </div>
@@ -676,18 +676,18 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
                     onClick={() => setSelectedDateIndex(idx)}
                     className={`p-3 rounded-xl border text-center transition-all cursor-pointer space-y-2 select-none text-left relative ${
                       isSelected
-                        ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/40 dark:border-[#2D9BF0] dark:bg-[#2D9BF0]/15 dark:shadow-[0_0_12px_rgba(45,155,240,0.25)] dark:ring-[#2D9BF0]/50"
-                        : "border-border/70 bg-card hover:bg-muted/40 hover:border-border dark:border-[#1E293B] dark:bg-[#0C1322] dark:hover:bg-[#101A2D] dark:hover:border-[#2D9BF0]/30"
+                        ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/40 font-semibold"
+                        : "border-border/70 bg-card hover:bg-muted/40 hover:border-border"
                     }`}
                   >
                     {isSelected && (
-                      <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-primary dark:bg-[#2D9BF0]" />
+                      <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
                     )}
                     <div className="flex items-center justify-between">
-                      <span className={`text-xs font-bold ${isSelected ? "text-primary dark:text-[#2D9BF0]" : "text-foreground dark:text-zinc-200"}`}>
+                      <span className={`text-xs font-bold ${isSelected ? "text-primary" : "text-foreground"}`}>
                         {day.dayName}
                       </span>
-                      <span className="text-[10px] text-muted-foreground dark:text-slate-400">
+                      <span className="text-[10px] text-muted-foreground">
                         {day.formattedDate}
                       </span>
                     </div>
@@ -698,11 +698,11 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
                       </div>
                     </div>
 
-                    <div className="font-mono text-xs font-bold text-foreground dark:text-zinc-100 text-center">
-                      {formatTemp(day.temperatureMax)} / <span className="text-muted-foreground dark:text-slate-400 font-normal">{formatTemp(day.temperatureMin)}</span>
+                    <div className="font-mono text-xs font-bold text-foreground text-center">
+                      {formatTemp(day.temperatureMax)} / <span className="text-muted-foreground font-normal">{formatTemp(day.temperatureMin)}</span>
                     </div>
 
-                    <div className="text-[10px] text-muted-foreground dark:text-slate-400 flex items-center justify-center gap-1">
+                    <div className="text-[10px] text-muted-foreground flex items-center justify-center gap-1">
                       <Droplets className="w-2.5 h-2.5 text-sky-500" />
                       <span>{day.precipitationProbability}% rain</span>
                     </div>
@@ -714,24 +714,24 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
 
           {/* Selected Date Details & Hourly Schedule */}
           {selectedDay && (
-            <Card className="border-border/80 dark:border-[#1E293B] bg-card dark:bg-[#0C1322]">
-              <CardHeader className="pb-3 border-b border-border/50 dark:border-[#1E293B]">
+            <Card className="border-border bg-card">
+              <CardHeader className="pb-3 border-b border-border/50">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
-                    <CardTitle className="text-sm font-semibold flex items-center gap-2 dark:text-white">
-                      <Clock className="w-4 h-4 text-primary dark:text-[#2D9BF0]" />
+                    <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
+                      <Clock className="w-4 h-4 text-primary" />
                       Hourly Schedule for {selectedDay.dayName} ({selectedDay.formattedDate})
                     </CardTitle>
-                    <CardDescription className="text-xs mt-0.5 dark:text-slate-400">
+                    <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                       {selectedDay.weatherDescription} with temperatures between {formatTemp(selectedDay.temperatureMin)} and {formatTemp(selectedDay.temperatureMax)}.
                     </CardDescription>
                   </div>
 
                   {travelInsight && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/60 dark:bg-[#080D18] border border-border/60 dark:border-[#1E293B] text-xs self-start sm:self-auto">
-                      <travelInsight.icon className="w-3.5 h-3.5 text-primary dark:text-[#2D9BF0] shrink-0" />
-                      <span className="text-muted-foreground dark:text-slate-300 text-xs">
-                        <strong className="text-foreground dark:text-white font-medium mr-1">{travelInsight.title}:</strong>
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/60 border border-border/60 text-xs self-start sm:self-auto">
+                      <travelInsight.icon className="w-3.5 h-3.5 text-primary shrink-0" />
+                      <span className="text-muted-foreground text-xs">
+                        <strong className="text-foreground font-medium mr-1">{travelInsight.title}:</strong>
                         {travelInsight.advice}
                       </span>
                     </div>
@@ -751,9 +751,9 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
                         return (
                           <div
                             key={hourItem.fullTime || hourItem.time}
-                            className="flex flex-col items-center justify-between p-3 rounded-lg bg-muted/40 dark:bg-[#080D18] border border-border/50 dark:border-[#1E293B] min-w-[85px] sm:min-w-[95px] space-y-2 text-center hover:bg-muted/60 dark:hover:bg-[#101A2D] dark:hover:border-[#2D9BF0]/30 transition-colors"
+                            className="flex flex-col items-center justify-between p-3 rounded-lg bg-muted/40 border border-border/50 min-w-[85px] sm:min-w-[95px] space-y-2 text-center hover:bg-muted/60 transition-colors"
                           >
-                            <span className="text-[11px] font-semibold text-muted-foreground dark:text-slate-400">
+                            <span className="text-[11px] font-semibold text-muted-foreground">
                               {hourItem.time}
                             </span>
 
@@ -761,16 +761,16 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
                               <HIcon className="w-4 h-4" />
                             </div>
 
-                            <div className="font-mono text-xs font-bold text-foreground dark:text-white">
+                            <div className="font-mono text-xs font-bold text-foreground">
                               {formatTemp(hourItem.temperature)}
                             </div>
 
-                            <div className="text-[10px] text-muted-foreground dark:text-slate-400 flex items-center justify-center gap-0.5">
+                            <div className="text-[10px] text-muted-foreground flex items-center justify-center gap-0.5">
                               <Droplets className="w-2.5 h-2.5 text-sky-500" />
                               <span>{hourItem.precipitationProbability}%</span>
                             </div>
 
-                            <div className="text-[10px] text-muted-foreground/80 dark:text-slate-500 font-mono">
+                            <div className="text-[10px] text-muted-foreground/80 font-mono">
                               {unit === "F"
                                 ? `${Math.round(hourItem.windSpeed * 0.621371)}mph`
                                 : `${hourItem.windSpeed}km/h`}
@@ -781,7 +781,7 @@ export function WeatherView({ initialData, onSearch, onCitySuggestions }: Weathe
                     </div>
                   </div>
                 ) : (
-                  <div className="py-6 text-center text-xs text-muted-foreground dark:text-slate-400 space-y-1">
+                  <div className="py-6 text-center text-xs text-muted-foreground space-y-1">
                     <p>Standard day forecast outlook: High {formatTemp(selectedDay.temperatureMax)}, Low {formatTemp(selectedDay.temperatureMin)}.</p>
                     <p className="text-[11px]">3-hourly precision activates automatically for near-term dates.</p>
                   </div>

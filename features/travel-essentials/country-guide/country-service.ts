@@ -8,7 +8,10 @@ import {
   hasGroqKey,
 } from "@/lib/ai";
 
-import { EMERGENCY_DIRECTORY } from "../emergency/emergency-data";
+import {
+  EMERGENCY_DIRECTORY,
+  getEmergencyContactsForCountry,
+} from "../emergency/emergency-data";
 import type { CountryInfo, EmergencyContacts } from "../types";
 import { QUICK_PICK_COUNTRIES } from "./country-constants";
 
@@ -321,23 +324,7 @@ export async function searchCountryInfo(query: string): Promise<CountryInfo | nu
 
     // ── Calling Code & Emergency Directory Integration ───────────────────────
     const callingCode = best.calling_codes && best.calling_codes.length > 0 ? `+${best.calling_codes[0]}` : "";
-
-    const emergencyFromDir = EMERGENCY_DIRECTORY.find(
-      (e) =>
-        (e.code && e.code.toUpperCase().includes(countryCode)) ||
-        e.country.toLowerCase() === name.toLowerCase()
-    );
-
-    const emergencyContacts: EmergencyContacts = emergencyFromDir || {
-      country: name,
-      code: countryCode || "??",
-      dialCode: callingCode || (region === "Europe" ? "+EU" : "+--"),
-      general: region === "Europe" ? "112" : isNorthAmerica ? "911" : "112 / 999",
-      police: region === "Europe" ? "112" : isNorthAmerica ? "911" : "112",
-      ambulance: region === "Europe" ? "112" : isNorthAmerica ? "911" : "112",
-      fire: region === "Europe" ? "112" : isNorthAmerica ? "911" : "112",
-      notes: `Single emergency dispatch: ${region === "Europe" ? "112 (EU standard)" : isNorthAmerica ? "911" : "112 / 999"}. Verify local hospital numbers upon arrival in ${name}.`,
-    };
+    const emergencyContacts: EmergencyContacts = getEmergencyContactsForCountry(name, countryCode, region);
 
     // Extract active international memberships
     const memberships = best.memberships

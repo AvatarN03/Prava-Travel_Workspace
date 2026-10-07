@@ -109,13 +109,13 @@ export function VaultView({ initialLinks }: VaultViewProps) {
   return (
     <div className="space-y-6">
       {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pb-3 border-b border-border dark:border-[#1E293B]/70">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pb-3 border-b border-border">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1 max-w-lg">
           <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground dark:text-slate-400" />
+            <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
             <Input
               placeholder="Search vault bookmarks & URLs..."
-              className="pl-8 h-8 text-xs bg-background dark:bg-[#060A14] dark:border-[#1E293B] dark:text-white dark:placeholder:text-slate-500 dark:focus-visible:border-[#2D9BF0]"
+              className="pl-8 h-8 text-xs bg-background border-border text-foreground"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -127,8 +127,8 @@ export function VaultView({ initialLinks }: VaultViewProps) {
               onClick={() => setSelectedCategory("ALL")}
               className={`px-2.5 py-1 text-xs rounded-sm font-medium transition-colors whitespace-nowrap cursor-pointer ${
                 selectedCategory === "ALL"
-                  ? "bg-primary text-primary-foreground font-semibold shadow-2xs dark:bg-[#2D9BF0] dark:text-white dark:shadow-[0_0_12px_rgba(45,155,240,0.3)]"
-                  : "bg-secondary text-secondary-foreground hover:bg-accent dark:bg-[#0C1322] dark:border dark:border-[#1E293B] dark:text-slate-400 dark:hover:text-white dark:hover:border-[#2D9BF0]/30"
+                  ? "bg-primary text-primary-foreground font-semibold shadow-2xs"
+                  : "bg-secondary text-secondary-foreground hover:bg-accent dark:bg-card-subtle dark:border dark:border-border dark:text-muted-foreground dark:hover:text-foreground"
               }`}
             >
               All ({initialLinks.length})
@@ -140,8 +140,8 @@ export function VaultView({ initialLinks }: VaultViewProps) {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-2.5 py-1 text-xs rounded-sm font-medium transition-colors whitespace-nowrap cursor-pointer ${
                   selectedCategory === cat
-                    ? "bg-primary text-primary-foreground font-semibold shadow-2xs dark:bg-[#2D9BF0] dark:text-white dark:shadow-[0_0_12px_rgba(45,155,240,0.3)]"
-                    : "bg-secondary text-secondary-foreground hover:bg-accent dark:bg-[#0C1322] dark:border dark:border-[#1E293B] dark:text-slate-400 dark:hover:text-white dark:hover:border-[#2D9BF0]/30"
+                    ? "bg-primary text-primary-foreground font-semibold shadow-2xs"
+                    : "bg-secondary text-secondary-foreground hover:bg-accent dark:bg-card-subtle dark:border dark:border-border dark:text-muted-foreground dark:hover:text-foreground"
                 }`}
               >
                 {cat}
@@ -155,17 +155,17 @@ export function VaultView({ initialLinks }: VaultViewProps) {
 
       {/* Vault Grid or Empty State */}
       {filteredLinks.length === 0 ? (
-        <Card className="border-dashed rounded-md dark:border-[#1E293B] dark:bg-[#0C1322]">
+        <Card className="border-dashed rounded-md bg-card">
           <CardHeader className="text-center py-14">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-md bg-primary/10 dark:bg-[#2D9BF0]/15 text-primary dark:text-[#2D9BF0] mb-3">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-md bg-primary/10 text-primary mb-3">
               <Bookmark className="h-6 w-6" />
             </div>
-            <CardTitle className="text-base font-bold dark:text-white">
+            <CardTitle className="text-base font-bold text-foreground">
               {initialLinks.length === 0
                 ? "Your Travel Resource Vault is empty"
                 : "No matching vault bookmarks"}
             </CardTitle>
-            <CardDescription className="max-w-md mx-auto text-xs mt-1 dark:text-slate-400">
+            <CardDescription className="max-w-md mx-auto text-xs mt-1 text-muted-foreground">
               {initialLinks.length === 0
                 ? "Save visa application portals, packing checklists, train pass tools, and travel blogs here to easily attach them to future trips."
                 : "Try adjusting your search keywords or category filter."}
@@ -189,12 +189,12 @@ export function VaultView({ initialLinks }: VaultViewProps) {
           {filteredLinks.map((link) => {
             const categoryBadgeClass =
               CATEGORY_COLORS[link.category || "Resource"] ||
-              "bg-secondary text-secondary-foreground border-border dark:border-[#1E293B] dark:bg-[#131F35] dark:text-zinc-200";
+              "bg-secondary text-secondary-foreground border-border";
 
             return (
               <Card
                 key={link.id}
-                className="border-border dark:border-[#1E293B] bg-card dark:bg-[#0C1322] flex flex-col justify-between hover:border-border/80 dark:hover:border-[#2D9BF0]/40 transition-colors shadow-xs"
+                className="border-border bg-card flex flex-col justify-between hover:border-primary/40 transition-colors shadow-xs"
               >
                 <CardHeader className="p-4 pb-2 space-y-2">
                   <div className="flex items-start justify-between gap-2">
@@ -210,29 +210,29 @@ export function VaultView({ initialLinks }: VaultViewProps) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-6 w-6 text-muted-foreground hover:text-foreground dark:text-slate-400 dark:hover:text-white cursor-pointer -mr-1"
+                          className="h-6 w-6 text-muted-foreground hover:text-foreground cursor-pointer -mr-1"
                         >
                           <MoreVertical className="w-3.5 h-3.5" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="text-xs dark:bg-[#0C1322] dark:border-[#1E293B]">
+                      <DropdownMenuContent align="end" className="text-xs">
                         <DropdownMenuItem
-                          className="cursor-pointer gap-2 dark:hover:bg-[#131F35]"
+                          className="cursor-pointer gap-2"
                           onClick={() => setAttachingLink(link)}
                         >
-                          <FolderPlus className="w-3.5 h-3.5 text-primary dark:text-[#2D9BF0]" />
+                          <FolderPlus className="w-3.5 h-3.5 text-primary" />
                           Attach to Trip...
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          className="cursor-pointer gap-2 dark:hover:bg-[#131F35]"
+                          className="cursor-pointer gap-2"
                           onClick={() => setEditingLink(link)}
                         >
-                          <Pencil className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-400" />
+                          <Pencil className="w-3.5 h-3.5 text-muted-foreground" />
                           Edit Details
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator className="dark:bg-[#1E293B]" />
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem
-                          className="cursor-pointer gap-2 text-destructive focus:text-destructive dark:hover:bg-[#131F35]"
+                          className="cursor-pointer gap-2 text-destructive focus:text-destructive"
                           onClick={() => setDeletingLink(link)}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -243,37 +243,37 @@ export function VaultView({ initialLinks }: VaultViewProps) {
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-semibold text-foreground dark:text-white line-clamp-1">
+                    <h3 className="text-sm font-semibold text-foreground line-clamp-1">
                       {link.title}
                     </h3>
                     <a
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-[11px] text-primary dark:text-[#2D9BF0] hover:underline truncate max-w-full mt-0.5"
+                      className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline truncate max-w-full mt-0.5"
                     >
                       <span className="truncate">{link.url.replace(/^https?:\/\//, "")}</span>
-                      <ExternalLink className="w-2.5 h-2.5 flex-shrink-0" />
+                      <ExternalLink className="w-2.5 h-2.5 shrink-0" />
                     </a>
                   </div>
                 </CardHeader>
 
                 <CardContent className="p-4 pt-1 space-y-3">
                   {link.description && (
-                    <p className="text-xs text-muted-foreground dark:text-slate-400 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                       {link.description}
                     </p>
                   )}
 
-                  <div className="pt-2 border-t border-border/50 dark:border-[#1E293B] flex items-center justify-between">
-                    <span className="text-[10px] text-muted-foreground dark:text-slate-400">
+                  <div className="pt-2 border-t border-border/50 flex items-center justify-between">
+                    <span className="text-[10px] text-muted-foreground">
                       Saved {new Date(link.createdAt).toLocaleDateString()}
                     </span>
 
                     <Button
                       variant="outline"
                       size="sm"
-                      className="h-7 text-xs gap-1.5 cursor-pointer font-medium dark:bg-[#080D18] dark:border-[#1E293B] dark:text-slate-200 dark:hover:bg-[#101A2D] dark:hover:border-[#2D9BF0]/40 dark:hover:text-white"
+                      className="h-7 text-xs gap-1.5 cursor-pointer font-medium hover:border-primary/40"
                       onClick={() => setAttachingLink(link)}
                     >
                       <Compass className="w-3 h-3" />
