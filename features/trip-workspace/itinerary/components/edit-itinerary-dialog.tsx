@@ -16,11 +16,26 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 import { updateItineraryItem } from "../actions";
 
 import type { ItineraryItem } from "@prisma/client";
+
+const ITINERARY_CATEGORIES = [
+  { value: "Activity", label: "Activity / Sightseeing" },
+  { value: "Food", label: "Food & Dining" },
+  { value: "Transport", label: "Transport / Travel" },
+  { value: "Tour", label: "Guided Tour" },
+  { value: "Leisure", label: "Free Time & Leisure" },
+];
 
 interface EditItineraryDialogProps {
   item: ItineraryItem;
@@ -90,11 +105,11 @@ export function EditItineraryDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px] bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800">
+      <DialogContent className="sm:max-w-[480px]">
         <form onSubmit={handleSubmit} className="space-y-3.5">
           <DialogHeader>
-            <DialogTitle className="text-foreground dark:text-zinc-50">Edit Itinerary Item</DialogTitle>
-            <DialogDescription className="text-muted-foreground dark:text-zinc-400">
+            <DialogTitle>Edit Itinerary Item</DialogTitle>
+            <DialogDescription>
               Update timing, location, or details for this event.
             </DialogDescription>
           </DialogHeader>
@@ -107,20 +122,19 @@ export function EditItineraryDialog({
 
           <div className="space-y-3">
             <div className="space-y-1">
-              <Label htmlFor="edit-item-title" className="text-foreground dark:text-zinc-200">Title / Activity *</Label>
+              <Label htmlFor="edit-item-title">Title / Activity *</Label>
               <Input
                 id="edit-item-title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
                 disabled={isPending}
-                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="edit-item-day" className="text-foreground dark:text-zinc-200">Day #</Label>
+                <Label htmlFor="edit-item-day">Day #</Label>
                 <Input
                   id="edit-item-day"
                   type="number"
@@ -128,41 +142,42 @@ export function EditItineraryDialog({
                   value={formData.dayNumber}
                   onChange={(e) => setFormData({ ...formData, dayNumber: parseInt(e.target.value) || 1 })}
                   disabled={isPending}
-                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="edit-item-time" className="text-foreground dark:text-zinc-200">Time</Label>
+                <Label htmlFor="edit-item-time">Time</Label>
                 <Input
                   id="edit-item-time"
                   value={formData.time}
                   onChange={(e) => setFormData({ ...formData, time: e.target.value })}
                   disabled={isPending}
-                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="edit-item-category" className="text-foreground dark:text-zinc-200">Category</Label>
-                <select
-                  id="edit-item-category"
-                  className="flex h-9 w-full rounded-sm border border-border dark:border-zinc-800 bg-background dark:bg-[#121622] px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 text-foreground dark:text-zinc-100"
+                <Label htmlFor="edit-item-category">Category</Label>
+                <Select
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  onValueChange={(val) => setFormData({ ...formData, category: val })}
                   disabled={isPending}
                 >
-                  <option value="Activity">Activity / Sightseeing</option>
-                  <option value="Food">Food & Dining</option>
-                  <option value="Transport">Transport / Travel</option>
-                  <option value="Tour">Guided Tour</option>
-                  <option value="Leisure">Free Time & Leisure</option>
-                </select>
+                  <SelectTrigger id="edit-item-category" className="w-full">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ITINERARY_CATEGORIES.map((cat) => (
+                      <SelectItem key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="edit-item-cost" className="text-foreground dark:text-zinc-200">Estimated Cost ($)</Label>
+                <Label htmlFor="edit-item-cost">Estimated Cost ($)</Label>
                 <Input
                   id="edit-item-cost"
                   type="number"
@@ -171,31 +186,28 @@ export function EditItineraryDialog({
                   value={formData.cost}
                   onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
                   disabled={isPending}
-                  className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="edit-item-location" className="text-foreground dark:text-zinc-200">Location / Address</Label>
+              <Label htmlFor="edit-item-location">Location / Address</Label>
               <Input
                 id="edit-item-location"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 disabled={isPending}
-                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="edit-item-desc" className="text-foreground dark:text-zinc-200">Notes & Details</Label>
+              <Label htmlFor="edit-item-desc">Notes & Details</Label>
               <Textarea
                 id="edit-item-desc"
                 rows={2}
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 disabled={isPending}
-                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
               />
             </div>
           </div>
@@ -207,7 +219,6 @@ export function EditItineraryDialog({
               size="sm"
               onClick={() => onOpenChange(false)}
               disabled={isPending}
-              className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-300"
             >
               Cancel
             </Button>

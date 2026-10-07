@@ -18,9 +18,25 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 import { createNote } from "../actions";
+
+export const NOTE_CATEGORIES = [
+  { value: "General", label: "General" },
+  { value: "Food & Dining", label: "Food & Dining" },
+  { value: "Sightseeing", label: "Sightseeing" },
+  { value: "Transport", label: "Transport" },
+  { value: "Shopping", label: "Shopping" },
+  { value: "Emergency / Medical", label: "Emergency / Medical" },
+];
 
 interface AddNoteDialogProps {
   tripId: string;
@@ -87,11 +103,11 @@ export function AddNoteDialog({ tripId, trigger }: AddNoteDialogProps) {
         </DialogTrigger>
       )}
 
-      <DialogContent className="sm:max-w-[480px] dark:bg-[#0F131C] dark:border-zinc-800 text-foreground dark:text-zinc-100">
+      <DialogContent className="sm:max-w-[480px]">
         <form onSubmit={handleSubmit} className="space-y-3.5">
           <DialogHeader>
-            <DialogTitle className="dark:text-zinc-100">Create Travel Note</DialogTitle>
-            <DialogDescription className="dark:text-zinc-400">
+            <DialogTitle>Create Travel Note</DialogTitle>
+            <DialogDescription>
               Jot down recommendations, itineraries ideas, reservation codes, or memos.
             </DialogDescription>
           </DialogHeader>
@@ -104,7 +120,7 @@ export function AddNoteDialog({ tripId, trigger }: AddNoteDialogProps) {
 
           <div className="space-y-3">
             <div className="space-y-1">
-              <Label htmlFor="note-title" className="dark:text-zinc-300">Title *</Label>
+              <Label htmlFor="note-title">Title *</Label>
               <Input
                 id="note-title"
                 placeholder="e.g. Recommended Ramen Shops in Shinjuku"
@@ -112,27 +128,28 @@ export function AddNoteDialog({ tripId, trigger }: AddNoteDialogProps) {
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
                 disabled={isPending}
-                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="note-cat" className="dark:text-zinc-300">Category</Label>
-                <select
-                  id="note-cat"
-                  className="flex h-9 w-full rounded-sm border border-border bg-background dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100 px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
+                <Label htmlFor="note-cat">Category</Label>
+                <Select
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  onValueChange={(val) => setFormData({ ...formData, category: val })}
                   disabled={isPending}
                 >
-                  <option value="General" className="dark:bg-[#121622] dark:text-zinc-100">General</option>
-                  <option value="Food & Dining" className="dark:bg-[#121622] dark:text-zinc-100">Food & Dining</option>
-                  <option value="Sightseeing" className="dark:bg-[#121622] dark:text-zinc-100">Sightseeing</option>
-                  <option value="Transport" className="dark:bg-[#121622] dark:text-zinc-100">Transport</option>
-                  <option value="Shopping" className="dark:bg-[#121622] dark:text-zinc-100">Shopping</option>
-                  <option value="Emergency / Medical" className="dark:bg-[#121622] dark:text-zinc-100">Emergency / Medical</option>
-                </select>
+                  <SelectTrigger id="note-cat" className="w-full">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {NOTE_CATEGORIES.map((cat) => (
+                      <SelectItem key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="flex items-center gap-2 pt-6">
@@ -141,17 +158,17 @@ export function AddNoteDialog({ tripId, trigger }: AddNoteDialogProps) {
                   id="note-pinned"
                   checked={formData.isPinned}
                   onChange={(e) => setFormData({ ...formData, isPinned: e.target.checked })}
-                  className="h-4 w-4 rounded-xs border-border dark:border-zinc-700 bg-background dark:bg-[#121622] text-[#2D9BF0] focus:ring-[#2D9BF0] cursor-pointer"
+                  className="h-4 w-4 rounded-xs border-border bg-background text-primary focus:ring-primary cursor-pointer"
                   disabled={isPending}
                 />
-                <Label htmlFor="note-pinned" className="cursor-pointer dark:text-zinc-300">
+                <Label htmlFor="note-pinned" className="cursor-pointer">
                   Pin Note to Top
                 </Label>
               </div>
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="note-content" className="dark:text-zinc-300">Note Content *</Label>
+              <Label htmlFor="note-content">Note Content *</Label>
               <Textarea
                 id="note-content"
                 placeholder="Write your note, tips, contact details..."
@@ -160,7 +177,7 @@ export function AddNoteDialog({ tripId, trigger }: AddNoteDialogProps) {
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 required
                 disabled={isPending}
-                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 font-mono text-xs leading-relaxed"
+                className="font-mono text-xs leading-relaxed"
               />
             </div>
           </div>
@@ -172,7 +189,7 @@ export function AddNoteDialog({ tripId, trigger }: AddNoteDialogProps) {
               size="sm"
               onClick={() => setOpen(false)}
               disabled={isPending}
-              className="cursor-pointer dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800/60"
+              className="cursor-pointer"
             >
               Cancel
             </Button>

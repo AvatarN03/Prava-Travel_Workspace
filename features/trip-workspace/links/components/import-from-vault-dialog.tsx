@@ -84,24 +84,24 @@ export function ImportFromVaultDialog({
           <Button
             variant="outline"
             size="sm"
-            className="text-xs gap-1.5 cursor-pointer font-medium border-border dark:border-zinc-800 text-foreground dark:text-zinc-300 hover:bg-muted dark:hover:bg-zinc-800/60 shadow-2xs"
+            className="text-xs gap-1.5 cursor-pointer font-medium border-border text-foreground hover:bg-muted shadow-2xs"
           >
-            <Bookmark className="w-3.5 h-3.5 text-[#2D9BF0]" />
+            <Bookmark className="w-3.5 h-3.5 text-primary" />
             Import from Vault
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg max-h-[85vh] flex flex-col dark:bg-[#0F131C] dark:border-zinc-800 text-foreground dark:text-zinc-100">
+      <DialogContent className="sm:max-w-lg max-h-[85vh] flex flex-col">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-md bg-[#2D9BF0]/10 text-[#2D9BF0]">
+            <div className="p-2 rounded-md bg-primary/10 text-primary">
               <Bookmark className="w-4 h-4" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold dark:text-zinc-100">
+              <DialogTitle className="text-base font-semibold">
                 Import from Travel Resource Vault
               </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground dark:text-zinc-400">
+              <DialogDescription className="text-xs text-muted-foreground">
                 Quickly add your saved global bookmarks and reference links into this trip.
               </DialogDescription>
             </div>
@@ -110,16 +110,16 @@ export function ImportFromVaultDialog({
 
         <div className="flex-1 overflow-y-auto pr-1 py-3 space-y-2.5 min-h-[220px]">
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-12 text-xs text-muted-foreground dark:text-zinc-400 gap-2">
-              <Loader2 className="w-4 h-4 animate-spin text-[#2D9BF0]" />
+            <div className="flex flex-col items-center justify-center py-12 text-xs text-muted-foreground gap-2">
+              <Loader2 className="w-4 h-4 animate-spin text-primary" />
               Loading your Travel Vault bookmarks...
             </div>
           ) : vaultLinks.length === 0 ? (
             <div className="text-center py-10 space-y-2">
-              <p className="text-xs text-muted-foreground dark:text-zinc-400">
+              <p className="text-xs text-muted-foreground">
                 No saved bookmarks found in your Travel Resource Vault.
               </p>
-              <p className="text-[11px] text-muted-foreground/80 dark:text-zinc-500">
+              <p className="text-[11px] text-muted-foreground/80">
                 You can save reusable links in Travel Essentials → Resource Vault.
               </p>
             </div>
@@ -131,33 +131,33 @@ export function ImportFromVaultDialog({
               return (
                 <div
                   key={item.id}
-                  className="flex items-start justify-between gap-3 p-3 rounded-md border border-border dark:border-zinc-800 bg-card/60 dark:bg-[#121622] hover:bg-card dark:hover:bg-[#121622]/80 transition-colors"
+                  className="flex items-start justify-between gap-3 p-3 rounded-md border border-border bg-card/60 hover:bg-card transition-colors"
                 >
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold text-foreground dark:text-zinc-100 truncate">
+                      <span className="text-xs font-semibold text-foreground truncate">
                         {item.title}
                       </span>
                       {item.category && (
-                        <Badge variant="outline" className="text-[10px] py-0 px-1.5 h-4 dark:border-zinc-700 dark:text-zinc-300">
+                        <Badge variant="outline" className="text-[10px] py-0 px-1.5 h-4">
                           {item.category}
                         </Badge>
                       )}
                     </div>
-                    <div className="flex items-center gap-1 text-[11px] text-muted-foreground dark:text-zinc-400 truncate">
+                    <div className="flex items-center gap-1 text-[11px] text-muted-foreground truncate">
                       <span className="truncate">{item.url}</span>
                       <a
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#2D9BF0] hover:underline inline-flex items-center"
+                        className="text-primary hover:underline inline-flex items-center"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <ExternalLink className="w-2.5 h-2.5 ml-0.5" />
                       </a>
                     </div>
                     {item.description && (
-                      <p className="text-[11px] text-muted-foreground dark:text-zinc-400 line-clamp-1">
+                      <p className="text-[11px] text-muted-foreground line-clamp-1">
                         {item.description}
                       </p>
                     )}
@@ -166,12 +166,12 @@ export function ImportFromVaultDialog({
                   <Button
                     size="sm"
                     variant={alreadyImported ? "secondary" : "outline"}
-                    className="text-xs h-7 gap-1 cursor-pointer flex-shrink-0 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800/60"
+                    className="text-xs h-7 gap-1 cursor-pointer flex-shrink-0"
                     disabled={alreadyImported || isImporting}
                     onClick={() => handleImport(item)}
                   >
                     {isImporting ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     ) : alreadyImported ? (
                       <>
                         <Check className="w-3 h-3 text-emerald-500" />

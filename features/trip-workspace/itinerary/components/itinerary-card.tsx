@@ -137,13 +137,13 @@ export function ItineraryCard({
       <div className="group relative flex items-start gap-3 sm:gap-4 pl-0">
         {/* Timeline circular node */}
         <div className="flex flex-col items-center shrink-0 mt-3.5 z-10">
-          <div className="h-6 w-6 rounded-full bg-background dark:bg-[#0F131C] border-2 border-[#2D9BF0] flex items-center justify-center shadow-xs">
-            <Icon className="h-3 w-3 text-[#2D9BF0]" />
+          <div className="h-6 w-6 rounded-full bg-background border-2 border-primary flex items-center justify-center shadow-xs">
+            <Icon className="h-3 w-3 text-primary" />
           </div>
         </div>
 
         {/* Card Body */}
-        <div className="flex-1 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] hover:border-[#2D9BF0]/50 hover:shadow-xs transition-all duration-150 p-3.5 sm:p-4 space-y-2.5">
+        <div className="flex-1 rounded-sm border border-border/80 bg-card hover:border-primary/50 hover:shadow-xs transition-all duration-150 p-3.5 sm:p-4 space-y-2.5">
           {/* Header Row */}
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-1.5 min-w-0 flex-1">
@@ -156,8 +156,8 @@ export function ItineraryCard({
                 </span>
 
                 {item.time && (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-foreground dark:text-zinc-200 font-mono tabular-nums">
-                    <Clock className="w-3 h-3 text-[#2D9BF0]" />
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-foreground font-mono tabular-nums">
+                    <Clock className="w-3 h-3 text-primary" />
                     {item.time}
                   </span>
                 )}
@@ -171,7 +171,7 @@ export function ItineraryCard({
               </div>
 
               {/* Title */}
-              <h4 className="text-sm sm:text-base font-semibold text-foreground dark:text-zinc-100 leading-snug">
+              <h4 className="text-sm sm:text-base font-semibold text-foreground leading-snug">
                 {item.title}
               </h4>
             </div>
@@ -182,7 +182,7 @@ export function ItineraryCard({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 text-muted-foreground hover:text-foreground dark:hover:text-zinc-100 cursor-pointer shrink-0"
+                  className="h-7 w-7 text-muted-foreground hover:text-foreground cursor-pointer shrink-0"
                   disabled={isDeleting}
                 >
                   {isDeleting ? (
@@ -192,19 +192,19 @@ export function ItineraryCard({
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800">
-                <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="cursor-pointer dark:hover:bg-[#121622]">
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="cursor-pointer">
                   <Pencil className="h-3.5 w-3.5 mr-2" />
                   Edit Event
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleAddToGoogleCalendar} className="cursor-pointer dark:hover:bg-[#121622]">
-                  <Calendar className="h-3.5 w-3.5 mr-2 text-[#2D9BF0]" />
+                <DropdownMenuItem onClick={handleAddToGoogleCalendar} className="cursor-pointer">
+                  <Calendar className="h-3.5 w-3.5 mr-2 text-primary" />
                   Add to Google Calendar
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="dark:bg-zinc-800" />
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => setIsDeleteOpen(true)}
-                  className="text-destructive focus:text-destructive cursor-pointer dark:hover:bg-[#121622]"
+                  className="text-destructive focus:text-destructive cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5 mr-2" />
                   Delete Event
@@ -215,14 +215,14 @@ export function ItineraryCard({
 
           {/* Location */}
           {item.location && (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground dark:text-zinc-400">
-              <MapPin className="w-3.5 h-3.5 text-[#2D9BF0] shrink-0" />
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
               {mapsUrl ? (
                 <a
                   href={mapsUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:text-foreground dark:hover:text-zinc-200 hover:underline inline-flex items-center gap-1 truncate"
+                  className="hover:text-foreground hover:underline inline-flex items-center gap-1 truncate"
                 >
                   <span className="truncate">{item.location}</span>
                   <ExternalLink className="w-3 h-3 shrink-0 opacity-60" />
@@ -235,7 +235,7 @@ export function ItineraryCard({
 
           {/* Description & Tips */}
           {item.description && (
-            <p className="text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed pt-1.5 whitespace-pre-wrap border-t border-border/60 dark:border-zinc-800">
+            <p className="text-xs text-muted-foreground leading-relaxed pt-1.5 whitespace-pre-wrap border-t border-border/60">
               {item.description}
             </p>
           )}

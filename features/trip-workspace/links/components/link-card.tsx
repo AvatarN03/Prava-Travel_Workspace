@@ -79,9 +79,9 @@ export function LinkCard({ item }: LinkCardProps) {
         return { label: "Flights/Travel", host, icon: Plane, color: "text-sky-600 dark:text-sky-400 bg-sky-500/10 border-sky-500/20" };
       }
 
-      return { label: host, host, icon: Globe, color: "text-[#2D9BF0] bg-[#2D9BF0]/10 border-[#2D9BF0]/20" };
+      return { label: host, host, icon: Globe, color: "text-primary bg-primary/10 border-primary/20" };
     } catch {
-      return { label: "External Link", host: "external", icon: Globe, color: "text-[#2D9BF0] bg-[#2D9BF0]/10 border-[#2D9BF0]/20" };
+      return { label: "External Link", host: "external", icon: Globe, color: "text-primary bg-primary/10 border-primary/20" };
     }
   };
 
@@ -90,7 +90,7 @@ export function LinkCard({ item }: LinkCardProps) {
 
   return (
     <>
-      <div className="group relative flex flex-col justify-between p-4 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] hover:border-[#2D9BF0]/50 hover:shadow-2xs transition-all duration-200">
+      <div className="group relative flex flex-col justify-between p-4 rounded-sm border border-border/80 bg-card hover:border-primary/50 hover:shadow-2xs transition-all duration-200">
         <div className="space-y-2.5 flex-1">
           {/* Header row */}
           <div className="flex items-start justify-between gap-3">
@@ -101,18 +101,18 @@ export function LinkCard({ item }: LinkCardProps) {
                   <span className="truncate max-w-[130px]">{domainInfo.label}</span>
                 </span>
                 {item.category && (
-                  <Badge variant="outline" className="text-[10px] rounded-xs px-1.5 py-0 border-border/60 dark:border-zinc-700 dark:text-zinc-300">
+                  <Badge variant="outline" className="text-[10px] rounded-xs px-1.5 py-0 border-border/60">
                     {item.category}
                   </Badge>
                 )}
               </div>
 
-              <h4 className="text-sm font-bold text-foreground dark:text-zinc-100 leading-snug line-clamp-1 pt-0.5 tracking-tight">
+              <h4 className="text-sm font-bold text-foreground leading-snug line-clamp-1 pt-0.5 tracking-tight">
                 <a
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-[#2D9BF0] hover:underline transition-colors"
+                  className="hover:text-primary hover:underline transition-colors"
                 >
                   {item.title}
                 </a>
@@ -124,25 +124,25 @@ export function LinkCard({ item }: LinkCardProps) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 text-muted-foreground hover:text-foreground dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-muted dark:hover:bg-zinc-800/60 shrink-0 cursor-pointer -mr-1 -mt-1 rounded-xs"
+                  className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted shrink-0 cursor-pointer -mr-1 -mt-1 rounded-xs"
                 >
                   <MoreHorizontal className="h-3.5 w-3.5" />
                   <span className="sr-only">Options</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="rounded-sm dark:bg-[#0F131C] dark:border-zinc-800 dark:text-zinc-200">
-                <DropdownMenuItem onClick={handleCopyUrl} className="cursor-pointer text-xs dark:hover:bg-zinc-800/60 dark:focus:bg-zinc-800/60">
+              <DropdownMenuContent align="end" className="rounded-sm">
+                <DropdownMenuItem onClick={handleCopyUrl} className="cursor-pointer text-xs">
                   <Copy className="h-3.5 w-3.5 mr-2" />
                   Copy Link
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="cursor-pointer text-xs dark:hover:bg-zinc-800/60 dark:focus:bg-zinc-800/60">
+                <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="cursor-pointer text-xs">
                   <Pencil className="h-3.5 w-3.5 mr-2" />
                   Edit Bookmark
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="dark:bg-zinc-800" />
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => setIsDeleteOpen(true)}
-                  className="text-destructive focus:text-destructive cursor-pointer text-xs dark:hover:bg-zinc-800/60 dark:focus:bg-zinc-800/60"
+                  className="text-destructive focus:text-destructive cursor-pointer text-xs"
                 >
                   <Trash2 className="h-3.5 w-3.5 mr-2" />
                   Delete Bookmark
@@ -153,18 +153,18 @@ export function LinkCard({ item }: LinkCardProps) {
 
           {/* Description */}
           {item.description && (
-            <p className="text-xs text-muted-foreground dark:text-zinc-400 line-clamp-2 leading-relaxed">
+            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
               {item.description}
             </p>
           )}
         </div>
 
         {/* Footer Link & Copy */}
-        <div className="pt-3 mt-3 border-t border-border/50 dark:border-zinc-800 flex items-center justify-between text-xs">
+        <div className="pt-3 mt-3 border-t border-border/50 flex items-center justify-between text-xs">
           <button
             type="button"
             onClick={handleCopyUrl}
-            className="text-muted-foreground hover:text-foreground dark:text-zinc-400 dark:hover:text-zinc-200 text-[11px] inline-flex items-center gap-1 font-medium cursor-pointer"
+            className="text-muted-foreground hover:text-foreground text-[11px] inline-flex items-center gap-1 font-medium cursor-pointer"
             title="Copy URL"
           >
             <Copy className="w-3 h-3" />
@@ -175,7 +175,7 @@ export function LinkCard({ item }: LinkCardProps) {
             href={item.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-semibold text-[#2D9BF0] hover:underline text-xs"
+            className="inline-flex items-center gap-1 font-semibold text-primary hover:underline text-xs"
           >
             <span>Visit Link</span>
             <ExternalLink className="w-3 h-3" />

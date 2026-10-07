@@ -18,9 +18,24 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 import { createLink } from "../actions";
+
+export const LINK_CATEGORIES = [
+  { value: "Guides & Articles", label: "Guides & Articles" },
+  { value: "Booking & Tickets", label: "Booking & Tickets" },
+  { value: "Maps & Transit", label: "Maps & Transit" },
+  { value: "Food & Reviews", label: "Food & Reviews" },
+  { value: "Other", label: "Other" },
+];
 
 interface AddLinkDialogProps {
   tripId: string;
@@ -92,11 +107,11 @@ export function AddLinkDialog({ tripId, trigger }: AddLinkDialogProps) {
         </DialogTrigger>
       )}
 
-      <DialogContent className="sm:max-w-[440px] dark:bg-[#0F131C] dark:border-zinc-800 text-foreground dark:text-zinc-100">
+      <DialogContent className="sm:max-w-[440px]">
         <form onSubmit={handleSubmit} className="space-y-3.5">
           <DialogHeader>
-            <DialogTitle className="dark:text-zinc-100">Add Bookmark Link</DialogTitle>
-            <DialogDescription className="dark:text-zinc-400">
+            <DialogTitle>Add Bookmark Link</DialogTitle>
+            <DialogDescription>
               Save helpful blog posts, Google Maps pins, tickets, or travel guides.
             </DialogDescription>
           </DialogHeader>
@@ -109,7 +124,7 @@ export function AddLinkDialog({ tripId, trigger }: AddLinkDialogProps) {
 
           <div className="space-y-3">
             <div className="space-y-1">
-              <Label htmlFor="link-title" className="dark:text-zinc-300">Link Title *</Label>
+              <Label htmlFor="link-title">Link Title *</Label>
               <Input
                 id="link-title"
                 placeholder="e.g. Kyoto 3-Day Walking Guide"
@@ -117,12 +132,11 @@ export function AddLinkDialog({ tripId, trigger }: AddLinkDialogProps) {
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
                 disabled={isPending}
-                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500"
               />
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="link-url" className="dark:text-zinc-300">URL / Web Address *</Label>
+              <Label htmlFor="link-url">URL / Web Address *</Label>
               <Input
                 id="link-url"
                 placeholder="https://example.com/guide..."
@@ -130,29 +144,32 @@ export function AddLinkDialog({ tripId, trigger }: AddLinkDialogProps) {
                 onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                 required
                 disabled={isPending}
-                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 font-mono text-xs"
+                className="font-mono text-xs"
               />
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="link-category" className="dark:text-zinc-300">Category</Label>
-              <select
-                id="link-category"
-                className="flex h-9 w-full rounded-sm border border-border bg-background dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100 px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
+              <Label htmlFor="link-category">Category</Label>
+              <Select
                 value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                onValueChange={(val) => setFormData({ ...formData, category: val })}
                 disabled={isPending}
               >
-                <option value="Guides & Articles" className="dark:bg-[#121622] dark:text-zinc-100">Guides & Articles</option>
-                <option value="Booking & Tickets" className="dark:bg-[#121622] dark:text-zinc-100">Booking & Tickets</option>
-                <option value="Maps & Transit" className="dark:bg-[#121622] dark:text-zinc-100">Maps & Transit</option>
-                <option value="Food & Reviews" className="dark:bg-[#121622] dark:text-zinc-100">Food & Reviews</option>
-                <option value="Other" className="dark:bg-[#121622] dark:text-zinc-100">Other</option>
-              </select>
+                <SelectTrigger id="link-category" className="w-full">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {LINK_CATEGORIES.map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="link-desc" className="dark:text-zinc-300">Description (Optional)</Label>
+              <Label htmlFor="link-desc">Description (Optional)</Label>
               <Textarea
                 id="link-desc"
                 placeholder="Key takeaways or why you saved this..."
@@ -160,7 +177,7 @@ export function AddLinkDialog({ tripId, trigger }: AddLinkDialogProps) {
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 disabled={isPending}
-                className="dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 text-xs"
+                className="text-xs"
               />
             </div>
           </div>
@@ -172,7 +189,7 @@ export function AddLinkDialog({ tripId, trigger }: AddLinkDialogProps) {
               size="sm"
               onClick={() => setOpen(false)}
               disabled={isPending}
-              className="cursor-pointer dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800/60"
+              className="cursor-pointer"
             >
               Cancel
             </Button>
