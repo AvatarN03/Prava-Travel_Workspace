@@ -62,8 +62,16 @@
 - **Phase 82: Storage Module Consolidation & Boilerplate Reduction** (Complete)
 - **Phase 83: Trip Workspace Design System Alignment, Currency Deduplication & Select Mapping** (Complete)
 - **Phase 84: Trip Workspace Select Normalization, Theme Token Harmonization & Dead Code Cleanup** (Complete)
+- **Phase 85: Providers Consolidation & Theme Provider Inlining** (Complete)
 
 ## Current Task
+- **Phase 85 Complete**: Providers Consolidation & Theme Provider Inlining:
+  - **Provider Architecture Consolidation (`providers/index.tsx`, `providers/theme-provider.tsx`)**:
+    - Shifted `ThemeProvider` implementation and Next Themes / React 19 console warning suppression directly into `providers/index.tsx`.
+    - Removed redundant intermediate file `providers/theme-provider.tsx` safely from the repository.
+    - Updated entry import in `app/layout.tsx` to `import { ThemeProvider } from "@/providers";`.
+    - Verified zero broken imports or references across the workspace.
+    - Ran `npm run build` with Turbopack: Prisma generated (808ms), TypeScript passed in 23.3s with 0 errors, static pages generated in 1.6s, exit code 0.
 - **Phase 84 Complete**: Trip Workspace Select Normalization, Theme Token Harmonization & Dead Code Cleanup:
   - **Itinerary Module Refactoring (`add-itinerary-dialog.tsx`, `edit-itinerary-dialog.tsx`, `itinerary-card.tsx`, `itinerary-view.tsx`)**:
     - Replaced raw HTML `<select>` in `add-itinerary-dialog.tsx` and `edit-itinerary-dialog.tsx` with official shadcn/ui `<Select>`, mapped over reusable `ITINERARY_CATEGORIES`.

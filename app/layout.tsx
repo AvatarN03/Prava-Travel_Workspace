@@ -3,7 +3,7 @@ import { Cinzel, Newsreader, Sora } from "next/font/google";
 
 import { Toaster } from "@/components/ui/sonner";
 
-import { ThemeProvider } from "@/providers/theme-provider";
+import { ThemeProvider } from "@/providers";
 
 import "./globals.css";
 
