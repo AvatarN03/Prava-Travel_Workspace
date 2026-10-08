@@ -114,7 +114,7 @@ export function buildGoogleCalendarUrl(payload: CalendarEventPayload): string {
   if (payload.description) {
     detailsParts.push(payload.description);
   }
-  detailsParts.push("\n---\nOrganized with Prava AI Travel Workspace (https://prava.app)");
+  detailsParts.push("\n---\nOrganized with Prava Travel Workspace (https://prava-workspace.vercel.app)");
   params.set("details", detailsParts.join("\n"));
 
   return `${baseUrl}?${params.toString()}`;
@@ -231,7 +231,7 @@ export function generateTripIcs(
   const lines: string[] = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Prava AI//Prava Travel Workspace//EN",
+    "PRODID:-//Prava//Prava Travel Workspace//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     `X-WR-CALNAME:${escapeIcsText(trip.title)}`,
@@ -247,12 +247,12 @@ export function generateTripIcs(
 
     lines.push(
       "BEGIN:VEVENT",
-      `UID:prava-trip-${trip.id || "trip"}-${timestamp}@prava.app`,
+      `UID:prava-trip-${trip.id || "trip"}-${timestamp}@prava-workspace.vercel.app`,
       `DTSTAMP:${timestamp}`,
       `DTSTART;VALUE=DATE:${formatIcsDate(tripStart, true)}`,
       `DTEND;VALUE=DATE:${formatIcsDate(nextDayEnd, true)}`,
       `SUMMARY:${escapeIcsText(`Trip: ${trip.title}`)}`,
-      `DESCRIPTION:${escapeIcsText(trip.description || `Journey to ${trip.destination || "destination"}. Planned with Prava AI.`)}`,
+      `DESCRIPTION:${escapeIcsText(trip.description || `Journey to ${trip.destination || "destination"}. Planned with Prava.`)}`,
       trip.destination ? `LOCATION:${escapeIcsText(trip.destination)}` : "",
       "STATUS:CONFIRMED",
       "TRANSP:TRANSPARENT",
@@ -272,14 +272,14 @@ export function generateTripIcs(
       const desc = [
         stay.confirmationCode ? `Confirmation: ${stay.confirmationCode}` : "",
         stay.address ? `Address: ${stay.address}` : "",
-        "Planned with Prava AI Travel Workspace",
+        "Planned with Prava Travel Workspace",
       ]
         .filter(Boolean)
         .join("\\n");
 
       lines.push(
         "BEGIN:VEVENT",
-        `UID:prava-stay-${stay.id || idx}-${timestamp}@prava.app`,
+        `UID:prava-stay-${stay.id || idx}-${timestamp}@prava-workspace.vercel.app`,
         `DTSTAMP:${timestamp}`,
         `DTSTART;VALUE=DATE:${formatIcsDate(checkInDate, true)}`,
         `DTEND;VALUE=DATE:${formatIcsDate(nextDayOut, true)}`,
@@ -326,7 +326,7 @@ export function generateTripIcs(
 
     lines.push(
       "BEGIN:VEVENT",
-      `UID:prava-item-${item.id || idx}-${timestamp}@prava.app`,
+      `UID:prava-item-${item.id || idx}-${timestamp}@prava-workspace.vercel.app`,
       `DTSTAMP:${timestamp}`,
       isAllDay
         ? `DTSTART;VALUE=DATE:${formatIcsDate(startDate, true)}`
@@ -335,7 +335,7 @@ export function generateTripIcs(
         ? `DTEND;VALUE=DATE:${formatIcsDate(new Date(startDate.getTime() + 86400000), true)}`
         : `DTEND:${formatIcsDate(endDate, false)}`,
       `SUMMARY:${escapeIcsText(item.title)}`,
-      `DESCRIPTION:${escapeIcsText(item.description || `Activity on Day ${item.dayNumber || 1}. Planned with Prava AI.`)}`,
+      `DESCRIPTION:${escapeIcsText(item.description || `Activity on Day ${item.dayNumber || 1}. Planned with Prava.`)}`,
       item.location ? `LOCATION:${escapeIcsText(item.location)}` : "",
       "STATUS:CONFIRMED",
       "END:VEVENT"
