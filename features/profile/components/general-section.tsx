@@ -31,6 +31,8 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
+import { InstallButton } from "@/components/pwa";
+
 import { useOfflineSyncContext } from "@/lib/offline";
 import { SUPPORTED_CURRENCIES } from "@/features/travel-essentials";
 
@@ -210,6 +212,18 @@ export function GeneralSection({
                 )}
               </div>
             )}
+          </div>
+
+          <Separator className="border-border dark:border-zinc-800" />
+
+          <div className="flex items-center justify-between py-1">
+            <div className="space-y-0.5 pr-4">
+              <p className="font-sans font-semibold text-foreground dark:text-zinc-200">Home Screen & Desktop App</p>
+              <p className="font-sans text-muted-foreground dark:text-zinc-400 text-[11px]">
+                Install Prava to your home screen or desktop for 1-tap fast access and native app mode
+              </p>
+            </div>
+            <InstallButton hideWhenInstalled={false} />
           </div>
 
           <Separator className="border-border dark:border-zinc-800" />

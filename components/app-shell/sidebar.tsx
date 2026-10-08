@@ -30,6 +30,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import { InstallButton } from "@/components/pwa";
+
 import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
 
 import { cn } from "@/lib/utils";
@@ -327,7 +329,10 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
         </div>
 
         {/* Bottom Area: Account Section (Preserved across all modes) */}
-        <div className="shrink-0 pt-2 pb-8 md:pb-10 border-t border-shell-border/60 dark:border-slate-300/60 mt-auto">
+        <div className="shrink-0 pt-2 pb-8 md:pb-10 border-t border-shell-border/60 dark:border-slate-300/60 mt-auto space-y-2">
+          <div className="px-2">
+            <InstallButton variant="sidebar" />
+          </div>
           <div>
             <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 select-none">
               Account

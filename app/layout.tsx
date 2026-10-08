@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cinzel, Newsreader, Sora } from "next/font/google";
 
+import { PwaProvider } from "@/components/pwa";
 import { Toaster } from "@/components/ui/sonner";
 
 import { ThemeProvider } from "@/providers";
@@ -23,6 +24,13 @@ const cinzel = Cinzel({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#2D9BF0",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL || "https://prava.app"
@@ -34,7 +42,20 @@ export const metadata: Metadata = {
   description:
     "Intelligent trip planning without the chaos. Organize multi-day itineraries, stays, expenses, and travel essentials in a structured workspace.",
   icons: {
-    icon: "/logo.png",
+    icon: [
+      { url: "/logo.png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Prava",
   },
 };
 
@@ -59,10 +80,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster position="top-right" richColors />
+          <PwaProvider>
+            {children}
+            <Toaster position="top-right" richColors />
+          </PwaProvider>
         </ThemeProvider>
       </body>
     </html>
   );
 }
+

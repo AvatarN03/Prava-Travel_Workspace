@@ -63,8 +63,28 @@
 - **Phase 83: Trip Workspace Design System Alignment, Currency Deduplication & Select Mapping** (Complete)
 - **Phase 84: Trip Workspace Select Normalization, Theme Token Harmonization & Dead Code Cleanup** (Complete)
 - **Phase 85: Providers Consolidation & Theme Provider Inlining** (Complete)
+- **Phase 86: Progressive Web App (PWA), Add to Home Screen & Offline Fallback Shell** (Complete)
 
 ## Current Task
+- **Phase 86 Complete**: Progressive Web App (PWA), Add to Home Screen & Offline Fallback Shell:
+  - **PWA Asset Generation (`public/`)**:
+    - Generated standard high-resolution PWA and iOS touch icons using `sharp`: `icon-192.png` (192×192), `icon-512.png` (512×512), `apple-icon.png` (180×180), and `icon-maskable.png` (512×512 with safe padding) from `public/logo.png`.
+    - Preserved existing `public/logo.png` and all other public assets completely untouched.
+  - **Web App Manifest (`app/manifest.ts`)**:
+    - Configured Next.js App Router native manifest returning `MetadataRoute.Manifest` with app name (`Prava — Travel Workspace`), short name (`Prava`), start URL (`/dashboard`), display (`standalone`), theme color (`#2D9BF0`), and background color (`#0B0E14`).
+  - **Non-Disruptive Service Worker (`public/sw.js`)**:
+    - Implemented lightweight, non-intrusive service worker that safely caches static assets and provides an offline fallback shell.
+    - Explicitly guards against intercepting mutations (`POST`, `PUT`, `DELETE`), Next.js Server Actions (`next-action` header), dynamic RSC requests (`_rsc`), and Supabase Auth / API routes.
+  - **Offline Fallback Shell (`app/offline/page.tsx`)**:
+    - Built dedicated offline route with theme token compliance, connection retry trigger, and direct navigation links to access IndexedDB cached trips (`/trips`).
+  - **Root Layout & Meta (`app/layout.tsx`)**:
+    - Exported `viewport` with `themeColor: "#2D9BF0"`, updated metadata with icon sets, manifest (`/manifest.webmanifest`), and `appleWebApp` capability.
+    - Wrapped application shell with client-side `<PwaProvider>`.
+  - **PWA Provider & Install UI (`components/pwa/`)**:
+    - Created `PwaProvider` listening to Chromium `beforeinstallprompt`, detecting standalone display mode, and providing an iOS Safari Add-to-Home-Screen guided modal.
+    - Built reusable `InstallButton` component and seamlessly embedded it in the desktop/mobile sidebar footer (`components/app-shell/sidebar.tsx`) and Settings General section (`features/profile/components/general-section.tsx`) alongside the Offline Travel Cache.
+  - **Full Production Build Verification**:
+    - Executed `npm run build`: Prisma generated (1.36s), Turbopack compiled in 21.8s, TypeScript passed in 16.8s with 0 errors, static pages (`/manifest.webmanifest`, `/offline`) generated in 3.2s, exit code 0.
 - **Phase 85 Complete**: Providers Consolidation & Theme Provider Inlining:
   - **Provider Architecture Consolidation (`providers/index.ts`, `providers/theme-provider.tsx`)**:
     - Shifted `ThemeProvider` implementation and Next Themes / React 19 console warning suppression directly into `providers/index.ts`.
