@@ -10,11 +10,34 @@ import React, {
 } from "react";
 
 import { type IDBPDatabase, openDB } from "idb";
-import { Database, WifiOff, X } from "lucide-react";
+import { Database, Languages, WifiOff, X } from "lucide-react";
+
+import { OfflineTravelEssentialsDialog } from "@/features/travel-essentials";
 
 import { fetchTripsForOfflineSync } from "./actions";
-
 import { cn } from "@/lib/utils";
+
+import type {
+  OfflineAccommodation,
+  OfflineChecklistItem,
+  OfflineExpense,
+  OfflineItineraryItem,
+  OfflineLink,
+  OfflineNote,
+  OfflineTripPayload,
+} from "./actions";
+
+export type {
+  OfflineTripPayload,
+  OfflineItineraryItem,
+  OfflineAccommodation,
+  OfflineChecklistItem,
+  OfflineNote,
+  OfflineExpense,
+  OfflineLink,
+};
+
+export type OfflineTrip = OfflineTripPayload;
 
 // ─── Constants & Types ────────────────────────────────────────────────────────
 
@@ -22,19 +45,6 @@ const DB_NAME = "prava-offline-db";
 const DB_VERSION = 1;
 const SYNC_DELAY_MS = 3 * 60 * 1000; // Wait 3m after mount
 const STALE_THRESHOLD_MS = 30 * 60 * 1000; // 30m stale threshold
-
-export interface OfflineTrip {
-  id: string;
-  title: string;
-  destination: string | null;
-  description: string | null;
-  startDate: string | null;
-  endDate: string | null;
-  status: string;
-  coverImageUrl: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export interface OfflineSyncState {
   isSyncing: boolean;
@@ -200,6 +210,7 @@ export function OfflineBanner({
   const isOnline = context ? context.isOnline : useOnlineStatus();
   const syncLabel = lastSyncLabel ?? context?.lastSyncLabel ?? "Cached data";
   const [dismissed, setDismissed] = useState(false);
+  const [isEssentialsOpen, setIsEssentialsOpen] = useState(false);
 
   useEffect(() => {
     if (isOnline) {
@@ -212,51 +223,70 @@ export function OfflineBanner({
   }
 
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className={cn(
-        "absolute bottom-3 inset-x-3 sm:inset-x-auto sm:right-4 sm:bottom-4 z-30 max-w-md",
-        "flex items-center justify-between gap-2 px-3 py-2 sm:px-3.5 sm:py-2.5",
-        "rounded-sm border border-amber-500/40 bg-card text-card-foreground shadow-lg",
-        "border-l-4 border-l-amber-500",
-        "animate-in fade-in slide-in-from-bottom-2 duration-200"
-      )}
-    >
-      <div className="flex items-center gap-2 min-w-0 flex-1">
-        <span className="relative flex h-2 w-2 shrink-0">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-        </span>
+    <>
+      <div
+        role="status"
+        aria-live="polite"
+        className={cn(
+          "absolute bottom-3 inset-x-3 sm:inset-x-auto sm:right-4 sm:bottom-4 z-30 max-w-md",
+          "flex items-center justify-between gap-2 px-3 py-2 sm:px-3.5 sm:py-2.5",
+          "rounded-sm border border-amber-500/40 bg-card text-card-foreground shadow-lg",
+          "border-l-4 border-l-amber-500",
+          "animate-in fade-in slide-in-from-bottom-2 duration-200"
+        )}
+      >
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <span className="relative flex h-2 w-2 shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+          </span>
 
-        <div className="flex items-center gap-1.5 shrink-0">
-          <WifiOff className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-          <span className="font-semibold text-xs text-foreground">Offline</span>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <WifiOff className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+            <span className="font-semibold text-xs text-foreground">Offline</span>
+          </div>
+
+          <span className="text-muted-foreground/60 text-xs shrink-0">•</span>
+
+          <p className="text-[11px] sm:text-xs text-muted-foreground truncate">
+            Showing cached data <span className="hidden sm:inline">(Read-Only)</span>
+          </p>
+
+          {syncLabel && (
+            <span className="hidden md:inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/70 px-1.5 py-0.5 rounded-xs border border-border/50 shrink-0">
+              <Database className="h-2.5 w-2.5 text-amber-500" />
+              <span className="truncate max-w-[120px]">{syncLabel}</span>
+            </span>
+          )}
         </div>
 
-        <span className="text-muted-foreground/60 text-xs shrink-0">•</span>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button
+            type="button"
+            onClick={() => setIsEssentialsOpen(true)}
+            className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-medium rounded-xs bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors cursor-pointer"
+            title="Open Offline Travel Essentials (Phrasebook, Emergency numbers, Visa facts)"
+          >
+            <Languages className="h-3 w-3" />
+            <span>Essentials</span>
+          </button>
 
-        <p className="text-[11px] sm:text-xs text-muted-foreground truncate">
-          Showing cached data <span className="hidden sm:inline">(Read-Only)</span>
-        </p>
-
-        {syncLabel && (
-          <span className="hidden md:inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/70 px-1.5 py-0.5 rounded-xs border border-border/50 shrink-0">
-            <Database className="h-2.5 w-2.5 text-amber-500" />
-            <span className="truncate max-w-[120px]">{syncLabel}</span>
-          </span>
-        )}
+          <button
+            type="button"
+            onClick={() => setDismissed(true)}
+            className="h-6 w-6 shrink-0 inline-flex items-center justify-center rounded-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+            aria-label="Dismiss offline notice"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
 
-      <button
-        type="button"
-        onClick={() => setDismissed(true)}
-        className="h-6 w-6 shrink-0 inline-flex items-center justify-center rounded-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
-        aria-label="Dismiss offline notice"
-      >
-        <X className="h-3.5 w-3.5" />
-      </button>
-    </div>
+      <OfflineTravelEssentialsDialog
+        open={isEssentialsOpen}
+        onOpenChange={setIsEssentialsOpen}
+      />
+    </>
   );
 }
 

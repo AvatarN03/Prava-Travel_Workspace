@@ -38,6 +38,7 @@ import {
 import {
   DEFAULT_WATCHLIST_CURRENCIES,
   SUPPORTED_CURRENCIES,
+  getFallbackRates,
 } from "./currency-service";
 import type {
   CurrencyPerformanceData,
@@ -92,10 +93,20 @@ export function CurrencyConverter({
         setRates(cached);
       } else {
         startRefresh(async () => {
-          const updated = await onRefresh(cleanBase);
-          if (updated) {
-            ratesCacheRef.current.set(cleanBase, updated);
-            setRates(updated);
+          try {
+            const updated = await onRefresh(cleanBase);
+            if (updated) {
+              ratesCacheRef.current.set(cleanBase, updated);
+              setRates(updated);
+            } else if (!rates) {
+              const fallback = getFallbackRates(cleanBase);
+              setRates(fallback);
+            }
+          } catch {
+            if (!rates) {
+              const fallback = getFallbackRates(cleanBase);
+              setRates(fallback);
+            }
           }
         });
       }
@@ -200,10 +211,20 @@ export function CurrencyConverter({
     }
 
     startRefresh(async () => {
-      const updated = await onRefresh(cleanBase);
-      if (updated) {
-        ratesCacheRef.current.set(cleanBase, updated);
-        setRates(updated);
+      try {
+        const updated = await onRefresh(cleanBase);
+        if (updated) {
+          ratesCacheRef.current.set(cleanBase, updated);
+          setRates(updated);
+        } else if (!ratesCacheRef.current.has(cleanBase)) {
+          const fallback = getFallbackRates(cleanBase);
+          setRates(fallback);
+        }
+      } catch {
+        if (!ratesCacheRef.current.has(cleanBase)) {
+          const fallback = getFallbackRates(cleanBase);
+          setRates(fallback);
+        }
       }
     });
   };

@@ -66,21 +66,48 @@
 - **Phase 86: Progressive Web App (PWA), Add to Home Screen & Offline Fallback Shell** (Complete)
 - **Phase 87: Sidebar Install App UI/UX Modernization & Tooltip Affordance** (Complete)
 - **Phase 88: Responsive Offline Bottom Floating Toast & Mobile Menu Clearance** (Complete)
-- **Phase 89: Offline Cache Toggle Auto-Save, Forced Manual Sync & Live Toast Feedback** (Complete)
+- **Phase 89: Offline Cache Explicit Save & Non-Wiping Transition Guard** (Complete)
+- **Phase 90: Complete Individual Trip Details IndexedDB Sync & Offline Workspace Dialog** (Complete)
+- **Phase 91: Travel Essentials Offline Companion & Static Resilience Architecture** (Complete)
 
 ## Current Task
-- **Phase 89 Complete**: Offline Cache Toggle Auto-Save, Forced Manual Sync & Live Toast Feedback:
-  - **Root Cause Resolution (`lib/offline/index.tsx`, `features/profile/components/general-section.tsx`)**:
-    - Discovered that toggling the Offline Travel Cache switch was only modifying local form state in `profile-editor.tsx`, never auto-saving to PostgreSQL or notifying the root `OfflineSyncProvider` context (`offlineModeEnabled` remained `false`).
-    - Discovered that `triggerSync()` was gated behind `if (offlineModeEnabled)` and `performSync()` was early-returning if cached data was less than 30 minutes old (`STALE_THRESHOLD_MS`), causing "Sync Now" clicks to be completely ignored.
-  - **Context & Provider Dynamic State Synchronization (`lib/offline/index.tsx`)**:
-    - Extended `OfflineSyncContextValue` with `setOfflineMode: (enabled: boolean) => void` and updated `triggerSync` to return sync result metadata (`Promise<{ success: boolean; count?: number; error?: string } | void>`).
-    - Updated `performSync(force = false)` to accept a `force` flag that bypasses the 30-minute staleness check during user-initiated manual syncs.
-    - Updated `triggerSync` to always execute `performSync(true)` with immediate feedback.
-  - **Profile Switch Immediate Auto-Save & Sync Execution (`features/profile/`)**:
-    - In `profile-editor.tsx`, added `handleUpdateOfflineMode(checked)` to immediately persist `offlineMode` to Supabase PostgreSQL via `updateGeneralPreferences`.
-    - In `general-section.tsx`, created `handleToggleOfflineMode` which immediately updates local state, updates `OfflineSyncContext`, auto-saves to database, and triggers an initial background prefetch of active/planning trips into IndexedDB with instant toast feedback.
-    - In `general-section.tsx`, created `handleManualSync` providing spinning animation, disabled loading state, and toast feedback reporting the exact count of trips cached locally.
+- **Phase 91 Complete**: Travel Essentials Offline Companion & Static Resilience Architecture:
+  - **Offline Travel Essentials Modal Hub (`features/travel-essentials/components/offline-travel-essentials-dialog.tsx`)**:
+    - Created dedicated, zero-network modal companion accessible anywhere across the application when disconnected.
+    - 🗣️ **Phrasebook**: 10+ languages (Hindi, Japanese, French, Spanish, German, Italian, etc.) with real-time search, category filter pills (Greetings, Essentials, Dining, Transit, Emergency, Numbers), phonetic pronunciations, and 1-click clipboard copy.
+    - 🚨 **Emergency Directory**: Verified emergency contacts for 27+ countries covering General Emergency, Police, Ambulance, Fire, and Tourist Police with clickable `tel:` links.
+    - 🛂 **Visa Rules & Facts**: Curated travel guidance for popular tourist destinations with visa duration, capital, language, currency, and emergency overview.
+    - 💱 **Offline FX Calculator**: Instant currency converter operating on fallback baseline rates for 30+ currencies without requiring external ECB network fetches.
+  - **Graceful Currency Converter Fallback (`features/travel-essentials/currency/currency-converter.tsx`)**:
+    - Integrated `getFallbackRates(base)` to seamlessly provide baseline rates if `onRefresh` fails or when the user loads the currency tab without an internet connection.
+  - **Floating Offline Banner Integration (`lib/offline/index.tsx`)**:
+    - Added an "Essentials" trigger button with icon inside `OfflineBanner`, mounting `OfflineTravelEssentialsDialog` directly within the persistent AppShell floating toast.
+  - **Offline Fallback Page Hub Integration (`app/offline/page.tsx`)**:
+    - Added prominent "Travel Essentials (Phrasebook & Emergency)" button on `/offline`, allowing stranded users to access phrases and emergency numbers in 1 click alongside cached trips.
+  - **Travel Essentials Workspace Shell Resilience (`app/(workspace)/travel-essentials/travel-essentials-shell.tsx`)**:
+    - Integrated `useOnlineStatus()` to display an amber advisory card when disconnected, explaining that live weather and maps require internet access while offering a 1-click launch button to the offline companion.
+- **Phase 90 Complete**: Complete Individual Trip Details IndexedDB Sync & Offline Workspace Dialog:
+  - **Full Workspace Entity Serialization (`lib/offline/actions.ts`)**:
+    - Expanded `fetchTripsForOfflineSync()` from shallow trip columns to query and serialize all child workspace relations: `itinerary`, `accommodations`, `checklistItems`, `notes`, `expenses`, and `links`.
+    - Implemented ISO date serialization for all `DateTime` fields across activities, hotel check-in/out, expenses, and notes, enabling clean boundary transmission and IndexedDB persistence.
+    - Added relation counts (`_counts`) to each cached trip payload for immediate card affordances.
+  - **IndexedDB Storage & Type Standardization (`lib/offline/index.tsx`)**:
+    - Standardized `OfflineTripPayload` across `lib/offline/index.tsx`, making `OfflineTrip` an alias of `OfflineTripPayload`.
+    - Guaranteed full object storage into IndexedDB `trips` store upon manual or scheduled sync.
+    - Added `prevEnabledRef` transition guard in `useOfflineSync` to prevent accidental cache clearing on initial mount when offline mode is not yet saved to DB.
+  - **Offline Trip Workspace Viewer Dialog (`features/trips/components/offline-trip-viewer-dialog.tsx`)**:
+    - Created high-performance, read-only offline workspace viewer with 5 dedicated tabs:
+      - 📅 **Itinerary**: Day-by-day filtering, times, categories, titles, locations, and descriptions.
+      - 🏨 **Stays**: Hotel types, check-in/out windows, addresses with map pin, monospace confirmation codes with copy/select affordance, and click-to-call phone numbers.
+      - ✅ **Checklist**: Categorized packing and preparation tasks with completed state indicators.
+      - 📝 **Notes**: Pinned badges, markdown/whitespace content, and category tags.
+      - 💰 **Expenses**: Total spend counter, currency tags, and itemized spending history.
+  - **Offline Trip Card & Table Integration (`features/trips/components/`)**:
+    - In `trip-card.tsx` and `trip-table-view.tsx`, intercepted click handlers when `!isOnline` to seamlessly open `OfflineTripViewerDialog` using cached data from IndexedDB without failing network requests or RSC crashes.
+    - Displayed amber "Cached" badge on trip cards when browsing offline.
+    - Updated `trip-list.tsx` to pass cached entity counts, completed task metrics, and total spend when rendering offline.
+  - **Offline Fallback Page Hub (`app/offline/page.tsx`)**:
+    - Embedded 1-click cached trips list on `/offline` fallback page, allowing travelers who land directly on the offline shell to view any of their saved trips immediately.
   - **Relocated from Top Header to Bottom Canvas (`lib/offline/index.tsx`, `components/app-shell/app-shell.tsx`)**:
     - Removed `OfflineBanner` from rendering at the top of the outer root in `OfflineSyncProvider`.
     - Placed `<OfflineBanner />` under the main component element inside the Center Content Canvas in `AppShell` (`absolute bottom-3 inset-x-3 sm:inset-x-auto sm:right-4 sm:bottom-4 z-30`).

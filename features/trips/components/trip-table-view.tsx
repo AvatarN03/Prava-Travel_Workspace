@@ -17,6 +17,7 @@ import {
   MoreHorizontal,
   Pencil,
   Trash2,
+  WifiOff,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -31,6 +32,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EditTripDialog } from "./edit-trip-dialog";
+import { OfflineTripViewerDialog } from "./offline-trip-viewer-dialog";
+
+import { useOfflineSyncContext } from "@/lib/offline";
 
 import { formatDateRange } from "@/lib/utils";
 import { deleteTrip, duplicateTrip, toggleTripPublicStatus } from "../actions";
@@ -46,6 +50,8 @@ export function TripTableView({ trips }: TripTableViewProps) {
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [deletingTrip, setDeletingTrip] = useState<Trip | null>(null);
   const [actionPendingId, setActionPendingId] = useState<string | null>(null);
+  const [selectedOfflineTripId, setSelectedOfflineTripId] = useState<string | null>(null);
+  const { isOnline } = useOfflineSyncContext();
   const [, startTransition] = useTransition();
 
   const handleDuplicate = (trip: Trip) => {
@@ -155,12 +161,22 @@ export function TripTableView({ trips }: TripTableViewProps) {
                         </div>
 
                         <div className="min-w-0">
-                          <Link
-                            href={`/trips/${trip.id}`}
-                            className="font-semibold text-foreground dark:text-zinc-100 hover:text-primary transition-colors truncate block text-sm"
-                          >
-                            {trip.title}
-                          </Link>
+                          {!isOnline ? (
+                            <button
+                              type="button"
+                              onClick={() => setSelectedOfflineTripId(trip.id)}
+                              className="font-semibold text-foreground dark:text-zinc-100 hover:text-primary transition-colors truncate block text-sm text-left cursor-pointer"
+                            >
+                              {trip.title}
+                            </button>
+                          ) : (
+                            <Link
+                              href={`/trips/${trip.id}`}
+                              className="font-semibold text-foreground dark:text-zinc-100 hover:text-primary transition-colors truncate block text-sm"
+                            >
+                              {trip.title}
+                            </Link>
+                          )}
                           {trip.destination ? (
                             <div className="flex items-center gap-1 text-[11px] text-muted-foreground dark:text-zinc-400 truncate mt-0.5">
                               <MapPin className="h-3 w-3 text-muted-foreground/70 dark:text-zinc-400 shrink-0" />
@@ -236,13 +252,24 @@ export function TripTableView({ trips }: TripTableViewProps) {
                     {/* Actions */}
                     <td className="py-3 px-4 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-1.5">
-                        <Link
-                          href={`/trips/${trip.id}`}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-sm border border-border/80 dark:border-zinc-800 bg-background dark:bg-[#121622] hover:bg-muted dark:hover:bg-[#161B2A] text-foreground dark:text-zinc-200 transition-colors"
-                        >
-                          Workspace
-                          <ArrowUpRight className="h-3 w-3 text-muted-foreground dark:text-zinc-400" />
-                        </Link>
+                        {!isOnline ? (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedOfflineTripId(trip.id)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-sm border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 dark:text-amber-200 transition-colors cursor-pointer"
+                          >
+                            Offline View
+                            <ArrowUpRight className="h-3 w-3 text-amber-600 dark:text-amber-400" />
+                          </button>
+                        ) : (
+                          <Link
+                            href={`/trips/${trip.id}`}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-sm border border-border/80 dark:border-zinc-800 bg-background dark:bg-[#121622] hover:bg-muted dark:hover:bg-[#161B2A] text-foreground dark:text-zinc-200 transition-colors"
+                          >
+                            Workspace
+                            <ArrowUpRight className="h-3 w-3 text-muted-foreground dark:text-zinc-400" />
+                          </Link>
+                        )}
 
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -331,6 +358,12 @@ export function TripTableView({ trips }: TripTableViewProps) {
           }}
         />
       )}
+
+      <OfflineTripViewerDialog
+        tripId={selectedOfflineTripId}
+        open={!!selectedOfflineTripId}
+        onOpenChange={(open) => !open && setSelectedOfflineTripId(null)}
+      />
     </>
   );
 }

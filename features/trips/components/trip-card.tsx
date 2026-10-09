@@ -22,6 +22,7 @@ import {
   MoreHorizontal,
   Pencil,
   Trash2,
+  WifiOff,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -37,6 +38,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EditTripDialog } from "./edit-trip-dialog";
+import { OfflineTripViewerDialog } from "./offline-trip-viewer-dialog";
+
+import { useOfflineSyncContext } from "@/lib/offline";
 
 import { formatDateRange, isTripDatesPassed } from "@/lib/utils";
 import { deleteTrip, duplicateTrip, toggleTripPublicStatus } from "../actions";
@@ -52,6 +56,8 @@ export function TripCard({ trip }: TripCardProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isPendingAction, setIsPendingAction] = useState(false);
+  const [isOfflineViewerOpen, setIsOfflineViewerOpen] = useState(false);
+  const { isOnline } = useOfflineSyncContext();
   const [, startTransition] = useTransition();
 
   const handleDuplicate = () => {
@@ -224,6 +230,12 @@ export function TripCard({ trip }: TripCardProps) {
               <Badge variant={getStatusVariant(trip.status)} className="shadow-xs text-[10px] uppercase font-semibold backdrop-blur-xs">
                 {trip.status.toLowerCase()}
               </Badge>
+              {!isOnline && (
+                <Badge variant="outline" className="shadow-xs text-[10px] font-semibold border-amber-500/40 bg-amber-500/20 text-amber-900 dark:text-amber-300 gap-1 backdrop-blur-xs">
+                  <WifiOff className="h-2.5 w-2.5" />
+                  Cached
+                </Badge>
+              )}
             </div>
 
             <div className="pointer-events-auto">
@@ -245,12 +257,22 @@ export function TripCard({ trip }: TripCardProps) {
                     </div>
                   )}
                   <CardTitle className="text-base font-semibold leading-snug tracking-tight line-clamp-1 pt-0.5 text-foreground dark:text-zinc-100">
-                    <Link
-                      href={`/trips/${trip.id}`}
-                      className="hover:text-primary transition-colors focus:outline-none focus:underline"
-                    >
-                      {trip.title}
-                    </Link>
+                    {!isOnline ? (
+                      <button
+                        type="button"
+                        onClick={() => setIsOfflineViewerOpen(true)}
+                        className="text-left hover:text-primary transition-colors focus:outline-none focus:underline cursor-pointer"
+                      >
+                        {trip.title}
+                      </button>
+                    ) : (
+                      <Link
+                        href={`/trips/${trip.id}`}
+                        className="hover:text-primary transition-colors focus:outline-none focus:underline"
+                      >
+                        {trip.title}
+                      </Link>
+                    )}
                   </CardTitle>
                 </div>
 
@@ -282,12 +304,22 @@ export function TripCard({ trip }: TripCardProps) {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48 dark:bg-[#0F131C] dark:border-zinc-800">
-                      <DropdownMenuItem asChild className="cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200">
-                        <Link href={`/trips/${trip.id}`}>
+                      {!isOnline ? (
+                        <DropdownMenuItem
+                          onClick={() => setIsOfflineViewerOpen(true)}
+                          className="cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200"
+                        >
                           <ArrowUpRight className="h-3.5 w-3.5 mr-2" />
-                          Open Workspace
-                        </Link>
-                      </DropdownMenuItem>
+                          Open Offline View
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem asChild className="cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200">
+                          <Link href={`/trips/${trip.id}`}>
+                            <ArrowUpRight className="h-3.5 w-3.5 mr-2" />
+                            Open Workspace
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200">
                         <Pencil className="h-3.5 w-3.5 mr-2" />
                         Edit Details & Cover
@@ -384,16 +416,33 @@ export function TripCard({ trip }: TripCardProps) {
               <span className="truncate">{formatDateRange(trip.startDate, trip.endDate)}</span>
             </div>
 
-            <Link
-              href={`/trips/${trip.id}`}
-              className="inline-flex items-center font-medium text-foreground dark:text-zinc-200 hover:text-primary transition-colors group-hover:translate-x-0.5 transform duration-150 shrink-0 ml-auto"
-            >
-              Workspace
-              <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
-            </Link>
+            {!isOnline ? (
+              <button
+                type="button"
+                onClick={() => setIsOfflineViewerOpen(true)}
+                className="inline-flex items-center font-medium text-foreground dark:text-zinc-200 hover:text-primary transition-colors group-hover:translate-x-0.5 transform duration-150 shrink-0 ml-auto cursor-pointer"
+              >
+                Offline View
+                <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
+              </button>
+            ) : (
+              <Link
+                href={`/trips/${trip.id}`}
+                className="inline-flex items-center font-medium text-foreground dark:text-zinc-200 hover:text-primary transition-colors group-hover:translate-x-0.5 transform duration-150 shrink-0 ml-auto"
+              >
+                Workspace
+                <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
+              </Link>
+            )}
           </CardFooter>
         </div>
       </Card>
+
+      <OfflineTripViewerDialog
+        tripId={trip.id}
+        open={isOfflineViewerOpen}
+        onOpenChange={setIsOfflineViewerOpen}
+      />
 
       <EditTripDialog
         trip={trip}

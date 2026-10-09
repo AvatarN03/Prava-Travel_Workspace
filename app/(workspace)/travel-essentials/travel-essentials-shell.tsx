@@ -12,9 +12,11 @@ import {
   Languages,
   Loader2,
   Map,
+  WifiOff,
 } from "lucide-react";
 import type { Link as PrismaLink } from "@prisma/client";
 
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -22,6 +24,9 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { OfflineTravelEssentialsDialog } from "@/features/travel-essentials";
+
+import { useOnlineStatus } from "@/lib/offline";
 
 import type {
   CitySuggestion,
@@ -165,6 +170,9 @@ export function TravelEssentialsShell({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const isOnline = useOnlineStatus();
+  const [isOfflineHubOpen, setIsOfflineHubOpen] = useState(false);
+
   // Initialize active tab from search params if available, fallback to initialTab
   const [activeTab, setActiveTab] = useState<TabType>(() => {
     const rawQueryTab = searchParams.get("tab");
@@ -261,6 +269,39 @@ export function TravelEssentialsShell({
           A dedicated toolkit for smooth journeys. Check live forecasts, convert currencies, explore maps, and access emergency contacts and phrasebooks.
         </p>
       </div>
+
+      {/* ── Offline Status Alert (when disconnected) ── */}
+      {!isOnline && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-sm border border-amber-500/30 bg-amber-500/5 text-card-foreground shadow-2xs animate-in fade-in duration-200">
+          <div className="flex items-center gap-2.5">
+            <span className="relative flex h-2 w-2 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+            </span>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                <WifiOff className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                <span>You are currently browsing offline</span>
+              </p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                Live forecasts and interactive maps require internet access. Your Phrasebook, Emergency Directory, Country Facts, and Offline FX rates remain fully functional.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => setIsOfflineHubOpen(true)}
+              className="h-7 px-2.5 text-xs font-medium border-amber-500/30 hover:bg-amber-500/10 text-amber-700 dark:text-amber-400 cursor-pointer gap-1.5"
+            >
+              <Languages className="h-3.5 w-3.5" />
+              <span>Offline Companion</span>
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Navigation Controls: Mobile Select Dropdown (< sm) & Tablet Tab Strip (sm to md) — Hidden on Desktop (md:hidden) as sidebar drives navigation */}
       <div className="md:hidden space-y-3">
@@ -387,6 +428,11 @@ export function TravelEssentialsShell({
           {visitedTabs.has("vault") && <VaultView initialLinks={initialVaultLinks} />}
         </div>
       </div>
+
+      <OfflineTravelEssentialsDialog
+        open={isOfflineHubOpen}
+        onOpenChange={setIsOfflineHubOpen}
+      />
     </div>
   );
 }

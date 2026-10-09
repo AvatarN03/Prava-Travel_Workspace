@@ -246,7 +246,7 @@ export async function fetchCurrencyPerformance(
   }
 }
 
-function getFallbackRates(base: string): FxRates {
+export function getFallbackRates(base: string): FxRates {
   const defaultUsdRates: Record<string, number> = {
     USD: 1.0,
     EUR: 0.924,

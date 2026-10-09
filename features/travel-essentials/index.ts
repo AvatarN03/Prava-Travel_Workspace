@@ -3,6 +3,7 @@ export { CountryGuideView } from "./country-guide/country-guide-view";
 export { CurrencyConverter } from "./currency/currency-converter";
 export { LanguageView } from "./language/language-view";
 export { MapView } from "./maps/map-view";
+export { OfflineTravelEssentialsDialog } from "./components/offline-travel-essentials-dialog";
 export { VaultView } from "./vault/components/vault-view";
 export { WeatherView } from "./weather/weather-view";
 
@@ -10,6 +11,7 @@ export { WeatherView } from "./weather/weather-view";
 export {
   fetchCurrencyPerformance,
   fetchFxRates,
+  getFallbackRates,
   SUPPORTED_CURRENCIES,
 } from "./currency/currency-service";
 
@@ -51,6 +53,12 @@ export {
   formatDistance,
   reverseGeocodeLocation,
 } from "./maps/map-service";
+
+// Emergency
+export {
+  EMERGENCY_DIRECTORY,
+  getEmergencyContactsForCountry,
+} from "./emergency/emergency-data";
 
 // Language
 export { LANGUAGE_GUIDES } from "./language/language-data";

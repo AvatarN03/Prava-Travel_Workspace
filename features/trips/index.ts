@@ -1,6 +1,7 @@
 // Components
 export { CreateTripDialog } from "./components/create-trip-dialog";
 export { EditTripDialog } from "./components/edit-trip-dialog";
+export { OfflineTripViewerDialog } from "./components/offline-trip-viewer-dialog";
 export { TripCard } from "./components/trip-card";
 export { TripList } from "./components/trip-list";
 export { TripTableView } from "./components/trip-table-view";

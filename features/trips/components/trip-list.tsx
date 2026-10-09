@@ -77,6 +77,9 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
             createdAt: new Date(t.createdAt),
             updatedAt: new Date(t.updatedAt),
             status: t.status as TripStatus,
+            _count: t._counts || undefined,
+            completedTasksCount: t.checklistItems?.filter((c) => c.isCompleted).length || 0,
+            totalSpend: t.expenses?.reduce((sum, e) => sum + (e.amount || 0), 0) || 0,
           })) as unknown as Trip[];
           setTrips(mappedTrips);
           setIsShowingOfflineData(true);
