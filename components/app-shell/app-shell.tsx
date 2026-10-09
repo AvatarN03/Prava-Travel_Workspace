@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
 import { WorkspaceAiPanel } from "@/features/trip-workspace/ai/components/workspace-ai-panel";
+import { OfflineBanner } from "@/lib/offline";
 
 import { useWorkspaceAi } from "@/features/trip-workspace/context/workspace-ai-context";
 
@@ -39,13 +40,14 @@ export function AppShell({ children, initialUserInfo }: AppShellProps) {
 
       {/* Center Content Canvas - Flush against AI Assistant Panel */}
       <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden md:py-1.5 transition-all duration-300 ease-in-out md:pr-0">
-        <div className="flex-1 h-full flex flex-col min-h-0 rounded-none md:rounded-l-[16px] md:rounded-r-none bg-slate-50 text-slate-900 dark:bg-background dark:text-slate-100 shadow-2xl overflow-hidden md:border-l-4 border-primary/80 dark:border-primary/60 md:border-r-0 transition-all duration-300 ease-in-out">
+        <div className="flex-1 h-full flex flex-col min-h-0 rounded-none md:rounded-l-[16px] md:rounded-r-none bg-slate-50 text-slate-900 dark:bg-background dark:text-slate-100 shadow-2xl overflow-hidden md:border-l-4 border-primary/80 dark:border-primary/60 md:border-r-0 transition-all duration-300 ease-in-out relative">
           <TopBar onMobileMenuOpen={() => setMobileOpen(true)} initialUserInfo={initialUserInfo} />
           <main className="flex-1 min-h-0 overflow-y-auto w-full p-4 sm:p-6 lg:p-8 thin-scrollbar bg-prava-pattern">
             <div className="w-full max-w-7xl mx-auto">
               {children}
             </div>
           </main>
+          <OfflineBanner />
         </div>
       </div>
 

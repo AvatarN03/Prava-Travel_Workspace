@@ -82,7 +82,7 @@ export default function RootLayout({
         >
           <PwaProvider>
             {children}
-            <Toaster position="top-right" richColors />
+            <Toaster position="bottom-right" richColors />
           </PwaProvider>
         </ThemeProvider>
       </body>

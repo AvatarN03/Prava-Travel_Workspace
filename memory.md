@@ -64,9 +64,48 @@
 - **Phase 84: Trip Workspace Select Normalization, Theme Token Harmonization & Dead Code Cleanup** (Complete)
 - **Phase 85: Providers Consolidation & Theme Provider Inlining** (Complete)
 - **Phase 86: Progressive Web App (PWA), Add to Home Screen & Offline Fallback Shell** (Complete)
+- **Phase 87: Sidebar Install App UI/UX Modernization & Tooltip Affordance** (Complete)
+- **Phase 88: Responsive Offline Bottom Floating Toast & Mobile Menu Clearance** (Complete)
+- **Phase 89: Offline Cache Toggle Auto-Save, Forced Manual Sync & Live Toast Feedback** (Complete)
 
 ## Current Task
-- **Phase 86 Complete**: Progressive Web App (PWA), Add to Home Screen & Offline Fallback Shell:
+- **Phase 89 Complete**: Offline Cache Toggle Auto-Save, Forced Manual Sync & Live Toast Feedback:
+  - **Root Cause Resolution (`lib/offline/index.tsx`, `features/profile/components/general-section.tsx`)**:
+    - Discovered that toggling the Offline Travel Cache switch was only modifying local form state in `profile-editor.tsx`, never auto-saving to PostgreSQL or notifying the root `OfflineSyncProvider` context (`offlineModeEnabled` remained `false`).
+    - Discovered that `triggerSync()` was gated behind `if (offlineModeEnabled)` and `performSync()` was early-returning if cached data was less than 30 minutes old (`STALE_THRESHOLD_MS`), causing "Sync Now" clicks to be completely ignored.
+  - **Context & Provider Dynamic State Synchronization (`lib/offline/index.tsx`)**:
+    - Extended `OfflineSyncContextValue` with `setOfflineMode: (enabled: boolean) => void` and updated `triggerSync` to return sync result metadata (`Promise<{ success: boolean; count?: number; error?: string } | void>`).
+    - Updated `performSync(force = false)` to accept a `force` flag that bypasses the 30-minute staleness check during user-initiated manual syncs.
+    - Updated `triggerSync` to always execute `performSync(true)` with immediate feedback.
+  - **Profile Switch Immediate Auto-Save & Sync Execution (`features/profile/`)**:
+    - In `profile-editor.tsx`, added `handleUpdateOfflineMode(checked)` to immediately persist `offlineMode` to Supabase PostgreSQL via `updateGeneralPreferences`.
+    - In `general-section.tsx`, created `handleToggleOfflineMode` which immediately updates local state, updates `OfflineSyncContext`, auto-saves to database, and triggers an initial background prefetch of active/planning trips into IndexedDB with instant toast feedback.
+    - In `general-section.tsx`, created `handleManualSync` providing spinning animation, disabled loading state, and toast feedback reporting the exact count of trips cached locally.
+  - **Relocated from Top Header to Bottom Canvas (`lib/offline/index.tsx`, `components/app-shell/app-shell.tsx`)**:
+    - Removed `OfflineBanner` from rendering at the top of the outer root in `OfflineSyncProvider`.
+    - Placed `<OfflineBanner />` under the main component element inside the Center Content Canvas in `AppShell` (`absolute bottom-3 inset-x-3 sm:inset-x-auto sm:right-4 sm:bottom-4 z-30`).
+    - Unblocked the mobile TopBar and hamburger menu button completely, allowing seamless access to the mobile drawer.
+    - Confined toast strictly within the main canvas area so the desktop sidebar remains 100% uncovered on the left.
+    - Ensured `z-30` sits cleanly below the mobile sidebar drawer (`z-40`), allowing the navigation drawer to overlay without obstruction.
+  - **Mobile Responsive Design & Minimalist Theme Tokens (`lib/offline/index.tsx`)**:
+    - Redesigned into a compact, single-row floating toast (`rounded-sm border border-amber-500/40 bg-card text-card-foreground shadow-lg border-l-4 border-l-amber-500`).
+    - Added animated pulse dot, WifiOff badge, concise status text ("Showing cached data"), and responsive metadata.
+    - Integrated a 1-tap dismiss button (`X`) with automatic reset on network recovery (`isOnline = true`).
+  - **Global Sonner Toaster Realignment (`app/layout.tsx`)**:
+    - Shifted default Sonner Toaster position from `top-right` to `bottom-right` to eliminate any toast overlays over the mobile header.
+  - **Sidebar Position Realignment (`components/app-shell/sidebar.tsx`)**:
+    - Relocated the Install App CTA from above the Account heading to the bottom of the sidebar, positioned cleanly after the Subscription menu item.
+    - Added generous bottom padding (`pb-8 md:pb-12` on the bottom container, and `pt-1 pb-2` on the wrapper) ensuring comfortable breathing room away from the bottom edge of the viewport.
+  - **Minimalist Theme-Responsive Surface & Subtle Corners (`components/pwa/install-button.tsx`)**:
+    - Light Mode: Crisp solid light background (`bg-white hover:bg-slate-100 border border-slate-200`) with dark typography (`text-slate-900` / `text-slate-500`).
+    - Dark Mode: Solid dark surface (`dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-slate-800`) with light typography (`dark:text-white` / `dark:text-slate-400`).
+    - Corner radius set to `rounded-sm` with `rounded-xs` icon badge and zero gradient/glassmorphic effects.
+  - **shadcn/ui Tooltip Integration (`components/pwa/install-button.tsx`)**:
+    - Integrated shadcn `<TooltipProvider>`, `<Tooltip>`, `<TooltipTrigger asChild>`, and `<TooltipContent>` with `side="right"`, providing descriptive context: *"Install Prava on your device for 1-tap workspace access and offline support."*
+  - **Universal Browser Install & Guidance Support (`components/pwa/pwa-provider.tsx`)**:
+    - Updated `isInstallable` to `!isStandalone`, preventing the button from disappearing when Chromium heuristics or other desktop browsers have not yet fired `beforeinstallprompt`.
+    - Added native fallback guidance modal for desktop browsers (Chrome, Edge, Brave, Safari) alongside iOS Safari instructions.
+    - Cleaned unused imports across PWA components.
   - **PWA Asset Generation (`public/`)**:
     - Generated standard high-resolution PWA and iOS touch icons using `sharp`: `icon-192.png` (192×192), `icon-512.png` (512×512), `apple-icon.png` (180×180), and `icon-maskable.png` (512×512 with safe padding) from `public/logo.png`.
     - Preserved existing `public/logo.png` and all other public assets completely untouched.

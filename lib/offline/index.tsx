@@ -10,9 +10,11 @@ import React, {
 } from "react";
 
 import { type IDBPDatabase, openDB } from "idb";
-import { Database, WifiOff } from "lucide-react";
+import { Database, WifiOff, X } from "lucide-react";
 
 import { fetchTripsForOfflineSync } from "./actions";
+
+import { cn } from "@/lib/utils";
 
 // ─── Constants & Types ────────────────────────────────────────────────────────
 
@@ -38,11 +40,12 @@ export interface OfflineSyncState {
   isSyncing: boolean;
   lastSyncLabel: string;
   enabled: boolean;
-  triggerSync: () => void;
+  triggerSync: () => Promise<{ success: boolean; count?: number; error?: string } | void>;
 }
 
 export interface OfflineSyncContextValue extends OfflineSyncState {
   isOnline: boolean;
+  setOfflineMode: (enabled: boolean) => void;
 }
 
 // ─── IndexedDB Storage Engine ─────────────────────────────────────────────────
@@ -187,49 +190,72 @@ export function useOnlineStatus(): boolean {
 // ─── Offline Banner Component ─────────────────────────────────────────────────
 
 export function OfflineBanner({
-  lastSyncLabel = "Cached data",
+  lastSyncLabel,
   itemCount,
 }: {
   lastSyncLabel?: string;
   itemCount?: number;
 }) {
+  const context = useContext(OfflineSyncContext);
+  const isOnline = context ? context.isOnline : useOnlineStatus();
+  const syncLabel = lastSyncLabel ?? context?.lastSyncLabel ?? "Cached data";
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    if (isOnline) {
+      setDismissed(false);
+    }
+  }, [isOnline]);
+
+  if (isOnline || dismissed) {
+    return null;
+  }
+
   return (
     <div
       role="status"
       aria-live="polite"
-      className="sticky top-0 z-40 w-full border-b border-amber-500/30 bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-amber-500/15 backdrop-blur-md px-3 py-2 text-xs text-amber-900 dark:text-amber-200 shadow-xs"
+      className={cn(
+        "absolute bottom-3 inset-x-3 sm:inset-x-auto sm:right-4 sm:bottom-4 z-30 max-w-md",
+        "flex items-center justify-between gap-2 px-3 py-2 sm:px-3.5 sm:py-2.5",
+        "rounded-sm border border-amber-500/40 bg-card text-card-foreground shadow-lg",
+        "border-l-4 border-l-amber-500",
+        "animate-in fade-in slide-in-from-bottom-2 duration-200"
+      )}
     >
-      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="relative flex h-2.5 w-2.5 shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+      <div className="flex items-center gap-2 min-w-0 flex-1">
+        <span className="relative flex h-2 w-2 shrink-0">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+        </span>
+
+        <div className="flex items-center gap-1.5 shrink-0">
+          <WifiOff className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+          <span className="font-semibold text-xs text-foreground">Offline</span>
+        </div>
+
+        <span className="text-muted-foreground/60 text-xs shrink-0">•</span>
+
+        <p className="text-[11px] sm:text-xs text-muted-foreground truncate">
+          Showing cached data <span className="hidden sm:inline">(Read-Only)</span>
+        </p>
+
+        {syncLabel && (
+          <span className="hidden md:inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/70 px-1.5 py-0.5 rounded-xs border border-border/50 shrink-0">
+            <Database className="h-2.5 w-2.5 text-amber-500" />
+            <span className="truncate max-w-[120px]">{syncLabel}</span>
           </span>
-
-          <div className="flex items-center gap-1.5 font-semibold text-[11px] tracking-wide uppercase shrink-0 bg-amber-500/20 text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded-xs border border-amber-500/30">
-            <WifiOff className="h-3 w-3" />
-            <span>Offline Mode</span>
-          </div>
-
-          <p className="truncate text-xs text-foreground/90 font-medium">
-            You are offline. Showing cached trip data (Read-Only).
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0 text-[11px] text-muted-foreground">
-          <div className="flex items-center gap-1 bg-background/60 dark:bg-card/60 px-2 py-0.5 rounded-xs border border-border/60">
-            <Database className="h-3 w-3 text-amber-500" />
-            <span>
-              Last synced: <strong className="text-foreground">{lastSyncLabel}</strong>
-            </span>
-          </div>
-          {itemCount !== undefined && itemCount > 0 && (
-            <span className="hidden md:inline-block bg-background/60 dark:bg-card/60 px-2 py-0.5 rounded-xs border border-border/60">
-              {itemCount} trips cached
-            </span>
-          )}
-        </div>
+        )}
       </div>
+
+      <button
+        type="button"
+        onClick={() => setDismissed(true)}
+        className="h-6 w-6 shrink-0 inline-flex items-center justify-center rounded-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+        aria-label="Dismiss offline notice"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
     </div>
   );
 }
@@ -245,43 +271,52 @@ export function useOfflineSync(
   const delayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasScheduledRef = useRef(false);
 
-  const performSync = useCallback(async () => {
-    if (!userId) return;
+  const performSync = useCallback(
+    async (force = false): Promise<{ success: boolean; count?: number; error?: string }> => {
+      if (!userId) return { success: false, error: "User not authenticated" };
 
-    setIsSyncing(true);
-    try {
-      const syncInfo = await getLastSyncInfo();
-      if (syncInfo.userId && syncInfo.userId !== userId) {
-        await clearOfflineDb();
-      }
+      setIsSyncing(true);
+      try {
+        const syncInfo = await getLastSyncInfo();
+        if (syncInfo.userId && syncInfo.userId !== userId) {
+          await clearOfflineDb();
+        }
 
-      const isStale =
-        !syncInfo.synced || Date.now() - syncInfo.timestamp > STALE_THRESHOLD_MS;
+        if (!force) {
+          const isStale =
+            !syncInfo.synced || Date.now() - syncInfo.timestamp > STALE_THRESHOLD_MS;
 
-      if (!isStale) {
-        setLastSyncLabel(syncInfo.label);
+          if (!isStale) {
+            setLastSyncLabel(syncInfo.label);
+            setIsSyncing(false);
+            return { success: true, count: 0 };
+          }
+        }
+
+        const res = await fetchTripsForOfflineSync();
+        if (res.success && res.trips) {
+          await syncTripsToIndexedDB(res.trips, userId);
+          const info = await getLastSyncInfo();
+          setLastSyncLabel(info.label);
+          return { success: true, count: res.trips.length };
+        } else {
+          return { success: false, error: res.error || "Failed to fetch trips" };
+        }
+      } catch (err) {
+        console.error("[OfflineSync] Sync failed:", err);
+        return { success: false, error: "Sync failed" };
+      } finally {
         setIsSyncing(false);
-        return;
       }
+    },
+    [userId]
+  );
 
-      const res = await fetchTripsForOfflineSync();
-      if (res.success && res.trips) {
-        await syncTripsToIndexedDB(res.trips, userId);
-        const info = await getLastSyncInfo();
-        setLastSyncLabel(info.label);
-      }
-    } catch (err) {
-      console.error("[OfflineSync] Sync failed:", err);
-    } finally {
-      setIsSyncing(false);
-    }
-  }, [userId]);
+  const triggerSync = useCallback(async () => {
+    return await performSync(true);
+  }, [performSync]);
 
-  const triggerSync = useCallback(() => {
-    if (offlineModeEnabled && !isSyncing) {
-      performSync();
-    }
-  }, [offlineModeEnabled, isSyncing, performSync]);
+  const prevEnabledRef = useRef<boolean | null>(null);
 
   useEffect(() => {
     if (offlineModeEnabled) {
@@ -293,12 +328,15 @@ export function useOfflineSync(
           performSync();
         }, SYNC_DELAY_MS);
       }
-    } else {
+    } else if (prevEnabledRef.current === true) {
       clearOfflineDb().then(() => {
         setLastSyncLabel("Not synced");
       });
       hasScheduledRef.current = false;
+    } else {
+      getLastSyncInfo().then((info) => setLastSyncLabel(info.label));
     }
+    prevEnabledRef.current = offlineModeEnabled;
 
     return () => {
       if (delayTimerRef.current) {
@@ -328,7 +366,8 @@ export function useOfflineSyncContext(): OfflineSyncContextValue {
       lastSyncLabel: "Not synced",
       enabled: false,
       isOnline: true,
-      triggerSync: () => {},
+      triggerSync: async () => {},
+      setOfflineMode: () => {},
     };
   }
   return context;
@@ -352,8 +391,14 @@ export function OfflineSyncProvider({
   }, [initialOfflineMode]);
 
   return (
-    <OfflineSyncContext.Provider value={{ ...syncState, enabled: offlineMode, isOnline }}>
-      {!isOnline && <OfflineBanner lastSyncLabel={syncState.lastSyncLabel} />}
+    <OfflineSyncContext.Provider
+      value={{
+        ...syncState,
+        enabled: offlineMode,
+        isOnline,
+        setOfflineMode,
+      }}
+    >
       {children}
     </OfflineSyncContext.Provider>
   );

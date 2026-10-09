@@ -329,15 +329,16 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
         </div>
 
         {/* Bottom Area: Account Section (Preserved across all modes) */}
-        <div className="shrink-0 pt-2 pb-8 md:pb-10 border-t border-shell-border/60 dark:border-slate-300/60 mt-auto space-y-2">
-          <div className="px-2">
-            <InstallButton variant="sidebar" />
-          </div>
+        <div className="shrink-0 pt-3 pb-8 md:pb-12 border-t border-shell-border/60 dark:border-slate-300/60 mt-auto space-y-3">
           <div>
             <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 select-none">
               Account
             </div>
             {renderNavGroup(accountNavItems)}
+          </div>
+
+          <div className="px-3 pt-1 pb-2">
+            <InstallButton variant="sidebar" />
           </div>
         </div>
       </aside>

@@ -10,6 +10,7 @@ import {
   Save,
   Sparkles,
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +35,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { InstallButton } from "@/components/pwa";
 
 import { useOfflineSyncContext } from "@/lib/offline";
+
+import { cn } from "@/lib/utils";
 import { SUPPORTED_CURRENCIES } from "@/features/travel-essentials";
 
 import type { ProfileWithStats } from "../actions";
@@ -77,7 +80,26 @@ export function GeneralSection({
   onUpdateNotification,
   isUpdatingNotification,
 }: GeneralSectionProps) {
-  const { isSyncing, lastSyncLabel, triggerSync, isOnline } = useOfflineSyncContext();
+  const {
+    isSyncing,
+    lastSyncLabel,
+    triggerSync,
+    isOnline,
+    setOfflineMode: setProviderOfflineMode,
+  } = useOfflineSyncContext();
+
+  const handleManualSync = async () => {
+    toast.info("Syncing trips to device...");
+    const res = await triggerSync();
+    if (res && res.success) {
+      setProviderOfflineMode(true);
+      toast.success(
+        `Offline cache refreshed (${res.count ?? 0} active trip${(res.count ?? 0) === 1 ? "" : "s"} cached).`
+      );
+    } else if (res && !res.success) {
+      toast.error(res.error || "Failed to sync offline trips.");
+    }
+  };
 
   const hasPersonaChanges =
     aiAutoPropose !== (profile.aiAutoPropose ?? true) ||
@@ -198,16 +220,17 @@ export function GeneralSection({
                   )}
                 </div>
 
-                {isOnline && !isSyncing && (
+                {isOnline && (
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => triggerSync()}
-                    className="h-6 px-2 font-sans text-[11px] gap-1 text-primary hover:text-primary hover:bg-primary/10 cursor-pointer"
+                    disabled={isSyncing}
+                    onClick={handleManualSync}
+                    className="h-6 px-2 font-sans text-[11px] gap-1 text-primary hover:text-primary hover:bg-primary/10 cursor-pointer disabled:opacity-50"
                   >
-                    <RefreshCw className="h-3 w-3" />
-                    Sync Now
+                    <RefreshCw className={cn("h-3 w-3", isSyncing && "animate-spin")} />
+                    {isSyncing ? "Syncing..." : "Sync Now"}
                   </Button>
                 )}
               </div>
@@ -269,6 +292,7 @@ export function GeneralSection({
                 offlineMode,
                 travelPreferences: travelPreferences.trim() || "",
               });
+              setProviderOfflineMode(offlineMode);
               if (offlineMode && !profile.offlineMode) {
                 setTimeout(() => triggerSync(), 250);
               }
