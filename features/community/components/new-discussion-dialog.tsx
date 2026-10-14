@@ -299,7 +299,7 @@ export function NewDiscussionDialog({
             </div>
           </div>
 
-          <DialogFooter className="px-5 py-3 border-t border-border shrink-0 bg-muted/20 dark:bg-card flex flex-row items-center justify-end gap-2">
+          <DialogFooter className="px-5 py-3 border-t border-border shrink-0 bg-muted/20 flex flex-row items-center justify-end gap-2">
             <Button
               type="button"
               variant="outline"

@@ -90,14 +90,14 @@ export function DashboardQuickActions() {
                     <span className={`p-1.5 rounded-xs ${group.iconColor}`}>
                       <GroupIcon className="w-4 h-4" />
                     </span>
-                    <span className="font-sans text-[10px] font-semibold uppercase tracking-wider text-muted-foreground dark:text-zinc-400">
+                    <span className="font-sans text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                       {group.category}
                     </span>
                   </div>
 
                   <Link
                     href={group.mainHref}
-                    className="text-muted-foreground dark:text-zinc-400 hover:text-primary transition-colors p-1"
+                    className="text-muted-foreground hover:text-primary transition-colors p-1"
                     title={`Open ${group.title}`}
                   >
                     <ArrowUpRight className="w-4 h-4" />
@@ -107,18 +107,18 @@ export function DashboardQuickActions() {
                 <div>
                   <Link
                     href={group.mainHref}
-                    className="font-sans text-sm font-semibold text-foreground dark:text-zinc-100 hover:text-primary transition-colors block"
+                    className="font-sans text-sm font-semibold text-foreground hover:text-primary transition-colors block"
                   >
                     {group.title}
                   </Link>
-                  <p className="font-sans text-xs text-muted-foreground dark:text-zinc-400 mt-1 leading-relaxed line-clamp-2">
+                  <p className="font-sans text-xs text-muted-foreground mt-1 leading-relaxed line-clamp-2">
                     {group.description}
                   </p>
                 </div>
               </div>
 
               {/* Combined Sub-Tools Pills */}
-              <div className="pt-2 border-t border-border/60 dark:border-zinc-800/80">
+              <div className="pt-2 border-t border-border/60">
                 <div className="flex flex-wrap gap-1.5">
                   {group.tools.map((tool) => {
                     const ToolIcon = tool.icon;
@@ -126,7 +126,7 @@ export function DashboardQuickActions() {
                       <Link
                         key={tool.label}
                         href={tool.href}
-                        className="dashboard-interactive-row inline-flex items-center gap-1.5 px-2 py-1 font-sans text-[11px] font-medium text-slate-700 dark:text-zinc-300 hover:text-primary transition-colors cursor-pointer"
+                        className="dashboard-interactive-row inline-flex items-center gap-1.5 px-2 py-1 font-sans text-[11px] font-medium text-foreground/80 hover:text-primary transition-colors cursor-pointer"
                       >
                         <ToolIcon className="w-3 h-3 text-primary shrink-0" />
                         <span>{tool.label}</span>

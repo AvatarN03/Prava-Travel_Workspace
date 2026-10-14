@@ -185,29 +185,29 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
       </Link>
 
       {/* Top Header Banner */}
-      <div className="border-b border-border dark:border-zinc-800 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="border-b border-border pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
-          <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+          <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block">
             {mode === "create" ? "Creator Studio" : "Story Revision"}
           </span>
-          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
             {mode === "create" ? (
               <>
                 Write a Travel{" "}
-                <span className="font-serif italic font-normal text-foreground dark:text-zinc-100">
+                <span className="font-serif italic font-normal text-foreground">
                   Story
                 </span>
               </>
             ) : (
               <>
                 Edit{" "}
-                <span className="font-serif italic font-normal text-foreground dark:text-zinc-100">
+                <span className="font-serif italic font-normal text-foreground">
                   Story
                 </span>
               </>
             )}
           </h1>
-          <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 font-normal leading-relaxed max-w-xl">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-xl">
             Share your travel experiences, recommendations, and itinerary insights with the Prava community.
           </p>
         </div>
@@ -218,7 +218,7 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
             type="button"
             variant="outline"
             size="sm"
-            className="h-8 text-xs gap-1.5 cursor-pointer rounded-sm border-border dark:border-zinc-800 dark:hover:bg-zinc-800/60"
+            className="h-8 text-xs gap-1.5 cursor-pointer rounded-sm border-border hover:bg-muted"
             onClick={() => handleSave("DRAFT")}
             disabled={isSaving || !title.trim() || !content.trim()}
           >
@@ -246,12 +246,12 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
         <div
           className={`flex items-center gap-2 p-3 rounded-md text-xs ${
             message.type === "success"
-              ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+              ? "bg-success/10 border border-success/20 text-success"
               : "bg-destructive/10 border border-destructive/20 text-destructive"
           }`}
         >
           {message.type === "success" ? (
-            <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
           ) : (
             <AlertCircle className="h-4 w-4 shrink-0 text-destructive" />
           )}
@@ -263,15 +263,15 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column (Details, Description & Markdown Content) */}
         <div className="lg:col-span-7 xl:col-span-8 space-y-5">
-          <Card className="border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-2xs rounded-md">
-            <CardHeader className="pb-3 border-b border-border/60 dark:border-zinc-800/80">
-              <CardTitle className="text-sm font-semibold flex items-center gap-1.5 text-foreground dark:text-zinc-100">
+          <Card className="border border-border bg-card shadow-2xs rounded-md">
+            <CardHeader className="pb-3 border-b border-border/60">
+              <CardTitle className="text-sm font-semibold flex items-center gap-1.5 text-foreground">
                 <FileText className="h-3.5 w-3.5 text-primary" /> Story Details
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 pt-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-foreground dark:text-zinc-200">
+                <label className="text-xs font-semibold text-foreground">
                   Title *
                 </label>
                 <Input
@@ -280,16 +280,16 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   onBlur={handleTitleBlur}
-                  className="h-9 text-xs bg-background dark:bg-[#121622] border-border dark:border-zinc-800 text-foreground dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                  className="h-9 text-xs"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-foreground dark:text-zinc-200">
+                <label className="text-xs font-semibold text-foreground">
                   URL Slug
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground dark:text-zinc-500 text-[11px] font-mono select-none">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-[11px] font-mono select-none">
                     /stories/
                   </span>
                   <Input
@@ -299,13 +299,13 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
                     onChange={(e) =>
                       setSlug(e.target.value.toLowerCase().replace(/\s+/g, "-"))
                     }
-                    className="h-9 pl-16 text-xs font-mono bg-background dark:bg-[#121622] border-border dark:border-zinc-800 text-foreground dark:text-zinc-100"
+                    className="h-9 pl-16 text-xs font-mono"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-foreground dark:text-zinc-200">
+                <label className="text-xs font-semibold text-foreground">
                   Excerpt / Summary
                 </label>
                 <Textarea
@@ -314,19 +314,19 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
                   value={excerpt}
                   onChange={(e) => setExcerpt(e.target.value)}
                   maxLength={500}
-                  className="text-xs resize-none leading-relaxed bg-background dark:bg-[#121622] border-border dark:border-zinc-800 text-foreground dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                  className="text-xs resize-none leading-relaxed"
                 />
-                <p className="text-[11px] text-muted-foreground dark:text-zinc-500 text-right">
+                <p className="text-[11px] text-muted-foreground text-right">
                   {excerpt.length}/500
                 </p>
               </div>
 
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-foreground dark:text-zinc-200">
+                  <label className="text-xs font-semibold text-foreground">
                     Content * (Markdown supported)
                   </label>
-                  <span className="text-[11px] text-muted-foreground dark:text-zinc-400">
+                  <span className="text-[11px] text-muted-foreground">
                     {content.split(/\s+/).filter(Boolean).length} words
                   </span>
                 </div>
@@ -335,9 +335,9 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
                   rows={18}
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="text-xs font-mono resize-y leading-relaxed min-h-[360px] bg-background dark:bg-card-subtle border-border text-foreground dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                  className="text-xs font-mono resize-y leading-relaxed min-h-90"
                 />
-                <p className="text-[11px] text-muted-foreground dark:text-zinc-400">
+                <p className="text-[11px] text-muted-foreground">
                   Markdown formatting is supported. Use ## for sections, - for bullet lists, and **text** for bold.
                 </p>
               </div>
@@ -349,9 +349,9 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
         <div className="lg:col-span-5 xl:col-span-4 space-y-5 lg:sticky lg:top-20">
           {/* Cover Image Upload Card */}
           <Card className="border border-border bg-card shadow-2xs rounded-md overflow-hidden">
-            <CardHeader className="pb-3 border-b border-border/60 dark:border-zinc-800/80">
-              <CardTitle className="text-sm font-semibold text-foreground dark:text-zinc-100">Cover Image</CardTitle>
-              <CardDescription className="text-xs text-muted-foreground dark:text-zinc-400">
+            <CardHeader className="pb-3 border-b border-border/60">
+              <CardTitle className="text-sm font-semibold text-foreground">Cover Image</CardTitle>
+              <CardDescription className="text-xs text-muted-foreground">
                 Visual header that will appear at the top of your story and in feeds.
               </CardDescription>
             </CardHeader>
@@ -367,9 +367,9 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
 
           {/* Story Photos & Trip Gallery Card */}
           <Card className="border border-border bg-card shadow-2xs rounded-md overflow-hidden">
-            <CardHeader className="pb-3 border-b border-border/60 dark:border-zinc-800/80">
+            <CardHeader className="pb-3 border-b border-border/60">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-semibold flex items-center gap-1.5 text-foreground dark:text-zinc-100">
+                <CardTitle className="text-sm font-semibold flex items-center gap-1.5 text-foreground">
                   <Camera className="h-3.5 w-3.5 text-primary" /> Trip Photos ({images.length})
                 </CardTitle>
                 <label className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline cursor-pointer">
@@ -382,7 +382,7 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
                     disabled={isUploadingPhotos}
                   />
                   {isUploadingPhotos ? (
-                    <span className="flex items-center gap-1 text-muted-foreground dark:text-zinc-400">
+                    <span className="flex items-center gap-1 text-muted-foreground">
                       <Loader2 className="w-3 h-3 animate-spin" /> Uploading...
                     </span>
                   ) : (
@@ -392,13 +392,13 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
                   )}
                 </label>
               </div>
-              <CardDescription className="text-xs text-muted-foreground dark:text-zinc-400">
+              <CardDescription className="text-xs text-muted-foreground">
                 Upload multiple snapshots of places visited. Readers can view them in the story gallery or lightbox.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 pt-4">
               {images.length === 0 ? (
-                <label className="flex flex-col items-center justify-center p-5 border-2 border-dashed border-border dark:border-zinc-800 hover:border-primary/50 dark:hover:border-primary/50 rounded-md cursor-pointer bg-muted/20 dark:bg-zinc-900/30 hover:bg-muted/40 dark:hover:bg-zinc-900/60 transition-colors">
+                <label className="flex flex-col items-center justify-center p-5 border-2 border-dashed border-border hover:border-primary/50 rounded-md cursor-pointer bg-muted/20 hover:bg-muted/40 transition-colors">
                   <input
                     type="file"
                     multiple
@@ -410,12 +410,12 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
                   {isUploadingPhotos ? (
                     <Loader2 className="h-6 w-6 text-primary animate-spin mb-1.5" />
                   ) : (
-                    <ImagePlus className="h-6 w-6 text-muted-foreground dark:text-zinc-500 mb-1.5" />
+                    <ImagePlus className="h-6 w-6 text-muted-foreground mb-1.5" />
                   )}
-                  <span className="text-xs font-semibold text-foreground dark:text-zinc-200">
+                  <span className="text-xs font-semibold text-foreground">
                     {isUploadingPhotos ? "Uploading photos..." : "Add trip photos"}
                   </span>
-                  <span className="text-[10px] text-muted-foreground dark:text-zinc-400 mt-0.5">
+                  <span className="text-[10px] text-muted-foreground mt-0.5">
                     Select multiple JPG, PNG, or WebP files
                   </span>
                 </label>
@@ -426,8 +426,8 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
                     return (
                       <div
                         key={imgUrl + i}
-                        className={`group relative aspect-4/3 rounded-md overflow-hidden border bg-muted/30 dark:bg-zinc-900/50 ${
-                          isCover ? "border-primary ring-1 ring-primary" : "border-border dark:border-zinc-800"
+                        className={`group relative aspect-4/3 rounded-md overflow-hidden border bg-muted/30 ${
+                          isCover ? "border-primary ring-1 ring-primary" : "border-border"
                         }`}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -476,15 +476,15 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
 
           {/* Tags & Trip Link Card */}
           <Card className="border border-border bg-card shadow-2xs rounded-md">
-            <CardHeader className="pb-3 border-b border-border/60 dark:border-zinc-800/80">
-              <CardTitle className="text-sm font-semibold flex items-center gap-1.5 text-foreground dark:text-zinc-100">
+            <CardHeader className="pb-3 border-b border-border/60">
+              <CardTitle className="text-sm font-semibold flex items-center gap-1.5 text-foreground">
                 <Tag className="h-3.5 w-3.5 text-primary" /> Tags & Trip Link
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 pt-4">
               {/* Tags */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-foreground dark:text-zinc-200">Tags</label>
+                <label className="text-xs font-semibold text-foreground">Tags</label>
                 <div className="flex gap-2">
                   <Input
                     type="text"
@@ -497,13 +497,13 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
                         addTag();
                       }
                     }}
-                    className="h-8 text-xs bg-background dark:bg-[#121622] border-border dark:border-zinc-800 text-foreground dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                    className="h-8 text-xs"
                   />
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="h-8 text-xs px-3 cursor-pointer border-border dark:border-zinc-800 dark:hover:bg-zinc-800/60"
+                    className="h-8 text-xs px-3 cursor-pointer border-border hover:bg-muted"
                     onClick={addTag}
                     disabled={tags.length >= 10}
                   >
@@ -524,7 +524,7 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
                     ))}
                   </div>
                 )}
-                <p className="text-[11px] text-muted-foreground dark:text-zinc-400">
+                <p className="text-[11px] text-muted-foreground">
                   {tags.length}/10 tags · Press Enter or click Add
                 </p>
               </div>
@@ -532,25 +532,25 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
               {/* Linked Trip */}
               {userTrips.length > 0 && (
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold flex items-center gap-1.5 text-foreground dark:text-zinc-200">
+                  <label className="text-xs font-semibold flex items-center gap-1.5 text-foreground">
                     <Link2 className="h-3 w-3 text-primary" /> Link Workspace Trip
                   </label>
                   <Select
                     value={linkedTripId || "none"}
                     onValueChange={(val) => setLinkedTripId(val === "none" ? "" : val)}
                   >
-                    <SelectTrigger className="w-full h-9 rounded-md border border-input dark:border-zinc-800 bg-background dark:bg-[#121622] px-3 text-xs text-foreground dark:text-zinc-100 cursor-pointer">
+                    <SelectTrigger className="w-full h-9 rounded-md border border-input bg-background px-3 text-xs text-foreground cursor-pointer">
                       <SelectValue placeholder="— No linked trip —" />
                     </SelectTrigger>
-                    <SelectContent className="bg-popover dark:bg-[#0F131C] border-border dark:border-zinc-800">
-                      <SelectItem value="none" className="text-xs cursor-pointer text-muted-foreground dark:text-zinc-400">
+                    <SelectContent className="bg-popover border-border">
+                      <SelectItem value="none" className="text-xs cursor-pointer text-muted-foreground">
                         — No linked trip —
                       </SelectItem>
                       {userTrips.map((t) => (
-                        <SelectItem key={t.id} value={t.id} className="text-xs cursor-pointer dark:hover:bg-zinc-800/60">
-                          <span className="font-medium text-foreground dark:text-zinc-200">{t.title}</span>
+                        <SelectItem key={t.id} value={t.id} className="text-xs cursor-pointer">
+                          <span className="font-medium text-foreground">{t.title}</span>
                           {t.destination && (
-                            <span className="text-muted-foreground dark:text-zinc-400 text-[11px] ml-1.5">
+                            <span className="text-muted-foreground text-[11px] ml-1.5">
                               · {t.destination}
                             </span>
                           )}
@@ -558,7 +558,7 @@ export function BlogEditor({ mode, postId, initialData, userTrips = [] }: BlogEd
                       ))}
                     </SelectContent>
                   </Select>
-                  <p className="text-[11px] text-muted-foreground dark:text-zinc-400">
+                  <p className="text-[11px] text-muted-foreground">
                     Readers can 1-click clone this trip itinerary directly into their workspace.
                   </p>
                 </div>

@@ -41,7 +41,7 @@ export function RecentTripsList({ trips }: RecentTripsListProps) {
 
       <CardContent className="p-4 space-y-2.5">
         {trips.length === 0 ? (
-          <div className="text-center py-6 font-sans text-xs text-muted-foreground dark:text-zinc-400">
+          <div className="text-center py-6 font-sans text-xs text-muted-foreground">
             No trips created yet.
           </div>
         ) : (
@@ -56,9 +56,9 @@ export function RecentTripsList({ trips }: RecentTripsListProps) {
               >
                 {/* Left: Thumbnail icon & details */}
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="relative w-10 h-10 rounded-xs overflow-hidden dashboard-surface-subtle flex items-center justify-center shrink-0 border border-border/50 dark:border-zinc-800">
+                  <div className="relative w-10 h-10 rounded-xs overflow-hidden dashboard-surface-subtle flex items-center justify-center shrink-0 border border-border/50">
                     {trip.coverImageUrl ? (
-                      <Image
+                       <Image
                         src={trip.coverImageUrl}
                         alt={trip.title}
                         fill
@@ -74,7 +74,7 @@ export function RecentTripsList({ trips }: RecentTripsListProps) {
                     <div className="flex items-center gap-2 flex-wrap">
                       <Link
                         href={`/trips/${trip.id}`}
-                        className="font-sans font-semibold text-foreground dark:text-zinc-100 truncate group-hover:text-primary transition-colors max-w-[180px] sm:max-w-[240px]"
+                        className="font-sans font-semibold text-foreground truncate group-hover:text-primary transition-colors max-w-45 sm:max-w-60"
                       >
                         {trip.title}
                       </Link>
@@ -86,10 +86,10 @@ export function RecentTripsList({ trips }: RecentTripsListProps) {
                       </Badge>
                     </div>
 
-                    <div className="font-sans text-[11px] text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5 truncate">
+                    <div className="font-sans text-[11px] text-muted-foreground flex items-center gap-1.5 truncate">
                       {trip.destination && (
                         <>
-                          <span className="font-serif italic truncate max-w-[120px] text-foreground/80 dark:text-zinc-300">
+                          <span className="font-serif italic truncate max-w-30 text-foreground/80">
                             {trip.destination}
                           </span>
                           <span>·</span>

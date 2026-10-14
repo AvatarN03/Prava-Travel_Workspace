@@ -180,26 +180,26 @@ export function TravelFinancialsDialog({
           {/* Spend Summary Matrix */}
           <div className="grid grid-cols-3 gap-2.5 p-3 rounded-lg dashboard-surface-subtle">
             <div className="space-y-0.5">
-              <span className="text-[10px] uppercase font-semibold text-muted-foreground dark:text-zinc-400 tracking-wider">
+              <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">
                 Total Spend
               </span>
-              <div className="text-lg font-bold font-mono text-foreground dark:text-zinc-100">
+              <div className="text-lg font-bold font-mono text-foreground">
                 {currency} {metrics.totalSpend.toLocaleString()}
               </div>
             </div>
             <div className="space-y-0.5">
-              <span className="text-[10px] uppercase font-semibold text-muted-foreground dark:text-zinc-400 tracking-wider">
+              <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">
                 Trip Workspaces
               </span>
-              <div className="text-sm font-semibold font-mono text-foreground dark:text-zinc-200">
+              <div className="text-sm font-semibold font-mono text-foreground">
                 {currency} {metrics.tripSpend.toLocaleString()}
               </div>
             </div>
             <div className="space-y-0.5">
-              <span className="text-[10px] uppercase font-semibold text-muted-foreground dark:text-zinc-400 tracking-wider">
+              <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">
                 Travel Gear & Overheads
               </span>
-              <div className="text-sm font-semibold font-mono text-foreground dark:text-zinc-200">
+              <div className="text-sm font-semibold font-mono text-foreground">
                 {currency} {metrics.generalSpend.toLocaleString()}
               </div>
             </div>
@@ -211,8 +211,8 @@ export function TravelFinancialsDialog({
               onSubmit={handleCreate}
               className="p-3.5 rounded-lg dashboard-surface-subtle space-y-3"
             >
-              <div className="flex items-center justify-between pb-1 border-b border-border/60 dark:border-zinc-800/80">
-                <span className="text-xs font-semibold text-foreground dark:text-zinc-100">
+              <div className="flex items-center justify-between pb-1 border-b border-border/60">
+                <span className="text-xs font-semibold text-foreground">
                   Record Travel Overhead / Gear
                 </span>
                 <button
@@ -343,7 +343,7 @@ export function TravelFinancialsDialog({
           {/* List of general travel overheads */}
           <div className="space-y-2">
             {generalExpenses.length === 0 ? (
-              <div className="p-6 rounded-md border border-dashed border-border dark:border-zinc-800 text-center text-xs text-muted-foreground dark:text-zinc-400">
+              <div className="p-6 rounded-md border border-dashed border-border text-center text-xs text-muted-foreground">
                 No general travel overhead items logged yet. Record global items like travel backpacks, multi-trip insurance, or passport renewals here.
               </div>
             ) : (
@@ -363,18 +363,18 @@ export function TravelFinancialsDialog({
                       >
                         {catInfo.label}
                       </Badge>
-                      <span className="font-semibold text-foreground dark:text-zinc-200 truncate">
+                      <span className="font-semibold text-foreground truncate">
                         {exp.title}
                       </span>
                       {exp.notes && (
-                        <span className="text-[11px] text-muted-foreground dark:text-zinc-400 truncate hidden sm:inline">
+                        <span className="text-[11px] text-muted-foreground truncate hidden sm:inline">
                           — {exp.notes}
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-3 flex-shrink-0">
-                      <span className="font-mono font-bold text-foreground dark:text-zinc-100">
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className="font-mono font-bold text-foreground">
                         {exp.currency} {exp.amount.toLocaleString()}
                       </span>
                       <button

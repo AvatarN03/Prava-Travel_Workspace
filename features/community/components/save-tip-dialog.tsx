@@ -91,7 +91,7 @@ export function SaveTipDialog({
 
         <div className="space-y-4 py-2">
           {/* Tip Excerpt */}
-          <div className="rounded-lg bg-muted/40 dark:bg-card-subtle border border-border p-3 space-y-1">
+          <div className="rounded-lg bg-muted/40 border border-border p-3 space-y-1">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               Advice Preview
             </span>

@@ -5,8 +5,9 @@ import { Compass, Hotel, MapPin, Plus, Sparkles, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
-import { DashboardEmptyVector } from "./dashboard-empty-vector";
 import { CreateTripDialog } from "@/features/trips";
+
+import { DashboardEmptyVector } from "./dashboard-empty-vector";
 
 export function DashboardEmptyState() {
   return (
@@ -23,39 +24,39 @@ export function DashboardEmptyState() {
           </div>
 
           <div className="space-y-2">
-            <h2 className="font-sans text-xl sm:text-2xl lg:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
+            <h2 className="font-sans text-xl sm:text-2xl lg:text-3xl font-light tracking-tight text-foreground">
               Start Planning Your{" "}
-              <span className="font-serif italic font-normal text-zinc-700 dark:text-zinc-200">
+              <span className="font-serif italic font-normal text-foreground/80">
                 Next Journey
               </span>
             </h2>
-            <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 leading-relaxed max-w-xl font-normal">
+            <p className="font-sans text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-xl font-normal">
               Create your first trip to organize smart daily schedules, track stays &amp; bookings, manage multi-currency expenses in INR, and pack with essential checklists.
             </p>
           </div>
 
           {/* Feature Highlights Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 py-1">
-            <div className="flex items-center gap-2 font-sans text-xs text-slate-700 dark:text-zinc-300">
-              <span className="flex h-5 w-5 items-center justify-center rounded-xs bg-[#2D9BF0]/15 text-[#2D9BF0] dark:text-[#38BDF8] shrink-0">
+            <div className="flex items-center gap-2 font-sans text-xs text-foreground/80">
+              <span className="flex h-5 w-5 items-center justify-center rounded-xs bg-primary/15 text-primary shrink-0">
                 <Sparkles className="w-3 h-3" />
               </span>
               <span>Daily Itinerary &amp; Timeline</span>
             </div>
-            <div className="flex items-center gap-2 font-sans text-xs text-slate-700 dark:text-zinc-300">
-              <span className="flex h-5 w-5 items-center justify-center rounded-xs bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shrink-0">
+            <div className="flex items-center gap-2 font-sans text-xs text-foreground/80">
+              <span className="flex h-5 w-5 items-center justify-center rounded-xs bg-success/15 text-success shrink-0">
                 <Hotel className="w-3 h-3" />
               </span>
               <span>Stays &amp; Confirmation Codes</span>
             </div>
-            <div className="flex items-center gap-2 font-sans text-xs text-slate-700 dark:text-zinc-300">
-              <span className="flex h-5 w-5 items-center justify-center rounded-xs bg-amber-500/15 text-amber-600 dark:text-amber-400 shrink-0">
+            <div className="flex items-center gap-2 font-sans text-xs text-foreground/80">
+              <span className="flex h-5 w-5 items-center justify-center rounded-xs bg-warning/15 text-warning shrink-0">
                 <Wallet className="w-3 h-3" />
               </span>
               <span>Multi-Currency Budget in INR</span>
             </div>
-            <div className="flex items-center gap-2 font-sans text-xs text-slate-700 dark:text-zinc-300">
-              <span className="flex h-5 w-5 items-center justify-center rounded-xs bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 shrink-0">
+            <div className="flex items-center gap-2 font-sans text-xs text-foreground/80">
+              <span className="flex h-5 w-5 items-center justify-center rounded-xs bg-primary/15 text-primary shrink-0">
                 <MapPin className="w-3 h-3" />
               </span>
               <span>Offline Notes &amp; Essentials</span>
@@ -77,9 +78,9 @@ export function DashboardEmptyState() {
 
         {/* Right Travel Illustration Column */}
         <div className="lg:col-span-5 flex items-center justify-center">
-          <div className="w-full max-w-[280px] sm:max-w-[320px] aspect-square relative flex items-center justify-center">
+          <div className="w-full max-w-70 sm:max-w-80 aspect-square relative flex items-center justify-center">
             {/* Subtle glow background */}
-            <div className="absolute inset-4 rounded-full bg-primary/10 dark:bg-primary/15 blur-2xl pointer-events-none" />
+            <div className="absolute inset-4 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
 
             {/* Travel Theme Vector Graphic */}
             <DashboardEmptyVector className="w-full h-full relative z-10 drop-shadow-sm select-none" />

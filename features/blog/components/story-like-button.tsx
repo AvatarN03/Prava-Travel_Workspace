@@ -66,8 +66,8 @@ export function StoryLikeButton({
         disabled={isPending}
         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
           hasLiked
-            ? "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
-            : "bg-muted/50 dark:bg-zinc-800/60 hover:bg-muted dark:hover:bg-zinc-800 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 border border-border dark:border-zinc-800"
+            ? "bg-destructive/10 text-destructive border border-destructive/20"
+            : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground border border-border"
         } ${className}`}
         title={hasLiked ? "Unlike story" : "Like story"}
       >
@@ -76,7 +76,7 @@ export function StoryLikeButton({
         ) : (
           <Heart
             className={`w-3.5 h-3.5 transition-transform active:scale-125 ${
-              hasLiked ? "fill-red-500 text-red-500" : "text-muted-foreground dark:text-zinc-400"
+              hasLiked ? "fill-destructive text-destructive" : "text-muted-foreground"
             }`}
           />
         )}
@@ -92,10 +92,10 @@ export function StoryLikeButton({
       size={size}
       onClick={handleToggleLike}
       disabled={isPending}
-      className={`h-8 text-xs gap-1.5 cursor-pointer border-border dark:border-zinc-800 transition-colors ${
+      className={`h-8 text-xs gap-1.5 cursor-pointer border-border transition-colors ${
         hasLiked
-          ? "text-red-600 dark:text-red-400 border-red-500/30 bg-red-500/5 hover:bg-red-500/10"
-          : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 dark:hover:bg-zinc-800/60"
+          ? "text-destructive border-destructive/30 bg-destructive/5 hover:bg-destructive/10"
+          : "text-muted-foreground hover:text-foreground hover:bg-muted"
       } ${className}`}
       title={hasLiked ? "Unlike story" : "Like story"}
     >
@@ -104,7 +104,7 @@ export function StoryLikeButton({
       ) : (
         <Heart
           className={`w-3.5 h-3.5 transition-transform active:scale-125 ${
-            hasLiked ? "fill-red-500 text-red-500" : ""
+            hasLiked ? "fill-destructive text-destructive" : ""
           }`}
         />
       )}

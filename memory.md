@@ -4032,4 +4032,94 @@
       - Modernized fallback banner gradient from `bg-gradient-to-br` &rarr; `bg-linear-to-br` (Line 92).
   - **Verification**:
     - Verified all files in `components/storage/` (`cover-image.tsx`, `avatar-upload.tsx`, `image-upload.tsx`, `index.ts`) are 100% free of legacy gradient syntax and arbitrary height brackets.
+- **Task 212 (Travel Stories Components Design Token Standardization & Tailwind v4 Modernization)**:
+  - **Context & Requirement**:
+    - User provided `@[current_problems]` diagnostic warnings for `features/blog/components/` (`blog-editor.tsx`, `markdown-renderer.tsx`, `my-stories-list.tsx`, `story-like-button.tsx`) regarding duplicate property collisions (`border-border dark:border-zinc-800`, `text-foreground dark:text-zinc-*`, `text-muted-foreground dark:text-zinc-*`, `text-emerald-* dark:text-emerald-*`, `text-red-* dark:text-red-*`) and arbitrary bracketed dimensions (`min-h-[360px]`, `max-h-[480px]`, `max-w-[140px]`, `max-w-[90px]`, `bg-gradient-to-t`).
+  - **Key Refinements**:
+    - `features/blog/components/markdown-renderer.tsx`:
+      - Removed redundant `dark:text-zinc-*`, `dark:border-zinc-800`, and `dark:bg-zinc-*` overrides across headings (`h1`, `h2`, `h3`), blockquotes, images, paragraphs, and inline code blocks, relying directly on semantic design tokens (`text-foreground`, `text-muted-foreground`, `border-border`, `bg-muted`).
+      - Converted `max-h-[480px]` &rarr; `max-h-120`.
+    - `features/blog/components/story-like-button.tsx`:
+      - Replaced `text-red-600 dark:text-red-400` with `text-destructive` and `fill-destructive`.
+      - Standardized pill and button containers to `bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground border border-border`, eliminating 8 duplicate property collisions.
+    - `features/blog/components/my-stories-list.tsx`:
+      - Standardized header, filter tabs, story cards, empty states, and badges to semantic tokens (`border-border`, `text-foreground`, `text-muted-foreground`, `bg-card`, `bg-muted`).
+      - Converted `bg-gradient-to-t` &rarr; `bg-linear-to-t`.
+      - Converted arbitrary widths `max-w-[140px]` &rarr; `max-w-35` and `max-w-[90px]` &rarr; `max-w-22.5`.
+      - Replaced `text-emerald-500` with `text-success`.
+    - `features/blog/components/blog-editor.tsx`:
+      - Replaced `text-emerald-600 dark:text-emerald-400` with `text-success`.
+      - Cleaned header banner, story details card, slug input, excerpt textarea, and markdown editor textarea (`min-h-[360px]` &rarr; `min-h-90`), standardizing to `bg-background border-border text-foreground placeholder:text-muted-foreground`.
+      - Standardized right column cards (Cover Image, Story Photos, Tags & Trip Link Select) to semantic tokens (`border-border`, `bg-card`, `bg-muted`, `text-foreground`, `text-muted-foreground`).
+  - **Verification**:
+    - Audited entire `features/blog/components/` directory; 100% free of duplicate `dark:` property collisions, legacy gradients, and bracketed pixel dimensions.
+- **Task 213 (Community Forum Design Token Standardization & Input/Textarea Primitive Deduplication)**:
+  - **Context & Requirement**:
+    - User provided `@[current_problems]` diagnostic warnings for:
+      - `features/blog/components/blog-editor.tsx`: input/textarea placeholder color property collisions (`'text-foreground' applies the same CSS properties as 'placeholder:text-muted-foreground'`).
+      - `features/community/components/community-forum-view.tsx`: duplicate/conflicting dark classes (`bg-card/40 dark:bg-card/60`, `bg-muted/40 dark:bg-muted/20`, `bg-muted/40 dark:bg-card-subtle`, `text-muted-foreground dark:text-zinc-*`, `border-border dark:border-zinc-800`) and bracketed widths (`max-w-[120px]`, `max-w-[140px]`, `max-w-[100px]`).
+      - `features/community/components/edit-discussion-dialog.tsx`: `bg-muted/20 dark:bg-card`.
+      - `features/community/components/new-discussion-dialog.tsx`: `bg-muted/20 dark:bg-card`.
+      - `features/community/components/save-tip-dialog.tsx`: `bg-muted/40 dark:bg-card-subtle`.
+  - **Key Refinements**:
+    - `features/blog/components/blog-editor.tsx`:
+      - Removed redundant `bg-background border-border text-foreground placeholder:text-muted-foreground` classes from `<Input>` and `<Textarea>` callsites since these styles are already built into the core primitives (`components/ui/input.tsx` and `components/ui/textarea.tsx`), eliminating 4 CSS property collision warnings.
+    - `features/community/components/community-forum-view.tsx`:
+      - Standardized empty state card, card thumbnails, trip badges, tags, and author rows to semantic tokens (`bg-card/40`, `bg-muted/40`, `border-border`, `text-foreground`, `text-muted-foreground`).
+      - Converted bracketed max-widths to standard Tailwind v4 scale: `max-w-[120px]` &rarr; `max-w-30`, `max-w-[140px]` &rarr; `max-w-35`, `max-w-[100px]` &rarr; `max-w-25`.
+      - Standardized `CATEGORY_THEME_BADGES` to semantic tokens (`text-primary`, `text-warning`, `text-destructive`, `text-success`, `text-purple-500`).
+    - `features/community/components/edit-discussion-dialog.tsx`:
+      - Simplified `DialogFooter` from `bg-muted/20 dark:bg-card` &rarr; `bg-muted/20`.
+    - `features/community/components/new-discussion-dialog.tsx`:
+      - Simplified `DialogFooter` from `bg-muted/20 dark:bg-card` &rarr; `bg-muted/20`.
+    - `features/community/components/save-tip-dialog.tsx`:
+      - Simplified advice preview container from `bg-muted/40 dark:bg-card-subtle` &rarr; `bg-muted/40`.
+    - `features/community/components/forum-thread-view.tsx`:
+      - Proactively removed redundant `dark:` prefixes from `hover:bg-destructive/10` on post and reply delete dropdown items.
+  - **Verification**:
+    - Audited all files in `features/community/components/`; verified 100% free of duplicate `dark:` property collisions, legacy syntax, and bracketed pixel dimensions.
+
+- **Task 214 (Dashboard Feature Design Tokens Standardization & Tailwind v4 Modernization)**:
+  - **Context & Requirement**:
+    - User asked about hardcoded colors in `features/dashboard/components/financial-snapshot-card.tsx:L85-L91` (`text-primary dark:text-[#38BDF8]` and `text-amber-600 dark:text-amber-400`).
+    - User supplied `@[current_problems]` diagnostic report highlighting 50+ warnings across all 11 components in `features/dashboard/components/`:
+      - Duplicate/conflicting CSS properties: `text-foreground dark:text-zinc-*`, `text-muted-foreground dark:text-zinc-*`, `border-border dark:border-zinc-800*`, `bg-muted dark:bg-zinc-800`.
+      - Hardcoded color collisions: `text-emerald-600 dark:text-emerald-400`, `text-amber-600 dark:text-amber-400`, `text-indigo-600 dark:text-indigo-400`, `text-primary dark:text-[#38BDF8]`.
+      - Tailwind v4 dimensional upgrades: `max-w-[280px]`, `max-w-[180px]`, `sm:max-w-[240px]`, `max-w-[140px]`, `max-w-[130px]`, `max-w-[120px]`, `lg:h-[220px]`, `sm:aspect-16/9`, `bg-gradient-to-t`, `flex-shrink-0`.
+  - **Key Refinements**:
+    - `features/dashboard/components/financial-snapshot-card.tsx`:
+      - Clarified and resolved L85-L91: `text-primary` already adapts dynamically via theme CSS variables (removed redundant hardcoded sky blue hex `dark:text-[#38BDF8]`); replaced `text-amber-600 dark:text-amber-400` with the adaptive design token `text-warning`.
+      - Standardized all card headings, labels, budget bars, and category pill text to semantic tokens (`text-foreground`, `text-muted-foreground`, `bg-muted`).
+    - `features/dashboard/components/active-trip-workspace-card.tsx`:
+      - Replaced `text-emerald-600 dark:text-emerald-400` & `bg-emerald-500` with `text-success` & `bg-success`.
+      - Cleaned all task, note, and place rows to `border-border`, `text-foreground`, `text-muted-foreground`.
+      - Converted `max-w-[130px]` &rarr; `max-w-32.5`.
+    - `features/dashboard/components/dashboard-empty-state.tsx`:
+      - Standardized feature highlights grid to `text-foreground/80`, `bg-primary/15 text-primary`, `bg-success/15 text-success`, `bg-warning/15 text-warning`.
+      - Converted `max-w-[280px] sm:max-w-[320px]` &rarr; `max-w-70 sm:max-w-80`.
+      - Organized imports into 6-tier hierarchy.
+    - `features/dashboard/components/dashboard-metrics.tsx`:
+      - Standardized all 4 metric cards (Trips, Total Budget Spent, Scheduled Activities, Pending Tasks) to `text-foreground` and `text-muted-foreground`.
+    - `features/dashboard/components/dashboard-quick-actions.tsx`:
+      - Standardized category headers, titles, descriptions, dividers, and tool pills to `text-foreground`, `text-muted-foreground`, `border-border/60`, and `text-foreground/80`.
+    - `features/dashboard/components/recent-trips-list.tsx`:
+      - Converted `max-w-[180px] sm:max-w-[240px]` &rarr; `max-w-45 sm:max-w-60` and `max-w-[120px]` &rarr; `max-w-30`.
+      - Standardized list items to `border-border/50`, `text-foreground`, `text-muted-foreground`, and `text-foreground/80`.
+    - `features/dashboard/components/travel-essentials-grid.tsx`:
+      - Standardized tool cards to `text-foreground` and `text-muted-foreground`.
+    - `features/dashboard/components/travel-financials-dialog.tsx`:
+      - Standardized spend summary matrix and overhead rows to `text-foreground` and `text-muted-foreground`.
+      - Converted `flex-shrink-0` &rarr; `shrink-0`.
+    - `features/dashboard/components/upcoming-trip-card.tsx`:
+      - Standardized readiness indicators, checkpoints, and hero callout to `text-foreground`, `text-muted-foreground`, `bg-muted`, and `text-success`.
+      - Converted `sm:aspect-16/9` &rarr; `sm:aspect-video`, `lg:h-[220px]` &rarr; `lg:h-55`, and `bg-gradient-to-t` &rarr; `bg-linear-to-t`.
+    - `features/dashboard/components/urgent-checklist.tsx`:
+      - Converted `max-w-[140px]` &rarr; `max-w-35`.
+      - Standardized tasks list to `text-foreground`, `text-muted-foreground`, `text-foreground/80`, and `text-foreground/70`.
+    - `features/dashboard/components/ai-assistant-card.tsx`:
+      - Standardized assistant header and description to `text-foreground` and `text-muted-foreground`.
+  - **Verification**:
+    - All 11 Dashboard component files audited and standardized; verified 100% free of duplicate `dark:` property collisions, legacy gradients, and bracketed pixel dimensions.
+
+
 

@@ -20,12 +20,12 @@ export function AiAssistantCard() {
               className="h-full w-full object-cover"
             />
           </div>
-          <span className="font-sans text-xs font-semibold text-foreground dark:text-zinc-100">
+          <span className="font-sans text-xs font-semibold text-foreground">
             Ichinose — Prava Travel Assistant
           </span>
         </div>
 
-        <p className="font-sans text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed">
+        <p className="font-sans text-xs text-muted-foreground leading-relaxed">
           Ask Ichinose to organize efficient transit, balance multi-currency expenses, or audit pacing for your upcoming stops.
         </p>
 

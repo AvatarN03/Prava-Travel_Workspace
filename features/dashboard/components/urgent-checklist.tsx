@@ -32,7 +32,7 @@ export function UrgentChecklist({ tasks }: UrgentChecklistProps) {
 
       <CardContent className="p-4 space-y-2">
         {tasks.length === 0 ? (
-          <div className="text-center py-6 font-sans text-xs text-muted-foreground dark:text-zinc-400">
+          <div className="text-center py-6 font-sans text-xs text-muted-foreground">
             All checklist items are completed or none created.
           </div>
         ) : (
@@ -43,23 +43,23 @@ export function UrgentChecklist({ tasks }: UrgentChecklistProps) {
               className="dashboard-interactive-row flex items-center justify-between gap-3 p-2.5 text-xs group"
             >
               <div className="space-y-0.5 min-w-0">
-                <div className="font-sans font-semibold text-foreground dark:text-zinc-100 truncate group-hover:text-primary transition-colors">
+                <div className="font-sans font-semibold text-foreground truncate group-hover:text-primary transition-colors">
                   {task.title}
                 </div>
-                <div className="font-sans text-[11px] text-muted-foreground dark:text-zinc-400 flex items-center gap-2">
-                  <span className="font-serif italic truncate max-w-[140px] text-foreground/80 dark:text-zinc-300 font-normal">
+                <div className="font-sans text-[11px] text-muted-foreground flex items-center gap-2">
+                  <span className="font-serif italic truncate max-w-35 text-foreground/80 font-normal">
                     {task.tripTitle}
                   </span>
                   <span>•</span>
-                  <span className="dashboard-surface-subtle px-1.5 py-0.5 rounded-2xs text-[10px] font-medium text-foreground/70 dark:text-zinc-300">
+                  <span className="dashboard-surface-subtle px-1.5 py-0.5 rounded-2xs text-[10px] font-medium text-foreground/70">
                     {task.category}
                   </span>
                 </div>
               </div>
 
               {task.dueDate && (
-                <span className="inline-flex items-center font-sans text-[10px] text-muted-foreground dark:text-zinc-400 tabular-nums shrink-0">
-                  <Calendar className="w-3 h-3 mr-1 text-muted-foreground/70 dark:text-zinc-400" />
+                <span className="inline-flex items-center font-sans text-[10px] text-muted-foreground tabular-nums shrink-0">
+                  <Calendar className="w-3 h-3 mr-1 text-muted-foreground/70" />
                   {new Date(task.dueDate).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",

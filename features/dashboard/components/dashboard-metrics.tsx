@@ -47,15 +47,15 @@ export function DashboardMetrics({
       <Card className="dashboard-card">
         <CardHeader className="p-4 pb-1">
           <div className="flex items-center justify-between">
-            <span className="font-sans text-xs font-medium text-muted-foreground dark:text-zinc-400">Trips</span>
+            <span className="font-sans text-xs font-medium text-muted-foreground">Trips</span>
             <Compass className="w-4 h-4 text-primary" />
           </div>
         </CardHeader>
         <CardContent className="p-4 pt-1">
-          <div className="font-sans text-2xl font-semibold tabular-nums text-foreground dark:text-zinc-100">
+          <div className="font-sans text-2xl font-semibold tabular-nums text-foreground">
             {metrics.totalTrips}
           </div>
-          <div className="flex items-center justify-between mt-1 font-sans text-[11px] text-muted-foreground dark:text-zinc-400">
+          <div className="flex items-center justify-between mt-1 font-sans text-[11px] text-muted-foreground">
             <span className="tabular-nums">
               {metrics.activeTrips} active • {metrics.planningTrips} planning
             </span>
@@ -72,15 +72,15 @@ export function DashboardMetrics({
       <Card className="dashboard-card">
         <CardHeader className="p-4 pb-1">
           <div className="flex items-center justify-between">
-            <span className="font-sans text-xs font-medium text-muted-foreground dark:text-zinc-400">Total Budget Spent</span>
+            <span className="font-sans text-xs font-medium text-muted-foreground">Total Budget Spent</span>
             <Wallet className="w-4 h-4 text-primary" />
           </div>
         </CardHeader>
         <CardContent className="p-4 pt-1">
-          <div className="font-sans text-2xl font-semibold tabular-nums text-foreground dark:text-zinc-100">
+          <div className="font-sans text-2xl font-semibold tabular-nums text-foreground">
             {formattedSpend}
           </div>
-          <div className="mt-1 flex items-center justify-between font-sans text-[11px] text-muted-foreground dark:text-zinc-400">
+          <div className="mt-1 flex items-center justify-between font-sans text-[11px] text-muted-foreground">
             <TravelFinancialsDialog
               metrics={{
                 totalSpend: metrics.totalSpend,
@@ -97,15 +97,15 @@ export function DashboardMetrics({
       <Card className="dashboard-card">
         <CardHeader className="p-4 pb-1">
           <div className="flex items-center justify-between">
-            <span className="font-sans text-xs font-medium text-muted-foreground dark:text-zinc-400">Scheduled Activities</span>
+            <span className="font-sans text-xs font-medium text-muted-foreground">Scheduled Activities</span>
             <Calendar className="w-4 h-4 text-primary" />
           </div>
         </CardHeader>
         <CardContent className="p-4 pt-1">
-          <div className="font-sans text-2xl font-semibold tabular-nums text-foreground dark:text-zinc-100">
+          <div className="font-sans text-2xl font-semibold tabular-nums text-foreground">
             {metrics.totalItineraryCount}
           </div>
-          <div className="mt-1 font-sans text-[11px] text-muted-foreground dark:text-zinc-400">
+          <div className="mt-1 font-sans text-[11px] text-muted-foreground">
             Total itinerary events planned
           </div>
         </CardContent>
@@ -114,15 +114,15 @@ export function DashboardMetrics({
       <Card className="dashboard-card">
         <CardHeader className="p-4 pb-1">
           <div className="flex items-center justify-between">
-            <span className="font-sans text-xs font-medium text-muted-foreground dark:text-zinc-400">Pending Tasks</span>
+            <span className="font-sans text-xs font-medium text-muted-foreground">Pending Tasks</span>
             <CheckSquare className="w-4 h-4 text-primary" />
           </div>
         </CardHeader>
         <CardContent className="p-4 pt-1">
-          <div className="font-sans text-2xl font-semibold tabular-nums text-foreground dark:text-zinc-100">
+          <div className="font-sans text-2xl font-semibold tabular-nums text-foreground">
             {metrics.pendingTasksCount}
           </div>
-          <div className="mt-1 font-sans text-[11px] text-muted-foreground dark:text-zinc-400">
+          <div className="mt-1 font-sans text-[11px] text-muted-foreground">
             Preparation tasks remaining
           </div>
         </CardContent>

@@ -83,14 +83,14 @@ export function TravelEssentialsGrid() {
                   <div className="dashboard-icon-box p-1.5 group-hover:scale-110 transition-transform">
                     <Icon className="w-4 h-4" />
                   </div>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/50 dark:text-zinc-500 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                 </div>
 
                 <div>
-                  <div className="font-sans text-xs font-semibold text-foreground dark:text-zinc-200 group-hover:text-primary transition-colors">
+                  <div className="font-sans text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
                     {tool.title}
                   </div>
-                  <div className="font-sans text-[10px] text-muted-foreground dark:text-zinc-400 truncate mt-0.5">
+                  <div className="font-sans text-[10px] text-muted-foreground truncate mt-0.5">
                     {tool.subtitle}
                   </div>
                 </div>

@@ -326,7 +326,7 @@ export function ForumThreadView({
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleDeletePost}
-                  className="gap-2 text-destructive cursor-pointer dark:hover:bg-destructive/10"
+                  className="gap-2 text-destructive cursor-pointer hover:bg-destructive/10"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   Delete Discussion
@@ -603,7 +603,7 @@ export function ForumThreadView({
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => handleDeleteReply(reply.id)}
-                                  className="gap-2 text-destructive cursor-pointer dark:hover:bg-destructive/10"
+                                  className="gap-2 text-destructive cursor-pointer hover:bg-destructive/10"
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
                                   Delete Reply
