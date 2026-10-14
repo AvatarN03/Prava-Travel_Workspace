@@ -205,7 +205,7 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
             value={inclusionFilter}
             onValueChange={(val) => setInclusionFilter(val as InclusionFilter)}
           >
-            <SelectTrigger className="h-8 text-xs min-w-[130px] sm:w-[155px] shrink-0 bg-background border-border text-foreground rounded-sm">
+            <SelectTrigger className="h-8 text-xs min-w-32.5 sm:w-38.75 shrink-0 bg-background border-border text-foreground rounded-sm">
               <Filter className="w-3.5 h-3.5 mr-1.5 text-muted-foreground shrink-0" />
               <SelectValue placeholder="Inclusions" />
             </SelectTrigger>
@@ -223,7 +223,7 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
             value={durationFilter}
             onValueChange={(val) => setDurationFilter(val as DurationFilter)}
           >
-            <SelectTrigger className="h-8 text-xs min-w-[130px] sm:w-[155px] shrink-0 bg-background border-border text-foreground rounded-sm">
+            <SelectTrigger className="h-8 text-xs min-w-32.5 sm:w-38.75 shrink-0 bg-background border-border text-foreground rounded-sm">
               <Clock className="w-3.5 h-3.5 mr-1.5 text-muted-foreground shrink-0" />
               <SelectValue placeholder="Duration" />
             </SelectTrigger>
@@ -241,7 +241,7 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
             value={sortBy}
             onValueChange={(val) => setSortBy(val as SortOption)}
           >
-            <SelectTrigger className="h-8 text-xs min-w-[125px] sm:w-[145px] shrink-0 bg-background border-border text-foreground rounded-sm">
+            <SelectTrigger className="h-8 text-xs min-w-31.25 sm:w-36.25 shrink-0 bg-background border-border text-foreground rounded-sm">
               <ArrowUpDown className="w-3.5 h-3.5 mr-1.5 text-muted-foreground shrink-0" />
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>

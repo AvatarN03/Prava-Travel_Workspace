@@ -76,7 +76,7 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
           alt={trip.title}
           className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent" />
 
         {/* Top-Left Badges: Duration & Destination */}
         <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">

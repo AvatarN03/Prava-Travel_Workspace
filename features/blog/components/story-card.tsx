@@ -54,7 +54,7 @@ export function StoryCard({ story }: { story: StoryCardItem }) {
           alt={story.title}
           className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
       </div>
 
       <CardHeader className="p-4 pb-2">
@@ -91,7 +91,7 @@ export function StoryCard({ story }: { story: StoryCardItem }) {
         {story.linkedTrip && (
           <div className="flex items-center gap-1.5 rounded-md bg-primary/10 border border-primary/20 px-2 py-1 text-[11px] text-primary">
             <Compass className="h-3 w-3 shrink-0" />
-            <span className="font-semibold truncate max-w-[150px]">
+            <span className="font-semibold truncate max-w-37.5">
               {story.linkedTrip.title}
             </span>
             <span className="text-muted-foreground ml-auto text-[10px]">

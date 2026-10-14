@@ -169,7 +169,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
   const PageIcon = pageInfo.icon;
 
   return (
-    <header className="sticky top-0 z-30 shrink-0 flex h-16 w-full items-center justify-between border-b border-border bg-background/80 backdrop-blur-md px-2 sm:px-4 md:px-6 rounded-none md:rounded-tl-[24px] transition-colors">
+    <header className="sticky top-0 z-30 shrink-0 flex h-16 w-full items-center justify-between border-b border-border bg-background/80 backdrop-blur-md px-2 sm:px-4 md:px-6 rounded-none md:rounded-tl-3xl transition-colors">
         {/* Left: Mobile Trigger & Page Title */}
         <div className="flex items-center gap-1.5 sm:gap-4 min-w-0">
           <Button
@@ -183,7 +183,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
           </Button>
 
           <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-            <div className="hidden sm:flex h-7 w-7 items-center justify-center rounded-xs bg-sky-50 dark:bg-sky-950/40 text-[#2D9BF0] border border-sky-200/60 dark:border-sky-800/40 shadow-2xs shrink-0">
+            <div className="hidden sm:flex h-7 w-7 items-center justify-center rounded-xs bg-primary/10 text-primary border border-primary/20 shadow-2xs shrink-0">
               <PageIcon className="h-4 w-4" />
             </div>
             <h1 className="text-sm sm:text-base font-light sm:font-normal tracking-tight text-foreground truncate">
@@ -214,7 +214,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="flex items-center gap-1 sm:gap-2 pl-0.5 sm:pl-1 pr-1 sm:pr-2.5 py-1 rounded-md border border-transparent hover:border-slate-200/80 dark:hover:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#2D9BF0]"
+                  className="flex items-center gap-1 sm:gap-2 pl-0.5 sm:pl-1 pr-1 sm:pr-2.5 py-1 rounded-md border border-transparent hover:border-border hover:bg-muted/50 transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
                   aria-label="User profile overview"
                 >
                   <div className="relative shrink-0">
@@ -222,8 +222,8 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
                       className={cn(
                         "h-7 w-7 transition-all",
                         userInfo.tier === "pro"
-                          ? "ring-2 ring-amber-400 dark:ring-amber-400 ring-offset-1 ring-offset-background shadow-xs"
-                          : "ring-1 ring-slate-200/60 dark:ring-slate-700/60"
+                          ? "ring-2 ring-amber-400 ring-offset-1 ring-offset-background shadow-xs"
+                          : "ring-1 ring-border"
                       )}
                     >
                       {userInfo.avatarUrl && (
@@ -233,7 +233,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
                           className="object-cover"
                         />
                       )}
-                      <AvatarFallback className="bg-gradient-to-tr from-[#2D9BF0] to-[#55B8FF] text-white font-bold text-[11px]">
+                      <AvatarFallback className="bg-linear-to-tr from-[#2D9BF0] to-[#55B8FF] text-white font-bold text-[11px]">
                         {userInfo.name ? (
                           userInfo.name.replace(/^@/, "").charAt(0).toUpperCase()
                         ) : (
@@ -243,14 +243,14 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
                     </Avatar>
                     {userInfo.tier === "pro" && (
                       <span
-                        className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-amber-500 ring-1 ring-white dark:ring-slate-900"
+                        className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-amber-500 ring-1 ring-background"
                         title="Verified Pro Member"
                       >
                         <Sparkles className="h-1.5 w-1.5 text-white" />
                       </span>
                     )}
                   </div>
-                  <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 max-w-[130px] truncate select-none hidden sm:inline">
+                  <span className="text-xs font-semibold text-foreground max-w-32.5 truncate select-none hidden sm:inline">
                     {userInfo.name || "Traveler"}
                   </span>
                 </button>
@@ -261,15 +261,15 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
                 className="w-80 p-0 rounded-lg border border-border bg-popover text-popover-foreground shadow-xl overflow-hidden"
               >
                 {/* Profile Identity Card */}
-                <div className="p-4 bg-slate-50/80 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800/80">
+                <div className="p-4 bg-muted/40 border-b border-border">
                   <div className="flex items-center gap-3">
                     <div className="relative shrink-0">
                       <Avatar
                         className={cn(
                           "h-11 w-11 shadow-xs",
                           userInfo.tier === "pro"
-                            ? "ring-2 ring-amber-400 dark:ring-amber-400 ring-offset-2 ring-offset-background"
-                            : "ring-2 ring-white dark:ring-slate-800"
+                            ? "ring-2 ring-amber-400 ring-offset-2 ring-offset-background"
+                            : "ring-2 ring-border"
                         )}
                       >
                         {userInfo.avatarUrl && (
@@ -279,7 +279,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
                             className="object-cover"
                           />
                         )}
-                        <AvatarFallback className="bg-gradient-to-tr from-[#2D9BF0] to-[#55B8FF] text-white font-bold text-sm">
+                        <AvatarFallback className="bg-linear-to-tr from-[#2D9BF0] to-[#55B8FF] text-white font-bold text-sm">
                           {userInfo.name ? (
                             userInfo.name.replace(/^@/, "").charAt(0).toUpperCase()
                           ) : (
@@ -289,7 +289,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
                       </Avatar>
                       {userInfo.tier === "pro" && (
                         <span
-                          className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 ring-1.5 ring-white dark:ring-slate-900 text-white shadow-xs"
+                          className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 ring-1.5 ring-background text-white shadow-xs"
                           title="Verified Pro Member"
                         >
                           <Sparkles className="h-2.5 w-2.5" />
@@ -298,16 +298,16 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                        <p className="text-sm font-bold text-foreground truncate">
                           {userInfo.name || "Traveler"}
                         </p>
                         {userInfo.tier === "pro" ? (
-                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase bg-amber-500/10 text-amber-500 border border-amber-500/20">
                             <Sparkles className="h-2.5 w-2.5" />
                             Pro
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase bg-muted text-muted-foreground">
                             Free
                           </span>
                         )}
@@ -324,36 +324,36 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
                 {/* Details at a glance */}
                 <div className="p-3.5 space-y-2.5 text-xs">
                   {/* Email */}
-                  <div className="flex items-start gap-2.5 text-slate-600 dark:text-slate-400">
-                    <Mail className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-2.5 text-muted-foreground">
+                    <Mail className="h-3.5 w-3.5 text-muted-foreground/70 shrink-0 mt-0.5" />
                     <div className="min-w-0 flex-1">
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground/70 block mb-0.5">
                         Email
                       </span>
-                      <span className="text-slate-800 dark:text-slate-200 font-medium break-all select-all">
+                      <span className="text-foreground font-medium break-all select-all">
                         {userInfo.email || "No email linked"}
                       </span>
                     </div>
                   </div>
 
                   {/* Currency & Trips */}
-                  <div className="flex items-start gap-2.5 text-slate-600 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800/60">
-                    <Coins className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-2.5 text-muted-foreground pt-1 border-t border-border">
+                    <Coins className="h-3.5 w-3.5 text-muted-foreground/70 shrink-0 mt-0.5" />
                     <div className="min-w-0 flex-1 flex items-center justify-between">
                       <div>
-                        <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground/70 block mb-0.5">
                           Default Currency
                         </span>
-                        <span className="text-slate-800 dark:text-slate-200 font-medium">
+                        <span className="text-foreground font-medium">
                           {userInfo.defaultCurrency || "INR"}
                         </span>
                       </div>
                       {userInfo.totalTrips !== undefined && (
                         <div className="text-right">
-                          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">
+                          <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground/70 block mb-0.5">
                             Workspace Trips
                           </span>
-                          <span className="text-slate-800 dark:text-slate-200 font-medium">
+                          <span className="text-foreground font-medium">
                             {userInfo.totalTrips} {userInfo.totalTrips === 1 ? "Trip" : "Trips"}
                           </span>
                         </div>
@@ -363,8 +363,8 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
 
                   {/* Member Since */}
                   {userInfo.memberSince && (
-                    <div className="flex items-center gap-2.5 text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800/60">
-                      <Calendar className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-muted-foreground pt-1 border-t border-border">
+                      <Calendar className="h-3.5 w-3.5 text-muted-foreground/70 shrink-0" />
                       <span className="text-[11px]">
                         Member since {userInfo.memberSince}
                       </span>
@@ -373,7 +373,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
                 </div>
 
                 {/* Footer: View & Edit Profile Link (Strictly NO sign-out) */}
-                <div className="p-2.5 bg-slate-50/70 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800/80">
+                <div className="p-2.5 bg-muted/40 border-t border-border">
                   <Link
                     href="/profile"
                     onClick={() => setProfileOpen(false)}

@@ -294,7 +294,7 @@ export function TravelEssentialsShell({
               size="sm"
               variant="outline"
               onClick={() => setIsOfflineHubOpen(true)}
-              className="h-7 px-2.5 text-xs font-medium border-amber-500/30 hover:bg-amber-500/10 text-amber-700 dark:text-amber-400 cursor-pointer gap-1.5"
+              className="h-7 px-2.5 text-xs font-medium border-amber-500/30 hover:bg-amber-500/10 text-amber-500 cursor-pointer gap-1.5"
             >
               <Languages className="h-3.5 w-3.5" />
               <span>Offline Companion</span>
@@ -371,7 +371,7 @@ export function TravelEssentialsShell({
                   <TabsTrigger
                     key={tab.id}
                     value={tab.id}
-                    className="flex items-center gap-2 rounded-sm px-3.5 py-1.5 font-sans text-xs font-medium transition-all duration-150 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:border data-[state=active]:border-primary/40 text-muted-foreground hover:text-foreground cursor-pointer select-none"
+                    className="flex items-center gap-2 rounded-sm px-3.5 py-1.5 font-sans text-xs font-medium transition-all duration-150 data-[state=active]:bg-background data-[state=active]:border data-[state=active]:border-primary/40 hover:text-foreground cursor-pointer select-none"
                   >
                     <Icon className={`w-3.5 h-3.5 ${tab.iconColor} shrink-0`} />
                     <span>{tab.label}</span>
