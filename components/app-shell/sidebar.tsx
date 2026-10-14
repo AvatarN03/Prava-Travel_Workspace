@@ -150,7 +150,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
               // Opposite-theme styling: In light mode, sidebar is dark; in dark mode, sidebar is light
               isActive
                 ? "bg-primary text-primary-foreground shadow-xs font-semibold"
-                : "text-slate-300 hover:text-white hover:bg-slate-100/10 hover:translate-x-0.5 dark:text-slate-600 dark:hover:text-slate-950 dark:hover:bg-slate-200 dark:hover:translate-x-0.5"
+                : "text-shell-foreground/80 hover:text-shell-foreground hover:bg-shell-muted/15 hover:translate-x-0.5"
             )}
           >
             <Icon
@@ -158,7 +158,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
                 "h-4 w-4 transition-transform duration-200 shrink-0",
                 isActive
                   ? "text-white scale-105"
-                  : "text-slate-400 group-hover:text-white group-hover:scale-110 dark:text-slate-500 dark:group-hover:text-slate-900"
+                  : "text-shell-muted group-hover:text-shell-foreground group-hover:scale-110"
               )}
             />
             <span className="truncate flex-1 tracking-normal">{item.title}</span>
@@ -168,7 +168,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
                   "ml-auto rounded-full px-1.5 py-0.5 font-sans text-[10px] font-semibold tabular-nums shadow-2xs",
                   isActive
                     ? "bg-white/20 text-white"
-                    : "bg-white/10 text-slate-300 dark:bg-slate-300 dark:text-slate-800"
+                    : "bg-shell-muted/20 text-shell-foreground"
                 )}
               >
                 {item.badge}
@@ -195,14 +195,14 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
         className={cn(
           "w-60 md:w-52 shrink-0 flex flex-col transition-transform duration-300 ease-in-out",
           // Mobile fixed drawer styling
-          "fixed inset-y-0 left-0 z-40 bg-shell text-slate-200 border-r border-shell-border dark:bg-slate-100 dark:text-slate-900 dark:border-slate-300",
+          "fixed inset-y-0 left-0 z-40 bg-shell text-shell-foreground border-r border-shell-border",
           // Desktop flex child styling (seamless transparent background matching outer shell)
-          "md:static md:translate-x-0 md:bg-transparent md:border-r-0 dark:md:bg-transparent dark:md:border-r-0",
+          "md:static md:translate-x-0 md:bg-transparent md:border-r-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
         {/* Brand / Logo Header */}
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-shell-border dark:border-slate-300 px-4">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-shell-border px-4">
           <TooltipProvider delayDuration={150}>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -220,7 +220,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
                     />
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-brand font-medium tracking-[0.24em] text-base uppercase text-white dark:text-slate-900 group-hover:text-[#2D9BF0] transition-colors">
+                    <span className="font-brand font-medium tracking-[0.24em] text-base uppercase text-shell-foreground group-hover:text-[#2D9BF0] transition-colors">
                       Prava
                     </span>
                     <span className="h-1.5 w-1.5 rounded-full bg-[#2D9BF0] animate-pulse shadow-xs" />
@@ -242,7 +242,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden h-8 w-8 text-slate-400 hover:text-white dark:text-slate-600 dark:hover:text-slate-900 cursor-pointer"
+              className="md:hidden h-8 w-8 text-shell-muted hover:text-shell-foreground cursor-pointer"
               onClick={onMobileClose}
             >
               <X className="h-4 w-4" />
@@ -259,7 +259,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
               <div className="px-4">
                 <Link
                   href="/dashboard"
-                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 hover:text-white dark:text-slate-500 dark:hover:text-slate-900 transition-colors group cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-shell-muted hover:text-shell-foreground transition-colors group cursor-pointer"
                 >
                   <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
                   <span>Back to Workspace</span>
@@ -286,7 +286,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
               <div className="px-4">
                 <Link
                   href="/trips"
-                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 hover:text-white dark:text-slate-500 dark:hover:text-slate-900 transition-colors group cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-shell-muted hover:text-shell-foreground transition-colors group cursor-pointer"
                 >
                   <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
                   <span>All Trips</span>
@@ -311,7 +311,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
             <>
               {/* Group 1: Workspace */}
               <div>
-                <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 select-none">
+                <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-shell-muted select-none">
                   Workspace
                 </div>
                 {renderNavGroup(workspaceNavItems)}
@@ -319,7 +319,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
 
               {/* Group 2: Explore */}
               <div>
-                <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 select-none">
+                <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-shell-muted select-none">
                   Explore
                 </div>
                 {renderNavGroup(otherNavItems)}
@@ -329,9 +329,9 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
         </div>
 
         {/* Bottom Area: Account Section (Preserved across all modes) */}
-        <div className="shrink-0 pt-3 pb-8 md:pb-12 border-t border-shell-border/60 dark:border-slate-300/60 mt-auto space-y-3">
+        <div className="shrink-0 pt-3 pb-8 md:pb-12 border-t border-shell-border/60 mt-auto space-y-3">
           <div>
-            <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 select-none">
+            <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-shell-muted select-none">
               Account
             </div>
             {renderNavGroup(accountNavItems)}

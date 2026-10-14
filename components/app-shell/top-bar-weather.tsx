@@ -155,7 +155,7 @@ export function TopBarWeather() {
               <span className="font-semibold text-foreground text-xs font-mono">
                 {weather.temperature}°C
               </span>
-              <span className="hidden lg:inline-block text-[11px] text-muted-foreground font-medium truncate max-w-[80px]">
+              <span className="hidden lg:inline-block text-[11px] text-muted-foreground font-medium truncate max-w-20">
                 · {weather.city}
               </span>
             </div>
@@ -219,7 +219,7 @@ export function TopBarWeather() {
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-muted-foreground block font-medium flex items-center justify-center gap-0.5">
+                <span className="text-[10px] text-muted-foreground font-medium flex items-center justify-center gap-0.5">
                   <Droplets className="w-2.5 h-2.5 text-sky-500" /> Humidity
                 </span>
                 <span className="text-xs font-semibold font-mono text-foreground">
@@ -227,7 +227,7 @@ export function TopBarWeather() {
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-muted-foreground block font-medium flex items-center justify-center gap-0.5">
+                <span className="text-[10px] text-muted-foreground font-medium flex items-center justify-center gap-0.5">
                   <Wind className="w-2.5 h-2.5 text-teal-500" /> Wind
                 </span>
                 <span className="text-xs font-semibold font-mono text-foreground">

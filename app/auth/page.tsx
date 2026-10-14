@@ -222,18 +222,18 @@ function AuthForm() {
   const isActionDisabled = loading || oauthLoading;
 
   return (
-    <div className="relative min-h-screen bg-canvas text-zinc-950 dark:text-zinc-50 flex flex-col selection:bg-primary/20 selection:text-primary transition-colors overflow-hidden">
+    <div className="relative min-h-screen bg-canvas text-foreground flex flex-col selection:bg-primary/20 selection:text-primary transition-colors overflow-hidden">
       {/* Fluent Animated Canvas Waves & Ambient Radial Glow (Hero/CTA Style) */}
       <AuthBackgroundPattern />
 
       {/* Background Subtle Grid Texture */}
       <div
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] z-0"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[32px_32px] mask-[radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] z-0"
         aria-hidden="true"
       />
 
       {/* Minimalist Top Navigation */}
-      <header className="relative z-20 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-card/70 dark:bg-canvas/70 backdrop-blur-md">
+      <header className="relative z-20 border-b border-border/80 bg-card/70 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-8 lg:px-12">
           {/* Brand Wordmark */}
           <Link
@@ -249,7 +249,7 @@ function AuthForm() {
               className="w-6.5 h-6.5 object-contain transition-transform duration-300 group-hover:scale-105"
               priority
             />
-            <span className="font-brand font-medium tracking-[0.26em] text-base uppercase text-zinc-950 dark:text-zinc-50 transition-colors">
+            <span className="font-brand font-medium tracking-[0.26em] text-base uppercase text-foreground transition-colors">
               Prava
             </span>
           </Link>
@@ -259,7 +259,7 @@ function AuthForm() {
             <ThemeToggle />
             <Link
               href="/"
-              className="group inline-flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer px-2.5 py-1.5 rounded-sm hover:bg-zinc-100 dark:hover:bg-zinc-800/60"
+              className="group inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer px-2.5 py-1.5 rounded-sm hover:bg-muted"
             >
               <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" />
               <span className="hidden sm:inline">Back to Home</span>
@@ -276,74 +276,74 @@ function AuthForm() {
           {/* Left Feature & Narrative Column (Desktop Only) */}
           <div className="hidden lg:flex lg:col-span-6 flex-col justify-center space-y-8 pr-4">
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-sm bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 font-semibold uppercase tracking-wider text-[10px] font-sans w-fit">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-sm bg-muted border border-border text-muted-foreground font-semibold uppercase tracking-wider text-[10px] font-sans w-fit">
                 <span>Prava Access</span>
                 <span>·</span>
                 <span className="text-primary">Workspace</span>
               </div>
 
-              <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-zinc-950 dark:text-zinc-50 leading-[1.18] break-words">
+              <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-foreground leading-[1.18] wrap-break-word">
                 Plan the route.
-                <span className="block font-serif italic font-normal text-zinc-900 dark:text-zinc-100 mt-1 sm:mt-1.5">
+                <span className="block font-serif italic font-normal text-foreground/90 mt-1 sm:mt-1.5">
                   Keep the journey moving.
                 </span>
               </h2>
 
-              <p className="text-sm text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed max-w-md pt-0.5">
+              <p className="text-sm text-muted-foreground font-normal leading-relaxed max-w-md pt-0.5">
                 The structured travel workspace where multi-day itineraries, stays, expenses, and travel essentials stay coordinated without the chaos.
               </p>
             </div>
 
             {/* Curated Mini Journey Preview Card */}
-            <div className="rounded-md border border-zinc-200/90 dark:border-zinc-800/90 bg-white/90 dark:bg-zinc-900/70 p-5 shadow-xs space-y-4 backdrop-blur-xs">
-              <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800/80 pb-3">
+            <div className="rounded-md border border-border/90 bg-card/90 p-5 shadow-xs space-y-4 backdrop-blur-xs">
+              <div className="flex items-center justify-between border-b border-border/60 pb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="flex h-7 w-7 items-center justify-center rounded-xs bg-[#2D9BF0]/10 text-[#2D9BF0]">
                     <Compass className="h-4 w-4" />
                   </div>
                   <div className="space-y-0.5">
-                    <span className="text-xs font-semibold tracking-wider uppercase text-zinc-900 dark:text-zinc-100 block">
+                    <span className="text-xs font-semibold tracking-wider uppercase text-foreground block">
                       Ladakh Expedition
                     </span>
-                    <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block font-mono">
+                    <span className="text-[10px] text-muted-foreground block font-mono">
                       34.1526° N, 77.5771° E · 8 Days
                     </span>
                   </div>
                 </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-900/60 font-medium">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-success/10 text-success border border-success/20 font-medium">
                   Workspace Active
                 </span>
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs p-2.5 rounded-sm bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800/80">
+                <div className="flex items-center justify-between text-xs p-2.5 rounded-sm bg-muted/40 border border-border/60">
                   <div className="flex items-center gap-3">
                     <span className="text-[11px] font-mono font-semibold text-[#2D9BF0]">06:30</span>
-                    <span className="font-medium text-zinc-800 dark:text-zinc-200">Sunrise Prayers at Thiksey</span>
+                    <span className="font-medium text-foreground">Sunrise Prayers at Thiksey</span>
                   </div>
-                  <span className="text-[10px] text-zinc-500 dark:text-zinc-400">Indus Ridge</span>
+                  <span className="text-[10px] text-muted-foreground">Indus Ridge</span>
                 </div>
 
-                <div className="flex items-center justify-between text-xs p-2.5 rounded-sm bg-sky-50/60 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/50">
+                <div className="flex items-center justify-between text-xs p-2.5 rounded-sm bg-primary/5 border border-primary/20">
                   <div className="flex items-center gap-3">
                     <span className="text-[11px] font-mono font-semibold text-[#2D9BF0]">11:00</span>
-                    <span className="font-medium text-zinc-800 dark:text-zinc-200">Khardung La Pass Crossing</span>
+                    <span className="font-medium text-foreground">Khardung La Pass Crossing</span>
                   </div>
-                  <span className="text-[10px] text-sky-700 dark:text-sky-300 font-medium">5,359m Summit</span>
+                  <span className="text-[10px] text-primary font-medium">5,359m Summit</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2 text-[11px] text-zinc-500 dark:text-zinc-400 border-t border-zinc-100 dark:border-zinc-800/80">
+              <div className="flex items-center justify-between pt-2 text-[11px] text-muted-foreground border-t border-border/60">
                 <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <ShieldCheck className="h-3.5 w-3.5 text-success" />
                   <span>Postgres persistence · AI governed</span>
                 </div>
-                <span className="font-mono text-[10px] text-zinc-400">₹42,500 tracked</span>
+                <span className="font-mono text-[10px] text-muted-foreground">₹42,500 tracked</span>
               </div>
             </div>
 
             {/* Feature Reassurance Badges */}
-            <div className="flex flex-wrap items-center gap-5 pt-1 text-xs text-zinc-500 dark:text-zinc-400 font-sans">
+            <div className="flex flex-wrap items-center gap-5 pt-1 text-xs text-muted-foreground font-sans">
               <span className="flex items-center gap-1.5">
                 <Check className="h-3.5 w-3.5 text-[#2D9BF0]" /> Free 10-trip tier
               </span>
@@ -358,18 +358,18 @@ function AuthForm() {
 
           {/* Right Auth Form Column */}
           <div className="lg:col-span-6 flex justify-center w-full">
-            <div className="w-full max-w-md rounded-md border border-zinc-200/90 dark:border-zinc-800/90 bg-white/95 dark:bg-zinc-900/80 p-6 sm:p-8 shadow-xs backdrop-blur-xs space-y-6">
+            <div className="w-full max-w-md rounded-md border border-border/90 bg-card/95 p-6 sm:p-8 shadow-xs backdrop-blur-xs space-y-6">
               
               {/* Form Header */}
               <div className="space-y-1.5">
-                <h1 className="text-2xl font-light tracking-tight text-zinc-950 dark:text-zinc-50">
+                <h1 className="text-2xl font-light tracking-tight text-foreground">
                   {authMode === "signup"
                     ? "Create your workspace account"
                     : authMode === "forgot"
                     ? "Reset your password"
                     : "Welcome back"}
                 </h1>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 font-normal">
+                <p className="text-xs text-muted-foreground font-normal">
                   {authMode === "signup"
                     ? "Sign up to start organizing trips with structured AI assistance."
                     : authMode === "forgot"
@@ -389,14 +389,14 @@ function AuthForm() {
                       setErrorMessage(null);
                       setForgotSent(false);
                     }}
-                    className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   >
                     <ArrowLeft className="h-3.5 w-3.5" />
                     <span>Back to Sign In</span>
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 p-1 rounded-sm bg-zinc-100 dark:bg-zinc-800/70 border border-zinc-200/60 dark:border-zinc-700/60 text-xs">
+                <div className="grid grid-cols-2 p-1 rounded-sm bg-muted/70 border border-border/60 text-xs">
                   <button
                     type="button"
                     disabled={isActionDisabled}
@@ -407,8 +407,8 @@ function AuthForm() {
                     className={cn(
                       "py-1.5 text-xs font-medium rounded-xs transition-all cursor-pointer",
                       authMode === "signin"
-                        ? "bg-white dark:bg-zinc-900 text-zinc-950 dark:text-zinc-50 shadow-2xs font-semibold"
-                        : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-200"
+                        ? "bg-card text-foreground shadow-2xs font-semibold"
+                        : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     Sign In
@@ -423,8 +423,8 @@ function AuthForm() {
                     className={cn(
                       "py-1.5 text-xs font-medium rounded-xs transition-all cursor-pointer",
                       authMode === "signup"
-                        ? "bg-white dark:bg-zinc-900 text-zinc-950 dark:text-zinc-50 shadow-2xs font-semibold"
-                        : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-200"
+                        ? "bg-card text-foreground shadow-2xs font-semibold"
+                        : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     Create Account
@@ -434,8 +434,8 @@ function AuthForm() {
 
               {/* Error banner if URL parameter or action contains error */}
               {errorMessage && (
-                <div className="rounded-sm border border-red-200 dark:border-red-900/50 bg-red-50/90 dark:bg-red-950/30 p-3 text-xs text-red-700 dark:text-red-400 flex items-start gap-2.5">
-                  <AlertTriangle className="h-4 w-4 shrink-0 text-red-600 dark:text-red-400 mt-0.5" />
+                <div className="rounded-sm border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive flex items-start gap-2.5">
+                  <AlertTriangle className="h-4 w-4 shrink-0 text-destructive mt-0.5" />
                   <div className="flex-1 leading-relaxed">{errorMessage}</div>
                 </div>
               )}
@@ -448,12 +448,12 @@ function AuthForm() {
                       <Mail className="h-6 w-6" />
                     </div>
                     <div className="space-y-1.5">
-                      <h3 className="text-base font-medium text-zinc-900 dark:text-zinc-100">
+                      <h3 className="text-base font-medium text-foreground">
                         Check your email
                       </h3>
-                      <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-xs mx-auto">
+                      <p className="text-xs text-muted-foreground leading-relaxed max-w-xs mx-auto">
                         We sent a password reset link to{" "}
-                        <span className="font-semibold text-zinc-900 dark:text-zinc-100">{email}</span>.
+                        <span className="font-semibold text-foreground">{email}</span>.
                         Click the link in the email to set a new password.
                       </p>
                     </div>
@@ -465,7 +465,7 @@ function AuthForm() {
                           setForgotSent(false);
                           setErrorMessage(null);
                         }}
-                        className="w-full h-10 font-medium text-xs rounded-sm shadow-xs bg-zinc-950 hover:bg-black text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 transition-all cursor-pointer"
+                        className="w-full h-10 font-medium text-xs rounded-sm shadow-xs bg-foreground text-background hover:bg-foreground/90 transition-all cursor-pointer"
                       >
                         Return to Sign In
                       </Button>
@@ -473,7 +473,7 @@ function AuthForm() {
                         type="button"
                         disabled={loading}
                         onClick={handleForgotPassword}
-                        className="text-xs text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors cursor-pointer py-1"
+                        className="text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
                       >
                         {loading ? "Sending..." : "Didn't receive the email? Resend"}
                       </button>
@@ -483,8 +483,8 @@ function AuthForm() {
                   <div className="space-y-4">
                     <form onSubmit={handleForgotPassword} className="space-y-4">
                       <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
-                          <Mail className="h-3.5 w-3.5 text-zinc-400" /> Email address
+                        <label className="text-xs font-medium text-foreground flex items-center gap-1.5">
+                          <Mail className="h-3.5 w-3.5 text-muted-foreground" /> Email address
                         </label>
                         <Input
                           type="email"
@@ -494,13 +494,13 @@ function AuthForm() {
                           placeholder="you@example.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="h-10 rounded-sm border-zinc-200 dark:border-zinc-800 bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-zinc-950 dark:focus-visible:ring-zinc-200 placeholder:text-zinc-400"
+                          className="h-10 rounded-sm border-input bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-ring placeholder:text-muted-foreground"
                         />
                       </div>
 
                       <Button
                         type="submit"
-                        className="w-full h-10 font-medium text-xs rounded-sm shadow-xs bg-zinc-950 hover:bg-black text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 transition-all cursor-pointer flex items-center justify-center gap-2"
+                        className="w-full h-10 font-medium text-xs rounded-sm shadow-xs bg-foreground text-background hover:bg-foreground/90 transition-all cursor-pointer flex items-center justify-center gap-2"
                         disabled={isActionDisabled}
                       >
                         {loading && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
@@ -508,7 +508,7 @@ function AuthForm() {
                       </Button>
                     </form>
 
-                    <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 text-center text-xs text-zinc-500 dark:text-zinc-400">
+                    <div className="pt-2 border-t border-border/60 text-center text-xs text-muted-foreground">
                       Remembered your password?{" "}
                       <button
                         type="button"
@@ -517,7 +517,7 @@ function AuthForm() {
                           setAuthMode("signin");
                           setErrorMessage(null);
                         }}
-                        className="font-medium text-zinc-950 dark:text-zinc-50 hover:underline underline-offset-4 cursor-pointer ml-1"
+                        className="font-medium text-foreground hover:underline underline-offset-4 cursor-pointer ml-1"
                       >
                         Sign In
                       </button>
@@ -532,10 +532,10 @@ function AuthForm() {
                     variant="outline"
                     disabled={isActionDisabled}
                     onClick={handleGoogleSignIn}
-                    className="w-full h-10 font-medium text-xs rounded-sm border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-800/40 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 shadow-2xs flex items-center justify-center gap-2.5 cursor-pointer transition-colors"
+                    className="w-full h-10 font-medium text-xs rounded-sm border-border bg-card hover:bg-muted text-foreground shadow-2xs flex items-center justify-center gap-2.5 cursor-pointer transition-colors"
                   >
                     {oauthLoading ? (
-                      <Loader2 className="h-4 w-4 animate-spin text-zinc-500" />
+                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                     ) : (
                       <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
                         <path
@@ -567,19 +567,19 @@ function AuthForm() {
 
                   {/* Minimalist Divider */}
                   <div className="relative flex items-center justify-center my-1">
-                    <div className="border-t border-zinc-200 dark:border-zinc-800 w-full" />
-                    <span className="bg-white dark:bg-zinc-900 px-3 text-[10px] font-sans font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-widest shrink-0">
+                    <div className="border-t border-border w-full" />
+                    <span className="bg-card px-3 text-[10px] font-sans font-medium text-muted-foreground uppercase tracking-widest shrink-0">
                       Or continue with email
                     </span>
-                    <div className="border-t border-zinc-200 dark:border-zinc-800 w-full" />
+                    <div className="border-t border-border w-full" />
                   </div>
 
                   {/* Credentials Form */}
                   <form onSubmit={handleAuth} className="space-y-4">
                     {authMode === "signup" && (
                       <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
-                          <User className="h-3.5 w-3.5 text-zinc-400" /> Full Name
+                        <label className="text-xs font-medium text-foreground flex items-center gap-1.5">
+                          <User className="h-3.5 w-3.5 text-muted-foreground" /> Full Name
                         </label>
                         <Input
                           type="text"
@@ -589,14 +589,14 @@ function AuthForm() {
                           placeholder="e.g. Maya Lin"
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
-                          className="h-10 rounded-sm border-zinc-200 dark:border-zinc-800 bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-zinc-950 dark:focus-visible:ring-zinc-200 placeholder:text-zinc-400"
+                          className="h-10 rounded-sm border-input bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-ring placeholder:text-muted-foreground"
                         />
                       </div>
                     )}
 
                     <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
-                        <Mail className="h-3.5 w-3.5 text-zinc-400" /> Email address
+                      <label className="text-xs font-medium text-foreground flex items-center gap-1.5">
+                        <Mail className="h-3.5 w-3.5 text-muted-foreground" /> Email address
                       </label>
                       <Input
                         type="email"
@@ -606,17 +606,17 @@ function AuthForm() {
                         placeholder="you@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="h-10 rounded-sm border-zinc-200 dark:border-zinc-800 bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-zinc-950 dark:focus-visible:ring-zinc-200 placeholder:text-zinc-400"
+                        className="h-10 rounded-sm border-input bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-ring placeholder:text-muted-foreground"
                       />
                     </div>
 
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
-                          <KeyRound className="h-3.5 w-3.5 text-zinc-400" /> Password
+                        <label className="text-xs font-medium text-foreground flex items-center gap-1.5">
+                          <KeyRound className="h-3.5 w-3.5 text-muted-foreground" /> Password
                         </label>
                         {authMode === "signup" ? (
-                          <span className="text-[11px] text-zinc-400 dark:text-zinc-500">Min. 6 characters</span>
+                          <span className="text-[11px] text-muted-foreground">Min. 6 characters</span>
                         ) : (
                           <button
                             type="button"
@@ -626,7 +626,7 @@ function AuthForm() {
                               setErrorMessage(null);
                               setForgotSent(false);
                             }}
-                            className="text-[11px] text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:underline underline-offset-4 cursor-pointer transition-colors"
+                            className="text-[11px] text-muted-foreground hover:text-foreground hover:underline underline-offset-4 cursor-pointer transition-colors"
                           >
                             Forgot password?
                           </button>
@@ -640,12 +640,12 @@ function AuthForm() {
                           placeholder="••••••••"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="h-10 pr-10 rounded-sm border-zinc-200 dark:border-zinc-800 bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-zinc-950 dark:focus-visible:ring-zinc-200 placeholder:text-zinc-400"
+                          className="h-10 pr-10 rounded-sm border-input bg-transparent text-sm focus-visible:ring-1 focus-visible:ring-ring placeholder:text-muted-foreground"
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 focus:outline-none cursor-pointer p-0.5"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none cursor-pointer p-0.5"
                           aria-label={showPassword ? "Hide password" : "Show password"}
                         >
                           {showPassword ? (
@@ -659,7 +659,7 @@ function AuthForm() {
 
                     <Button
                       type="submit"
-                      className="w-full h-10 font-medium text-xs rounded-sm shadow-xs bg-zinc-950 hover:bg-black text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 transition-all cursor-pointer flex items-center justify-center gap-2"
+                      className="w-full h-10 font-medium text-xs rounded-sm shadow-xs bg-foreground text-background hover:bg-foreground/90 transition-all cursor-pointer flex items-center justify-center gap-2"
                       disabled={isActionDisabled}
                     >
                       {loading && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
@@ -668,7 +668,7 @@ function AuthForm() {
                   </form>
 
                   {/* Inline Switcher Footer */}
-                  <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 text-center text-xs text-zinc-500 dark:text-zinc-400">
+                  <div className="pt-2 border-t border-border/60 text-center text-xs text-muted-foreground">
                     {authMode === "signup" ? "Already have an account?" : "Don't have an account yet?"}{" "}
                     <button
                       type="button"
@@ -677,7 +677,7 @@ function AuthForm() {
                         setAuthMode(authMode === "signup" ? "signin" : "signup");
                         setErrorMessage(null);
                       }}
-                      className="font-medium text-zinc-950 dark:text-zinc-50 hover:underline underline-offset-4 cursor-pointer ml-1"
+                      className="font-medium text-foreground hover:underline underline-offset-4 cursor-pointer ml-1"
                     >
                       {authMode === "signup" ? "Sign In instead" : "Create one free"}
                     </button>

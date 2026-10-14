@@ -233,7 +233,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
                           className="object-cover"
                         />
                       )}
-                      <AvatarFallback className="bg-linear-to-tr from-[#2D9BF0] to-[#55B8FF] text-white font-bold text-[11px]">
+                      <AvatarFallback className="bg-primary text-primary-foreground font-bold text-[11px]">
                         {userInfo.name ? (
                           userInfo.name.replace(/^@/, "").charAt(0).toUpperCase()
                         ) : (
@@ -279,7 +279,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
                             className="object-cover"
                           />
                         )}
-                        <AvatarFallback className="bg-linear-to-tr from-[#2D9BF0] to-[#55B8FF] text-white font-bold text-sm">
+                        <AvatarFallback className="bg-primary text-primary-foreground font-bold text-sm">
                           {userInfo.name ? (
                             userInfo.name.replace(/^@/, "").charAt(0).toUpperCase()
                           ) : (

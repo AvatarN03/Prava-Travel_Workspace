@@ -20,6 +20,11 @@
   --popover: 255 255 255;
   --popover-foreground: 17 24 39;
 
+  --shell: 9 14 26;
+  --shell-foreground: 226 232 240;
+  --shell-muted: 148 163 184;
+  --shell-border: 21 32 51;
+
   /* Prava Brand — #2D9BF0 Radiant Cerulean */
   --primary: 45 155 240;
   --primary-foreground: 255 255 255;
@@ -69,6 +74,11 @@
   --popover: 15 19 28;
   --popover-foreground: 241 245 249;
 
+  --shell: 241 245 249;
+  --shell-foreground: 15 23 42;
+  --shell-muted: 100 116 139;
+  --shell-border: 203 213 225;
+
   /* Keep Prava blue as the primary brand */
   --primary: 45 155 240;
   --primary-foreground: 255 255 255;
@@ -105,8 +115,10 @@
   --color-card-foreground: rgb(var(--card-foreground));
   --color-card-subtle: rgb(var(--card-subtle));
   --color-canvas: rgb(var(--canvas));
-  --color-shell: #090E1A;
-  --color-shell-border: #152033;
+  --color-shell: rgb(var(--shell));
+  --color-shell-foreground: rgb(var(--shell-foreground));
+  --color-shell-muted: rgb(var(--shell-muted));
+  --color-shell-border: rgb(var(--shell-border));
 
   --color-popover: rgb(var(--popover));
   --color-popover-foreground: rgb(var(--popover-foreground));
@@ -141,7 +153,7 @@
   --font-sans: var(--font-sora), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-serif: var(--font-newsreader), Georgia, Cambria, "Times New Roman", Times, serif;
   --font-brand: var(--font-brand), var(--font-newsreader), Georgia, serif;
-  --font-mono: var(--font-sora), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 /* =========================================================
@@ -159,10 +171,7 @@ input[type="reset"] {
 body {
   background-color: rgb(var(--background));
   color: rgb(var(--foreground));
-  font-family:
-    var(--font-sora),
-    Roboto,
-    sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -290,8 +299,8 @@ html {
 }
 
 .animate-accordion-up,
-[data-state="closed"] > [class*="animate-accordion-down"],
-[data-state="closed"][class*="animate-accordion-down"] {
+[data-state="closed"] > [class*="animate-accordion-up"],
+[data-state="closed"][class*="animate-accordion-up"] {
   animation: accordion-up 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -309,8 +318,6 @@ html {
 }
 
 :where(.dark, .dark *) .dashboard-card {
-  border-color: rgb(var(--border));
-  background-color: rgb(var(--card));
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
 }
 
@@ -329,8 +336,6 @@ html {
 }
 
 :where(.dark, .dark *) .dashboard-card-hover {
-  border-color: rgb(var(--border));
-  background-color: rgb(var(--card));
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
 }
 
@@ -341,11 +346,7 @@ html {
 }
 
 .dashboard-card-header {
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-}
-
-:where(.dark, .dark *) .dashboard-card-header {
-  border-bottom: 1px solid rgba(39, 39, 42, 0.85);
+  border-bottom: 1px solid rgb(var(--border) / 0.8);
 }
 
 .dashboard-surface-subtle {
@@ -403,10 +404,6 @@ html {
   color: rgb(var(--foreground));
 }
 
-:where(.dark, .dark *) .dashboard-title {
-  color: #f4f4f5;
-}
-
 .dashboard-subtext {
   font-size: 0.6875rem;
   color: #64748b;
@@ -440,7 +437,6 @@ html {
   color: #38bdf8;
 }
 
-.btn-primary,
 .prava-btn-primary,
 .dashboard-btn-primary {
   background-color: #09090b;
@@ -454,14 +450,12 @@ html {
   transition: all 0.15s ease;
 }
 
-.btn-primary:hover,
 .prava-btn-primary:hover,
 .dashboard-btn-primary:hover {
   background-color: #27272a;
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
 }
 
-:where(.dark, .dark *) .btn-primary,
 :where(.dark, .dark *) .prava-btn-primary,
 :where(.dark, .dark *) .dashboard-btn-primary {
   background-color: #f4f4f5;
@@ -469,14 +463,12 @@ html {
   border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
-:where(.dark, .dark *) .btn-primary:hover,
 :where(.dark, .dark *) .prava-btn-primary:hover,
 :where(.dark, .dark *) .dashboard-btn-primary:hover {
   background-color: #ffffff;
   box-shadow: 0 2px 6px 0 rgba(255, 255, 255, 0.15);
 }
 
-.btn-primary:active,
 .prava-btn-primary:active,
 .dashboard-btn-primary:active {
   transform: scale(0.99);

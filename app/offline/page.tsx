@@ -46,7 +46,7 @@ export default function OfflinePage() {
           <WifiOff className="h-6 w-6 sm:h-7 sm:w-7" />
         </div>
 
-        <span className="text-[11px] uppercase font-bold tracking-widest text-amber-600 dark:text-amber-400 mb-2">
+        <span className="text-[11px] uppercase font-bold tracking-widest text-warning mb-2">
           Offline Mode
         </span>
 
@@ -66,7 +66,7 @@ export default function OfflinePage() {
               <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Cached Trips ({cachedTrips.length})
               </span>
-              <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+              <span className="text-[10px] text-warning font-medium">
                 1-Click Offline View
               </span>
             </div>
@@ -102,7 +102,7 @@ export default function OfflinePage() {
             type="button"
             variant="secondary"
             onClick={() => setIsEssentialsOpen(true)}
-            className="w-full h-9 font-sans text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/20 cursor-pointer gap-2"
+            className="w-full h-9 font-sans text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-warning border border-amber-500/20 cursor-pointer gap-2"
           >
             <Languages className="h-4 w-4" />
             Travel Essentials (Phrasebook & Emergency)
