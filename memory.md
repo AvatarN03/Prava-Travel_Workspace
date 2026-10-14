@@ -3972,6 +3972,19 @@
        - Documented the Max-Width 7XL Obsidian Live Travel Essentials suite (Weather, ECB exchange rates with interactive SVG charts, 250+ country guides, Leaflet OSM maps, emergency hub, phrasebook).
        - Documented Polar billing integration, dynamic currency localization (24+ currencies), and Free vs. Pro quota meters.
        - Included comprehensive technical architecture table, environment variables guide, codebase tree, and key CLI scripts.
+- **Task 208 (Dashboard Page Code Quality & Readability Refactor)**:
+  - **Context & Requirement**:
+    - User requested an honest code quality and readability audit for `app/(workspace)/dashboard/page.tsx` with specific attention to shifting hardcoded domain data and logic to dedicated files.
+    - Decided on Option B (pragmatic logic extraction + constants) to preserve visual alignment with `loading.tsx` and sibling page patterns like `app/(workspace)/trips/page.tsx`.
+  - **Implementation**:
+    1. **Extracted Utility Functions (`features/dashboard/utils.ts`)**:
+       - `getUserFirstName(user)`: Derives traveler's first name with fallback to email prefix or `"Traveler"`.
+       - `getTimeBasedGreeting(date)`: Returns time-of-day greeting (`"Good morning"`, `"Good afternoon"`, `"Good evening"`).
+       - `getDashboardSubGreeting(upcomingTrip, totalTrips)`: Handles all 5 contextual journey status messages and pluralization checks (ongoing, concluded, countdown, or saved trips).
+    2. **Extracted Static String Constants (`features/dashboard/constants.ts`)**:
+       - Added `DASHBOARD_STRINGS` for `"Travel Workspace"` eyebrow and `"Cross-Trip Workspace Overview"` section header.
+    3. **Cleaned & Standardized Page (`app/(workspace)/dashboard/page.tsx`)**:
+       - Reorganized imports into strict 6-tier hierarchy in accordance with `.agents/skills/format-imports-and-clean/SKILL.md`.
+       - Eliminated ~40 lines of inline branching/formatting logic, reducing page length from 149 lines to 118 lines.
   - **Verification**:
-    - Verified markdown formatting, universal box diagram rendering, logo embedding, and links in [`README.md`](file:///e:/Projects/Web-Dev/NextJS/prava_v2/README.md).
-
+    - Validated all imports, type signatures, and JSX structure.

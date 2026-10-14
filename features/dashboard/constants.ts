@@ -13,6 +13,14 @@ export const TRIP_STATUS_BADGES: Record<
 };
 
 /**
+ * Static UI string constants for the dashboard layout.
+ */
+export const DASHBOARD_STRINGS = {
+  eyebrow: "Travel Workspace",
+  overviewSection: "Cross-Trip Workspace Overview",
+} as const;
+
+/**
  * Returns the badge config for a given trip status.
  * Falls back to a lowercase label with `"secondary"` variant for unknown statuses.
  */

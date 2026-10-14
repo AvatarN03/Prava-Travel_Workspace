@@ -16,6 +16,13 @@ import { UrgentChecklist } from "@/features/dashboard/components/urgent-checklis
 import { CreateTripDialog } from "@/features/trips";
 
 import { getDashboardSummary } from "@/features/dashboard/queries";
+import {
+  getDashboardSubGreeting,
+  getTimeBasedGreeting,
+  getUserFirstName,
+} from "@/features/dashboard/utils";
+
+import { DASHBOARD_STRINGS } from "@/features/dashboard/constants";
 
 export const metadata: Metadata = {
   title: "Prava Dashboard",
@@ -26,46 +33,9 @@ export default async function DashboardPage() {
   const summary = await getDashboardSummary();
   const { user, metrics, upcomingTrip, recentTrips, urgentTasks, generalExpenses } = summary;
 
-  const displayName =
-    user?.fullName || (user?.email ? user.email.split("@")[0] : "Traveler");
-  const firstName = displayName.split(" ")[0];
-
-  // Dynamic time-aware greeting
-  const hour = new Date().getHours();
-  const greeting =
-    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-
-  // Dynamic journey subtitle
-  let subGreeting = "Ready for your next journey? Start planning your first travel experience.";
-
-  if (upcomingTrip) {
-    if (upcomingTrip.isOngoing) {
-      subGreeting = `Your journey to ${upcomingTrip.destination || upcomingTrip.title} is currently underway. Have a wonderful trip!`;
-    } else if (upcomingTrip.isPastTrip) {
-      const daysText =
-        upcomingTrip.daysSinceEnd !== null && upcomingTrip.daysSinceEnd !== undefined
-          ? upcomingTrip.daysSinceEnd === 0
-            ? "today"
-            : `${upcomingTrip.daysSinceEnd} ${upcomingTrip.daysSinceEnd === 1 ? "day" : "days"} ago`
-          : "recently";
-      subGreeting = `Your previous journey to ${upcomingTrip.destination || upcomingTrip.title} concluded ${daysText}. Ready for what's next? Plan a new trip!`;
-    } else if (upcomingTrip.countdownDays !== null) {
-      if (upcomingTrip.countdownDays > 0) {
-        subGreeting = `Ready for your next journey? 1 trip starting in ${upcomingTrip.countdownDays} ${upcomingTrip.countdownDays === 1 ? "day" : "days"
-          }.`;
-      } else if (upcomingTrip.countdownDays === 0) {
-        subGreeting = "Ready for your next journey? 1 trip starting today.";
-      } else {
-        subGreeting = "Ready for your next journey? Start planning your next travel experience.";
-      }
-    } else {
-      subGreeting = `Ready for your next journey? You have ${metrics.totalTrips} ${metrics.totalTrips === 1 ? "trip" : "trips"
-        } saved in your workspace.`;
-    }
-  } else if (metrics.totalTrips > 0) {
-    subGreeting = `Ready for your next journey? You have ${metrics.totalTrips} ${metrics.totalTrips === 1 ? "trip" : "trips"
-      } saved in your workspace.`;
-  }
+  const firstName = getUserFirstName(user);
+  const greeting = getTimeBasedGreeting();
+  const subGreeting = getDashboardSubGreeting(upcomingTrip, metrics.totalTrips);
 
   return (
     <div className="space-y-6 pb-10">
@@ -73,7 +43,7 @@ export default async function DashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block select-none">
-            Travel Workspace
+            {DASHBOARD_STRINGS.eyebrow}
           </span>
           <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
             {greeting},{" "}
@@ -130,13 +100,10 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          {/* Quick Actions & Travel Utilities */}
-          <DashboardQuickActions />
-
           {/* Bottom Section: Cross-Trip Metrics Overview */}
           <div className="pt-2">
             <div className="dashboard-section-eyebrow mb-3">
-              Cross-Trip Workspace Overview
+              {DASHBOARD_STRINGS.overviewSection}
             </div>
             <DashboardMetrics
               metrics={metrics}
