@@ -3017,7 +3017,7 @@
     - **`LandingHeader` Integration (`features/landing/components/landing-header.tsx`)**:
       - Replaced `ThemeChanger` with `<ThemeToggle />` positioned directly beside the `Dashboard` button (for authenticated users) and beside `Sign In` / `Start Planning` (for guests).
     - **`TopBar` Refactor (`components/app-shell/top-bar.tsx`)**:
-      - Replaced redundant inline state (`isCurrentDark`, `displayDark`, `isTransitioning`, `toggleTheme`) and duplicate `MorphIcon` JSX with `<ThemeToggle className="text-slate-500 dark:text-slate-400 hover:text-[#2D9BF0] dark:hover:text-[#2D9BF0] hover:bg-sky-50 dark:hover:bg-slate-800" iconSize={20} />`.
+      - Replaced redundant inline state (`isCurrentDark`, `displayDark`, `isTransitioning`, `toggleTheme`) and duplicate `MorphIcon` JSX with `<ThemeToggle className="text-muted-foreground hover:text-primary hover:bg-sky-50 dark:hover:bg-slate-800" iconSize={20} />`.
     - **`ThemeChanger` Neutralization (`components/app-shell/theme-changer.tsx`)**:
       - Replaced obsolete `ThemeChanger` file with a 1-line dead-code stub `export {};` adhering to Rule 11.
 
@@ -3988,3 +3988,9 @@
        - Eliminated ~40 lines of inline branching/formatting logic, reducing page length from 149 lines to 118 lines.
   - **Verification**:
     - Validated all imports, type signatures, and JSX structure.
+- **Task 209 (Workspace Design Token Standardization & Duplicate Tailwind Class Elimination)**:
+  - **Context & Requirement**:
+    - User provided `@[current_problems]` diagnostic warnings flagging duplicate and conflicting CSS properties in Tailwind v4 across `subscription/loading.tsx`, `templates/loading.tsx`, `templates-view.tsx`, `template-card.tsx`, `travel-essentials-shell.tsx`, `stories/loading.tsx`, `stories/manage/loading.tsx`, `stories/page.tsx`, `story-card.tsx`, `memory.md`, `profile-editor.tsx`, and `top-bar.tsx`.
+  - **Root Cause & Solution**:
+    - In Tailwind CSS v4, pairing a CSS variable semantic token utility (`border-border`, `bg-card`, `bg-muted`, `text-foreground`, `text-muted-foreground`) with an explicit `dark:*` utility targeting the same CSS property triggers a collision warning because the semantic CSS variables already automatically resolve their respective dark theme color values in `app/globals.css`.
+    - Standardized all skeleton loaders, shell navigation controls, templates catalog, stories discovery feed, and subscription cards to Prava's unified semantic design tokens (`border-border`, `bg-muted/*`, `text-foreground`, `text-muted-foreground`), cleanly eliminating duplicate rules without visual regression in light or dark modes.

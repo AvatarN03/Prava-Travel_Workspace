@@ -45,13 +45,13 @@ export default async function DashboardPage() {
           <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block select-none">
             {DASHBOARD_STRINGS.eyebrow}
           </span>
-          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
             {greeting},{" "}
-            <span className="font-serif italic font-normal text-foreground dark:text-zinc-200">
+            <span className="font-serif italic font-normal text-foreground">
               {firstName}
             </span>
           </h1>
-          <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 font-normal leading-relaxed max-w-2xl">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
             {subGreeting}
           </p>
         </div>

@@ -238,18 +238,18 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
   return (
     <div className="w-full max-w-7xl mx-auto space-y-6 pb-16">
       {/* ── Editorial Workspace Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-border dark:border-zinc-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-border">
         <div className="space-y-1">
           <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
             Account Hub
           </span>
-          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
             Account &{" "}
-            <span className="font-serif italic font-normal text-foreground dark:text-zinc-100">
+            <span className="font-serif italic font-normal text-foreground">
               Settings
             </span>
           </h1>
-          <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 font-normal leading-relaxed max-w-2xl">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
             Manage your traveler identity, regional defaults, travel preferences, and session security.
           </p>
         </div>
@@ -271,7 +271,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
             variant="outline"
             size="sm"
             disabled
-            className="h-9 px-4 py-1.5 rounded-sm font-sans text-xs font-semibold gap-1.5 cursor-not-allowed opacity-50 shrink-0 self-start sm:self-auto border-border dark:border-zinc-800"
+            className="h-9 px-4 py-1.5 rounded-sm font-sans text-xs font-semibold gap-1.5 cursor-not-allowed opacity-50 shrink-0 self-start sm:self-auto border-border"
             title="Public profile is disabled for private accounts. Enable Public Creator Profile and click Save Configurations to activate."
           >
             <Lock className="h-3.5 w-3.5 text-muted-foreground" />
@@ -300,14 +300,14 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
                     "flex w-full items-center gap-2.5 px-3 py-2 font-sans text-xs rounded-sm transition-colors text-left cursor-pointer",
                     isActive
                       ? "bg-primary/10 text-primary font-semibold border-l-2 border-primary"
-                      : "text-muted-foreground dark:text-zinc-400 hover:bg-accent dark:hover:bg-zinc-800/60 hover:text-foreground dark:hover:text-zinc-100 font-medium border-l-2 border-transparent"
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground font-medium border-l-2 border-transparent"
                   )}
                   aria-current={isActive ? "page" : undefined}
                 >
                   <Icon
                     className={cn(
                       "h-4 w-4 shrink-0",
-                      isActive ? "text-primary" : "text-muted-foreground dark:text-zinc-500"
+                      isActive ? "text-primary" : "text-muted-foreground"
                     )}
                   />
                   <span>{item.label}</span>
@@ -368,12 +368,12 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
       <div className="block md:hidden space-y-10">
         {/* 1. Overview */}
         <div className="space-y-4">
-          <div className="pb-2 border-b border-border dark:border-zinc-800">
-            <h2 className="font-sans text-sm font-semibold text-foreground dark:text-zinc-100 flex items-center gap-2">
+          <div className="pb-2 border-b border-border">
+            <h2 className="font-sans text-sm font-semibold text-foreground flex items-center gap-2">
               <User className="h-4 w-4 text-primary" />
               Overview
             </h2>
-            <p className="font-sans text-xs text-muted-foreground dark:text-zinc-400 mt-0.5">
+            <p className="font-sans text-xs text-muted-foreground mt-0.5">
               Profile details and public creator settings
             </p>
           </div>
@@ -393,12 +393,12 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
 
         {/* 2. General */}
         <div className="space-y-4">
-          <div className="pb-2 border-b border-border dark:border-zinc-800">
-            <h2 className="font-sans text-sm font-semibold text-foreground dark:text-zinc-100 flex items-center gap-2">
+          <div className="pb-2 border-b border-border">
+            <h2 className="font-sans text-sm font-semibold text-foreground flex items-center gap-2">
               <SlidersHorizontal className="h-4 w-4 text-primary" />
               General Preferences
             </h2>
-            <p className="font-sans text-xs text-muted-foreground dark:text-zinc-400 mt-0.5">
+            <p className="font-sans text-xs text-muted-foreground mt-0.5">
               Currency, regional defaults, AI assistants, and notification reminders
             </p>
           </div>
@@ -423,12 +423,12 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
 
         {/* 3. Security */}
         <div className="space-y-4">
-          <div className="pb-2 border-b border-border dark:border-zinc-800">
-            <h2 className="font-sans text-sm font-semibold text-foreground dark:text-zinc-100 flex items-center gap-2">
+          <div className="pb-2 border-b border-border">
+            <h2 className="font-sans text-sm font-semibold text-foreground flex items-center gap-2">
               <Shield className="h-4 w-4 text-primary" />
               Security & Session
             </h2>
-            <p className="font-sans text-xs text-muted-foreground dark:text-zinc-400 mt-0.5">
+            <p className="font-sans text-xs text-muted-foreground mt-0.5">
               Account authentication provider and active session logout
             </p>
           </div>

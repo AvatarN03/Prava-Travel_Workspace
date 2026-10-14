@@ -155,22 +155,22 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
           <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block select-none">
             Trip Blueprints
           </span>
-          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
+          <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
             Curated{" "}
-            <span className="font-serif italic font-normal text-foreground dark:text-zinc-200">
+            <span className="font-serif italic font-normal text-foreground">
               Itineraries
             </span>
           </h1>
-          <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 font-normal leading-relaxed max-w-2xl">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
             Real trip blueprints published by travelers. Preview complete day-by-day schedules, accommodations, and estimated budgets, then clone directly into your workspace.
           </p>
         </div>
 
         <div className="relative w-full sm:w-80 shrink-0">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground dark:text-zinc-400" />
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search destination, keyword, creator..."
-            className="pl-8.5 h-9 text-xs bg-card dark:bg-[#0F131C] border-border dark:border-zinc-800 text-foreground dark:text-zinc-100 rounded-sm"
+            className="pl-8.5 h-9 text-xs bg-card border-border text-foreground rounded-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -188,12 +188,12 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
       {/* Filter Toolbar (Borderless layout with Inclusions, Duration & Sort selects) */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 py-1">
         {/* Left: Results Counter */}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground dark:text-zinc-400 px-0.5">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground px-0.5">
           <span>
-            Showing <strong className="text-foreground dark:text-zinc-100 font-semibold">{filteredTrips.length}</strong> trip{" "}
+            Showing <strong className="text-foreground font-semibold">{filteredTrips.length}</strong> trip{" "}
             {filteredTrips.length === 1 ? "template" : "templates"}
           </span>
-          <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-muted-foreground/80 dark:text-zinc-400">
+          <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-muted-foreground/80">
             • <Sparkles className="w-3 h-3 text-primary ml-0.5" /> 1-Click Atomic Workspace Clone
           </span>
         </div>
@@ -259,7 +259,7 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
               variant="ghost"
               size="sm"
               onClick={handleResetFilters}
-              className="h-8 px-2 text-xs text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 cursor-pointer rounded-sm shrink-0"
+              className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer rounded-sm shrink-0"
             >
               Reset
             </Button>
@@ -269,18 +269,18 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
 
       {/* Grid of Templates */}
       {filteredTrips.length === 0 ? (
-        <div className="rounded-md border border-dashed border-border bg-card/40 dark:bg-card-subtle/60 p-12 text-center space-y-4">
+        <div className="rounded-md border border-dashed border-border bg-card/40 p-12 text-center space-y-4">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
             <Compass className="h-7 w-7 text-primary" />
           </div>
 
           <div className="space-y-1">
-            <h3 className="text-base font-bold text-foreground dark:text-zinc-100">
+            <h3 className="text-base font-bold text-foreground">
               {hasActiveFilters
                 ? "No trip templates match your filters"
                 : "No public templates published yet"}
             </h3>
-            <p className="text-xs text-muted-foreground dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
+            <p className="text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">
               {hasActiveFilters
                 ? "Try adjusting your search query, duration range, or inclusions to discover more travel plans."
                 : "Be the first to publish a public itinerary! Navigate to any of your trips in the workspace and toggle 'Public' in the header to share your plan."}
@@ -293,7 +293,7 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
                 variant="outline"
                 size="sm"
                 onClick={handleResetFilters}
-                className="text-xs dark:border-zinc-800 dark:text-zinc-200"
+                className="text-xs border-border"
               >
                 Clear All Filters
               </Button>

@@ -254,18 +254,18 @@ export function TravelEssentialsShell({
           <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block">
             Travel Toolkit
           </span>
-          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-primary/10 border border-primary/20 text-primary text-xs font-semibold dark:bg-primary/15 dark:border-primary/30">
+          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-primary/10 border border-primary/20 text-primary text-xs font-semibold">
             <ActiveIcon className="w-3.5 h-3.5" />
             <span>{activeTabMeta.label}</span>
           </div>
         </div>
-        <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
+        <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground">
           Travel{" "}
-          <span className="font-serif italic font-normal text-foreground dark:text-zinc-200">
+          <span className="font-serif italic font-normal text-foreground">
             Essentials
           </span>
         </h1>
-        <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-slate-400 font-normal leading-relaxed max-w-3xl">
+        <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-3xl">
           A dedicated toolkit for smooth journeys. Check live forecasts, convert currencies, explore maps, and access emergency contacts and phrasebooks.
         </p>
       </div>
@@ -319,14 +319,14 @@ export function TravelEssentialsShell({
           <Select value={activeTab} onValueChange={handleTabChange}>
             <SelectTrigger className="w-full h-12 bg-card border-border shadow-xs px-3 rounded-sm text-left cursor-pointer focus:ring-primary">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-muted/60 dark:bg-slate-800/60 shrink-0">
+                <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-muted/60 shrink-0">
                   <ActiveIcon className={`w-4 h-4 ${activeTabMeta.iconColor}`} />
                 </div>
                 <div className="flex flex-col min-w-0 text-left">
-                  <span className="truncate font-sans text-xs font-bold text-foreground dark:text-zinc-100">
+                  <span className="truncate font-sans text-xs font-bold text-foreground">
                     {activeTabMeta.label}
                   </span>
-                  <span className="truncate font-sans text-[10px] text-muted-foreground dark:text-slate-400 font-normal">
+                  <span className="truncate font-sans text-[10px] text-muted-foreground font-normal">
                     {activeTabMeta.description}
                   </span>
                 </div>
@@ -342,12 +342,12 @@ export function TravelEssentialsShell({
                     className="cursor-pointer py-2.5 font-sans text-xs font-medium focus:bg-accent"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-muted/50 dark:bg-slate-800/50 shrink-0">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-muted/50 shrink-0">
                         <Icon className={`w-3.5 h-3.5 ${tab.iconColor}`} />
                       </div>
                       <div className="flex flex-col text-left">
-                        <span className="font-sans font-semibold text-foreground dark:text-zinc-100 text-xs">{tab.label}</span>
-                        <span className="font-sans text-[10px] text-muted-foreground dark:text-slate-400">{tab.description}</span>
+                        <span className="font-sans font-semibold text-foreground text-xs">{tab.label}</span>
+                        <span className="font-sans text-[10px] text-muted-foreground">{tab.description}</span>
                       </div>
                     </div>
                   </SelectItem>
@@ -364,14 +364,14 @@ export function TravelEssentialsShell({
             onValueChange={handleTabChange}
             className="w-full"
           >
-            <TabsList className="h-10 bg-muted/70 dark:bg-card p-1 rounded-sm border border-border/60 inline-flex items-center gap-1 w-auto min-w-full sm:min-w-0 justify-start">
+            <TabsList className="h-10 bg-muted/70 p-1 rounded-sm border border-border/60 inline-flex items-center gap-1 w-auto min-w-full sm:min-w-0 justify-start">
               {TABS.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <TabsTrigger
                     key={tab.id}
                     value={tab.id}
-                    className="flex items-center gap-2 rounded-sm px-3.5 py-1.5 font-sans text-xs font-medium transition-all duration-150 data-[state=active]:bg-background dark:data-[state=active]:bg-card-subtle data-[state=active]:text-foreground data-[state=active]:border data-[state=active]:border-primary/40 dark:text-slate-400 dark:hover:text-white cursor-pointer select-none"
+                    className="flex items-center gap-2 rounded-sm px-3.5 py-1.5 font-sans text-xs font-medium transition-all duration-150 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:border data-[state=active]:border-primary/40 text-muted-foreground hover:text-foreground cursor-pointer select-none"
                   >
                     <Icon className={`w-3.5 h-3.5 ${tab.iconColor} shrink-0`} />
                     <span>{tab.label}</span>
