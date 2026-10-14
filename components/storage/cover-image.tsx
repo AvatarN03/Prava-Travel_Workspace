@@ -79,7 +79,7 @@ export function CoverImage({
               className="h-full w-full object-cover"
             />
             {/* Deep editorial vignette gradient for crystal-clear text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/15 pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/45 to-black/15 pointer-events-none" />
 
             {/* Overlaid Title & Metadata Content */}
             {children && (
@@ -89,7 +89,7 @@ export function CoverImage({
             )}
           </div>
         ) : (
-          <div className="relative min-h-[160px] sm:min-h-[190px] w-full bg-gradient-to-br from-slate-900 via-sky-950 to-slate-950 flex flex-col justify-end p-4 sm:p-6 text-white border-b border-border/40">
+          <div className="relative min-h-40 sm:min-h-47.5 w-full bg-linear-to-br from-slate-900 via-sky-950 to-slate-950 flex flex-col justify-end p-4 sm:p-6 text-white border-b border-border/40">
             {children || (
               <div className="space-y-1">
                 {destination && (

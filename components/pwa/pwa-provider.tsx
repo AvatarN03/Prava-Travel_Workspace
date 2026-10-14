@@ -198,16 +198,18 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-emerald-500/15 text-emerald-500 flex items-center justify-center shrink-0 font-bold text-[11px]">
-                3
-              </div>
-              <div className="space-y-0.5">
-                <p className="font-semibold text-foreground">
-                  Tap &ldquo;Add&rdquo;
-                </p>
-                <p className="text-[11px] text-muted-foreground">
-                  Prava will now appear as an app icon on your device home screen.
-                </p>
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border">
+                <div className="h-6 w-6 rounded-full bg-success/15 text-success flex items-center justify-center shrink-0 font-bold text-[11px]">
+                  3
+                </div>
+                <div className="space-y-0.5">
+                  <p className="font-semibold text-foreground">
+                    Tap &ldquo;Add&rdquo;
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Prava will now appear as an app icon on your device home screen.
+                  </p>
+                </div>
               </div>
             </div>
           ) : (

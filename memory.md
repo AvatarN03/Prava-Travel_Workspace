@@ -4019,3 +4019,17 @@
     11. **Cleaned ThemeToggle Component**: Replaced hardcoded zinc color classes in `components/app-shell/theme-toggle.tsx` with `text-muted-foreground`, `hover:text-foreground`, `hover:bg-muted`, and `text-foreground`.
     12. **Cleaned TopBarWeather Component**: Updated `components/app-shell/top-bar-weather.tsx`: converted `max-w-[80px]` $\rightarrow$ `max-w-20` and removed conflicting `block` declarations on spans that already define `flex`.
     13. **Standardized TopBar Avatar Fallback**: Replaced hardcoded raw hex gradient `bg-linear-to-tr from-[#2D9BF0] to-[#55B8FF] text-white` in `components/app-shell/top-bar.tsx` with design system tokens `bg-primary text-primary-foreground` on both the header trigger and the profile popover card.
+    14. **Cleaned PWA Components**:
+        - `components/pwa/install-button.tsx`: Replaced hardcoded `text-emerald-600 dark:text-emerald-400` with `text-success` and standardized sidebar install button to `bg-card`, `border-border`, `bg-muted`, `text-foreground`, and `text-muted-foreground`.
+        - `components/pwa/pwa-provider.tsx`: Restored missing step card wrapper `<div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border">` around iOS Step 3, eliminating duplicated `flex` and conflicting `items-start items-center` display classes.
+- **Task 211 (Storage Components Tailwind CSS v4 Modernization)**:
+  - **Context & Requirement**:
+    - User provided `@[current_problems]` diagnostic warnings for `components/storage/cover-image.tsx` regarding legacy Tailwind gradients and arbitrary bracketed min-heights.
+  - **Key Refinements**:
+    - `components/storage/cover-image.tsx`:
+      - Modernized editorial vignette gradient from `bg-gradient-to-t` &rarr; `bg-linear-to-t` (Line 82).
+      - Replaced arbitrary min-height utilities `min-h-[160px]` &rarr; `min-h-40` and `sm:min-h-[190px]` &rarr; `sm:min-h-47.5` (Line 92).
+      - Modernized fallback banner gradient from `bg-gradient-to-br` &rarr; `bg-linear-to-br` (Line 92).
+  - **Verification**:
+    - Verified all files in `components/storage/` (`cover-image.tsx`, `avatar-upload.tsx`, `image-upload.tsx`, `index.ts`) are 100% free of legacy gradient syntax and arbitrary height brackets.
+
