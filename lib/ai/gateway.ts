@@ -87,6 +87,7 @@ export async function callOpenAiCompatible(
           "Content-Type": "application/json",
           ...config.extraHeaders,
         },
+        signal: AbortSignal.timeout(8000),
         body: JSON.stringify({
           model,
           messages: payloadMessages,

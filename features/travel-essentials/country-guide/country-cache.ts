@@ -1,14 +1,18 @@
 "use client";
 
-import type { CountryInfo } from "../types";
-import type { CountryAiSummary, CountryNewsArticle } from "./country-service";
+import type {
+  CountryAiSummary,
+  CountryInfo,
+  CountryNewsArticle,
+} from "../types";
 
 const AI_CACHE_PREFIX = "prava_cg_ai_v2_";
 const NEWS_CACHE_PREFIX = "prava_cg_news_v2_";
 const COUNTRY_CACHE_PREFIX = "prava_cg_info_v2_";
 
-const AI_TTL_MS = 24 * 60 * 60 * 1000;       // 24 hours
-const NEWS_TTL_MS = 2 * 60 * 60 * 1000;      // 2 hours
+const AI_TTL_MS = 24 * 60 * 60 * 1000;          // 24 hours
+const AI_FALLBACK_TTL_MS = 30 * 60 * 1000;     // 30 minutes for curated fallback
+const NEWS_TTL_MS = 2 * 60 * 60 * 1000;         // 2 hours
 const COUNTRY_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 // In-memory fallback if localStorage is unavailable (SSR, private browsing, quota limits)
@@ -94,11 +98,11 @@ export function setCachedAiSummary(
   countryName: string,
   summary: CountryAiSummary
 ): void {
-  // Never persist errored responses in client storage
-  if (summary.hasError) return;
   const clean = countryName.trim().toLowerCase();
   const key = `${AI_CACHE_PREFIX}${clean}`;
-  setItem(key, summary, AI_TTL_MS);
+  // Use shorter TTL for curated fallbacks so live AI is re-attempted later, while preventing spam loops
+  const ttl = summary.hasError ? AI_FALLBACK_TTL_MS : AI_TTL_MS;
+  setItem(key, summary, ttl);
 }
 
 export function clearCachedAiSummary(countryName: string): void {

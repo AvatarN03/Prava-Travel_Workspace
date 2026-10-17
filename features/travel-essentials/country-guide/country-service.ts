@@ -1,19 +1,29 @@
 "use server";
 
 import {
-  callOpenRouterFree,
-  callOpenCodeZenFree,
-  hasOpenCodeKey,
   callGroqChat,
+  callOpenCodeZenFree,
+  callOpenRouterFree,
+  GEMINI_TRIPS_MODELS,
+  getGeminiClient,
   hasGroqKey,
+  hasOpenCodeKey,
 } from "@/lib/ai";
 
 import {
   EMERGENCY_DIRECTORY,
   getEmergencyContactsForCountry,
 } from "../emergency/emergency-data";
-import type { CountryInfo, EmergencyContacts } from "../types";
-import { QUICK_PICK_COUNTRIES } from "./country-constants";
+import type {
+  CountryAiSummary,
+  CountryInfo,
+  CountryNewsArticle,
+  EmergencyContacts,
+} from "../types";
+import {
+  getCuratedCountryFallback,
+  QUICK_PICK_COUNTRIES,
+} from "./country-constants";
 
 // ─── REST Countries API v5 response shape ────────────────────────────────────
 // Base: https://api.restcountries.com/countries/v5
@@ -99,27 +109,7 @@ export interface CountrySuggestionItem {
   region: string;
 }
 
-export interface CountryNewsArticle {
-  title: string;
-  description: string;
-  url: string;
-  source: string;
-  publishedAt: string;
-  urlToImage?: string;
-}
-
-export interface CountryAiSummary {
-  vibe: string;
-  advisoryStatus: "safe" | "moderate" | "caution";
-  advisoryReason: string;
-  newsDigest: string[];
-  insiderTip: string;
-  provider: string;
-  isAiGenerated: boolean;
-  generatedAt?: string;
-  hasError?: boolean;
-  errorMessage?: string;
-}
+export type { CountryNewsArticle, CountryAiSummary };
 
 // ─── In-memory server caches ──────────────────────────────────────────────────
 const countryCache   = new Map<string, { data: CountryInfo;            timestamp: number }>();
@@ -127,10 +117,11 @@ const newsCache      = new Map<string, { data: CountryNewsArticle[];   timestamp
 const aiSummaryCache = new Map<string, { data: CountryAiSummary;       timestamp: number }>();
 const suggestCache   = new Map<string, { data: CountrySuggestionItem[]; timestamp: number }>();
 
-const CACHE_COUNTRY_MS  = 12 * 60 * 60 * 1000; // 12 h
-const CACHE_NEWS_MS     =  1 * 60 * 60 * 1000; //  1 h
-const CACHE_AI_MS       =  1 * 60 * 60 * 1000; //  1 h
-const CACHE_SUGGEST_MS  = 24 * 60 * 60 * 1000; // 24 h
+const CACHE_COUNTRY_MS     = 12 * 60 * 60 * 1000; // 12 h
+const CACHE_NEWS_MS        =  1 * 60 * 60 * 1000; //  1 h
+const CACHE_AI_MS          =  1 * 60 * 60 * 1000; //  1 h
+const CACHE_AI_FALLBACK_MS = 30 * 60 * 1000;      // 30 min
+const CACHE_SUGGEST_MS     = 24 * 60 * 60 * 1000; // 24 h
 
 // ─── Shared auth helper for REST Countries v5 ────────────────────────────────
 const RC_BASE = "https://api.restcountries.com/countries/v5";
@@ -507,7 +498,8 @@ const VERIFIED_FREE_MODELS = [
 ];
 
 /**
- * Generate an AI-powered travel & news summary using OpenRouter free models exclusively
+ * Generate an AI-powered travel & news summary with Google Gemini 2.5 Flash as primary,
+ * fast cascading fallbacks, and instantaneous curated fallback.
  */
 export async function generateCountryAiSummary(
   countryName: string,
@@ -518,12 +510,14 @@ export async function generateCountryAiSummary(
   const cacheKey = `ai_sum_${countryName.toLowerCase()}`;
   if (!forceRefresh) {
     const cached = aiSummaryCache.get(cacheKey);
-    if (cached && !cached.data.hasError && Date.now() - cached.timestamp < CACHE_AI_MS) {
-      return cached.data;
+    if (cached) {
+      const maxAge = cached.data.hasError ? CACHE_AI_FALLBACK_MS : CACHE_AI_MS;
+      if (Date.now() - cached.timestamp < maxAge) {
+        return cached.data;
+      }
     }
   }
 
-  const openRouterKey = process.env.OPENROUTER_API_KEY;
   const newsHeadlines = newsArticles.map((a) => `- ${a.title}`).join("\n");
 
   const prompt = `You are a concise, premium travel intelligence assistant for the Prava Travel Companion app.
@@ -548,116 +542,122 @@ Provide a factual JSON response with this exact schema:
 }
 Only output valid JSON.`;
 
-  // Curated baseline data for fallback
-  const curatedFallback: CountryAiSummary = {
-    vibe: `${countryName} offers an extraordinary blend of historic landmarks, vibrant urban energy, and welcoming local hospitality. Exploring its capital ${countryInfo.capital} reveals rich cultural traditions alongside world-class modern transit and culinary scenes.`,
-    advisoryStatus: countryInfo.waterSafetyStatus === "safe" ? "safe" : "moderate",
-    advisoryReason: `Standard travel precautions apply throughout ${countryName}. Tourist infrastructure is well-established with reliable municipal emergency services.`,
-    newsDigest: [
-      `Transit networks in ${countryInfo.capital} and major regional routes are operating on standard schedules with high contactless payment adoption.`,
-      `Seasonal cultural events, heritage sites, and museum exhibitions are actively welcoming international travelers.`,
-      `Confirm digital visa entry prerequisites and passport validity (minimum 6 months) prior to flight departure.`,
-    ],
-    insiderTip: `Download local transit maps in advance and carry small local currency (${countryInfo.currency.split(" ")[0]}) for small merchant markets and traditional cafes.`,
-    provider: "Prava Curated Travel Intelligence",
-    isAiGenerated: false,
-    generatedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-  };
-
+  const curatedFallback = getCuratedCountryFallback(countryName, countryInfo);
   let lastError = "";
 
-  // 1. Attempt OpenRouter Free Models Cascade (if key configured)
-  if (openRouterKey) {
-    const aiResult = await callOpenRouterFree({
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.2,
-      models: VERIFIED_FREE_MODELS,
-    });
+  // 1. Tier 1: Official Google Gemini 2.5 Flash Integration (Primary, sub-second latency)
+  const gemini = getGeminiClient();
+  if (gemini) {
+    for (const model of GEMINI_TRIPS_MODELS) {
+      try {
+        const response = await gemini.models.generateContent({
+          model,
+          contents: [{ role: "user", parts: [{ text: prompt }] }],
+          config: {
+            temperature: 0.2,
+            responseMimeType: "application/json",
+          },
+        });
 
-    if (aiResult?.success && aiResult.text) {
-      const parsed = extractJsonPayload(aiResult.text);
-      if (parsed && parsed.vibe) {
-        const result: CountryAiSummary = {
-          vibe: parsed.vibe,
-          advisoryStatus: parsed.advisoryStatus || "safe",
-          advisoryReason: parsed.advisoryReason || "Standard travel precautions apply.",
-          newsDigest: Array.isArray(parsed.newsDigest) ? parsed.newsDigest : [],
-          insiderTip: parsed.insiderTip || "",
-          provider: `OpenRouter (${aiResult.modelUsed.replace(/:free$/, "")})`,
-          isAiGenerated: true,
-          generatedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          hasError: false,
-        };
-        aiSummaryCache.set(cacheKey, { data: result, timestamp: Date.now() });
-        return result;
+        const rawText = response.text || "";
+        const parsed = extractJsonPayload(rawText);
+        if (parsed && parsed.vibe) {
+          const result: CountryAiSummary = {
+            vibe: parsed.vibe,
+            advisoryStatus: parsed.advisoryStatus || "safe",
+            advisoryReason: parsed.advisoryReason || "Standard travel precautions apply.",
+            newsDigest: Array.isArray(parsed.newsDigest) ? parsed.newsDigest : [],
+            insiderTip: parsed.insiderTip || "",
+            provider: `Google Gemini (${model.replace(/^gemini-/, "Gemini ")})`,
+            isAiGenerated: true,
+            generatedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            hasError: false,
+          };
+          aiSummaryCache.set(cacheKey, { data: result, timestamp: Date.now() });
+          return result;
+        }
+      } catch (err) {
+        console.warn(`[CountryAiSummary] Gemini model [${model}] failed:`, err);
+        lastError = err instanceof Error ? err.message : "Gemini error";
       }
     }
-    lastError = aiResult?.error || "OpenRouter free models unavailable or quota depleted.";
   }
 
-  // 2. Cascade to OpenCode Zen Free Models (if OPENCODE_API_KEY configured)
-  if (hasOpenCodeKey()) {
-    const opencodeResult = await callOpenCodeZenFree({
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.2,
-    });
-
-    if (opencodeResult?.success && opencodeResult.text) {
-      const parsed = extractJsonPayload(opencodeResult.text);
-      if (parsed && parsed.vibe) {
-        const result: CountryAiSummary = {
-          vibe: parsed.vibe,
-          advisoryStatus: parsed.advisoryStatus || "safe",
-          advisoryReason: parsed.advisoryReason || "Standard travel precautions apply.",
-          newsDigest: Array.isArray(parsed.newsDigest) ? parsed.newsDigest : [],
-          insiderTip: parsed.insiderTip || "",
-          provider: `OpenCode Zen (${opencodeResult.modelUsed.replace(/-free$/, "")})`,
-          isAiGenerated: true,
-          generatedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          hasError: false,
-        };
-        aiSummaryCache.set(cacheKey, { data: result, timestamp: Date.now() });
-        return result;
-      }
-    }
-    lastError = opencodeResult?.error || lastError || "OpenCode Zen models busy or unavailable.";
-  }
-
-  // 3. Cascade to Groq (if GROQ_API_KEY configured)
+  // 2. Tier 2: Groq Chat Cascade (if GROQ_API_KEY configured)
   if (hasGroqKey()) {
-    const groqResult = await callGroqChat({
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.2,
-      responseFormat: { type: "json_object" },
-    });
+    try {
+      const groqResult = await callGroqChat({
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.2,
+        responseFormat: { type: "json_object" },
+      });
 
-    if (groqResult?.success && groqResult.text) {
-      const parsed = extractJsonPayload(groqResult.text);
-      if (parsed && parsed.vibe) {
-        const result: CountryAiSummary = {
-          vibe: parsed.vibe,
-          advisoryStatus: parsed.advisoryStatus || "safe",
-          advisoryReason: parsed.advisoryReason || "Standard travel precautions apply.",
-          newsDigest: Array.isArray(parsed.newsDigest) ? parsed.newsDigest : [],
-          insiderTip: parsed.insiderTip || "",
-          provider: `Groq (${groqResult.modelUsed.split("/")[1] || groqResult.modelUsed})`,
-          isAiGenerated: true,
-          generatedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          hasError: false,
-        };
-        aiSummaryCache.set(cacheKey, { data: result, timestamp: Date.now() });
-        return result;
+      if (groqResult?.success && groqResult.text) {
+        const parsed = extractJsonPayload(groqResult.text);
+        if (parsed && parsed.vibe) {
+          const result: CountryAiSummary = {
+            vibe: parsed.vibe,
+            advisoryStatus: parsed.advisoryStatus || "safe",
+            advisoryReason: parsed.advisoryReason || "Standard travel precautions apply.",
+            newsDigest: Array.isArray(parsed.newsDigest) ? parsed.newsDigest : [],
+            insiderTip: parsed.insiderTip || "",
+            provider: `Groq (${groqResult.modelUsed.split("/")[1] || groqResult.modelUsed})`,
+            isAiGenerated: true,
+            generatedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            hasError: false,
+          };
+          aiSummaryCache.set(cacheKey, { data: result, timestamp: Date.now() });
+          return result;
+        }
       }
+      lastError = groqResult?.error || lastError || "Groq models busy or unavailable.";
+    } catch (err) {
+      console.warn("[CountryAiSummary] Groq call failed:", err);
     }
-    lastError = groqResult?.error || lastError || "Groq models busy or unavailable.";
   }
 
-  // 4. Graceful Curated Fallback (if all API attempts fail or keys missing)
-  return {
+  // 3. Tier 3: OpenRouter Free Models Cascade (if key configured)
+  const openRouterKey = process.env.OPENROUTER_API_KEY;
+  if (openRouterKey) {
+    try {
+      const aiResult = await callOpenRouterFree({
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.2,
+        models: VERIFIED_FREE_MODELS,
+      });
+
+      if (aiResult?.success && aiResult.text) {
+        const parsed = extractJsonPayload(aiResult.text);
+        if (parsed && parsed.vibe) {
+          const result: CountryAiSummary = {
+            vibe: parsed.vibe,
+            advisoryStatus: parsed.advisoryStatus || "safe",
+            advisoryReason: parsed.advisoryReason || "Standard travel precautions apply.",
+            newsDigest: Array.isArray(parsed.newsDigest) ? parsed.newsDigest : [],
+            insiderTip: parsed.insiderTip || "",
+            provider: `OpenRouter (${aiResult.modelUsed.replace(/:free$/, "")})`,
+            isAiGenerated: true,
+            generatedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            hasError: false,
+          };
+          aiSummaryCache.set(cacheKey, { data: result, timestamp: Date.now() });
+          return result;
+        }
+      }
+      lastError = aiResult?.error || lastError || "OpenRouter free models unavailable or quota depleted.";
+    } catch (err) {
+      console.warn("[CountryAiSummary] OpenRouter call failed:", err);
+    }
+  }
+
+  // 4. Graceful Curated Fallback
+  const fallbackResult: CountryAiSummary = {
     ...curatedFallback,
     hasError: true,
     errorMessage:
-      lastError || "AI free tier providers currently unavailable. Displaying curated baseline intelligence.",
+      lastError || "AI service is currently busy or unavailable. Showing verified curated travel intelligence.",
     provider: "Prava Curated Travel Intelligence",
   };
+  aiSummaryCache.set(cacheKey, { data: fallbackResult, timestamp: Date.now() });
+  return fallbackResult;
 }

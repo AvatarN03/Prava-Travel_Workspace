@@ -152,6 +152,28 @@ export interface CountryInfo {
   landlocked?: boolean;
 }
 
+export interface CountryAiSummary {
+  vibe: string;
+  advisoryStatus: "safe" | "moderate" | "caution";
+  advisoryReason: string;
+  newsDigest: string[];
+  insiderTip: string;
+  provider: string;
+  isAiGenerated: boolean;
+  generatedAt?: string;
+  hasError?: boolean;
+  errorMessage?: string;
+}
+
+export interface CountryNewsArticle {
+  title: string;
+  description: string;
+  url: string;
+  source: string;
+  publishedAt: string;
+  urlToImage?: string;
+}
+
 export interface EmergencyContacts {
   country: string;
   code: string;

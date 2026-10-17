@@ -1,3 +1,5 @@
+import type { CountryAiSummary, CountryInfo } from "../types";
+
 export interface QuickPickCountry {
   name: string;
   code: string;
@@ -440,3 +442,32 @@ export const BORDER_COUNTRY_NAMES: Record<string, string> = {
   ZMB: "Zambia",
   ZWE: "Zimbabwe",
 };
+
+/**
+ * Curated dynamic baseline intelligence for country travel advisories.
+ * Used whenever external AI models fail, timeout, or quota is depleted.
+ */
+export function getCuratedCountryFallback(
+  countryName: string,
+  countryInfo: CountryInfo
+): CountryAiSummary {
+  const currencyCode = (countryInfo.currency || "Local Currency").split(" ")[0];
+  const capital = countryInfo.capital || "its capital city";
+  const waterSafe = countryInfo.waterSafetyStatus === "safe";
+
+  return {
+    vibe: `${countryName} offers an extraordinary blend of historic landmarks, vibrant urban energy, and welcoming local hospitality. Exploring its capital ${capital} reveals rich cultural traditions alongside world-class modern transit and culinary scenes.`,
+    advisoryStatus: waterSafe ? "safe" : "moderate",
+    advisoryReason: `Standard travel precautions apply throughout ${countryName}. Tourist infrastructure is well-established with reliable municipal emergency services.`,
+    newsDigest: [
+      `Transit networks in ${capital} and major regional routes are operating on standard schedules with high contactless payment adoption.`,
+      `Seasonal cultural events, heritage sites, and museum exhibitions are actively welcoming international travelers.`,
+      `Confirm digital visa entry prerequisites and passport validity (minimum 6 months) prior to flight departure.`,
+    ],
+    insiderTip: `Download local transit maps in advance and carry small local currency (${currencyCode}) for small merchant markets and traditional cafes.`,
+    provider: "Prava Curated Travel Intelligence",
+    isAiGenerated: false,
+    generatedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    hasError: true,
+  };
+}

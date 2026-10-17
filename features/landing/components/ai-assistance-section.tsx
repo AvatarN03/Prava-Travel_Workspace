@@ -9,12 +9,16 @@ import { Button } from "@/components/ui/button";
 
 const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
+const PROMPTS = [
+  "Can you rearrange tomorrow's stops in Jaipur to avoid the afternoon desert heat?",
+  "Find a quiet rooftop chai vantage point overlooking Lake Pichola at sunset",
+  "Suggest a verified artisan block-printing workshop near Amber",
+] as const;
+
 export function AiAssistanceSection() {
   const [applied, setApplied] = useState(false);
   const [showReasoning, setShowReasoning] = useState(true);
-  const [activePrompt, setActivePrompt] = useState(
-    "Can you rearrange tomorrow's stops in Jaipur to avoid the afternoon desert heat?"
-  );
+  const [activePrompt, setActivePrompt] = useState<string>(PROMPTS[0]);
 
   const [acceptedStops, setAcceptedStops] = useState<Record<number, boolean>>({
     0: true,
@@ -30,23 +34,17 @@ export function AiAssistanceSection() {
 
   const selectedCount = Object.values(acceptedStops).filter(Boolean).length;
 
-  const prompts = [
-    "Can you rearrange tomorrow's stops in Jaipur to avoid the afternoon desert heat?",
-    "Find a quiet rooftop chai vantage point overlooking Lake Pichola at sunset",
-    "Suggest a verified artisan block-printing workshop near Amber",
-  ];
-
   return (
     <section
       data-nav-theme="dark"
-      className="py-16 sm:py-24 lg:py-28 border-t border-zinc-200/80 dark:border-zinc-800/80 bg-[#FAFAF9]/80 dark:bg-zinc-950/60 backdrop-blur-xs transition-colors overflow-hidden"
+      className="py-16 sm:py-24 lg:py-28 border-t border-border/80 bg-muted/20 backdrop-blur-xs transition-colors overflow-hidden"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-10 lg:px-16 space-y-10 sm:space-y-12">
         {/* Editorial Split Header with Responsive Typography */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end">
           <div className="lg:col-span-6 space-y-3">
             <motion.span
-              className="inline-block text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase font-sans"
+              className="inline-block text-[11px] font-semibold tracking-widest text-primary uppercase font-sans"
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
@@ -56,7 +54,7 @@ export function AiAssistanceSection() {
             </motion.span>
             
             <motion.h2
-              className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-zinc-950 dark:text-zinc-50 leading-[1.15] break-words [text-wrap:balance]"
+              className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-foreground leading-[1.15] wrap-break-word text-balance"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-60px" }}
@@ -90,7 +88,7 @@ export function AiAssistanceSection() {
                   </motion.span>
                 ))}
               </span>
-              <span className="block font-serif italic font-normal text-zinc-800 dark:text-zinc-200 mt-1 sm:mt-2">
+              <span className="block font-serif italic font-normal text-foreground/80 mt-1 sm:mt-2">
                 {["a", "little", "help."].map((word) => (
                   <motion.span
                     key={word}
@@ -119,7 +117,7 @@ export function AiAssistanceSection() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.7, delay: 0.25, ease: easeDecelerate }}
           >
-            <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed break-words [text-wrap:balance]">
+            <p className="text-sm sm:text-base text-muted-foreground font-normal leading-relaxed wrap-break-word text-balance">
               Prava Assist is not an autonomous bot taking over your plans—it is an
               intelligent thinking partner grounded directly in your trip's real
               constraints. AI drafts proposals. You stay in full control.
@@ -129,21 +127,21 @@ export function AiAssistanceSection() {
 
         {/* AI Proposal Card Simulation */}
         <motion.div
-          className="rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl shadow-zinc-950/5 dark:shadow-black/40 overflow-hidden"
+          className="rounded-sm border border-border bg-card shadow-xl overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.75, delay: 0.1, ease: easeDecelerate }}
         >
           {/* Card Top Bar with min-w-0 for Mobile Truncation */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-950/70 px-4 sm:px-6 py-2.5 sm:py-3 text-xs">
-            <div className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300 min-w-0">
-              <span className="h-2 w-2 rounded-full bg-[#2D9BF0] shrink-0" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 border-b border-border/80 bg-muted/70 px-4 sm:px-6 py-2.5 sm:py-3 text-xs">
+            <div className="flex items-center gap-2 text-foreground/80 min-w-0">
+              <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
               <span className="truncate font-medium text-[11px] sm:text-xs">
                 Contextual Journey Assistant · Trip: Royal Rajasthan (Day 02)
               </span>
             </div>
-            <span className="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-[11px] shrink-0 font-medium self-end sm:self-auto">
+            <span className="text-muted-foreground text-[10px] sm:text-[11px] shrink-0 font-medium self-end sm:self-auto">
               Structured Route Proposal
             </span>
           </div>
@@ -155,9 +153,9 @@ export function AiAssistanceSection() {
               <img
                 src="/avatars/default-avatar.jpg"
                 alt="User Avatar"
-                className="h-7 w-7 sm:h-9 sm:w-9 rounded-full object-cover border border-zinc-300 dark:border-zinc-700 shrink-0 shadow-2xs mt-0.5"
+                className="h-7 w-7 sm:h-9 sm:w-9 rounded-full object-cover border border-border shrink-0 shadow-2xs mt-0.5"
               />
-              <p className="text-xs sm:text-sm font-medium text-zinc-900 dark:text-zinc-100 break-words flex-1 min-w-0 pt-0.5 sm:pt-1.5">
+              <p className="text-xs sm:text-sm font-medium text-foreground wrap-break-word flex-1 min-w-0 pt-0.5 sm:pt-1.5">
                 "{activePrompt}"
               </p>
             </div>
@@ -168,19 +166,19 @@ export function AiAssistanceSection() {
               <img
                 src="/avatars/ichinose.png"
                 alt="Prava Assistant"
-                className="h-7 w-7 sm:h-9 sm:w-9 rounded-full object-cover border border-[#2D9BF0]/50 shrink-0 shadow-2xs mt-0.5"
+                className="h-7 w-7 sm:h-9 sm:w-9 rounded-full object-cover border border-primary/50 shrink-0 shadow-2xs mt-0.5"
               />
 
               <div className="flex-1 min-w-0 space-y-4">
                 {/* Collapsible Reasoning Process */}
-                <div className="rounded-xs border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-950/60 p-3 sm:p-3.5 space-y-2 min-w-0">
+                <div className="rounded-xs border border-border bg-muted/60 p-3 sm:p-3.5 space-y-2 min-w-0">
                   <button
                     type="button"
                     onClick={() => setShowReasoning(!showReasoning)}
-                    className="w-full flex items-center justify-between text-[11px] uppercase tracking-wider text-zinc-500 cursor-pointer font-medium gap-2"
+                    className="w-full flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground cursor-pointer font-medium gap-2"
                   >
                     <span className="flex items-center gap-1.5 truncate">
-                      <Compass className="h-3 w-3 text-[#2D9BF0] shrink-0" />
+                      <Compass className="h-3 w-3 text-primary shrink-0" />
                       <span className="truncate">Route Reasoning & Solar Calculation</span>
                     </span>
                     {showReasoning ? (
@@ -190,7 +188,7 @@ export function AiAssistanceSection() {
                     )}
                   </button>
                   {showReasoning && (
-                    <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans pt-1 border-t border-zinc-200/60 dark:border-zinc-800/60 break-words">
+                    <p className="text-xs text-muted-foreground leading-relaxed font-sans pt-1 border-t border-border/60 wrap-break-word">
                       Analyzing solar angle and transit between Pink City, Amer Ridge, and
                       Nahargarh. Moving open-air Amer Palace to 08:30 avoids peak 32°C afternoon
                       heat and tourist crowds. Shifting Anokhi Museum indoor galleries to 13:00 provides
@@ -200,17 +198,17 @@ export function AiAssistanceSection() {
                 </div>
 
                 {/* Narrative Summary */}
-                <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed break-words">
+                <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed wrap-break-word">
                   Here's an optimized schedule for tomorrow. By visiting Amer early in the morning,
                   you avoid the harsh desert sun and gain an unhurried shaded lunch before
                   climbing to Nahargarh for sunset.
                 </p>
 
                 {/* Structured Travel Proposal Schedule with Mobile Responsive Rows */}
-                <div className="rounded-xs border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-white dark:bg-zinc-950 text-xs shadow-2xs min-w-0">
-                  <div className="flex items-center justify-between p-3 sm:p-4 sm:px-6 bg-zinc-50 dark:bg-zinc-900 text-[11px] text-zinc-500 uppercase tracking-wider border-b border-zinc-200/80 dark:border-zinc-800/80 font-medium">
+                <div className="rounded-xs border border-border overflow-hidden bg-card text-xs shadow-2xs min-w-0">
+                  <div className="flex items-center justify-between p-3 sm:p-4 sm:px-6 bg-muted text-[11px] text-muted-foreground uppercase tracking-wider border-b border-border/80 font-medium">
                     <span className="flex items-center gap-1.5 truncate">
-                      <MapPin className="h-3.5 w-3.5 text-[#2D9BF0] shrink-0" />
+                      <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
                       <span className="truncate">Re-sequenced Itinerary</span>
                     </span>
                     <span className="tabular-nums shrink-0 ml-2">
@@ -218,7 +216,7 @@ export function AiAssistanceSection() {
                     </span>
                   </div>
 
-                  <div className="divide-y divide-zinc-200/80 dark:divide-zinc-800/80">
+                  <div className="divide-y divide-border/80">
                     {[
                       {
                         time: "08:30",
@@ -255,47 +253,47 @@ export function AiAssistanceSection() {
                           key={index}
                           className={`p-3 sm:p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 transition-colors ${
                             isChosen
-                              ? "hover:bg-zinc-50/60 dark:hover:bg-zinc-900/50"
-                              : "opacity-50 bg-zinc-100/40 dark:bg-zinc-950/40"
+                              ? "hover:bg-muted/60"
+                              : "opacity-50 bg-muted/40"
                           }`}
                         >
                           {/* Left: Time + Title + Context Details */}
                           <div className="flex items-start gap-2.5 sm:gap-3.5 min-w-0 flex-1">
-                            <span className="text-xs font-semibold text-[#2D9BF0] w-11 sm:w-12 shrink-0 tabular-nums pt-0.5">
+                            <span className="text-xs font-semibold text-primary w-11 sm:w-12 shrink-0 tabular-nums pt-0.5">
                               {item.time}
                             </span>
                             <div className="space-y-1 min-w-0 flex-1">
                               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                                 <span
-                                  className={`font-medium text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 break-words ${
-                                    !isChosen ? "line-through text-zinc-400 dark:text-zinc-500" : ""
+                                  className={`font-medium text-xs sm:text-sm text-foreground wrap-break-word ${
+                                    !isChosen ? "line-through text-muted-foreground" : ""
                                   }`}
                                 >
                                   {item.title}
                                 </span>
-                                <span className="text-[9px] sm:text-[10px] text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-1.5 sm:px-2 py-0.5 rounded-full font-medium shrink-0">
+                                <span className="text-[9px] sm:text-[10px] text-muted-foreground bg-muted px-1.5 sm:px-2 py-0.5 rounded-full font-medium shrink-0">
                                   {item.tag}
                                 </span>
                               </div>
-                              <p className="text-[11px] text-zinc-500 break-words leading-snug">
-                                {item.loc} · <span className="text-zinc-400 whitespace-nowrap">{item.duration}</span>
+                              <p className="text-[11px] text-muted-foreground wrap-break-word leading-snug">
+                                {item.loc} · <span className="text-muted-foreground/80 whitespace-nowrap">{item.duration}</span>
                               </p>
                             </div>
                           </div>
 
                           {/* Right: Interactive Yes / No Selection Buttons */}
-                          <div className="flex items-center justify-between sm:justify-end gap-2 pt-1 sm:pt-0 border-t sm:border-t-0 border-zinc-100 dark:border-zinc-800/60 sm:border-transparent shrink-0">
-                            <span className="text-[10px] text-zinc-400 uppercase tracking-wider font-medium">
+                          <div className="flex items-center justify-between sm:justify-end gap-2 pt-1 sm:pt-0 border-t sm:border-t-0 border-border/60 sm:border-transparent shrink-0">
+                            <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
                               Include?
                             </span>
-                            <div className="inline-flex items-center rounded-xs p-0.5 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-2xs">
+                            <div className="inline-flex items-center rounded-xs p-0.5 bg-muted border border-border shadow-2xs">
                               <button
                                 type="button"
                                 onClick={() => toggleStop(index, true)}
                                 className={`px-2.5 py-1 text-[11px] rounded-2xs font-medium transition-all cursor-pointer ${
                                   isChosen
-                                    ? "bg-white dark:bg-zinc-900 text-[#2D9BF0] shadow-xs font-semibold"
-                                    : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
+                                    ? "bg-card text-primary shadow-xs font-semibold"
+                                    : "text-muted-foreground hover:text-foreground"
                                 }`}
                               >
                                 Yes
@@ -305,8 +303,8 @@ export function AiAssistanceSection() {
                                 onClick={() => toggleStop(index, false)}
                                 className={`px-2.5 py-1 text-[11px] rounded-2xs font-medium transition-all cursor-pointer ${
                                   !isChosen
-                                    ? "bg-white dark:bg-zinc-900 text-rose-600 dark:text-rose-400 shadow-xs font-semibold"
-                                    : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
+                                    ? "bg-card text-destructive shadow-xs font-semibold"
+                                    : "text-muted-foreground hover:text-foreground"
                                 }`}
                               >
                                 No
@@ -321,7 +319,7 @@ export function AiAssistanceSection() {
 
                 {/* Accept Proposal Action Row with Dynamic Count and Mobile Full-Width Button */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-tight">
+                  <span className="text-[11px] text-muted-foreground leading-tight">
                     Atomic transaction: {selectedCount} of 4 stops selected to update in your workspace
                   </span>
 
@@ -332,8 +330,8 @@ export function AiAssistanceSection() {
                       disabled={applied || selectedCount === 0}
                       className={`w-full sm:w-auto text-xs h-9 px-4 rounded-sm gap-1.5 transition-all cursor-pointer font-medium ${
                         applied
-                          ? "bg-emerald-600 text-white hover:bg-emerald-600"
-                          : "bg-zinc-950 text-white hover:bg-black dark:bg-zinc-100 dark:text-zinc-950"
+                          ? "bg-success text-white hover:bg-success"
+                          : "dashboard-btn-primary"
                       }`}
                     >
                       {applied ? (
@@ -352,12 +350,12 @@ export function AiAssistanceSection() {
                 </div>
 
                 {/* Prompt Suggestions */}
-                <div className="pt-4 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-2">
-                  <span className="text-[10px] uppercase text-zinc-500 font-medium tracking-wider">
+                <div className="pt-4 border-t border-border/80 space-y-2">
+                  <span className="text-[10px] uppercase text-muted-foreground font-medium tracking-wider">
                     Try other contextual prompts:
                   </span>
                   <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
-                    {prompts.map((p, i) => (
+                    {PROMPTS.map((p, i) => (
                       <button
                         key={i}
                         type="button"
@@ -365,7 +363,7 @@ export function AiAssistanceSection() {
                           setActivePrompt(p);
                           setApplied(false);
                         }}
-                        className="text-[11px] px-2.5 py-1.5 rounded-xs border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors cursor-pointer text-left break-words max-w-full"
+                        className="text-[11px] px-2.5 py-1.5 rounded-xs border border-border bg-muted/50 text-muted-foreground hover:border-border hover:text-foreground transition-colors cursor-pointer text-left wrap-break-word max-w-full"
                       >
                         "{p}"
                       </button>

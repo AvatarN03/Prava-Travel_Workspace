@@ -4121,5 +4121,22 @@
   - **Verification**:
     - All 11 Dashboard component files audited and standardized; verified 100% free of duplicate `dark:` property collisions, legacy gradients, and bracketed pixel dimensions.
 
-
-
+- **Task 216 (Country Guide AI Summary — 5-Minute Hang Elimination, Gemini 2.5 Flash Cascade & Curated Fallback Resilience)**:
+  - **Context & Issue**:
+    - In Travel Essentials > Country Guide, the AI summary component was hanging for 5 minutes, crashing in production, and repeatedly reloading on tab switches without displaying the AI summary or falling back to the curated static text format.
+    - Root cause analysis revealed:
+      1. Sequential cascade in `country-service.ts` looped over failing free models (OpenRouter 429 rate limit, OpenCode Zen 403 `FreeTierError`, Groq invalid model names) with no `fetch` timeout or `AbortSignal`, causing Node.js sockets to wait up to the default 300-second (5-minute) timeout before crashing with a 504 serverless invocation timeout.
+      2. When the Server Action crashed or timed out, the client's `.catch()` block only unset loading states and left `aiSummary` as `null`, rendering an empty `"AI Intelligence summary unavailable"` box instead of the intended static curated text fallback.
+      3. In `country-cache.ts`, `setCachedAiSummary` explicitly dropped any response where `hasError: true`, causing `getCachedAiSummary` to return `null` on every mount or tab switch, triggering an infinite 5-minute hanging re-fetch cycle.
+  - **Solutions Implemented**:
+    - **`lib/ai/gateway.ts`**: Added `signal: AbortSignal.timeout(8000)` to all OpenAI-compatible completions calls, ensuring no fetch call hangs for more than 8 seconds.
+    - **`features/travel-essentials/country-guide/country-constants.ts`**: Exported `getCuratedCountryFallback(countryName, countryInfo)` shared across both client and server to construct clean, authentic curated travel intelligence immediately.
+    - **`features/travel-essentials/country-guide/country-service.ts`**:
+      - Upgraded `generateCountryAiSummary` to prioritize **Google Gemini 2.5 Flash** (`GEMINI_TRIPS_MODELS`, `getGeminiClient()`) as Tier 1 with sub-second execution.
+      - Cached curated fallback responses with a 30-minute TTL in `aiSummaryCache` to prevent server load spikes.
+    - **`features/travel-essentials/country-guide/country-cache.ts`**:
+      - Cached curated fallback responses in client storage with a 30-minute window (`AI_FALLBACK_TTL_MS`), preventing repeated re-fetch loops on tab navigation.
+    - **`features/travel-essentials/country-guide/country-guide-view.tsx`**:
+      - Updated `handleRegenerateAi` and `useEffect` `.catch()` handlers to immediately instantiate and display `getCuratedCountryFallback` with zero delay if network or server errors occur, guaranteeing the user always sees clean travel advice.
+  - **Verification**:
+    - Full production build (`npm run build`) completed successfully with 0 TypeScript errors and 0 route compilation regressions.

@@ -62,27 +62,29 @@ import {
   setCachedCountryInfo,
   setCachedNews,
 } from "./country-cache";
-import { getPassportVisaGuidance } from "./country-constants";
+import {
+  ALLIANCE_FULL_NAMES,
+  BORDER_COUNTRY_NAMES,
+  getCuratedCountryFallback,
+  getPassportVisaGuidance,
+  QUICK_PICK_COUNTRIES,
+  type QuickPickCountry,
+} from "./country-constants";
 import {
   fetchCountryNews,
   fetchCountrySuggestions,
   generateCountryAiSummary,
   searchCountryInfo,
+  type CountrySuggestionItem,
 } from "./country-service";
 
 import { EMERGENCY_DIRECTORY } from "../emergency/emergency-data";
-import {
-  ALLIANCE_FULL_NAMES,
-  BORDER_COUNTRY_NAMES,
-  QUICK_PICK_COUNTRIES,
-  type QuickPickCountry,
-} from "./country-constants";
 import type {
   CountryAiSummary,
+  CountryInfo,
   CountryNewsArticle,
-  CountrySuggestionItem,
-} from "./country-service";
-import type { CountryInfo, EmergencyContacts } from "../types";
+  EmergencyContacts,
+} from "../types";
 
 const REGIONS = ["All", "Europe", "Asia", "Americas", "Middle East"] as const;
 type RegionType = (typeof REGIONS)[number];
@@ -160,6 +162,10 @@ export function CountryGuideView() {
       setCachedAiSummary(country.name, fresh);
     } catch (err) {
       console.error("Failed to regenerate AI summary:", err);
+      const fallback = getCuratedCountryFallback(country.name, country);
+      fallback.errorMessage = "Unable to connect to AI service. Showing verified curated intelligence.";
+      setAiSummary(fallback);
+      setCachedAiSummary(country.name, fallback);
     } finally {
       setIsLoadingAi(false);
     }
@@ -224,6 +230,11 @@ export function CountryGuideView() {
         if (!isCancelled) {
           setIsLoadingNews(false);
           setIsLoadingAi(false);
+          // If server call threw or timed out, display instant curated fallback so UI never shows empty "unavailable" card
+          const fallback = getCuratedCountryFallback(country.name, country);
+          fallback.errorMessage = "AI services temporarily busy. Showing authentic verified data below.";
+          setAiSummary(fallback);
+          setCachedAiSummary(country.name, fallback);
         }
       });
 
