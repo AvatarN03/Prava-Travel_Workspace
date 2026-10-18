@@ -16,6 +16,11 @@
 [![Polar](https://img.shields.io/badge/Billing-Polar_Payments-blueviolet?style=flat)](https://polar.sh/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 
+<br />
+<br />
+
+<img src="public/SS/9.png" alt="Prava Travel Workspace Hero Art" width="100%" />
+
 </div>
 
 ---
@@ -126,101 +131,61 @@ Prava explicitly rejects chat-first gimmicks, neon gradients, and floating decor
 
 ## 📸 Visual Tour & Page Previews
 
-> *Screenshots below provide a visual walkthrough of Prava's core interfaces.*
+> *High-fidelity interface walkthrough of Prava across desktop and mobile devices.*
 
-### 1. Cross-Trip Dashboard
-*Central command center tracking upcoming countdowns, active journeys, recent trips, and high-priority packing tasks.*
+### 1. Landing Page & Journey Explorer
+*Multi-device responsive discovery portal with interactive route mapping, featured journeys (Ladakh, Rajasthan, Kerala, Varanasi), and instant workspace onboarding.*
 
-![Dashboard Preview](docs/screenshots/dashboard.png)
-*(Drop screenshot at `docs/screenshots/dashboard.png`)*
-
----
-
-### 2. Trip Overview & Calendar Sync
-*High-level journey metrics, tour-vibe cover photography, date elapsed alerts, and 1-click Google Calendar / `.ics` export.*
-
-![Trip Overview Preview](docs/screenshots/trip-overview.png)
-*(Drop screenshot at `docs/screenshots/trip-overview.png`)*
+![Prava Landing Page & Journey Explorer](public/SS/1.png)
 
 ---
 
-### 3. Curated Daily Itinerary Timeline
-*Day-by-day activity stream with category pills, time slots, locations, and the empty-state AI Kickstart engine.*
+### 2. Cross-Trip Command Dashboard
+*Centralized travel headquarters tracking active journey countdowns ("Jaipur — Forts, Food & Old City Walks"), 70% logistics completion indicators, transit status, upcoming checkpoints, high-priority checklists, and cross-trip financial snapshots.*
 
-![Itinerary Timeline Preview](docs/screenshots/itinerary-timeline.png)
-*(Drop screenshot at `docs/screenshots/itinerary-timeline.png`)*
-
----
-
-### 4. Accommodations & Stays Manager
-*Hotel, hostel, and Airbnb reservations with check-in/out schedules, confirmation codes, addresses, and nightly rates.*
-
-![Accommodations Preview](docs/screenshots/accommodations.png)
-*(Drop screenshot at `docs/screenshots/accommodations.png`)*
+![Prava Cross-Trip Dashboard](public/SS/2.png)
 
 ---
 
-### 5. Financials & Expense Tracker
-*Receipts ledger with sticky headers, category filter dropdown, target budget goal progress bar, and interactive SVG Donut chart.*
+### 3. Trips Management & Journey Blueprints
+*All-in-one trip manager categorized by status (Active, Planning, Completed) with Unsplash tour-vibe photography, scheduled dates, and instant transition to the 7-submodule trip workspace.*
 
-![Expenses Tracker Preview](docs/screenshots/expenses-tracker.png)
-*(Drop screenshot at `docs/screenshots/expenses-tracker.png`)*
-
----
-
-### 6. Notes & Markdown Documentation
-*Markdown travel notes with pinning, category tags, search, and instant auto-save.*
-
-![Notes Preview](docs/screenshots/notes.png)
-*(Drop screenshot at `docs/screenshots/notes.png`)*
+![Prava Trips Management & Workspace](public/SS/3.png)
 
 ---
 
-### 7. Interactive Checklist & AI Packing Lists
-*Smart packing checklist with category filters, progress meters, and AI-powered tailored packing generation.*
+### 4. Live Travel Essentials (Obsidian Suite)
+*Real-time currency converter with live European Central Bank exchange rates and trend tracking alongside an interactive AI Travel Language Phrasebook & Voice Guide with phonetic pronunciations and audio reader.*
 
-![Checklist Preview](docs/screenshots/checklist.png)
-*(Drop screenshot at `docs/screenshots/checklist.png`)*
-
----
-
-### 8. Reference Links & Bookmarks Vault
-*Trip bookmarks with domain favicon badges, categories, and 1-click bridge to the Global Resource Vault.*
-
-![Links Preview](docs/screenshots/links.png)
-*(Drop screenshot at `docs/screenshots/links.png`)*
+![Prava Travel Essentials Suite](public/SS/4.png)
 
 ---
 
-### 9. Docked Ichinose AI Assistant & Proposal Cards
-*Persistent 3-column flex companion with opposite-theme palette, multi-session threads, and structured diff proposal cards.*
+### 5. Community Forum & Discussion Hub
+*Open traveler community with categorized discussions (Goa, Japan, packing tips, route planning), upvoting, thread view counts, and 1-click "Save Tip to Trip Note" integration.*
 
-![Ichinose AI Assistant Preview](docs/screenshots/ichinose-ai-panel.png)
-*(Drop screenshot at `docs/screenshots/ichinose-ai-panel.png`)*
-
----
-
-### 10. Live Travel Essentials (Max-Width 7XL Obsidian Suite)
-*Real-time weather radar, live ECB currency exchange with historical trend charts, country guide, maps, emergency hub, and phrasebook.*
-
-![Travel Essentials Preview](docs/screenshots/travel-essentials.png)
-*(Drop screenshot at `docs/screenshots/travel-essentials.png`)*
+![Prava Community Forum](public/SS/5.png)
 
 ---
 
-### 11. Community Forum, Travel Stories & Templates
-*Discover curated itineraries, read long-form travel stories, participate in discussion threads, and clone trips in 1 click.*
+### 6. Travel Stories & Creator Chronicles
+*Long-form Markdown travel publication platform with rich hero photography, author profiles, reading time estimates, and linked 1-click trip cloning ("Goa, Between Work Calls and the Sea").*
 
-![Community Preview](docs/screenshots/community-forum.png)
-*(Drop screenshot at `docs/screenshots/community-forum.png`)*
+![Prava Travel Stories](public/SS/6.png)
 
 ---
 
-### 12. Account Settings & Polar Subscription Hub
-*Profile customization, 24+ currency preference selectors, Polar recurring checkout, and real-time AI quota analytics.*
+### 7. Curated Templates & 1-Click Trip Clones
+*Handcrafted trip blueprints published by verified travelers (Jaipur, Goa, Tokyo & Fuji). Includes complete day-by-day schedules, accommodations, and 1-click atomic cloning into your private workspace.*
 
-![Subscription & Usage Preview](docs/screenshots/subscription-usage.png)
-*(Drop screenshot at `docs/screenshots/subscription-usage.png`)*
+![Prava Curated Templates](public/SS/7.png)
+
+---
+
+### 8. Account & Creator Profile Hub
+*Traveler profile and identity hub with custom avatar uploads, traveler statistics counter (Total Trips, Templates, Stories, Discussions), regional defaults, and public portfolio settings.*
+
+![Prava Account & Creator Profile](public/SS/8.png)
 
 ---
 
