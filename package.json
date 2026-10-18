@@ -2,6 +2,8 @@
   "name": "prava_v2",
   "version": "2.0.0",
   "private": true,
+  "author": "AvatarN03",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",

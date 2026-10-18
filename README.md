@@ -15,6 +15,7 @@
 [![AI Engine](https://img.shields.io/badge/AI_Engine-Gemini_Primary_%2B_Multi--Model-4285F4?style=flat&logo=google)](#)
 [![Polar](https://img.shields.io/badge/Billing-Polar_Payments-blueviolet?style=flat)](https://polar.sh/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <br />
 <br />
@@ -43,7 +44,7 @@
 - [📚 Project Documentation](#-project-documentation)
 - [📁 Codebase Organization](#-codebase-organization)
 - [🎨 Design & Product Philosophy](#-design--product-philosophy)
-- [📄 Intellectual Property & License](#-intellectual-property--license)
+- [📄 License & Copyright](#-license--copyright)
 
 ---
 
@@ -377,10 +378,10 @@ Prava follows strict productivity and interface principles inspired by high-effi
 
 ---
 
-## 📄 Intellectual Property & License
+## 📄 License & Copyright
 
-**Prava Travel Workspace** is a private, proprietary software application designed, architected, and engineered by **AvatarN03**.
+**Prava Travel Workspace** is authored and maintained by **AvatarN03**.
 
-- **Copyright © 2026 AvatarN03. All rights reserved.**
-- This entire codebase, including its architecture, data models, UI/UX designs, transactional proposal mutation engine, and assets, is the private intellectual property of **AvatarN03**.
-- Unauthorized copying, cloning, redistribution, public reproduction, reverse engineering, or commercial exploitation of this repository or its software architecture without explicit permission from **AvatarN03** is strictly prohibited.
+- This project is licensed under the **[MIT License](LICENSE)**.
+- **Copyright © 2026 AvatarN03**.
+- You are free to inspect, learn from, fork, and contribute to this project under the terms of the MIT License.
