@@ -1,22 +1,22 @@
-# Prava AI — Design System & Visual Specification
+# Prava Travel Workspace — Design System & Visual Specification
 
 ## Metadata
 
 | Field | Value |
 |---|---|
-| **Project Name** | Prava AI (v2.0 Workspace) |
+| **Project Name** | Prava Travel Workspace |
 | **Document** | Design System & Visual Specification |
 | **Version** | 2.0 (Production Master) |
 | **Status** | Active / Canonical |
 | **Aligned With** | `docs/01-product-vision.md`, `docs/03-system-architecture.md`, `AGENTS.md` |
-| **Last Updated** | 2026-09-26 |
+| **Last Updated** | 2026-10-18 |
 
 ---
 
 ## 1. Executive Design Philosophy
 
 ### Product Vision: "Workspace First, AI Second"
-Prava AI is an **AI-augmented travel workspace** modeled after high-efficiency productivity tools (**Notion, Linear, GitHub, Stripe Dashboard**).
+Prava Travel Workspace is an **AI-augmented travel workspace** modeled after high-efficiency productivity tools (**Notion, Linear, GitHub, Stripe Dashboard**).
 
 - **Workspace First**: Structured, persistent, user-owned data is the core product. Every workflow (itineraries, accommodations, expenses, checklists, notes, essentials) works 100% manually without AI involvement.
 - **AI Second**: AI is an assistive accelerant (named **Ichinose**), not a conversational gatekeeper.
@@ -27,7 +27,7 @@ Prava AI is an **AI-augmented travel workspace** modeled after high-efficiency p
 
 ## 2. Canonical Typography System
 
-Prava AI utilizes a distinct, three-tier typographic hierarchy defined in `app/layout.tsx` and mapped via Tailwind CSS v4 in `app/globals.css`:
+Prava Travel Workspace utilizes a distinct, three-tier typographic hierarchy defined in `app/layout.tsx` and mapped via Tailwind CSS v4 in `app/globals.css`:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐

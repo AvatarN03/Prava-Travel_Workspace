@@ -1,44 +1,31 @@
-# Polar Sandbox Subscription Billing Guide — Prava AI V2
+# Polar Subscription Billing Architecture — Prava Travel Workspace
 
-This document details the architecture, setup, testing workflows, and production deployment checklist for Polar recurring subscriptions in the Prava AI Workspace.
+This document details the architecture, cryptographic verification, webhook delivery lifecycle, and customer portal workflows for Polar recurring subscriptions in Prava Travel Workspace.
 
 ---
 
 ## 1. Overview & Architecture
 
-Prava integrates with **Polar** as its Merchant of Record (MoR) for subscription billing.
+Prava integrates with **Polar** as its Merchant of Record (MoR) for subscription billing and quota governance.
 Key architectural principles:
-- **Sandbox-First**: Tested and verified in Polar Sandbox (`POLAR_SERVER=sandbox`).
+- **Environment Isolation**: Supports seamless toggling between Polar Sandbox (`POLAR_SERVER=sandbox`) and live production environments.
 - **Server Authority**: Entitlement to Pro privileges (`hasActiveProSubscription(userId)`) is determined exclusively by PostgreSQL database records (`Subscription` model), never by client parameters or success redirect URLs.
-- **Cryptographic Verification**: Webhooks are verified with `@polar-sh/sdk/webhooks` (`validateEvent`) before processing.
+- **Cryptographic Verification**: Webhooks are verified with `@polar-sh/sdk/webhooks` (`validateEvent`) before processing to prevent replay attacks and header spoofing.
 - **Idempotency**: Webhook deliveries are deduplicated via the `WebhookEvent` table to prevent duplicate subscriptions or state corruption.
 - **Customer Portal**: Customers manage and cancel their subscriptions directly in Polar's hosted Customer Portal via `polar.customerSessions.create`.
 
 ---
 
-## 2. Required Environment Variables
+## 2. Configuration Parameters & Architectural Contracts
 
-Add the following variables to `.env` (server-side only, never prefix secrets with `NEXT_PUBLIC_`):
+Polar integration relies on key server-only credentials managed securely in the production runtime:
 
-```bash
-# ------------------------------------------------------------------------------
-# Polar Subscription Billing (Sandbox Environment)
-# ------------------------------------------------------------------------------
-# 1. Polar Sandbox Organization Access Token (OAT)
-POLAR_ACCESS_TOKEN=polar_oat_your_sandbox_access_token
-
-# 2. Polar Recurring Product ID for "Prava Pro"
-POLAR_PRODUCT_ID=your_polar_product_id
-
-# 3. Polar Webhook Secret for signature validation
-POLAR_WEBHOOK_SECRET=polar_whsec_your_webhook_secret
-
-# 4. Polar Server Environment ("sandbox" or "production")
-POLAR_SERVER=sandbox
-
-# 5. Application URL for redirects
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
+| Parameter Contract | Purpose & Security Scope |
+|---|---|
+| **Organization Token** | Server-only Polar Organization Access Token (OAT) used to initiate checkout sessions and customer portal sessions. |
+| **Product Identifier** | Recurring subscription plan identifier mapped to the Pro tier in the workspace database. |
+| **Webhook Signature Secret** | Cryptographic secret used by the webhook endpoint to validate incoming `Standard Webhooks` headers. |
+| **Server Target** | Target environment indicator (`sandbox` or `production`) steering API communication. |
 
 ---
 

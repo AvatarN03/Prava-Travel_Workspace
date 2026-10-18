@@ -12,7 +12,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
 [![Prisma](https://img.shields.io/badge/Prisma-7.10-2D3748?style=flat&logo=prisma)](https://www.prisma.io/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-3ECF8E?style=flat&logo=postgresql)](https://supabase.com/)
-[![AI Engine](https://img.shields.io/badge/AI_Engine-Gemini_Primary_%2B_Multi--Model-4285F4?style=flat&logo=google)](https://deepmind.google/technologies/gemini/)
+[![AI Engine](https://img.shields.io/badge/AI_Engine-Gemini_Primary_%2B_Multi--Model-4285F4?style=flat&logo=google)](#)
 [![Polar](https://img.shields.io/badge/Billing-Polar_Payments-blueviolet?style=flat)](https://polar.sh/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 
@@ -40,11 +40,10 @@
   - [6. Subscription Billing & Quota Governance](#6-subscription-billing--quota-governance)
   - [7. Offline Sync & Media Optimization](#7-offline-sync--media-optimization)
 - [🏗️ Technical Architecture & Stack](#️-technical-architecture--stack)
-- [🚀 Getting Started & Local Development](#-getting-started--local-development)
-- [⚙️ Environment Variables Reference](#️-environment-variables-reference)
+- [📚 Project Documentation](#-project-documentation)
 - [📁 Codebase Organization](#-codebase-organization)
-- [🎨 Design Standards & Philosophy](#-design-standards--philosophy)
-- [📄 License & Credits](#-license--credits)
+- [🎨 Design & Product Philosophy](#-design--product-philosophy)
+- [📄 Intellectual Property & License](#-intellectual-property--license)
 
 ---
 
@@ -298,71 +297,21 @@ Located at `/subscription` and `/usage`:
 
 ---
 
-## 🚀 Getting Started & Local Development
+## 📚 Project Documentation
 
-### Prerequisites
-- **Node.js**: `v20.x` or `v22.x` (LTS recommended)
-- **Package Manager**: **`npm`** *(Strict requirement: always use `npm` to maintain `package-lock.json`)*
-- A [Supabase](https://supabase.com/) project (PostgreSQL database & Auth)
-- A [Google AI Studio](https://aistudio.google.com/) API Key for Gemini
+For deep technical insights, design rationale, and system architecture specifications authored throughout the engineering of Prava, explore the architectural documentation:
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/AvatarN03/Prava.git
-cd Prava
-```
-
-### 2. Install Dependencies
-```bash
-npm install
-```
-
-### 3. Configure Environment Variables
-Copy `.env.example` to create your local environment file:
-```bash
-cp .env.example .env.local
-```
-Configure your keys as outlined in the [Environment Variables Reference](#️-environment-variables-reference) below.
-
-### 4. Push Database Schema & Generate Prisma Client
-```bash
-npx prisma db push
-npx prisma generate
-```
-
-### 5. Start the Development Server
-```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## ⚙️ Environment Variables Reference
-
-| Variable | Description | Required? |
-|---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL (e.g., `https://xyz.supabase.co`) | **Yes** |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase Anon / Publishable API key | **Yes** |
-| `SUPABASE_SECRET_KEY` | Supabase Service Role Secret Key (server-only) | **Yes** |
-| `DATABASE_URL` | PostgreSQL connection string (Supabase pooled port `6543`) | **Yes** |
-| `DIRECT_URL` | Direct PostgreSQL connection string (Supabase port `5432`) | **Yes** |
-| `GEMINI_API_KEY` | Google AI Studio API key for Gemini 3.x / 2.5 Flash | **Yes** |
-| `OPENROUTER_API_KEY` | OpenRouter API key for free conversational fallback | Optional |
-| `UNSPLASH_ACCESS_KEY` | Unsplash API Access Key for destination cover photos | **Yes** |
-| `OPENWEATHER_API_KEY` | OpenWeather API key for 5-day weather radar | **Yes** |
-| `POLAR_ACCESS_TOKEN` | Polar organization access token (`polar_oat_...`) | Optional (Billing) |
-| `POLAR_CHECKOUT_MONTHLY_URL` | Polar checkout link for Monthly Pro subscription | Optional (Billing) |
-| `POLAR_CHECKOUT_ANNUAL_URL` | Polar checkout link for Annual Pro subscription | Optional (Billing) |
-| `POLAR_WEBHOOK_SECRET` | Polar webhook signature secret | Optional (Billing) |
-| `POLAR_SERVER` | Polar environment (`sandbox` or `production`) | Optional (Billing) |
-| `NEXT_PUBLIC_APP_URL` | Canonical app URL (default: `http://localhost:3000`) | **Yes** |
+- [Product Vision & Philosophy](docs/01-product-vision.md) — The founding thesis, problem space, user personas, and the *"Workspace First, AI Second"* doctrine.
+- [Design System & Typography](docs/02-design-system.md) — The 3-tier font system (Cinzel, Sora, Newsreader), dual-theme tokens, component standards, and the obsidian aesthetic.
+- [System Architecture](docs/03-system-architecture.md) — Monolithic server-first architecture, database schemas, AI context assembler, and transactional proposal engine.
+- [Engineering Roadmap](docs/implementation-roadmap.md) — The multi-phase engineering progression, architectural decisions, and module delivery milestones.
+- [Polar Subscription Architecture](docs/polar-subscription.md) — Merchant of Record integration, webhook idempotency, cryptographic signatures, and customer portal sessions.
 
 ---
 
 ## 📁 Codebase Organization
 
-Prava enforces a **feature-first** modular architecture:
+Prava enforces a **feature-first** modular architecture designed for high maintainability and clear domain boundaries:
 
 ```
 prava/
@@ -397,7 +346,7 @@ prava/
 │   ├── travel-essentials/            # Weather, FX, Country, Maps, Emergency, Language, Vault
 │   ├── trip-workspace/               # 7 workspace sub-modules + Ichinose AI proposal engine
 │   └── trips/                        # Trips CRUD, Unsplash picker, shadcn DatePickers
-├── lib/                              # Core singletons and utilities
+├── lib/                              # Core singletons and infrastructure utilities
 │   ├── ai/                           # Gemini client initialization & model cascade
 │   ├── auth/                         # Safe profile sync helper (syncUserProfile)
 │   ├── calendar/                     # Google Calendar URL & .ics export engine
@@ -407,47 +356,31 @@ prava/
 │   ├── supabase/                     # Supabase SSR client & proxy middleware
 │   └── utils/                        # Canvas image resizer & string helpers
 ├── prisma/                           # schema.prisma & PostgreSQL migrations
-├── services/                         # External integrations (context-builder, unsplash)
-├── memory.md                         # Continuous task memory & completed phases log
-└── AGENTS.md                         # Architecture rules & agent pair programming guidelines
+└── services/                         # Cross-cutting server integrations (context-builder, unsplash)
 ```
 
 ---
 
-## 🎨 Design Standards & Philosophy
+## 🎨 Design & Product Philosophy
 
-Prava follows strict productivity and interface principles:
+Prava follows strict productivity and interface principles inspired by high-efficiency software:
 
 - **Calm & Minimal**: Generous whitespace, subtle borders, and crisp typographical hierarchy over decorative gimmicks.
-- **No AI Slop**: Absolutely no chat-first chrome, floating bubbles, neumorphism, heavy gradients, or glowing neon animations.
+- **No AI Slop**: Explicit rejection of chat-first chrome, floating bubbles, neumorphism, heavy decorative gradients, or glowing neon animations.
 - **Brand Palette**:
   - Primary: Prava Cerulean Blue (`#2D9BF0`)
   - Accent: Sky / Ice (`#F0F8FF` / `#E0F2FE`)
   - Light Canvas: Slate background (`#F8FAFC`) with slate typography (`#1E293B`)
   - Dark Canvas: Deep obsidian navy (`#0C1322`, `#090E1A`)
 - **Explicit Affordances**: All interactive surfaces, buttons, and links strictly render `cursor: pointer`.
-- **Import Hierarchy**: Enforces a strict 6-tier import structure (`inbuilt` → `installed packages` → `components` → `contexts/providers` → `services/lib/utils` → `constants/types`) via `.agents/skills/format-imports-and-clean`.
+- **Content-First Focus**: Data density and readability take absolute precedence over ornamentation.
 
 ---
 
-## 📜 Key Scripts
+## 📄 Intellectual Property & License
 
-| Command | Purpose |
-|---|---|
-| `npm run dev` | Starts local Next.js dev server on `http://localhost:3000` with Turbopack |
-| `npm run build` | Compiles production bundle with strict TypeScript verification |
-| `npm run start` | Runs the compiled production build |
-| `npm run lint` | Runs ESLint checks |
-| `npx prisma db push` | Pushes schema changes directly to Supabase PostgreSQL |
-| `npx prisma generate` | Regenerates Prisma TypeScript client |
-| `npx prisma studio` | Launches interactive local database explorer |
+**Prava Travel Workspace** is a private, proprietary software application designed, architected, and engineered by **AvatarN03**.
 
----
-
-## 📄 License & Credits
-
-- Built with modern open-source technologies: Next.js, React, Tailwind CSS, Prisma, Supabase, and Radix UI.
-- Live data provided by Unsplash, OpenWeather, European Central Bank (via Frankfurter), and REST Countries.
-- Google Gemini intelligence provided by Google DeepMind.
-
-**Prava Travel Workspace** is private and proprietary. All rights reserved.
+- **Copyright © 2026 AvatarN03. All rights reserved.**
+- This entire codebase, including its architecture, data models, UI/UX designs, transactional proposal mutation engine, and assets, is the private intellectual property of **AvatarN03**.
+- Unauthorized copying, cloning, redistribution, public reproduction, reverse engineering, or commercial exploitation of this repository or its software architecture without explicit permission from **AvatarN03** is strictly prohibited.

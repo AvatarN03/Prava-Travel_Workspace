@@ -1,25 +1,25 @@
-# Prava AI
+# Prava Travel Workspace
 
-## Product Vision
+## Product Vision & Canonical Thesis
 
 ### Metadata
 
 | Field | Value |
 |---|---|
-| Project Name | Prava AI |
-| Current Version | 2.0 (Planning Phase) |
-| Document Version | 1.0 |
-| Status | Draft |
+| Project Name | Prava Travel Workspace |
+| Current Version | 2.0 (Production Master) |
+| Document Version | 2.0 |
+| Status | Active / Canonical |
 | Owner | Prashanth Naidu |
-| Last Updated | 2026-08-06 |
+| Last Updated | 2026-10-18 |
 
 ---
 
 ## Executive Summary
 
-Prava AI is an AI-augmented travel workspace. It is the single place where a traveler plans, organizes, and manages every aspect of a trip — itineraries, accommodation, expenses, notes, checklists, and reference links — alongside contextual reference tools for weather, currency, maps, country information, emergency contacts, and language essentials.
+Prava Travel Workspace is an AI-augmented travel workspace. It is the single system of record where a traveler plans, organizes, and manages every aspect of a trip — itineraries, accommodation, expenses, notes, checklists, and reference links — alongside contextual reference tools for weather, currency, maps, country information, emergency contacts, and language essentials.
 
-Prava AI is not built around a conversational AI assistant that generates a trip and hands it back as a static output. It is built around a persistent workspace that stores and organizes a user's travel data, with AI applied on top of that data to reduce manual effort where it is useful. Every core workflow in Prava AI can be completed manually, without AI involvement, at any time.
+Prava Travel Workspace is not built around a conversational AI assistant that generates a trip and hands it back as a static output. It is built around a persistent workspace that stores and organizes a user's travel data, with AI applied on top of that data to reduce manual effort where it is useful. Every core workflow in Prava can be completed manually, without AI involvement, at any time.
 
 This distinction is the foundation of the product: **Workspace First, AI Second.**
 
@@ -199,80 +199,48 @@ The goal is an interface that recedes into the background, allowing the user's t
 
 ---
 
-## Project Scope
+## Project Scope & Delivery
 
-Prava AI 2.0 covers the modules described in the [Feature Overview](#feature-overview) section: Dashboard, Trips, Trip Workspace (with its sub-modules), AI Assistant, Community, Travel Essentials, Profile, Profile Insights, and Settings.
-
-The architecture is scoped to what is realistic for a solo developer operating on free-tier infrastructure. Enterprise-grade complexity (e.g., multi-region infrastructure, dedicated data pipelines, large-scale distributed systems) is explicitly out of scope unless a specific, demonstrated need arises.
-
-> **TODO:** A detailed technical architecture document defining infrastructure choices, data storage, and AI integration approach is tracked separately (see [Related Documents](#related-documents)).
-
----
-
-## MVP Scope
-
-The MVP is expected to include the full Trip Workspace (Overview, Itinerary, Accommodation, Expenses, Notes, Checklist, Links, AI Assistant), the Dashboard, Trips list, baseline AI Assistant, Travel Essentials, and Settings.
-
-> **TODO:** The exact cut line between MVP and post-MVP scope — including whether Community and Profile Insights ship in the initial MVP release or are deferred — has not been finalized. This section should be updated once MVP scope is formally locked.
+Prava Travel Workspace covers the complete journey lifecycle across its core functional domains:
+- **Cross-Trip Dashboard**: Central command center tracking active countdowns, logistics completion indicators, upcoming checkpoints, urgent checklist tasks, and recent journeys.
+- **Trip Workspace (7 Sub-Modules)**: Overview & Calendar sync, Curated Itinerary timeline, Accommodations & Stays, Financials & Expense tracker with interactive SVG Donut charts, Markdown Notes, Interactive Checklists with smart packing generation, and Reference Links vault.
+- **Ichinose AI Assistant**: Persistent 3-column flex companion with Gemini primary reasoning, multi-model fallback cascades, and the transactional proposal mutation engine (`AiProposal`).
+- **Live Travel Essentials (Max-Width 7XL Obsidian Suite)**: Real-time weather radar, live ECB currency exchange with historical trend charts, REST Countries guides, Leaflet OSM maps, international emergency directory, and the audio voice phrasebook.
+- **Community Hub**: Handcrafted trip templates with 1-click workspace cloning, community discussion forum with thread replies, and travel stories markdown publication platform.
+- **Subscription Billing & Quota Governance**: Polar recurring subscriptions, customer portal sessions, dynamic localized currency conversions, and real-time quota meters.
+- **Offline Engine & Media Optimization**: IndexedDB offline caching and client-side HTML5 Canvas avatar optimization.
 
 ---
 
-## Future Vision
+## Production Scope Status
 
-Beyond the current planning phase, Prava AI is expected to continue deepening the intelligence layer applied to existing workspace modules, and to grow the Community module as a source of travel inspiration.
-
-Any expansion of scope is expected to remain consistent with the Workspace First, AI Second philosophy: new capabilities should apply to data the user already owns within the workspace, rather than introducing new categories of product behavior (e.g., booking, social networking, or enterprise travel management — see [Non-Goals](#non-goals)).
-
-> **TODO:** Specific future features and their prioritization have not been finalized and are intentionally not listed here to avoid premature commitments.
-
----
-
-## Success Metrics
-
-> **TODO:** Specific success metrics and targets have not been finalized. The categories below are placeholders to be filled in with concrete definitions and targets during MVP planning.
-
-| Category | Status |
-|---|---|
-| Workspace adoption (e.g., trips created, modules used per trip) | TODO |
-| Retention (e.g., returning users across multiple trips) | TODO |
-| AI feature usage relative to manual workflow usage | TODO |
-| User-reported reduction in planning effort | TODO |
-
----
-
-## Constraints
-
-- **Solo developer.** The product is designed, built, and maintained by a single developer, which directly informs scope and architectural decisions.
-- **Free-tier infrastructure.** Architecture choices are constrained to what is achievable on free-tier services, avoiding infrastructure costs that are not justified by current scale.
-- **Realistic complexity.** Architectural and feature decisions favor simplicity and maintainability over theoretical scalability or enterprise patterns.
+All core modules have been fully engineered and delivered to production. Every primary workflow functions seamlessly through manual manipulation with zero AI dependencies, fulfilling the core *"Workspace First, AI Second"* mission.
 
 ---
 
 ## Non-Goals
 
-Prava AI is explicitly **not** trying to become:
-
-- A social media platform
-- An Online Travel Agency (OTA)
-- A booking engine
-- Another general-purpose ChatGPT wrapper
-- An enterprise travel management platform
+Prava Travel Workspace is explicitly **not**:
+- A bloated social media feed optimized for doom-scrolling.
+- An Online Travel Agency (OTA) or third-party affiliate link farm.
+- An inflexible 15-step wizard that forces decisions on the traveler.
+- Another stateless, general-purpose ChatGPT prompt wrapper.
+- An enterprise corporate travel management platform.
 
 ---
 
-## Future Revisions
+## Revision History
 
 | Version | Date | Author | Description |
 |---|---|---|---|
 | 1.0 | 2026-08-06 | Prashanth Naidu | Initial draft of the Product Vision document |
+| 2.0 | 2026-10-18 | Prashanth Naidu | Production Master: Updated naming to Prava Travel Workspace, affirmed delivered modules, and finalized canonical architecture links. |
 
 ---
 
-## Related Documents
+## Canonical Documentation
 
-> **TODO:** The following related documents are anticipated but not yet finalized. Links should be added once each document exists.
-
-- Technical Architecture Document
-- MVP Scope and Roadmap
-- Design System / UI Guidelines
-- AI Integration Specification
+- [Design System & Typography](02-design-system.md) — Visual standards, 3-tier font hierarchy, and theme tokens.
+- [System Architecture](03-system-architecture.md) — Monolithic server-first architecture and data models.
+- [Implementation Roadmap](implementation-roadmap.md) — Comprehensive engineering milestones and delivery phases.
+- [Polar Subscription Architecture](polar-subscription.md) — Recurring billing, webhook validation, and quota governance.

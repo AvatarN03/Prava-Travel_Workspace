@@ -1,65 +1,51 @@
-# Prava AI V2 Implementation Roadmap
+# Prava Travel Workspace — Implementation Roadmap & Delivery Milestones
 
-> **Access note before you read this:** I was not able to open `docs/01-product-vision.md`, `docs/02-design-system.md`, or `docs/03-system-architecture.md` directly — no repository or files were uploaded to this session, only the task brief itself. The brief you provided is unusually thorough (it restates the architecture, module list, AI philosophy, and design intent in detail), so I've treated **that brief as the working source of truth** for this roadmap. Wherever the actual `.md` files likely contain more granular detail than the brief (exact schema fields, exact color/spacing tokens, Community module scope, etc.), I've flagged it explicitly as an **Open Decision** rather than inventing it. If you share the three docs, I can tighten Sections 3–6 against their exact wording in a follow-up pass.
-
----
-
-## 1. Current State Assessment
-
-**Confirmed from the provided `package.json` and tree:**
-
-- Next.js `16.3.0`, React `19.2.8` / `react-dom 19.2.8` — App Router (an `app/` directory already exists).
-- TypeScript `5.x`, `@types/node`, `@types/react`, `@types/react-dom` present — project is TS-first already.
-- Tailwind CSS `4.x` via `@tailwindcss/postcss` — this is the CSS-first Tailwind v4 configuration model, **not** the legacy `tailwind.config.js` JS model. This matters for Phase 1: shadcn/ui's CLI and docs must be treated as Tailwind-v4-aware, and theme tokens will live in CSS (`@theme` blocks in `globals.css`), not a JS config file.
-- ESLint `9.x` with `eslint.config.mjs` — flat config, not `.eslintrc`.
-- `package-lock.json` exists → the project was initialized with **npm**, not pnpm.
-- No UI library, ORM, auth client, query library, state library, validation library, image library, map library, or AI SDK installed yet. This is a genuinely blank slate above the Next.js/React/Tailwind/ESLint baseline.
-- No test framework installed yet.
-- No `.env` / `.env.example` present in the described tree.
-- `AGENTS.md` and `CLAUDE.md` contain Next.js-generated default agent guidance. Per your instruction, these are preserved as-is and only **appended to**, never overwritten, as the roadmap introduces new conventions (folder structure, Server Action patterns, etc.).
-- `docs/` exists with the three source-of-truth files — their exact contents are the one piece of "current state" I could not verify directly in this session (see access note above).
-
-**Discrepancy to resolve, not silently fix:**
-
-- The architecture document specifies **pnpm**. The repository currently contains **`package-lock.json`**, meaning it was bootstrapped with npm (or at least npm has been run once). These two facts conflict. See **Open Decision #1** and **Phase 0**.
-
-**Next.js 16 / React 19 implication:** Because this is Next.js 16 (a fairly new major version relative to most training data and public tutorials) and `AGENTS.md`/`CLAUDE.md` already instruct agents to consult the installed Next.js docs before writing code, every phase below that touches routing, caching, Server Actions, or streaming should begin with a quick check of the **installed** Next.js 16 docs rather than assumed Next.js 13/14 patterns (e.g. caching defaults, `fetch` behavior, and async `params`/`searchParams` have changed across versions). I call this out again explicitly in the phases where it matters most (App Shell, Data layer, AI streaming).
+This document details the phased engineering roadmap, architectural decisions, and production delivery milestones for the Prava Travel Workspace application. It aligns directly with the canonical product thesis ([`docs/01-product-vision.md`](01-product-vision.md)), design system specification ([`docs/02-design-system.md`](02-design-system.md)), and technical architecture ([`docs/03-system-architecture.md`](03-system-architecture.md)).
 
 ---
 
-## 2. Approved Decisions
+## 1. Architectural Baseline & Execution Foundation
 
-These come directly from your brief and are treated as locked unless you say otherwise:
+**Core Environment & Conventions:**
 
-- **Stack:** Next.js App Router, React, TypeScript, Tailwind CSS, shadcn/ui, Server Actions, Route Handlers, PostgreSQL via Supabase, Prisma, Supabase Auth, TanStack Query, Zustand, React Context, Zod, Cloudinary, React Leaflet/OpenStreetMap, Gemini 2.5 Flash (OpenRouter deferred), Vercel, pnpm.
-- **Principles:** feature-first, modular, server-first, separation of concerns, context-aware AI, single responsibility, reusable components, maintainability, progressive enhancement, free-tier optimization.
-- **Explicitly excluded, permanently unless revisited by you:** microservices, CQRS, event sourcing, a separate backend service, unnecessary infrastructure, premature abstraction.
-- **Modules:** Dashboard, Trips, Trip Workspace (Overview, Itinerary, Accommodation, Expenses, Notes, Checklist, Links, Trip Workspace AI), Community, Travel Essentials (Weather, Currency, Maps, Country Guide, Emergency, Language Essentials), Profile (Overview, Preferences, Activity, Insights), Settings.
-- **AI is cross-cutting**, not a standalone module — it lives inside Dashboard and Trip Workspace only.
-- **AI philosophy:** "the application remembers, the LLM does not." Durable data lives in Postgres; prompts are constructed from application-owned context; conversation history (if retained) is stored by the app, not relied on from the provider; AI must never gate a non-AI workflow.
-- **Design direction:** professional, minimal, calm, structured, readable, focused, intentional, content-first, whitespace-driven — closer to Notion/Linear/GitHub/Raycast/Stripe Dashboard, explicitly not ChatGPT-style chat-first, no gradients, no glassmorphism, no decorative animation, no bubble UI. Lucide icons. Desktop-first but responsive. Accessibility is a default, not a phase.
+- **Framework**: Next.js `16.3.x` (App Router), React `19.2.x` / `react-dom 19.2.x`.
+- **Language**: TypeScript `5.x` with strict type checking.
+- **Styling**: Tailwind CSS `v4.x` via `@tailwindcss/postcss` with theme tokens configured in `app/globals.css`.
+- **Package Manager**: **`npm`** *(Strict repository standard: maintains `package-lock.json`)*.
+- **Database & Auth**: PostgreSQL managed on Supabase with Supabase Auth SSR (`@supabase/ssr`).
+- **Data Layer**: Prisma ORM `7.10.x` with `@prisma/adapter-pg` connection pooling.
+- **Storage**: Supabase Storage (`prava-media` bucket) with user-scoped access rules and HTML5 Canvas client downscaling.
+- **Payments**: Polar Merchant of Record (MoR) with cryptographic webhook signatures and customer portal sessions.
+- **AI Intelligence**: Google Gemini (3.x & 2.5 Flash via `@google/genai`) with OpenRouter resilience cascades.
 
 ---
 
-## 3. Open Decisions / TODOs
+## 2. Approved Architectural Decisions
 
-These are things the brief doesn't fully pin down, or that only the actual doc files can resolve. Each has a recommended checkpoint rather than a guess.
+- **Stack**: Next.js App Router, React 19, TypeScript, Tailwind CSS v4, shadcn/ui & Radix UI, Server Actions, Route Handlers, PostgreSQL via Supabase, Prisma 7, Supabase Auth SSR, Supabase Storage, Leaflet/OSM, Google Gemini 2.5/3.x Flash, Polar Payments, npm.
+- **Core Principles**: Feature-first, modular, server-first, separation of concerns, context-aware AI, single responsibility, progressive enhancement, free-tier/cloud optimization.
+- **Modules**: Dashboard, Trips, Trip Workspace (Overview, Itinerary, Accommodations, Expenses, Notes, Checklist, Links, Ichinose AI), Travel Essentials Suite (Weather, FX, Country Guide, Maps, Emergency Hub, Language Phrasebook), Community Hub (Templates, Forum, Stories), User Profile, Subscription Billing & Quota Governance.
+- **AI Philosophy**: *"The application remembers, the LLM does not."* Durable state resides in PostgreSQL; prompts assemble structured workspace context; mutations execute exclusively via transactional review cards (`AiProposal`). AI never gates manual workflows.
+- **Design Direction**: Linear/Notion-grade craftsmanship, calm slate/obsidian palette, content-first typography, explicit `cursor: pointer` interactive affordances, zero AI slop.
 
-| # | Open item | Why it's open | Resolve by |
-|---|---|---|---|
-| 1 | **Package manager: npm vs pnpm** | Architecture doc says pnpm; repo has `package-lock.json` | Phase 0, before any new dependency is installed |
-| 2 | **Exact design tokens** (color scale, spacing scale, type scale, radius, elevation, dark mode y/n) | Brief gives qualitative direction only ("calm", "Notion-like"); `docs/02-design-system.md` likely has exact values I couldn't read | Phase 1, before shadcn/ui theming is finalized |
-| 3 | **Workspace entity schema details** (Itinerary item shape, Expense categories/currency handling, Checklist item shape, Link metadata) | Brief names the tabs but not their data model; `docs/03` likely specifies this | Phase 4, before `schema.prisma` is finalized — treat any schema I sketch below as a **draft for review**, not a final decision |
-| 4 | **User table strategy**: mirrored `public.profiles` table 1:1 with Supabase `auth.users`, vs. referencing `auth.users` directly from Prisma | Common Supabase+Prisma pattern is a mirrored profile table, but this is an architectural choice your docs may already make | Phase 4 |
-| 5 | **Auth methods**: email/password only, magic link, OAuth providers? | Not specified in brief | Phase 3 |
-| 6 | **Trip Workspace AI conversation persistence model**: per-trip single thread vs. multiple threads, retention/pruning policy | "Conversation history, when retained, belongs to the application" — the *when* and *how long* aren't specified | Before Phase 8 (AI infra) |
-| 7 | **Dashboard AI scope**: brief says AI is used "within Dashboard and Trip Workspace" — what does Dashboard AI actually do? | Not detailed | Before Phase 8 |
-| 8 | **Travel Essentials data providers** (weather API, currency/FX API, emergency-number source, country-guide content source) | Not named | Phase 9, per sub-module |
-| 9 | **Community module scope** | Named only as a module, no data model or interaction model given | Dedicated scoping pass before Phase 10 — do not start building against a guess |
-| 10 | **Settings module scope** | Not detailed beyond the name | Before Phase 12 |
-| 11 | **Image upload flow**: client-direct-to-Cloudinary (unsigned/signed upload widget) vs. server-mediated upload | Not specified | Cloudinary integration step inside Phase 6 (Accommodation/Notes likely use images) |
-| 12 | **Testing framework choice** (Vitest vs. Jest; Playwright vs. Cypress; none of these are installed yet) | Not specified | Phase 0 or Phase 4 at the latest, so tests can start accumulating early rather than being bolted on in Phase 13 |
-| 13 | **Gemini SDK package name/version at implementation time** | AI SDK package names for Gemini have shifted (`@google/generative-ai` vs newer `@google/genai`); should be verified against current docs at the moment Phase 8 actually starts, not assumed now | Start of Phase 8 |
+---
+
+## 3. Architecture Decisions & Resolution Log
+
+All foundational technical checkpoints have been resolved and codified in the production codebase:
+
+| # | Technical Decision | Resolution & Implementation Detail |
+|---|---|---|
+| 1 | **Package Manager** | **`npm`** selected and enforced to maintain clean `package-lock.json` synchronization. |
+| 2 | **Design Tokens & Typography** | 3-tier font hierarchy (`Cinzel`, `Sora`, `Newsreader`) with dual-theme obsidian variables. |
+| 3 | **Workspace Entity Schema** | Fully normalized Prisma relational models with `onDelete: Cascade` and snake_case mapping. |
+| 4 | **User Table Strategy** | `syncUserProfile(user)` helper safely syncing Supabase auth UUIDs to `Profile` with email collision recovery. |
+| 5 | **Auth Architecture** | Server-side PKCE code exchange in `app/auth/callback/route.ts` preventing client auth race conditions. |
+| 6 | **AI Thread Persistence** | Atomic `AiProposal` transaction engine with per-session context assembly and 15-message thread limits. |
+| 7 | **Travel Essentials APIs** | Live ECB rates via Frankfurter, OpenWeather 5-day radar, and REST Countries v3.1 integration. |
+| 8 | **Community & Sharing** | 1-Click workspace cloner duplicating trip entities with deep relational cloning. |
+| 9 | **Image Optimization** | Supabase Storage with client-side HTML5 Canvas 512x512 downscaling prior to upload. |
+| 10 | **Billing & Payments** | Polar sandbox & production integration with webhook HMAC verification and customer sessions. |
 
 None of these block starting the roadmap — most don't need answers until their listed phase. Items 1 and 12 are the only two worth deciding early because they affect tooling from day one.
 

@@ -1,4 +1,4 @@
-# Prava AI
+# Prava Travel Workspace
 
 ## System Architecture
 
@@ -6,19 +6,19 @@
 
 | Field | Value |
 |---|---|
-| Project Name | Prava AI |
+| Project Name | Prava Travel Workspace |
 | Document | System Architecture |
-| Version | 1.1 |
-| Status | Draft |
+| Version | 2.0 (Production Master) |
+| Status | Active / Canonical |
 | Owner | Prashanth Naidu |
-| Current Planning Phase | Architecture Finalization |
-| Last Updated | 2026-08-06 |
+| Current Planning Phase | Production Deployment |
+| Last Updated | 2026-10-18 |
 
 ---
 
 ## Purpose
 
-This document defines the technical architecture of Prava AI. It describes the approved technology stack, the structural organization of the codebase, and the architectural principles governing how the system is built and how it is expected to evolve.
+This document defines the technical architecture of Prava Travel Workspace. It describes the approved technology stack, the structural organization of the codebase, and the architectural principles governing how the system is built and how it is expected to evolve.
 
 This document assumes familiarity with `docs/01-product-vision.md`, which defines product philosophy, AI philosophy, product goals, core principles, module scope, and constraints. Those topics are not repeated here. This document addresses **how** the system is built, not **what** it does or **why** it exists.
 
@@ -26,48 +26,42 @@ This document assumes familiarity with `docs/01-product-vision.md`, which define
 
 ## Architecture Overview
 
-Prava AI is a server-first, monolithic Next.js application backed by a single relational database, with AI integrated as a cross-cutting capability rather than a core dependency or a separate system within the application.
+Prava Travel Workspace is a server-first, monolithic Next.js application backed by a single relational database, with AI integrated as a cross-cutting capability rather than a core dependency or a separate system within the application.
 
-The architecture is deliberately scoped for a solo developer operating on free-tier infrastructure, in accordance with the constraints defined in the Product Vision. It favors a small number of well-understood technologies over a larger number of specialized ones, and favors server-side logic over distributed or multi-service designs.
+The architecture is deliberately scoped for a solo developer operating on modern cloud infrastructure, in accordance with the constraints defined in the Product Vision. It favors a small number of well-understood technologies over a larger number of specialized ones, and favors server-side logic over distributed or multi-service designs.
 
 The system is organized around three structural layers:
 
-1. **Presentation layer** — Next.js (App Router) with React Server Components and Client Components, styled with Tailwind CSS and shadcn/ui.
+1. **Presentation layer** — Next.js 16 (App Router) with React 19 Server Components and Client Components, styled with Tailwind CSS v4 and shadcn/ui.
 2. **Application layer** — Server Actions and Route Handlers implementing business logic in TypeScript.
-3. **Data layer** — PostgreSQL (hosted on Supabase), accessed through Prisma ORM.
+3. **Data layer** — PostgreSQL (hosted on Supabase), accessed through Prisma ORM 7.x with connection pooling.
 
-AI (Gemini 2.5 Flash) is a capability invoked by the application layer against data already persisted in the data layer, surfaced within the Dashboard and Trip Workspace modules. It is not a separate system of record and does not sit in the primary request path for non-AI features. Consistent with the Product Vision's Workspace First, AI Second philosophy, the workspace and its persisted data remain the architectural core; AI is layered on top of it.
+AI (Google Gemini 3.x & 2.5 Flash) is a capability invoked by the application layer against data already persisted in the data layer, surfaced within the Trip Workspace and Dashboard modules. It is not a separate system of record and does not sit in the primary request path for non-AI features. Consistent with the Product Vision's Workspace First, AI Second philosophy, the workspace and its persisted data remain the architectural core; AI is layered on top of it.
 
 ---
 
 ## Technology Stack
 
-The following stack is approved and current. It is not to be substituted or extended without a corresponding architecture decision.
+The following stack is approved, implemented, and current.
 
-| Layer | Technology | Version |
+| Layer | Technology | Details & Version |
 |---|---|---|
-| Frontend Framework | Next.js (App Router) | 16.x |
-| UI Library | React | 19.x |
-| Language | TypeScript | — |
-| Styling | Tailwind CSS | 4.x |
-| Component Library | shadcn/ui | — |
-| Backend | Next.js Server Actions, Route Handlers | (bundled with Next.js 16.x) |
-| Database | PostgreSQL (Supabase) | — |
-| ORM | Prisma ORM | 7.x |
-| Authentication | Supabase Auth | — |
-| Server State | TanStack Query | — |
-| Client State | Zustand, React Context | — |
-| Validation | Zod | — |
-| File Storage | Cloudinary | — |
-| Maps | React Leaflet, OpenStreetMap | — |
-| AI Model | Gemini 2.5 Flash | — |
-| Future AI Abstraction | OpenRouter | — |
-| Deployment | Vercel | — |
-| Package Manager | pnpm | — |
-
-> Version references reflect the latest stable major releases as of this revision (August 2026) for technologies with an explicit update in scope (Next.js, React, Prisma ORM, Tailwind CSS) and should be validated against `package.json` at implementation time. No technology in this stack has been replaced or added.
-
-> **Note:** Any migration path away from a listed technology is documented under [Future Extensibility](#future-extensibility) or [Architecture Decisions](#architecture-decisions), not implied elsewhere in this document.
+| Framework | Next.js (App Router) | **16.3.x** (Turbopack, Server Actions, Route Handlers) |
+| Runtime & UI | React | **19.2.x** (Concurrent rendering, Suspense, Server Actions) |
+| Language | TypeScript | **5.x** (Strict mode) |
+| Styling | Tailwind CSS | **v4.x** (CSS-first `@tailwindcss/postcss`) |
+| Component Primitives | shadcn/ui & Radix UI | Dialog, Select, Tabs, Popover, Calendar, Switch, Accordion, Tooltip, Avatar |
+| Database | PostgreSQL (Supabase) | Supabase managed PostgreSQL with PgBouncer pooling |
+| ORM | Prisma ORM | **7.10.x** (`@prisma/client`, `@prisma/adapter-pg`) |
+| Authentication | Supabase Auth SSR | `@supabase/ssr`, server-side PKCE code exchange in `/auth/callback` |
+| File & Image Storage | Supabase Storage | `prava-media` bucket, user-scoped paths, HTML5 Canvas client downscaling |
+| Primary AI Engine | Google Gemini | `@google/genai` (Gemini 3.x Flash, 2.5 Flash, 3.1 Flash Lite) |
+| Multi-Model Fallback | OpenRouter Free | Open-weight resilience cascade (`nvidia/nemotron-3.5-lightning:free`) |
+| Payments & Billing | Polar Payments | `@polar-sh/sdk` recurring subscriptions, customer portal, webhooks |
+| Offline Cache | IndexedDB via `idb` | Client-side offline cache & background synchronization |
+| Maps & Geospatial | Leaflet & OpenStreetMap | Real-time map tiles, Nominatim geocoding, custom pins |
+| External APIs | Unsplash, OpenWeather, ECB | Live data integrations with graceful error boundaries |
+| Package Manager | npm | Strict repository convention (maintaining `package-lock.json`) |
 
 ---
 
