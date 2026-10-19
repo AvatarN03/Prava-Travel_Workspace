@@ -20,7 +20,7 @@
 <br />
 <br />
 
-<img src="public/SS/9.png" alt="Prava Travel Workspace Hero Art" width="100%" />
+<img src="public/SS/1.png" alt="Prava Travel Workspace Hero Art" width="100%" />
 
 </div>
 
