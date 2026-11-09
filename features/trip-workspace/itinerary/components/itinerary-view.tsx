@@ -10,13 +10,18 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { AddItineraryDialog } from "./add-itinerary-dialog";
 import { AddToCalendarDialog } from "../../common/add-to-calendar-dialog";
 import { ItineraryCard } from "./itinerary-card";
 
 import { useWorkspaceAi } from "../../context/workspace-ai-context";
-
-import { cn } from "@/lib/utils";
 
 import type { ItineraryItem } from "@prisma/client";
 
@@ -275,45 +280,33 @@ export function ItineraryView({
         </div>
       </div>
 
-      {/* ── Day Filter Navigation Strip ── */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar border-b border-border/60 dark:border-border">
-        <button
-          type="button"
-          onClick={() => setSelectedDay("ALL")}
-          className={cn(
-            "px-3 py-1.5 text-xs rounded-sm font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5",
-            selectedDay === "ALL"
-              ? "bg-primary text-white font-semibold shadow-xs"
-              : "bg-muted/50 dark:bg-card-subtle text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-100 hover:bg-muted dark:hover:bg-zinc-800 border border-border/60 dark:border-border"
-          )}
+      {/* Day filters remain compact regardless of trip length. */}
+      <div className="flex items-center justify-between gap-3 border-b border-border/60 pb-3">
+        <div>
+          <p className="text-xs font-semibold text-foreground">Day view</p>
+          <p className="text-[11px] text-muted-foreground">Show the full plan or focus on one day.</p>
+        </div>
+        <Select
+          value={selectedDay === "ALL" ? "ALL" : String(selectedDay)}
+          onValueChange={(value) => setSelectedDay(value === "ALL" ? "ALL" : Number(value))}
         >
-          <span>All Days</span>
-          <span className="text-[10px] opacity-80 tabular-nums">({items.length})</span>
-        </button>
+          <SelectTrigger className="h-9 w-44 shrink-0 rounded-sm bg-card text-xs font-medium cursor-pointer">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="rounded-sm">
+            <SelectItem value="ALL">All Days ({items.length} stops)</SelectItem>
+            {daysList.map((day) => {
+              const dateLabel = getDayDateLabel(day);
+              const dayCount = items.filter((item) => (item.dayNumber || 1) === day).length;
 
-        {daysList.map((day) => {
-          const dateLabel = getDayDateLabel(day);
-          const isSelected = selectedDay === day;
-          const dayCount = items.filter((i) => (i.dayNumber || 1) === day).length;
-
-          return (
-            <button
-              key={day}
-              type="button"
-              onClick={() => setSelectedDay(day)}
-              className={cn(
-                "px-3 py-1.5 text-xs rounded-sm font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5",
-                isSelected
-                  ? "bg-primary text-white font-semibold shadow-xs"
-                  : "bg-muted/50 dark:bg-card-subtle text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-100 hover:bg-muted dark:hover:bg-zinc-800 border border-border/60 dark:border-border"
-              )}
-            >
-              <span>Day {day}</span>
-              {dateLabel && <span className="text-[10px] opacity-75 font-normal">· {dateLabel}</span>}
-              <span className="text-[10px] opacity-80 tabular-nums">({dayCount})</span>
-            </button>
-          );
-        })}
+              return (
+                <SelectItem key={day} value={String(day)}>
+                  Day {day}{dateLabel ? ` · ${dateLabel}` : ""} ({dayCount})
+                </SelectItem>
+              );
+            })}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* ── Timeline Section by Day ── */}

@@ -26,15 +26,13 @@ export default function ItineraryLoading() {
         </div>
       </div>
 
-      {/* Day Filter Navigation Strip */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-border/60">
-        <div className="h-7 w-20 bg-primary/40 rounded-sm shrink-0" />
-        {["Day 1", "Day 2", "Day 3"].map((day) => (
-          <div
-            key={day}
-            className="h-7 w-20 sm:w-24 bg-card-subtle border border-border/60 rounded-sm shrink-0"
-          />
-        ))}
+      {/* Day selector: mirrors the compact day filter in the loaded view. */}
+      <div className="flex items-center justify-between gap-3 border-b border-border/60 pb-3">
+        <div className="space-y-1">
+          <div className="h-3.5 w-16 bg-muted/80 rounded-xs" />
+          <div className="h-3 w-44 bg-muted/50 rounded-xs" />
+        </div>
+        <div className="h-9 w-44 shrink-0 rounded-sm border border-border bg-card" />
       </div>
 
       {/* Day Section & Timeline List */}
