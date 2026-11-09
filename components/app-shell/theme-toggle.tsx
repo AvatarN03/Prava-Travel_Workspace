@@ -69,7 +69,7 @@ export function ThemeToggle({ className, iconSize = 19 }: ThemeToggleProps) {
             onClick={toggleTheme}
             disabled={isTransitioning}
             className={cn(
-              "h-8 w-8 sm:h-9 sm:w-9 text-muted-foreground hover:text-primary hover:bg-muted cursor-pointer transition-colors rounded-sm",
+              "h-8 w-8 rounded-sm text-muted-foreground transition-colors hover:bg-muted hover:text-primary dark:bg-black dark:text-white dark:hover:bg-black dark:hover:text-white sm:h-9 sm:w-9",
               className
             )}
             aria-label="Toggle theme"
@@ -79,7 +79,7 @@ export function ThemeToggle({ className, iconSize = 19 }: ThemeToggleProps) {
                 icon={activeDark ? Sun : Moon}
                 size={iconSize}
                 strokeWidth={2.2}
-                className="transition-colors duration-300 text-foreground"
+                className="text-foreground transition-colors duration-300 dark:text-white"
                 spring="snappy"
               />
             ) : (
