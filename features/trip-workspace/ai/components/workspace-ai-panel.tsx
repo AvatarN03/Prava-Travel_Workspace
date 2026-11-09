@@ -253,7 +253,7 @@ function FormattedMessageContent({
       );
     } else if (line.startsWith("> ")) {
       nodes.push(
-        <blockquote key={`bq-${idx}`} className="pl-2.5 border-l-2 border-[#2D9BF0] italic text-slate-300 dark:text-slate-700 bg-white/5 dark:bg-slate-200/50 py-0.5 rounded-r my-1.5">
+        <blockquote key={`bq-${idx}`} className="pl-2.5 border-l-2 border-primary italic text-slate-300 dark:text-slate-700 bg-white/5 dark:bg-slate-200/50 py-0.5 rounded-r my-1.5">
           {renderInlineSpans(line.replace(/^>\s*/, ""))}
         </blockquote>
       );
@@ -633,7 +633,7 @@ export function WorkspaceAiPanel({
                     }}
                     onBlur={handleSaveHeaderTitle}
                     autoFocus
-                    className="h-7 w-full max-w-[240px] rounded-sm border border-[#2D9BF0] bg-[#0E1729] dark:bg-white px-2.5 py-0.5 text-xs font-semibold text-white dark:text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#2D9BF0] shadow-xs"
+                    className="h-7 w-full max-w-[240px] rounded-sm border border-primary bg-[#0E1729] dark:bg-white px-2.5 py-0.5 text-xs font-semibold text-white dark:text-slate-900 focus:outline-none focus:ring-1 focus:ring-primary shadow-xs"
                   />
                 </div>
               ) : (
@@ -643,7 +643,7 @@ export function WorkspaceAiPanel({
                       onDoubleClick={handleStartEditHeader}
                       className="flex items-center gap-2 min-w-0 cursor-pointer select-none group"
                     >
-                      <span className="text-sm font-semibold text-white dark:text-slate-900 group-hover:text-[#2D9BF0] transition-colors truncate">
+                      <span className="text-sm font-semibold text-white dark:text-slate-900 group-hover:text-primary transition-colors truncate">
                         {activeConversationTitle || "Ichinose"}
                       </span>
                     </div>
@@ -667,7 +667,7 @@ export function WorkspaceAiPanel({
                     className={cn(
                       "h-8 w-8 rounded-md transition-colors cursor-pointer",
                       activeTab === "history"
-                        ? "bg-[#2D9BF0]/20 text-[#2D9BF0]"
+                        ? "bg-primary/20 text-primary"
                         : "text-slate-400 hover:text-white hover:bg-white/10 dark:text-slate-600 dark:hover:text-slate-950 dark:hover:bg-slate-200"
                     )}
                     aria-label="Chat history"
@@ -765,7 +765,7 @@ export function WorkspaceAiPanel({
                   <Button
                     size="sm"
                     variant="outline"
-                    className="h-7 text-xs gap-1 border-[#1E2B45] text-[#2D9BF0] hover:bg-[#2D9BF0]/15 dark:border-slate-300 dark:hover:bg-blue-50 rounded-md cursor-pointer"
+                    className="h-7 text-xs gap-1 border-[#1E2B45] text-primary hover:bg-primary/15 dark:border-slate-300 dark:hover:bg-blue-50 rounded-md cursor-pointer"
                     onClick={handleNewChat}
                     disabled={isCreatingThread}
                   >
@@ -787,7 +787,7 @@ export function WorkspaceAiPanel({
                         className={cn(
                           "group relative flex flex-col p-3 rounded-lg border transition-all cursor-pointer",
                           isActive
-                            ? "border-[#2D9BF0] bg-[#2D9BF0]/10 shadow-xs dark:bg-blue-50/80 dark:border-blue-400"
+                            ? "border-primary bg-primary/10 shadow-xs dark:bg-blue-50/80 dark:border-blue-400"
                             : "border-[#152033] bg-[#0E1729] hover:border-slate-700 hover:bg-[#15223D] dark:border-slate-200 dark:bg-white dark:hover:border-slate-300 dark:hover:bg-slate-50"
                         )}
                       >
@@ -813,7 +813,7 @@ export function WorkspaceAiPanel({
                                   }}
                                   onBlur={() => handleSaveThreadTitle(thread.id)}
                                   autoFocus
-                                  className="h-6 w-full rounded border border-[#2D9BF0] bg-[#0E1729] dark:bg-white px-1.5 text-xs text-white dark:text-slate-900 focus:outline-none"
+                                  className="h-6 w-full rounded border border-primary bg-[#0E1729] dark:bg-white px-1.5 text-xs text-white dark:text-slate-900 focus:outline-none"
                                 />
                                 <button
                                   type="button"
@@ -821,7 +821,7 @@ export function WorkspaceAiPanel({
                                     e.preventDefault();
                                     handleSaveThreadTitle(thread.id);
                                   }}
-                                  className="text-[#2D9BF0] p-0.5 rounded cursor-pointer shrink-0"
+                                  className="text-primary p-0.5 rounded cursor-pointer shrink-0"
                                   title="Save title"
                                 >
                                   <Check className="h-3.5 w-3.5" />
@@ -843,7 +843,7 @@ export function WorkspaceAiPanel({
                                 className={cn(
                                   "text-xs truncate font-medium",
                                   isActive
-                                    ? "text-[#2D9BF0] font-semibold"
+                                    ? "text-primary font-semibold"
                                     : "text-slate-200 dark:text-slate-800"
                                 )}
                               >
@@ -857,7 +857,7 @@ export function WorkspaceAiPanel({
                               {isActive && (
                                 <Badge
                                   variant="secondary"
-                                  className="text-[9px] px-1.5 py-0 h-4 bg-[#2D9BF0]/20 text-[#2D9BF0] border-[#2D9BF0]/30 font-semibold rounded"
+                                  className="text-[9px] px-1.5 py-0 h-4 bg-primary/20 text-primary border-primary/30 font-semibold rounded"
                                 >
                                   Active
                                 </Badge>
@@ -865,7 +865,7 @@ export function WorkspaceAiPanel({
                               <button
                                 type="button"
                                 onClick={(e) => handleStartEditThread(e, thread)}
-                                className="text-slate-400 hover:text-[#2D9BF0] dark:text-slate-500 dark:hover:text-blue-600 p-1 rounded transition-colors opacity-60 group-hover:opacity-100 cursor-pointer"
+                                className="text-slate-400 hover:text-primary dark:text-slate-500 dark:hover:text-blue-600 p-1 rounded transition-colors opacity-60 group-hover:opacity-100 cursor-pointer"
                                 title="Rename chat"
                               >
                                 <Pencil className="h-3 w-3" />
@@ -936,7 +936,7 @@ export function WorkspaceAiPanel({
               >
                 {messages.length === 0 ? (
                   <div className="space-y-4 py-8 text-center">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full overflow-hidden ring-2 ring-[#2D9BF0]/60 shadow-md bg-[#0E1729] dark:bg-white">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full overflow-hidden ring-2 ring-primary/60 shadow-md bg-[#0E1729] dark:bg-white">
                       <Image
                         src="/avatars/ichinose.png"
                         alt="Ichinose"
@@ -952,7 +952,7 @@ export function WorkspaceAiPanel({
                         </h4>
                         <Badge
                           variant="outline"
-                          className="text-[10px] px-2 py-0.5 font-semibold text-[#2D9BF0] border-[#2D9BF0]/30 bg-[#2D9BF0]/15 rounded-md"
+                          className="text-[10px] px-2 py-0.5 font-semibold text-primary border-primary/30 bg-primary/15 rounded-md"
                         >
                           Prava Assistant
                         </Badge>
@@ -972,7 +972,7 @@ export function WorkspaceAiPanel({
                           key={i}
                           type="button"
                           onClick={() => handleSend(prompt)}
-                          className="w-full text-left p-2.5 rounded-lg border border-[#152033] bg-[#0E1729] hover:border-[#2D9BF0]/50 hover:bg-[#15223D] text-slate-300 hover:text-white dark:border-slate-200 dark:bg-white dark:hover:border-blue-400 dark:hover:bg-blue-50/50 dark:text-slate-700 dark:hover:text-slate-950 transition-colors text-xs flex items-center justify-between group cursor-pointer shadow-xs"
+                          className="w-full text-left p-2.5 rounded-lg border border-[#152033] bg-[#0E1729] hover:border-primary/50 hover:bg-[#15223D] text-slate-300 hover:text-white dark:border-slate-200 dark:bg-white dark:hover:border-blue-400 dark:hover:bg-blue-50/50 dark:text-slate-700 dark:hover:text-slate-950 transition-colors text-xs flex items-center justify-between group cursor-pointer shadow-xs"
                         >
                           <span className="line-clamp-1">{prompt}</span>
                           <CornerDownLeft className="w-3.5 h-3.5 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1.5" />
@@ -986,7 +986,7 @@ export function WorkspaceAiPanel({
                       {msg.role === "user" ? (
                         /* User Message (Right-aligned bubble) */
                         <div className="flex flex-col items-end gap-1">
-                          <div className="rounded-xl px-3.5 py-2.5 max-w-[85%] text-xs leading-relaxed bg-[#2D9BF0] text-white font-medium shadow-xs break-words [overflow-wrap:anywhere]">
+                          <div className="rounded-xl px-3.5 py-2.5 max-w-[85%] text-xs leading-relaxed bg-primary text-white font-medium shadow-xs break-words [overflow-wrap:anywhere]">
                             {msg.content}
                           </div>
                           {msg.creditsCost !== undefined && msg.creditsCost > 0 && (
@@ -1068,7 +1068,7 @@ export function WorkspaceAiPanel({
                               onClick={() => handleFeedback(msg.id, "up")}
                               className={cn(
                                 "p-1 rounded hover:bg-white/10 hover:text-white dark:hover:bg-slate-200 dark:hover:text-slate-900 transition-colors cursor-pointer",
-                                feedback[msg.id] === "up" && "text-[#2D9BF0] bg-[#2D9BF0]/15 dark:bg-blue-50"
+                                feedback[msg.id] === "up" && "text-primary bg-primary/15 dark:bg-blue-50"
                               )}
                               title="Helpful response"
                               aria-label="Helpful response"
@@ -1121,7 +1121,7 @@ export function WorkspaceAiPanel({
 
                 {isLoading && (
                   <div className="flex items-start gap-2.5 text-xs py-2 animate-in fade-in duration-150">
-                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full overflow-hidden ring-1 ring-[#2D9BF0]/40 bg-[#0E1729] dark:bg-white mt-0.5">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full overflow-hidden ring-1 ring-primary/40 bg-[#0E1729] dark:bg-white mt-0.5">
                       <Image
                         src="/avatars/ichinose.png"
                         alt="Ichinose"
@@ -1134,10 +1134,10 @@ export function WorkspaceAiPanel({
                       <span className="text-xs text-slate-300 dark:text-slate-700 font-medium">
                         Analyzing trip details...
                       </span>
-                      <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#2D9BF0] animate-pulse">
+                      <div className="flex items-center gap-1.5 text-[11px] font-mono text-primary animate-pulse">
                         <span className="relative flex h-1.5 w-1.5">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2D9BF0] opacity-75" />
-                          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#2D9BF0]" />
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
                         </span>
                         <span>Thinking...</span>
                       </div>
@@ -1155,7 +1155,7 @@ export function WorkspaceAiPanel({
                       <button
                         type="button"
                         onClick={() => setUpgradeDialogOpen(true)}
-                        className="text-xs font-bold text-[#2D9BF0] hover:underline text-left pl-5 cursor-pointer"
+                        className="text-xs font-bold text-primary hover:underline text-left pl-5 cursor-pointer"
                       >
                         Upgrade to Pro Wanderer for unlimited AI messages &rarr;
                       </button>
@@ -1199,7 +1199,7 @@ export function WorkspaceAiPanel({
                     e.preventDefault();
                     handleSend();
                   }}
-                  className="rounded-xl border border-[#1E2B45] bg-[#0E1729] focus-within:border-[#2D9BF0] focus-within:ring-1 focus-within:ring-[#2D9BF0]/40 dark:border-slate-300 dark:bg-white dark:focus-within:border-[#2D9BF0] transition-all p-3 shadow-xs space-y-2"
+                  className="rounded-xl border border-[#1E2B45] bg-[#0E1729] focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/40 dark:border-slate-300 dark:bg-white dark:focus-within:border-primary transition-all p-3 shadow-xs space-y-2"
                 >
                   <textarea
                     ref={textareaRef}
@@ -1256,7 +1256,7 @@ export function WorkspaceAiPanel({
                       <button
                         type="submit"
                         disabled={isLoading || !input.trim() || isThreadLimitReached}
-                        className="h-7 w-7 rounded-full bg-slate-800 text-slate-400 hover:bg-[#2D9BF0] hover:text-white dark:bg-slate-200 dark:text-slate-600 dark:hover:bg-[#2D9BF0] dark:hover:text-white disabled:opacity-20 disabled:pointer-events-none flex items-center justify-center transition-all cursor-pointer shadow-xs shrink-0"
+                        className="h-7 w-7 rounded-full bg-slate-800 text-slate-400 hover:bg-primary hover:text-white dark:bg-slate-200 dark:text-slate-600 dark:hover:bg-primary dark:hover:text-white disabled:opacity-20 disabled:pointer-events-none flex items-center justify-center transition-all cursor-pointer shadow-xs shrink-0"
                         aria-label="Send message"
                       >
                         {isLoading ? (

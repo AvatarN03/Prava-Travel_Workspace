@@ -66,18 +66,18 @@ export function AccommodationList({
     return (
       <div className="space-y-6 max-w-7xl mx-auto">
         {/* Editorial Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-border dark:border-zinc-800">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-border dark:border-border">
           <div className="space-y-1.5">
-            <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+            <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block">
               Accommodations & Stays
             </span>
             <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
               Confirmed{" "}
-              <span className="font-serif italic font-normal text-foreground dark:text-zinc-100">
+              <span className="font-serif italic font-normal text-foreground dark:text-foreground">
                 Lodgings
               </span>
             </h1>
-            <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 font-normal leading-relaxed max-w-2xl">
+            <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-muted-foreground font-normal leading-relaxed max-w-2xl">
               Keep hotel vouchers, Airbnb lockbox codes, check-in instructions, and concierge contact details in one place.
             </p>
           </div>

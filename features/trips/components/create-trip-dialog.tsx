@@ -236,18 +236,18 @@ export function CreateTripDialog({
         </DialogTrigger>
       )}
 
-      <DialogContent className="w-[80vw] max-w-[80vw] sm:w-full sm:max-w-[560px] h-[80vh] max-h-[80vh] sm:h-auto sm:max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden shadow-2xl border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C]">
+      <DialogContent className="w-[80vw] max-w-[80vw] sm:w-full sm:max-w-[560px] h-[80vh] max-h-[80vh] sm:h-auto sm:max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden shadow-2xl border-border/80 dark:border-border bg-card dark:bg-card">
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
-          <DialogHeader className="p-4 sm:p-6 pb-3 sm:pb-4 pr-12 border-b border-border/60 dark:border-zinc-800 shrink-0 text-left bg-card dark:bg-[#0F131C]">
+          <DialogHeader className="p-4 sm:p-6 pb-3 sm:pb-4 pr-12 border-b border-border/60 dark:border-border shrink-0 text-left bg-card dark:bg-card">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-[#2D9BF0]/10 text-[#2D9BF0] shrink-0">
+              <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-primary/10 text-primary shrink-0">
                 <Compass className="h-4.5 w-4.5" />
               </div>
               <DialogTitle className="font-sans text-lg sm:text-xl font-light tracking-tight text-foreground dark:text-zinc-50">
-                Create New <span className="font-serif italic font-normal text-foreground dark:text-zinc-100">Trip</span>
+                Create New <span className="font-serif italic font-normal text-foreground dark:text-foreground">Trip</span>
               </DialogTitle>
             </div>
-            <DialogDescription className="text-xs text-muted-foreground dark:text-zinc-400">
+            <DialogDescription className="text-xs text-muted-foreground dark:text-muted-foreground">
               Plan an itinerary, organize stays, and coordinate travel with AI-assisted proposals.
             </DialogDescription>
           </DialogHeader>
@@ -260,7 +260,7 @@ export function CreateTripDialog({
                   <div className="pt-0.5">
                     <a
                       href="/subscription"
-                      className="inline-flex items-center gap-1 text-xs font-bold text-[#2D9BF0] hover:underline"
+                      className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
                     >
                       View Pro Wanderer Plans &rarr;
                     </a>
@@ -272,7 +272,7 @@ export function CreateTripDialog({
             <div className="space-y-4">
             {/* Title */}
             <div className="space-y-1.5">
-              <Label htmlFor="title" className="text-xs font-semibold text-foreground dark:text-zinc-200">
+              <Label htmlFor="title" className="text-xs font-semibold text-foreground dark:text-foreground">
                 Trip Title <span className="text-destructive">*</span>
               </Label>
               <Input
@@ -282,7 +282,7 @@ export function CreateTripDialog({
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
                 disabled={isPending}
-                className="h-10 text-sm focus-visible:ring-[#2D9BF0] dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
+                className="h-10 text-sm focus-visible:ring-primary dark:bg-card-subtle dark:border-border dark:text-foreground"
               />
               {fieldErrors.title && (
                 <p className="text-[11px] text-destructive">{fieldErrors.title[0]}</p>
@@ -291,8 +291,8 @@ export function CreateTripDialog({
 
             {/* Destination */}
             <div className="space-y-1.5">
-              <Label htmlFor="destination" className="text-xs font-semibold text-foreground dark:text-zinc-200 flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5 text-muted-foreground dark:text-zinc-400" /> Destination
+              <Label htmlFor="destination" className="text-xs font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5 text-muted-foreground dark:text-muted-foreground" /> Destination
               </Label>
               <Input
                 id="destination"
@@ -307,7 +307,7 @@ export function CreateTripDialog({
                   }
                 }}
                 disabled={isPending}
-                className="h-10 text-sm focus-visible:ring-[#2D9BF0] dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
+                className="h-10 text-sm focus-visible:ring-primary dark:bg-card-subtle dark:border-border dark:text-foreground"
               />
               {fieldErrors.destination && (
                 <p className="text-[11px] text-destructive">{fieldErrors.destination[0]}</p>
@@ -317,8 +317,8 @@ export function CreateTripDialog({
             {/* Dates Grid with shadcn DatePicker */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="startDate" className="text-xs font-semibold text-foreground dark:text-zinc-200 flex items-center gap-1.5">
-                  <CalendarIcon className="h-3.5 w-3.5 text-muted-foreground dark:text-zinc-400" /> Start Date
+                <Label htmlFor="startDate" className="text-xs font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
+                  <CalendarIcon className="h-3.5 w-3.5 text-muted-foreground dark:text-muted-foreground" /> Start Date
                 </Label>
                 <DatePicker
                   date={formData.startDate ? new Date(formData.startDate) : null}
@@ -332,8 +332,8 @@ export function CreateTripDialog({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="endDate" className="text-xs font-semibold text-foreground dark:text-zinc-200 flex items-center gap-1.5">
-                  <CalendarIcon className="h-3.5 w-3.5 text-muted-foreground dark:text-zinc-400" /> End Date
+                <Label htmlFor="endDate" className="text-xs font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
+                  <CalendarIcon className="h-3.5 w-3.5 text-muted-foreground dark:text-muted-foreground" /> End Date
                 </Label>
                 <DatePicker
                   date={formData.endDate ? new Date(formData.endDate) : null}
@@ -353,7 +353,7 @@ export function CreateTripDialog({
 
             {/* Status Select with shadcn/ui */}
             <div className="space-y-1.5">
-              <Label htmlFor="status" className="text-xs font-semibold text-foreground dark:text-zinc-200">
+              <Label htmlFor="status" className="text-xs font-semibold text-foreground dark:text-foreground">
                 Initial Status
               </Label>
               <Select
@@ -361,10 +361,10 @@ export function CreateTripDialog({
                 onValueChange={(val) => setFormData({ ...formData, status: val as TripStatus })}
                 disabled={isPending}
               >
-                <SelectTrigger id="status" className="h-10 text-sm focus:ring-[#2D9BF0] dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100">
+                <SelectTrigger id="status" className="h-10 text-sm focus:ring-primary dark:bg-card-subtle dark:border-border dark:text-foreground">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
-                <SelectContent className="dark:bg-[#0F131C] dark:border-zinc-800">
+                <SelectContent className="dark:bg-card dark:border-border">
                   <SelectItem value="PLANNING">Planning</SelectItem>
                   <SelectItem value="ACTIVE">Active (In Progress)</SelectItem>
                   <SelectItem value="COMPLETED">Completed</SelectItem>
@@ -392,7 +392,7 @@ export function CreateTripDialog({
             <div className="space-y-2 pt-1">
               <div className="flex items-center justify-between">
                 <Label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                  <ImageIcon className="h-3.5 w-3.5 text-[#2D9BF0]" /> Choose Cover Photo
+                  <ImageIcon className="h-3.5 w-3.5 text-primary" /> Choose Cover Photo
                   <span className="text-[11px] font-normal text-muted-foreground">(Optional)</span>
                 </Label>
 
@@ -434,9 +434,9 @@ export function CreateTripDialog({
                             setSelectedImageUrl(isSelected ? null : img.url);
                           }
                         }}
-                        className={`group relative h-20 sm:h-22 rounded-lg overflow-hidden cursor-pointer border transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2D9BF0] ${
+                        className={`group relative h-20 sm:h-22 rounded-lg overflow-hidden cursor-pointer border transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                           isSelected
-                            ? "border-[#2D9BF0] ring-2 ring-[#2D9BF0] ring-offset-1 shadow-sm scale-[1.02]"
+                            ? "border-primary ring-2 ring-primary ring-offset-1 shadow-sm scale-[1.02]"
                             : "border-border hover:border-primary/50 hover:shadow-xs"
                         }`}
                       >
@@ -449,13 +449,13 @@ export function CreateTripDialog({
                         <div
                           className={`absolute inset-0 transition-opacity duration-200 ${
                             isSelected
-                              ? "bg-[#2D9BF0]/20"
+                              ? "bg-primary/20"
                               : "bg-black/0 group-hover:bg-black/15"
                           }`}
                         />
 
                         {isSelected && (
-                          <div className="absolute top-1.5 right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#2D9BF0] text-white shadow-xs">
+                          <div className="absolute top-1.5 right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white shadow-xs">
                             <Check className="h-3 w-3 stroke-[3]" />
                           </div>
                         )}
@@ -489,8 +489,8 @@ export function CreateTripDialog({
 
             {/* Description */}
             <div className="space-y-1.5">
-              <Label htmlFor="description" className="text-xs font-semibold text-foreground dark:text-zinc-200">
-                Notes & Highlights <span className="text-[11px] font-normal text-muted-foreground dark:text-zinc-400">(Optional)</span>
+              <Label htmlFor="description" className="text-xs font-semibold text-foreground dark:text-foreground">
+                Notes & Highlights <span className="text-[11px] font-normal text-muted-foreground dark:text-muted-foreground">(Optional)</span>
               </Label>
               <Textarea
                 id="description"
@@ -499,19 +499,19 @@ export function CreateTripDialog({
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 disabled={isPending}
-                className="text-sm focus-visible:ring-[#2D9BF0] resize-none dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
+                className="text-sm focus-visible:ring-primary resize-none dark:bg-card-subtle dark:border-border dark:text-foreground"
               />
             </div>
 
             {/* Structured Proposal Generation Option (Visible based on general preferences toggle) */}
             {userAiAutoPropose && (
-              <div className="rounded-sm border border-[#2D9BF0]/30 bg-[#2D9BF0]/5 dark:bg-[#2D9BF0]/10 p-3.5 flex items-center justify-between gap-3">
+              <div className="rounded-sm border border-primary/30 bg-primary/5 dark:bg-primary/10 p-3.5 flex items-center justify-between gap-3">
                 <div className="space-y-0.5 pr-2">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground dark:text-zinc-200">
-                    <Sparkles className="h-3.5 w-3.5 text-[#2D9BF0]" />
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground dark:text-foreground">
+                    <Sparkles className="h-3.5 w-3.5 text-primary" />
                     Structured Itinerary Proposal
                   </div>
-                  <p className="text-[11px] text-muted-foreground dark:text-zinc-400 leading-relaxed">
+                  <p className="text-[11px] text-muted-foreground dark:text-muted-foreground leading-relaxed">
                     Auto-draft an initial day-by-day itinerary proposal with interactive 1-click additions upon workspace creation.
                   </p>
                 </div>
@@ -526,14 +526,14 @@ export function CreateTripDialog({
           </div>
         </div>
 
-        <DialogFooter className="p-3 sm:p-4 sm:px-6 border-t border-border/60 dark:border-zinc-800 shrink-0 bg-muted/15 sm:bg-card dark:bg-[#0F131C] flex flex-row items-center justify-end gap-2">
+        <DialogFooter className="p-3 sm:p-4 sm:px-6 border-t border-border/60 dark:border-border shrink-0 bg-muted/15 sm:bg-card dark:bg-card flex flex-row items-center justify-end gap-2">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={() => setIsOpen(false)}
             disabled={isPending}
-            className="cursor-pointer dark:border-zinc-800 dark:hover:bg-[#121622]"
+            className="cursor-pointer dark:border-border dark:hover:bg-[#121622]"
           >
             Cancel
           </Button>

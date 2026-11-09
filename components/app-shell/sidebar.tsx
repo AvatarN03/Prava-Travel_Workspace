@@ -220,10 +220,10 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
                     />
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-brand font-medium tracking-[0.24em] text-base uppercase text-shell-foreground group-hover:text-[#2D9BF0] transition-colors">
+                    <span className="font-brand font-medium tracking-[0.24em] text-base uppercase text-shell-foreground group-hover:text-primary transition-colors">
                       Prava
                     </span>
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#2D9BF0] animate-pulse shadow-xs" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse shadow-xs" />
                   </div>
                 </Link>
               </TooltipTrigger>
@@ -267,7 +267,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
               </div>
 
               <div>
-                <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2D9BF0] select-none">
+                <div className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-primary select-none">
                   Travel Toolkit
                 </div>
                 {renderNavGroup(travelEssentialsNavItems, (item) => {
@@ -295,7 +295,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
 
               <div>
                 <div
-                  className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2D9BF0] select-none truncate"
+                  className="px-4 pb-2 font-sans text-[10px] font-semibold uppercase tracking-[0.18em] text-primary select-none truncate"
                   title={activeTrip?.tripTitle || "Trip Workspace"}
                 >
                   {activeTrip?.tripTitle || "Trip Workspace"}

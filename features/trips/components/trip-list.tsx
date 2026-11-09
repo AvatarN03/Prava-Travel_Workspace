@@ -215,51 +215,51 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
       {totalCount > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
           {/* Active Trips Metric */}
-          <Card className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-3.5 shadow-2xs">
+          <Card className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-3.5 shadow-2xs">
             <div className="flex items-center justify-between">
-              <span className="font-sans text-xs font-medium text-muted-foreground dark:text-zinc-400">Active Trips</span>
+              <span className="font-sans text-xs font-medium text-muted-foreground dark:text-muted-foreground">Active Trips</span>
               <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                 <Clock className="h-4 w-4" />
               </div>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
               <span className="font-mono text-2xl font-light tracking-tight text-foreground dark:text-zinc-50 tabular-nums">{activeCount}</span>
-              <span className="text-[11px] text-muted-foreground dark:text-zinc-400">In progress</span>
+              <span className="text-[11px] text-muted-foreground dark:text-muted-foreground">In progress</span>
             </div>
           </Card>
 
           {/* Planning Metric */}
-          <Card className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-3.5 shadow-2xs">
+          <Card className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-3.5 shadow-2xs">
             <div className="flex items-center justify-between">
-              <span className="font-sans text-xs font-medium text-muted-foreground dark:text-zinc-400">Planning</span>
+              <span className="font-sans text-xs font-medium text-muted-foreground dark:text-muted-foreground">Planning</span>
               <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-sky-500/10 text-sky-600 dark:text-sky-400">
                 <Calendar className="h-4 w-4" />
               </div>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
               <span className="font-mono text-2xl font-light tracking-tight text-foreground dark:text-zinc-50 tabular-nums">{planningCount}</span>
-              <span className="text-[11px] text-muted-foreground dark:text-zinc-400">Upcoming drafts</span>
+              <span className="text-[11px] text-muted-foreground dark:text-muted-foreground">Upcoming drafts</span>
             </div>
           </Card>
 
           {/* Completed Metric */}
-          <Card className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-3.5 shadow-2xs">
+          <Card className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-3.5 shadow-2xs">
             <div className="flex items-center justify-between">
-              <span className="font-sans text-xs font-medium text-muted-foreground dark:text-zinc-400">Completed</span>
+              <span className="font-sans text-xs font-medium text-muted-foreground dark:text-muted-foreground">Completed</span>
               <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-blue-500/10 text-blue-600 dark:text-blue-400">
                 <CheckCircle2 className="h-4 w-4" />
               </div>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
               <span className="font-mono text-2xl font-light tracking-tight text-foreground dark:text-zinc-50 tabular-nums">{completedCount}</span>
-              <span className="text-[11px] text-muted-foreground dark:text-zinc-400">Past journeys</span>
+              <span className="text-[11px] text-muted-foreground dark:text-muted-foreground">Past journeys</span>
             </div>
           </Card>
 
           {/* Workspace Tier & Quota Meter */}
-          <Card className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-3.5 shadow-2xs flex flex-col justify-between">
+          <Card className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-3.5 shadow-2xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5">
+              <span className="text-xs font-medium text-muted-foreground dark:text-muted-foreground flex items-center gap-1.5">
                 <Layers className="h-3.5 w-3.5 text-primary" /> Workspace Slots
               </span>
               {!tripUsage?.isPro && (
@@ -274,12 +274,12 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
             </div>
             <div className="mt-2">
               <div className="flex items-baseline justify-between text-xs">
-                <span className="font-bold text-foreground dark:text-zinc-100">
-                  {usageCount} <span className="text-[11px] font-normal text-muted-foreground dark:text-zinc-400">/ {maxTrips} trips</span>
+                <span className="font-bold text-foreground dark:text-foreground">
+                  {usageCount} <span className="text-[11px] font-normal text-muted-foreground dark:text-muted-foreground">/ {maxTrips} trips</span>
                 </span>
-                <span className="text-[11px] font-medium text-muted-foreground dark:text-zinc-400">{usagePercentage}%</span>
+                <span className="text-[11px] font-medium text-muted-foreground dark:text-muted-foreground">{usagePercentage}%</span>
               </div>
-              <div className="mt-1.5 h-1.5 w-full rounded-full bg-muted dark:bg-[#121622] overflow-hidden">
+              <div className="mt-1.5 h-1.5 w-full rounded-full bg-muted dark:bg-card-subtle overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all duration-300 ${usagePercentage >= 90
                       ? "bg-destructive"
@@ -297,15 +297,15 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
 
       {/* Empty State when no trips at all */}
       {totalCount === 0 ? (
-        <Card className="border-dashed border-border/80 dark:border-zinc-800 bg-card/60 dark:bg-[#0F131C]/60 rounded-md">
+        <Card className="border-dashed border-border/80 dark:border-border bg-card/60 dark:bg-card/60 rounded-md">
           <CardHeader className="text-center py-14">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-md bg-primary/10 text-primary mb-3">
               <Compass className="h-6 w-6" />
             </div>
-            <CardTitle className="text-lg font-bold text-foreground dark:text-zinc-100">
+            <CardTitle className="text-lg font-bold text-foreground dark:text-foreground">
               {isShowingOfflineData ? "No cached trips found offline" : "Your Travel Workspace is Empty"}
             </CardTitle>
-            <CardDescription className="max-w-md mx-auto text-xs mt-1 text-muted-foreground dark:text-zinc-400">
+            <CardDescription className="max-w-md mx-auto text-xs mt-1 text-muted-foreground dark:text-muted-foreground">
               {isShowingOfflineData
                 ? "No trips have been cached on this browser yet. Connect to the internet to sync your workspace."
                 : "Organize daily itineraries, bookings, expenses, notes, and packing checklists in one cohesive workspace."}
@@ -322,8 +322,8 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                 }
               />
               <Link href="/templates">
-                <Button variant="outline" size="sm" className="cursor-pointer gap-1.5 dark:border-zinc-800 dark:hover:bg-[#121622]">
-                  <LayoutTemplate className="w-4 h-4 text-muted-foreground dark:text-zinc-400" />
+                <Button variant="outline" size="sm" className="cursor-pointer gap-1.5 dark:border-border dark:hover:bg-[#121622]">
+                  <LayoutTemplate className="w-4 h-4 text-muted-foreground dark:text-muted-foreground" />
                   Explore Curated Templates
                 </Button>
               </Link>
@@ -337,10 +337,10 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               {/* Search Bar */}
               <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground dark:text-zinc-400" />
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground dark:text-muted-foreground" />
                 <Input
                   placeholder="Search title, destination, notes..."
-                  className="pl-8.5 h-9 text-xs dark:bg-[#121622] dark:border-zinc-800 dark:text-zinc-100"
+                  className="pl-8.5 h-9 text-xs dark:bg-card-subtle dark:border-border dark:text-foreground"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -353,21 +353,21 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   value={statusFilter}
                   onValueChange={(val) => setStatusFilter(val as TripStatus | "ALL")}
                 >
-                  <SelectTrigger className="h-9 w-[155px] text-xs cursor-pointer dark:bg-[#0F131C] dark:border-zinc-800 dark:text-zinc-200">
-                    <Filter className="h-3.5 w-3.5 mr-1.5 text-muted-foreground dark:text-zinc-400 shrink-0" />
+                  <SelectTrigger className="h-9 w-[155px] text-xs cursor-pointer dark:bg-card dark:border-border dark:text-foreground">
+                    <Filter className="h-3.5 w-3.5 mr-1.5 text-muted-foreground dark:text-muted-foreground shrink-0" />
                     <span className="truncate">
                       {statusOptions.find((o) => o.value === statusFilter)?.label || "Status"}
                     </span>
-                    <span className="ml-auto text-[10px] px-1.5 py-0.2 rounded-full bg-muted dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 font-semibold shrink-0">
+                    <span className="ml-auto text-[10px] px-1.5 py-0.2 rounded-full bg-muted dark:bg-card-subtle text-muted-foreground dark:text-muted-foreground font-semibold shrink-0">
                       {statusOptions.find((o) => o.value === statusFilter)?.count ?? 0}
                     </span>
                   </SelectTrigger>
-                  <SelectContent className="dark:bg-[#0F131C] dark:border-zinc-800">
+                  <SelectContent className="dark:bg-card dark:border-border">
                     {statusOptions.map(({ label, value, count }) => (
-                      <SelectItem key={value} value={value} className="text-xs cursor-pointer dark:text-zinc-200">
+                      <SelectItem key={value} value={value} className="text-xs cursor-pointer dark:text-foreground">
                         <div className="flex items-center justify-between gap-3 w-full">
                           <span>{label}</span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 font-semibold">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted dark:bg-card-subtle text-muted-foreground dark:text-muted-foreground font-semibold">
                             {count}
                           </span>
                         </div>
@@ -381,27 +381,27 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   value={sortOption}
                   onValueChange={(val) => setSortOption(val as TripSortOption)}
                 >
-                  <SelectTrigger className="h-9 w-[190px] text-xs cursor-pointer dark:bg-[#0F131C] dark:border-zinc-800 dark:text-zinc-200">
-                    <ArrowUpDown className="h-3.5 w-3.5 mr-1.5 text-muted-foreground dark:text-zinc-400 shrink-0" />
+                  <SelectTrigger className="h-9 w-[190px] text-xs cursor-pointer dark:bg-card dark:border-border dark:text-foreground">
+                    <ArrowUpDown className="h-3.5 w-3.5 mr-1.5 text-muted-foreground dark:text-muted-foreground shrink-0" />
                     <SelectValue placeholder="Sort order" />
                   </SelectTrigger>
-                  <SelectContent className="dark:bg-[#0F131C] dark:border-zinc-800">
-                    <SelectItem value="departure" className="cursor-pointer dark:text-zinc-200">Departure (Soonest)</SelectItem>
-                    <SelectItem value="recent_updated" className="cursor-pointer dark:text-zinc-200">Recently Updated</SelectItem>
-                    <SelectItem value="newest" className="cursor-pointer dark:text-zinc-200">Newest Created</SelectItem>
-                    <SelectItem value="alphabetical" className="cursor-pointer dark:text-zinc-200">Title (A–Z)</SelectItem>
+                  <SelectContent className="dark:bg-card dark:border-border">
+                    <SelectItem value="departure" className="cursor-pointer dark:text-foreground">Departure (Soonest)</SelectItem>
+                    <SelectItem value="recent_updated" className="cursor-pointer dark:text-foreground">Recently Updated</SelectItem>
+                    <SelectItem value="newest" className="cursor-pointer dark:text-foreground">Newest Created</SelectItem>
+                    <SelectItem value="alphabetical" className="cursor-pointer dark:text-foreground">Title (A–Z)</SelectItem>
                   </SelectContent>
                 </Select>
 
                 {/* View Mode Toggle Buttons */}
-                <div className="flex items-center rounded-md border border-border dark:border-zinc-800 bg-card dark:bg-[#121622] p-0.5 shrink-0">
+                <div className="flex items-center rounded-md border border-border dark:border-border bg-card dark:bg-card-subtle p-0.5 shrink-0">
                   <button
                     type="button"
                     onClick={() => setViewMode("grid")}
                     aria-label="Grid view"
                     className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${viewMode === "grid"
                         ? "bg-primary text-primary-foreground shadow-2xs"
-                        : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
+                        : "text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200"
                       }`}
                   >
                     <LayoutGrid className="h-3.5 w-3.5" />
@@ -412,7 +412,7 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                     aria-label="Table view"
                     className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${viewMode === "table"
                         ? "bg-primary text-primary-foreground shadow-2xs"
-                        : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
+                        : "text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200"
                       }`}
                   >
                     <List className="h-3.5 w-3.5" />
@@ -429,23 +429,23 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   value={statusFilter}
                   onValueChange={(val) => setStatusFilter(val as TripStatus | "ALL")}
                 >
-                  <SelectTrigger className="h-9 text-xs w-full cursor-pointer dark:bg-[#0F131C] dark:border-zinc-800 dark:text-zinc-200">
+                  <SelectTrigger className="h-9 text-xs w-full cursor-pointer dark:bg-card dark:border-border dark:text-foreground">
                     <div className="flex items-center gap-1.5 truncate">
-                      <Filter className="h-3.5 w-3.5 text-muted-foreground dark:text-zinc-400 shrink-0" />
+                      <Filter className="h-3.5 w-3.5 text-muted-foreground dark:text-muted-foreground shrink-0" />
                       <span className="truncate">
                         {statusOptions.find((o) => o.value === statusFilter)?.label || "Status"}
                       </span>
-                      <span className="text-[10px] px-1 py-0.2 rounded-full bg-muted dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 font-semibold shrink-0">
+                      <span className="text-[10px] px-1 py-0.2 rounded-full bg-muted dark:bg-card-subtle text-muted-foreground dark:text-muted-foreground font-semibold shrink-0">
                         {statusOptions.find((o) => o.value === statusFilter)?.count ?? 0}
                       </span>
                     </div>
                   </SelectTrigger>
-                  <SelectContent className="dark:bg-[#0F131C] dark:border-zinc-800">
+                  <SelectContent className="dark:bg-card dark:border-border">
                     {statusOptions.map(({ label, value, count }) => (
-                      <SelectItem key={value} value={value} className="text-xs cursor-pointer dark:text-zinc-200">
+                      <SelectItem key={value} value={value} className="text-xs cursor-pointer dark:text-foreground">
                         <div className="flex items-center justify-between gap-3 w-full">
                           <span>{label}</span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 font-semibold">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted dark:bg-card-subtle text-muted-foreground dark:text-muted-foreground font-semibold">
                             {count}
                           </span>
                         </div>
@@ -461,28 +461,28 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   value={sortOption}
                   onValueChange={(val) => setSortOption(val as TripSortOption)}
                 >
-                  <SelectTrigger className="h-9 text-xs w-full cursor-pointer dark:bg-[#0F131C] dark:border-zinc-800 dark:text-zinc-200">
-                    <ArrowUpDown className="h-3.5 w-3.5 mr-1 text-muted-foreground dark:text-zinc-400 shrink-0" />
+                  <SelectTrigger className="h-9 text-xs w-full cursor-pointer dark:bg-card dark:border-border dark:text-foreground">
+                    <ArrowUpDown className="h-3.5 w-3.5 mr-1 text-muted-foreground dark:text-muted-foreground shrink-0" />
                     <SelectValue placeholder="Sort order" />
                   </SelectTrigger>
-                  <SelectContent className="dark:bg-[#0F131C] dark:border-zinc-800">
-                    <SelectItem value="departure" className="text-xs cursor-pointer dark:text-zinc-200">Departure (Soonest)</SelectItem>
-                    <SelectItem value="recent_updated" className="text-xs cursor-pointer dark:text-zinc-200">Recently Updated</SelectItem>
-                    <SelectItem value="newest" className="text-xs cursor-pointer dark:text-zinc-200">Newest Created</SelectItem>
-                    <SelectItem value="alphabetical" className="text-xs cursor-pointer dark:text-zinc-200">Title (A–Z)</SelectItem>
+                  <SelectContent className="dark:bg-card dark:border-border">
+                    <SelectItem value="departure" className="text-xs cursor-pointer dark:text-foreground">Departure (Soonest)</SelectItem>
+                    <SelectItem value="recent_updated" className="text-xs cursor-pointer dark:text-foreground">Recently Updated</SelectItem>
+                    <SelectItem value="newest" className="text-xs cursor-pointer dark:text-foreground">Newest Created</SelectItem>
+                    <SelectItem value="alphabetical" className="text-xs cursor-pointer dark:text-foreground">Title (A–Z)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* View Mode Toggle Buttons */}
-              <div className="flex items-center rounded-md border border-border dark:border-zinc-800 bg-card dark:bg-[#121622] p-0.5 shrink-0">
+              <div className="flex items-center rounded-md border border-border dark:border-border bg-card dark:bg-card-subtle p-0.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setViewMode("grid")}
                   aria-label="Grid view"
                   className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${viewMode === "grid"
                       ? "bg-primary text-primary-foreground shadow-2xs"
-                      : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
+                      : "text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200"
                     }`}
                 >
                   <LayoutGrid className="h-3.5 w-3.5" />
@@ -493,7 +493,7 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
                   aria-label="Table view"
                   className={`flex h-7.5 w-7.5 items-center justify-center rounded-xs transition-colors cursor-pointer ${viewMode === "table"
                       ? "bg-primary text-primary-foreground shadow-2xs"
-                      : "text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
+                      : "text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200"
                     }`}
                 >
                   <List className="h-3.5 w-3.5" />
@@ -504,15 +504,15 @@ export function TripList({ initialTrips, tripUsage }: TripListProps) {
 
           {/* Results: Grid or Table */}
           {filteredTrips.length === 0 ? (
-            <div className="text-center py-12 rounded-md border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-6">
-              <p className="text-sm font-semibold text-foreground dark:text-zinc-100">No matching trips found</p>
-              <p className="text-xs text-muted-foreground dark:text-zinc-400 mt-1">
+            <div className="text-center py-12 rounded-md border border-border/80 dark:border-border bg-card dark:bg-card p-6">
+              <p className="text-sm font-semibold text-foreground dark:text-foreground">No matching trips found</p>
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">
                 Try adjusting your search query or switching the status filter.
               </p>
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-4 text-xs cursor-pointer dark:border-zinc-800 dark:hover:bg-[#121622]"
+                className="mt-4 text-xs cursor-pointer dark:border-border dark:hover:bg-[#121622]"
                 onClick={() => {
                   setSearchQuery("");
                   setStatusFilter("ALL");

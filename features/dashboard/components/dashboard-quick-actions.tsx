@@ -25,7 +25,7 @@ export function DashboardQuickActions() {
       category: "Live Travel Utilities",
       description: "Check live 5-day destination forecasts, atmospheric conditions, and convert currencies to INR with live ECB rates.",
       icon: CloudSun,
-      iconColor: "text-[#2D9BF0] bg-[#2D9BF0]/10",
+      iconColor: "text-primary bg-primary/10",
       mainHref: "/travel-essentials?tab=weather",
       tools: [
         { label: "5-Day Weather Radar", href: "/travel-essentials?tab=weather", icon: CloudSun },

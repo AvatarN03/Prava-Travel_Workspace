@@ -254,9 +254,9 @@ export function ItineraryView({
               <Button
                 size="sm"
                 variant="outline"
-                className="h-8 gap-1.5 text-xs font-medium cursor-pointer border-border dark:border-zinc-800 dark:bg-[#121622] hover:bg-muted dark:hover:bg-zinc-800 text-foreground dark:text-zinc-100"
+                className="h-8 gap-1.5 text-xs font-medium cursor-pointer border-border dark:border-border dark:bg-card-subtle hover:bg-muted dark:hover:bg-zinc-800 text-foreground dark:text-foreground"
               >
-                <Calendar className="w-3.5 h-3.5 text-[#2D9BF0]" />
+                <Calendar className="w-3.5 h-3.5 text-primary" />
                 <span className="hidden sm:inline">Add to Calendar</span>
               </Button>
             }
@@ -276,15 +276,15 @@ export function ItineraryView({
       </div>
 
       {/* ── Day Filter Navigation Strip ── */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar border-b border-border/60 dark:border-zinc-800">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar border-b border-border/60 dark:border-border">
         <button
           type="button"
           onClick={() => setSelectedDay("ALL")}
           className={cn(
             "px-3 py-1.5 text-xs rounded-sm font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5",
             selectedDay === "ALL"
-              ? "bg-[#2D9BF0] text-white font-semibold shadow-xs"
-              : "bg-muted/50 dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 hover:bg-muted dark:hover:bg-zinc-800 border border-border/60 dark:border-zinc-800"
+              ? "bg-primary text-white font-semibold shadow-xs"
+              : "bg-muted/50 dark:bg-card-subtle text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-100 hover:bg-muted dark:hover:bg-zinc-800 border border-border/60 dark:border-border"
           )}
         >
           <span>All Days</span>
@@ -304,8 +304,8 @@ export function ItineraryView({
               className={cn(
                 "px-3 py-1.5 text-xs rounded-sm font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5",
                 isSelected
-                  ? "bg-[#2D9BF0] text-white font-semibold shadow-xs"
-                  : "bg-muted/50 dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 hover:bg-muted dark:hover:bg-zinc-800 border border-border/60 dark:border-zinc-800"
+                  ? "bg-primary text-white font-semibold shadow-xs"
+                  : "bg-muted/50 dark:bg-card-subtle text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-100 hover:bg-muted dark:hover:bg-zinc-800 border border-border/60 dark:border-border"
               )}
             >
               <span>Day {day}</span>
@@ -327,15 +327,15 @@ export function ItineraryView({
             return (
               <div key={day} className="space-y-3.5">
                 {/* Day Header Bar */}
-                <div className="flex items-center justify-between pb-2 border-b border-border/70 dark:border-zinc-800">
+                <div className="flex items-center justify-between pb-2 border-b border-border/70 dark:border-border">
                   <div className="flex items-center gap-2.5">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-sm bg-[#2D9BF0]/15 text-[#2D9BF0] text-xs font-bold font-mono">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-sm bg-primary/15 text-primary text-xs font-bold font-mono">
                       {day}
                     </span>
-                    <h3 className="text-sm font-bold text-foreground dark:text-zinc-100 flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-foreground dark:text-foreground flex items-center gap-2">
                       <span>Day {day}</span>
                       {dateLabel && (
-                        <span className="text-xs font-normal text-muted-foreground dark:text-zinc-400">
+                        <span className="text-xs font-normal text-muted-foreground dark:text-muted-foreground">
                           · {dateLabel}
                         </span>
                       )}
@@ -348,7 +348,7 @@ export function ItineraryView({
                         ${costForDay.toFixed(2)} est.
                       </span>
                     )}
-                    <span className="text-[11px] text-muted-foreground dark:text-zinc-400 tabular-nums">
+                    <span className="text-[11px] text-muted-foreground dark:text-muted-foreground tabular-nums">
                       {dayItems.length} {dayItems.length === 1 ? "activity" : "activities"}
                     </span>
                   </div>

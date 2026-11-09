@@ -304,21 +304,21 @@ export function ExpenseTracker({
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Editorial Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-1 border-b border-border/50 dark:border-zinc-800">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-1 border-b border-border/50 dark:border-border">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground dark:text-zinc-400 font-semibold">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground dark:text-muted-foreground font-semibold">
               Financial Ledger
             </span>
             <span className="text-muted-foreground/40 dark:text-zinc-600 text-xs">•</span>
-            <span className="text-[11px] font-mono text-muted-foreground dark:text-zinc-400">
+            <span className="text-[11px] font-mono text-muted-foreground dark:text-muted-foreground">
               {items.length} {items.length === 1 ? "expense" : "expenses"} logged
             </span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-zinc-50 font-serif">
             Trip Expenses · <span className="italic font-normal">Ledger & Burn</span>
           </h1>
-          <p className="text-xs text-muted-foreground dark:text-zinc-400 mt-1 max-w-xl">
+          <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1 max-w-xl">
             Track daily expenditures, multi-currency receipts, and budget allocations converted automatically to your home currency ({userCurrency}).
           </p>
         </div>

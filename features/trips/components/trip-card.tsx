@@ -202,9 +202,9 @@ export function TripCard({ trip }: TripCardProps) {
 
   return (
     <>
-      <Card className="group relative flex flex-col justify-between overflow-hidden border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] transition-all duration-150 hover:border-primary/40 dark:hover:border-primary/50 hover:shadow-xs rounded-md">
+      <Card className="group relative flex flex-col justify-between overflow-hidden border-border/80 dark:border-border bg-card dark:bg-card transition-all duration-150 hover:border-primary/40 dark:hover:border-primary/50 hover:shadow-xs rounded-md">
         {/* Card Cover Banner */}
-        <div className="relative h-32 w-full overflow-hidden border-b border-border/80 dark:border-zinc-800 bg-muted/40 dark:bg-zinc-900">
+        <div className="relative h-32 w-full overflow-hidden border-b border-border/80 dark:border-border bg-muted/40 dark:bg-zinc-900">
           {trip.coverImageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -216,7 +216,7 @@ export function TripCard({ trip }: TripCardProps) {
             <div className="h-full w-full bg-gradient-to-br from-sky-500/10 via-primary/5 to-slate-800/10 dark:from-sky-950/40 dark:via-slate-900 dark:to-slate-950 flex flex-col items-center justify-center text-primary/40 relative">
               <Compass className="h-8 w-8 stroke-[1.5]" />
               {trip.destination && (
-                <span className="text-[11px] font-medium text-muted-foreground/80 dark:text-zinc-400 tracking-wide mt-1 uppercase">
+                <span className="text-[11px] font-medium text-muted-foreground/80 dark:text-muted-foreground tracking-wide mt-1 uppercase">
                   {trip.destination}
                 </span>
               )}
@@ -251,12 +251,12 @@ export function TripCard({ trip }: TripCardProps) {
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1 min-w-0 flex-1">
                   {trip.destination && (
-                    <div className="flex items-center text-xs text-muted-foreground dark:text-zinc-400 truncate">
+                    <div className="flex items-center text-xs text-muted-foreground dark:text-muted-foreground truncate">
                       <MapPin className="w-3 h-3 mr-1 text-primary/80 shrink-0" />
                       <span className="truncate font-medium">{trip.destination}</span>
                     </div>
                   )}
-                  <CardTitle className="text-base font-semibold leading-snug tracking-tight line-clamp-1 pt-0.5 text-foreground dark:text-zinc-100">
+                  <CardTitle className="text-base font-semibold leading-snug tracking-tight line-clamp-1 pt-0.5 text-foreground dark:text-foreground">
                     {!isOnline ? (
                       <button
                         type="button"
@@ -293,7 +293,7 @@ export function TripCard({ trip }: TripCardProps) {
                         variant="ghost"
                         size="icon"
                         disabled={isPendingAction}
-                        className="h-7 w-7 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 shrink-0 cursor-pointer"
+                        className="h-7 w-7 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-100 shrink-0 cursor-pointer"
                       >
                         {isPendingAction ? (
                           <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -303,32 +303,32 @@ export function TripCard({ trip }: TripCardProps) {
                         <span className="sr-only">Actions</span>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48 dark:bg-[#0F131C] dark:border-zinc-800">
+                    <DropdownMenuContent align="end" className="w-48 dark:bg-card dark:border-border">
                       {!isOnline ? (
                         <DropdownMenuItem
                           onClick={() => setIsOfflineViewerOpen(true)}
-                          className="cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200"
+                          className="cursor-pointer dark:hover:bg-[#121622] dark:text-foreground"
                         >
                           <ArrowUpRight className="h-3.5 w-3.5 mr-2" />
                           Open Offline View
                         </DropdownMenuItem>
                       ) : (
-                        <DropdownMenuItem asChild className="cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200">
+                        <DropdownMenuItem asChild className="cursor-pointer dark:hover:bg-[#121622] dark:text-foreground">
                           <Link href={`/trips/${trip.id}`}>
                             <ArrowUpRight className="h-3.5 w-3.5 mr-2" />
                             Open Workspace
                           </Link>
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200">
+                      <DropdownMenuItem onClick={() => setIsEditOpen(true)} className="cursor-pointer dark:hover:bg-[#121622] dark:text-foreground">
                         <Pencil className="h-3.5 w-3.5 mr-2" />
                         Edit Details & Cover
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleDuplicate} className="cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200">
+                      <DropdownMenuItem onClick={handleDuplicate} className="cursor-pointer dark:hover:bg-[#121622] dark:text-foreground">
                         <Copy className="h-3.5 w-3.5 mr-2" />
                         Duplicate Trip
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleToggleShare} className="cursor-pointer dark:hover:bg-[#121622] dark:text-zinc-200">
+                      <DropdownMenuItem onClick={handleToggleShare} className="cursor-pointer dark:hover:bg-[#121622] dark:text-foreground">
                         <Globe className="h-3.5 w-3.5 mr-2" />
                         {trip.isPublic ? "Make Private" : "Share to Community"}
                       </DropdownMenuItem>
@@ -348,7 +348,7 @@ export function TripCard({ trip }: TripCardProps) {
 
             <CardContent className="p-4 pt-0 pb-3 space-y-3">
               {trip.description ? (
-                <p className="text-xs text-muted-foreground dark:text-zinc-400 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground line-clamp-2 leading-relaxed">
                   {trip.description}
                 </p>
               ) : (
@@ -366,7 +366,7 @@ export function TripCard({ trip }: TripCardProps) {
                   </span>
                   <Link
                     href={`/trips/${trip.id}`}
-                    className="text-[10px] font-semibold text-[#2D9BF0] hover:underline cursor-pointer"
+                    className="text-[10px] font-semibold text-primary hover:underline cursor-pointer"
                   >
                     Update &rarr;
                   </Link>
@@ -374,21 +374,21 @@ export function TripCard({ trip }: TripCardProps) {
               )}
 
               {/* Inclusions Chips Strip */}
-              <div className="flex items-center gap-2 flex-wrap pt-1 text-[11px] text-muted-foreground dark:text-zinc-400">
-                <span className="inline-flex items-center gap-1 bg-muted/50 dark:bg-[#121622] px-2 py-0.5 rounded-xs border border-border/50 dark:border-zinc-800">
-                  <Calendar className="h-3 w-3 text-muted-foreground/70 dark:text-zinc-400" />
-                  <strong className="text-foreground dark:text-zinc-200">{activityCount}</strong> act
+              <div className="flex items-center gap-2 flex-wrap pt-1 text-[11px] text-muted-foreground dark:text-muted-foreground">
+                <span className="inline-flex items-center gap-1 bg-muted/50 dark:bg-card-subtle px-2 py-0.5 rounded-xs border border-border/50 dark:border-border">
+                  <Calendar className="h-3 w-3 text-muted-foreground/70 dark:text-muted-foreground" />
+                  <strong className="text-foreground dark:text-foreground">{activityCount}</strong> act
                 </span>
 
-                <span className="inline-flex items-center gap-1 bg-muted/50 dark:bg-[#121622] px-2 py-0.5 rounded-xs border border-border/50 dark:border-zinc-800">
-                  <Building2 className="h-3 w-3 text-muted-foreground/70 dark:text-zinc-400" />
-                  <strong className="text-foreground dark:text-zinc-200">{stayCount}</strong> stay{stayCount === 1 ? "" : "s"}
+                <span className="inline-flex items-center gap-1 bg-muted/50 dark:bg-card-subtle px-2 py-0.5 rounded-xs border border-border/50 dark:border-border">
+                  <Building2 className="h-3 w-3 text-muted-foreground/70 dark:text-muted-foreground" />
+                  <strong className="text-foreground dark:text-foreground">{stayCount}</strong> stay{stayCount === 1 ? "" : "s"}
                 </span>
 
                 {taskCount > 0 && (
-                  <span className="inline-flex items-center gap-1 bg-muted/50 dark:bg-[#121622] px-2 py-0.5 rounded-xs border border-border/50 dark:border-zinc-800">
-                    <CheckSquare className="h-3 w-3 text-muted-foreground/70 dark:text-zinc-400" />
-                    <strong className="text-foreground dark:text-zinc-200">{completedTasks}</strong>/{taskCount}
+                  <span className="inline-flex items-center gap-1 bg-muted/50 dark:bg-card-subtle px-2 py-0.5 rounded-xs border border-border/50 dark:border-border">
+                    <CheckSquare className="h-3 w-3 text-muted-foreground/70 dark:text-muted-foreground" />
+                    <strong className="text-foreground dark:text-foreground">{completedTasks}</strong>/{taskCount}
                   </span>
                 )}
 
@@ -410,9 +410,9 @@ export function TripCard({ trip }: TripCardProps) {
           </div>
 
           {/* Card Footer */}
-          <CardFooter className="p-3 px-4 border-t border-border/60 dark:border-zinc-800/80 flex items-center justify-between text-xs text-muted-foreground dark:text-zinc-400 bg-muted/20 dark:bg-[#121622]/60">
+          <CardFooter className="p-3 px-4 border-t border-border/60 dark:border-border/80 flex items-center justify-between text-xs text-muted-foreground dark:text-muted-foreground bg-muted/20 dark:bg-card-subtle/60">
             <div className="inline-flex items-center truncate mr-2">
-              <Calendar className="w-3.5 h-3.5 mr-1.5 text-muted-foreground/70 dark:text-zinc-400 shrink-0" />
+              <Calendar className="w-3.5 h-3.5 mr-1.5 text-muted-foreground/70 dark:text-muted-foreground shrink-0" />
               <span className="truncate">{formatDateRange(trip.startDate, trip.endDate)}</span>
             </div>
 
@@ -420,7 +420,7 @@ export function TripCard({ trip }: TripCardProps) {
               <button
                 type="button"
                 onClick={() => setIsOfflineViewerOpen(true)}
-                className="inline-flex items-center font-medium text-foreground dark:text-zinc-200 hover:text-primary transition-colors group-hover:translate-x-0.5 transform duration-150 shrink-0 ml-auto cursor-pointer"
+                className="inline-flex items-center font-medium text-foreground dark:text-foreground hover:text-primary transition-colors group-hover:translate-x-0.5 transform duration-150 shrink-0 ml-auto cursor-pointer"
               >
                 Offline View
                 <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
@@ -428,7 +428,7 @@ export function TripCard({ trip }: TripCardProps) {
             ) : (
               <Link
                 href={`/trips/${trip.id}`}
-                className="inline-flex items-center font-medium text-foreground dark:text-zinc-200 hover:text-primary transition-colors group-hover:translate-x-0.5 transform duration-150 shrink-0 ml-auto"
+                className="inline-flex items-center font-medium text-foreground dark:text-foreground hover:text-primary transition-colors group-hover:translate-x-0.5 transform duration-150 shrink-0 ml-auto"
               >
                 Workspace
                 <ArrowUpRight className="w-3.5 h-3.5 ml-1" />

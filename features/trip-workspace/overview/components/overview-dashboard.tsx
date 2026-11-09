@@ -173,10 +173,10 @@ export function OverviewDashboard({
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* ── Editorial Workspace Header (Matching Landing Page & Travel Essentials) ── */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-border dark:border-zinc-800">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-border dark:border-border">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <span className="font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase block">
+            <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block">
               Trip Overview
             </span>
             {tripTimelineStatus === "ACTIVE_TODAY" && (
@@ -186,23 +186,23 @@ export function OverviewDashboard({
               </span>
             )}
             {tripTimelineStatus === "FUTURE" && (
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#2D9BF0]/10 text-[#2D9BF0] border border-[#2D9BF0]/20">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
                 Starts in {daysUntilStart} day{daysUntilStart === 1 ? "" : "s"}
               </span>
             )}
             {tripTimelineStatus === "PAST" && (
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-muted dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 border border-border dark:border-zinc-800">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-muted dark:bg-card-subtle text-muted-foreground dark:text-muted-foreground border border-border dark:border-border">
                 Completed Journey
               </span>
             )}
           </div>
           <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
             Journey{" "}
-            <span className="font-serif italic font-normal text-foreground dark:text-zinc-100">
+            <span className="font-serif italic font-normal text-foreground dark:text-foreground">
               Blueprint
             </span>
           </h1>
-          <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 font-normal leading-relaxed max-w-2xl">
+          <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-muted-foreground font-normal leading-relaxed max-w-2xl">
             A high-density workspace summary of your scheduled route, confirmed stays, expense allocations, and preparation checklist.
           </p>
         </div>
@@ -210,14 +210,14 @@ export function OverviewDashboard({
         {/* Header Right: Destination & Date context badge */}
         <div className="flex flex-wrap items-center gap-2 shrink-0">
           {trip.destination && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-muted/60 dark:bg-[#121622] border border-border/80 dark:border-zinc-800 text-xs font-medium text-foreground dark:text-zinc-200">
-              <MapPin className="w-3.5 h-3.5 text-[#2D9BF0]" />
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-muted/60 dark:bg-card-subtle border border-border/80 dark:border-border text-xs font-medium text-foreground dark:text-foreground">
+              <MapPin className="w-3.5 h-3.5 text-primary" />
               <span>{trip.destination}</span>
             </div>
           )}
           {startDate && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-muted/60 dark:bg-[#121622] border border-border/80 dark:border-zinc-800 text-xs font-medium text-foreground dark:text-zinc-200 tabular-nums">
-              <Calendar className="w-3.5 h-3.5 text-muted-foreground dark:text-zinc-400" />
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-muted/60 dark:bg-card-subtle border border-border/80 dark:border-border text-xs font-medium text-foreground dark:text-foreground tabular-nums">
+              <Calendar className="w-3.5 h-3.5 text-muted-foreground dark:text-muted-foreground" />
               <span>
                 {startDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                 {endDate ? ` – ${endDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}` : ""}
@@ -233,7 +233,7 @@ export function OverviewDashboard({
               <Button
                 variant="outline"
                 size="sm"
-                className="h-7 text-xs gap-1.5 px-2.5 font-medium cursor-pointer border-[#2D9BF0]/30 text-[#2D9BF0] hover:bg-[#2D9BF0]/10 dark:bg-[#121622]"
+                className="h-7 text-xs gap-1.5 px-2.5 font-medium cursor-pointer border-primary/30 text-primary hover:bg-primary/10 dark:bg-card-subtle"
               >
                 <Calendar className="w-3.5 h-3.5" />
                 <span>Sync to Calendar</span>
@@ -246,18 +246,18 @@ export function OverviewDashboard({
       {/* ── 4-Stat Metric Header Strip ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Metric 1: Itinerary Events */}
-        <div className="p-3.5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] hover:border-[#2D9BF0]/40 transition-colors shadow-2xs space-y-2">
-          <div className="flex items-center justify-between text-muted-foreground dark:text-zinc-400">
+        <div className="p-3.5 rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card hover:border-primary/40 transition-colors shadow-2xs space-y-2">
+          <div className="flex items-center justify-between text-muted-foreground dark:text-muted-foreground">
             <span className="text-[11px] font-medium uppercase tracking-wider">Itinerary</span>
-            <Calendar className="w-3.5 h-3.5 text-[#2D9BF0]" />
+            <Calendar className="w-3.5 h-3.5 text-primary" />
           </div>
           <div className="space-y-0.5">
             <div className="text-xl font-bold text-foreground dark:text-zinc-50 tabular-nums">
-              {itinerary.length} <span className="text-xs font-normal text-muted-foreground dark:text-zinc-400">events</span>
+              {itinerary.length} <span className="text-xs font-normal text-muted-foreground dark:text-muted-foreground">events</span>
             </div>
             <Link
               href={`/trips/${trip.id}/itinerary`}
-              className="text-[11px] text-[#2D9BF0] hover:underline inline-flex items-center gap-0.5 font-medium cursor-pointer"
+              className="text-[11px] text-primary hover:underline inline-flex items-center gap-0.5 font-medium cursor-pointer"
             >
               View timeline <ArrowUpRight className="w-3 h-3" />
             </Link>
@@ -265,8 +265,8 @@ export function OverviewDashboard({
         </div>
 
         {/* Metric 2: Total Spent */}
-        <div className="p-3.5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] hover:border-[#2D9BF0]/40 transition-colors shadow-2xs space-y-2">
-          <div className="flex items-center justify-between text-muted-foreground dark:text-zinc-400">
+        <div className="p-3.5 rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card hover:border-primary/40 transition-colors shadow-2xs space-y-2">
+          <div className="flex items-center justify-between text-muted-foreground dark:text-muted-foreground">
             <span className="text-[11px] font-medium uppercase tracking-wider">Total Spent</span>
             <Receipt className="w-3.5 h-3.5 text-emerald-500" />
           </div>
@@ -276,7 +276,7 @@ export function OverviewDashboard({
             </div>
             <Link
               href={`/trips/${trip.id}/expenses`}
-              className="text-[11px] text-[#2D9BF0] hover:underline inline-flex items-center gap-0.5 font-medium cursor-pointer"
+              className="text-[11px] text-primary hover:underline inline-flex items-center gap-0.5 font-medium cursor-pointer"
             >
               {expenses.length} records <ArrowUpRight className="w-3 h-3" />
             </Link>
@@ -284,18 +284,18 @@ export function OverviewDashboard({
         </div>
 
         {/* Metric 3: Preparation Checklist */}
-        <div className="p-3.5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] hover:border-[#2D9BF0]/40 transition-colors shadow-2xs space-y-2">
-          <div className="flex items-center justify-between text-muted-foreground dark:text-zinc-400">
+        <div className="p-3.5 rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card hover:border-primary/40 transition-colors shadow-2xs space-y-2">
+          <div className="flex items-center justify-between text-muted-foreground dark:text-muted-foreground">
             <span className="text-[11px] font-medium uppercase tracking-wider">Preparation</span>
             <CheckSquare className="w-3.5 h-3.5 text-amber-500" />
           </div>
           <div className="space-y-0.5">
             <div className="text-xl font-bold text-foreground dark:text-zinc-50 tabular-nums">
-              {checklistPercent}% <span className="text-xs font-normal text-muted-foreground dark:text-zinc-400">ready</span>
+              {checklistPercent}% <span className="text-xs font-normal text-muted-foreground dark:text-muted-foreground">ready</span>
             </div>
             <Link
               href={`/trips/${trip.id}/checklist`}
-              className="text-[11px] text-[#2D9BF0] hover:underline inline-flex items-center gap-0.5 font-medium cursor-pointer"
+              className="text-[11px] text-primary hover:underline inline-flex items-center gap-0.5 font-medium cursor-pointer"
             >
               {completedTasks}/{checklist.length} tasks <ArrowUpRight className="w-3 h-3" />
             </Link>
@@ -303,18 +303,18 @@ export function OverviewDashboard({
         </div>
 
         {/* Metric 4: Lodging & Links */}
-        <div className="p-3.5 rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] hover:border-[#2D9BF0]/40 transition-colors shadow-2xs space-y-2">
-          <div className="flex items-center justify-between text-muted-foreground dark:text-zinc-400">
+        <div className="p-3.5 rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card hover:border-primary/40 transition-colors shadow-2xs space-y-2">
+          <div className="flex items-center justify-between text-muted-foreground dark:text-muted-foreground">
             <span className="text-[11px] font-medium uppercase tracking-wider">Stays & Saves</span>
             <BedDouble className="w-3.5 h-3.5 text-indigo-500" />
           </div>
           <div className="space-y-0.5">
             <div className="text-xl font-bold text-foreground dark:text-zinc-50 tabular-nums">
-              {accommodations.length} <span className="text-xs font-normal text-muted-foreground dark:text-zinc-400">stays ·</span> {links.length} <span className="text-xs font-normal text-muted-foreground dark:text-zinc-400">saves</span>
+              {accommodations.length} <span className="text-xs font-normal text-muted-foreground dark:text-muted-foreground">stays ·</span> {links.length} <span className="text-xs font-normal text-muted-foreground dark:text-muted-foreground">saves</span>
             </div>
             <Link
               href={`/trips/${trip.id}/accommodations`}
-              className="text-[11px] text-[#2D9BF0] hover:underline inline-flex items-center gap-0.5 font-medium cursor-pointer"
+              className="text-[11px] text-primary hover:underline inline-flex items-center gap-0.5 font-medium cursor-pointer"
             >
               View bookings <ArrowUpRight className="w-3 h-3" />
             </Link>
@@ -325,29 +325,29 @@ export function OverviewDashboard({
       {/* ── 2x2 Elevated Feature Cards Grid (Matching Landing Showcase) ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Card 1: Today's Route / Active Schedule */}
-        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
           <div className="space-y-3">
-            <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground dark:text-zinc-400 border-b border-border/60 dark:border-zinc-800 pb-2">
-              <span className="font-semibold text-foreground dark:text-zinc-200 flex items-center gap-1.5">
-                <Compass className="w-3.5 h-3.5 text-[#2D9BF0]" />
+            <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground dark:text-muted-foreground border-b border-border/60 dark:border-border pb-2">
+              <span className="font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
+                <Compass className="w-3.5 h-3.5 text-primary" />
                 {tripTimelineStatus === "ACTIVE_TODAY" ? `Day ${activeDayNumber} Route` : "Upcoming Schedule"}
               </span>
               <Link
                 href={`/trips/${trip.id}/itinerary`}
-                className="text-[#2D9BF0] hover:underline cursor-pointer normal-case font-medium flex items-center gap-0.5"
+                className="text-primary hover:underline cursor-pointer normal-case font-medium flex items-center gap-0.5"
               >
                 View all {itinerary.length} events →
               </Link>
             </div>
 
             {activeActivities.length === 0 ? (
-              <div className="py-8 text-center text-xs text-muted-foreground dark:text-zinc-400 space-y-2">
+              <div className="py-8 text-center text-xs text-muted-foreground dark:text-muted-foreground space-y-2">
                 <Calendar className="w-6 h-6 mx-auto opacity-40 text-muted-foreground dark:text-zinc-500" />
                 <p>No itinerary events scheduled yet.</p>
                 <AddItineraryDialog
                   tripId={trip.id}
                   trigger={
-                    <Button variant="outline" size="sm" className="h-7 text-xs cursor-pointer dark:bg-[#121622] dark:border-zinc-800">
+                    <Button variant="outline" size="sm" className="h-7 text-xs cursor-pointer dark:bg-card-subtle dark:border-border">
                       <Plus className="w-3 h-3 mr-1" /> Add First Event
                     </Button>
                   }
@@ -357,12 +357,12 @@ export function OverviewDashboard({
               <div className="space-y-3 text-xs">
                 {activeActivities.map((act, idx) => (
                   <div key={act.id} className="flex items-start gap-3">
-                    <span className="text-[11px] text-muted-foreground dark:text-zinc-400 shrink-0 font-mono tabular-nums pt-0.5 w-12 text-right">
+                    <span className="text-[11px] text-muted-foreground dark:text-muted-foreground shrink-0 font-mono tabular-nums pt-0.5 w-12 text-right">
                       {act.time || `Stop ${idx + 1}`}
                     </span>
-                    <div className="border-l-2 border-[#2D9BF0]/60 pl-3 flex-1 min-w-0">
-                      <p className="font-medium text-foreground dark:text-zinc-200 truncate">{act.title}</p>
-                      <div className="flex items-center gap-2 text-[11px] text-muted-foreground dark:text-zinc-400 mt-0.5">
+                    <div className="border-l-2 border-primary/60 pl-3 flex-1 min-w-0">
+                      <p className="font-medium text-foreground dark:text-foreground truncate">{act.title}</p>
+                      <div className="flex items-center gap-2 text-[11px] text-muted-foreground dark:text-muted-foreground mt-0.5">
                         {act.category && (
                           <Badge variant="planning" className="text-[9px] px-1.5 py-0 h-4">
                             {act.category}
@@ -382,14 +382,14 @@ export function OverviewDashboard({
             )}
           </div>
 
-          <div className="pt-3 border-t border-border/60 dark:border-zinc-800 flex items-center justify-between text-[11px] text-muted-foreground dark:text-zinc-400">
+          <div className="pt-3 border-t border-border/60 dark:border-border flex items-center justify-between text-[11px] text-muted-foreground dark:text-muted-foreground">
             <span>{itinerary.length} total activities planned</span>
             <AddItineraryDialog
               tripId={trip.id}
               trigger={
                 <button
                   type="button"
-                  className="text-[#2D9BF0] hover:underline font-medium cursor-pointer inline-flex items-center gap-1"
+                  className="text-primary hover:underline font-medium cursor-pointer inline-flex items-center gap-1"
                 >
                   <Plus className="w-3 h-3" /> Add Activity
                 </button>
@@ -399,10 +399,10 @@ export function OverviewDashboard({
         </div>
 
         {/* Card 2: Current Stay / Next Lodging */}
-        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
           <div className="space-y-3">
-            <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground dark:text-zinc-400 border-b border-border/60 dark:border-zinc-800 pb-2">
-              <span className="font-semibold text-foreground dark:text-zinc-200 flex items-center gap-1.5">
+            <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground dark:text-muted-foreground border-b border-border/60 dark:border-border pb-2">
+              <span className="font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
                 <BedDouble className="w-3.5 h-3.5 text-indigo-500" />
                 Current Stay
               </span>
@@ -415,7 +415,7 @@ export function OverviewDashboard({
               <div className="space-y-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h4 className="text-base font-semibold text-foreground dark:text-zinc-100 truncate">
+                    <h4 className="text-base font-semibold text-foreground dark:text-foreground truncate">
                       {currentStay.name}
                     </h4>
                     <Badge variant="planning" className="text-[9px]">
@@ -423,15 +423,15 @@ export function OverviewDashboard({
                     </Badge>
                   </div>
                   {currentStay.address && (
-                    <p className="text-xs text-muted-foreground dark:text-zinc-400 mt-0.5 line-clamp-1">
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-0.5 line-clamp-1">
                       {currentStay.address}
                     </p>
                   )}
                 </div>
 
-                <div className="rounded-xs bg-muted/40 dark:bg-[#121622] p-2.5 border border-border/60 dark:border-zinc-800 text-xs space-y-1">
+                <div className="rounded-xs bg-muted/40 dark:bg-card-subtle p-2.5 border border-border/60 dark:border-border text-xs space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-foreground dark:text-zinc-200">
+                    <span className="font-medium text-foreground dark:text-foreground">
                       {currentStay.checkIn
                         ? `Check-in: ${new Date(currentStay.checkIn).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
                         : "Flexible Check-in"}
@@ -440,7 +440,7 @@ export function OverviewDashboard({
                       <button
                         type="button"
                         onClick={() => handleCopyCode(currentStay.confirmationCode!)}
-                        className="inline-flex items-center gap-1 text-[11px] font-mono font-medium text-[#2D9BF0] hover:underline cursor-pointer"
+                        className="inline-flex items-center gap-1 text-[11px] font-mono font-medium text-primary hover:underline cursor-pointer"
                         title="Copy code"
                       >
                         <Copy className="w-3 h-3" />
@@ -449,20 +449,20 @@ export function OverviewDashboard({
                     )}
                   </div>
                   {currentStay.checkOut && (
-                    <p className="text-[11px] text-muted-foreground dark:text-zinc-400">
+                    <p className="text-[11px] text-muted-foreground dark:text-muted-foreground">
                       Check-out: {new Date(currentStay.checkOut).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                     </p>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="py-8 text-center text-xs text-muted-foreground dark:text-zinc-400 space-y-2">
+              <div className="py-8 text-center text-xs text-muted-foreground dark:text-muted-foreground space-y-2">
                 <BedDouble className="w-6 h-6 mx-auto opacity-40 text-muted-foreground dark:text-zinc-500" />
                 <p>No accommodations booked yet.</p>
                 <AddAccommodationDialog
                   tripId={trip.id}
                   trigger={
-                    <Button variant="outline" size="sm" className="h-7 text-xs cursor-pointer dark:bg-[#121622] dark:border-zinc-800">
+                    <Button variant="outline" size="sm" className="h-7 text-xs cursor-pointer dark:bg-card-subtle dark:border-border">
                       <Plus className="w-3 h-3 mr-1" /> Add Stay
                     </Button>
                   }
@@ -471,7 +471,7 @@ export function OverviewDashboard({
             )}
           </div>
 
-          <div className="pt-3 border-t border-border/60 dark:border-zinc-800 flex items-center justify-between text-[11px] text-muted-foreground dark:text-zinc-400">
+          <div className="pt-3 border-t border-border/60 dark:border-border flex items-center justify-between text-[11px] text-muted-foreground dark:text-muted-foreground">
             {currentStay?.address ? (
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
@@ -479,7 +479,7 @@ export function OverviewDashboard({
                 )}`}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[#2D9BF0] hover:underline inline-flex items-center gap-1 cursor-pointer"
+                className="text-primary hover:underline inline-flex items-center gap-1 cursor-pointer"
               >
                 <ExternalLink className="w-3 h-3" /> Open in Maps
               </a>
@@ -488,7 +488,7 @@ export function OverviewDashboard({
             )}
             <Link
               href={`/trips/${trip.id}/accommodations`}
-              className="text-foreground dark:text-zinc-300 hover:text-[#2D9BF0] dark:hover:text-[#2D9BF0] font-medium cursor-pointer"
+              className="text-foreground dark:text-foreground hover:text-primary dark:hover:text-primary font-medium cursor-pointer"
             >
               View all stays →
             </Link>
@@ -496,14 +496,14 @@ export function OverviewDashboard({
         </div>
 
         {/* Card 3: Expense Ledger & Budget Progress */}
-        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
           <div className="space-y-3">
-            <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground dark:text-zinc-400 border-b border-border/60 dark:border-zinc-800 pb-2">
-              <span className="font-semibold text-foreground dark:text-zinc-200 flex items-center gap-1.5">
+            <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground dark:text-muted-foreground border-b border-border/60 dark:border-border pb-2">
+              <span className="font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
                 <Receipt className="w-3.5 h-3.5 text-emerald-500" />
                 Expense Ledger
               </span>
-              <span className="font-semibold text-foreground dark:text-zinc-200 font-mono tabular-nums">
+              <span className="font-semibold text-foreground dark:text-foreground font-mono tabular-nums">
                 ${totalSpent.toLocaleString(undefined, { maximumFractionDigits: 0 })} / ${budget.toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </span>
             </div>
@@ -516,7 +516,7 @@ export function OverviewDashboard({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div
-                          className="h-full bg-[#2D9BF0] cursor-pointer transition-opacity hover:opacity-85"
+                          className="h-full bg-primary cursor-pointer transition-opacity hover:opacity-85"
                           style={{ width: `${Math.min(100, (categoryTotals.ACCOMMODATION / budget) * 100)}%` }}
                         />
                       </TooltipTrigger>
@@ -593,9 +593,9 @@ export function OverviewDashboard({
                 </div>
               </TooltipProvider>
 
-              <div className="flex items-center justify-between text-[10px] text-muted-foreground dark:text-zinc-400">
+              <div className="flex items-center justify-between text-[10px] text-muted-foreground dark:text-muted-foreground">
                 <span>{spentPercent}% allocated</span>
-                <span className="font-medium text-foreground dark:text-zinc-200 tabular-nums">
+                <span className="font-medium text-foreground dark:text-foreground tabular-nums">
                   ${headroom.toLocaleString(undefined, { maximumFractionDigits: 0 })} headroom left
                 </span>
               </div>
@@ -603,28 +603,28 @@ export function OverviewDashboard({
 
             {/* Category Breakdown Chips */}
             <div className="grid grid-cols-2 gap-2 text-[11px]">
-              <div className="p-2 rounded-xs bg-muted/40 dark:bg-[#121622] border border-border/60 dark:border-zinc-800 flex justify-between">
-                <span className="text-muted-foreground dark:text-zinc-400">Lodging</span>
-                <span className="font-semibold text-foreground dark:text-zinc-100 font-mono tabular-nums">
+              <div className="p-2 rounded-xs bg-muted/40 dark:bg-card-subtle border border-border/60 dark:border-border flex justify-between">
+                <span className="text-muted-foreground dark:text-muted-foreground">Lodging</span>
+                <span className="font-semibold text-foreground dark:text-foreground font-mono tabular-nums">
                   ${categoryTotals.ACCOMMODATION.toLocaleString()}
                 </span>
               </div>
-              <div className="p-2 rounded-xs bg-muted/40 dark:bg-[#121622] border border-border/60 dark:border-zinc-800 flex justify-between">
-                <span className="text-muted-foreground dark:text-zinc-400">Transit</span>
-                <span className="font-semibold text-foreground dark:text-zinc-100 font-mono tabular-nums">
+              <div className="p-2 rounded-xs bg-muted/40 dark:bg-card-subtle border border-border/60 dark:border-border flex justify-between">
+                <span className="text-muted-foreground dark:text-muted-foreground">Transit</span>
+                <span className="font-semibold text-foreground dark:text-foreground font-mono tabular-nums">
                   ${categoryTotals.TRANSPORT.toLocaleString()}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="pt-3 border-t border-border/60 dark:border-zinc-800 flex items-center justify-between text-[11px] text-muted-foreground dark:text-zinc-400">
+          <div className="pt-3 border-t border-border/60 dark:border-border flex items-center justify-between text-[11px] text-muted-foreground dark:text-muted-foreground">
             <AddExpenseDialog
               tripId={trip.id}
               trigger={
                 <button
                   type="button"
-                  className="text-[#2D9BF0] hover:underline font-medium cursor-pointer inline-flex items-center gap-1"
+                  className="text-primary hover:underline font-medium cursor-pointer inline-flex items-center gap-1"
                 >
                   <Plus className="w-3 h-3" /> Record Expense
                 </button>
@@ -632,7 +632,7 @@ export function OverviewDashboard({
             />
             <Link
               href={`/trips/${trip.id}/expenses`}
-              className="text-foreground dark:text-zinc-300 hover:text-[#2D9BF0] dark:hover:text-[#2D9BF0] font-medium cursor-pointer"
+              className="text-foreground dark:text-foreground hover:text-primary dark:hover:text-primary font-medium cursor-pointer"
             >
               Open expenses →
             </Link>
@@ -640,26 +640,26 @@ export function OverviewDashboard({
         </div>
 
         {/* Card 4: Immediate Tasks & Checklist */}
-        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
           <div className="space-y-3">
-            <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground dark:text-zinc-400 border-b border-border/60 dark:border-zinc-800 pb-2">
-              <span className="font-semibold text-foreground dark:text-zinc-200 flex items-center gap-1.5">
+            <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground dark:text-muted-foreground border-b border-border/60 dark:border-border pb-2">
+              <span className="font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
                 <CheckSquare className="w-3.5 h-3.5 text-amber-500" />
                 Immediate Tasks
               </span>
-              <span className="text-[#2D9BF0] font-semibold">
+              <span className="text-primary font-semibold">
                 {pendingTasks.length} pending
               </span>
             </div>
 
             {pendingTasks.length === 0 ? (
-              <div className="py-8 text-center text-xs text-muted-foreground dark:text-zinc-400 space-y-2">
+              <div className="py-8 text-center text-xs text-muted-foreground dark:text-muted-foreground space-y-2">
                 <CheckSquare className="w-6 h-6 mx-auto opacity-40 text-muted-foreground dark:text-zinc-500" />
                 <p>All checklist tasks are completed! You&apos;re travel ready.</p>
                 <AddTaskDialog
                   tripId={trip.id}
                   trigger={
-                    <Button variant="outline" size="sm" className="h-7 text-xs cursor-pointer dark:bg-[#121622] dark:border-zinc-800">
+                    <Button variant="outline" size="sm" className="h-7 text-xs cursor-pointer dark:bg-card-subtle dark:border-border">
                       <Plus className="w-3 h-3 mr-1" /> Add Task
                     </Button>
                   }
@@ -674,13 +674,13 @@ export function OverviewDashboard({
             )}
           </div>
 
-          <div className="pt-3 border-t border-border/60 dark:border-zinc-800 flex items-center justify-between text-[11px] text-muted-foreground dark:text-zinc-400">
+          <div className="pt-3 border-t border-border/60 dark:border-border flex items-center justify-between text-[11px] text-muted-foreground dark:text-muted-foreground">
             <span className="text-emerald-600 dark:text-emerald-400 font-medium">
               ✓ {completedTasks} tasks completed
             </span>
             <Link
               href={`/trips/${trip.id}/checklist`}
-              className="text-foreground dark:text-zinc-300 hover:text-[#2D9BF0] dark:hover:text-[#2D9BF0] font-medium cursor-pointer"
+              className="text-foreground dark:text-foreground hover:text-primary dark:hover:text-primary font-medium cursor-pointer"
             >
               Open checklist →
             </Link>
@@ -691,10 +691,10 @@ export function OverviewDashboard({
       {/* ── Bottom Section: Pinned Notes & Quick Reference Links ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-2">
         {/* Pinned Notes Shelf */}
-        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 space-y-3 shadow-xs">
-          <div className="flex items-center justify-between pb-2 border-b border-border/60 dark:border-zinc-800">
-            <span className="text-xs font-semibold text-foreground dark:text-zinc-200 flex items-center gap-1.5">
-              <FileText className="w-3.5 h-3.5 text-[#2D9BF0]" />
+        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 space-y-3 shadow-xs">
+          <div className="flex items-center justify-between pb-2 border-b border-border/60 dark:border-border">
+            <span className="text-xs font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
+              <FileText className="w-3.5 h-3.5 text-primary" />
               Notes & Memos
             </span>
             <div className="flex items-center gap-2">
@@ -703,7 +703,7 @@ export function OverviewDashboard({
                 trigger={
                   <button
                     type="button"
-                    className="text-xs text-[#2D9BF0] hover:underline cursor-pointer inline-flex items-center gap-0.5"
+                    className="text-xs text-primary hover:underline cursor-pointer inline-flex items-center gap-0.5"
                   >
                     <Plus className="w-3 h-3" /> Add Note
                   </button>
@@ -711,7 +711,7 @@ export function OverviewDashboard({
               />
               <Link
                 href={`/trips/${trip.id}/notes`}
-                className="text-xs text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 inline-flex items-center gap-0.5"
+                className="text-xs text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200 inline-flex items-center gap-0.5"
               >
                 All ({notes.length}) <ArrowUpRight className="w-3 h-3" />
               </Link>
@@ -719,7 +719,7 @@ export function OverviewDashboard({
           </div>
 
           {notes.length === 0 ? (
-            <div className="py-4 text-center text-xs text-muted-foreground dark:text-zinc-400">
+            <div className="py-4 text-center text-xs text-muted-foreground dark:text-muted-foreground">
               No notes saved yet. Jot down directions, packing tips, or reservations.
             </div>
           ) : (
@@ -727,15 +727,15 @@ export function OverviewDashboard({
               {notes.slice(0, 3).map((note) => (
                 <div
                   key={note.id}
-                  className="p-2.5 rounded-sm border border-border/60 dark:border-zinc-800 bg-muted/30 dark:bg-[#121622] text-xs space-y-1 hover:border-border dark:hover:border-zinc-700 transition-colors"
+                  className="p-2.5 rounded-sm border border-border/60 dark:border-border bg-muted/30 dark:bg-card-subtle text-xs space-y-1 hover:border-border dark:hover:border-zinc-700 transition-colors"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-foreground dark:text-zinc-200 truncate">{note.title}</span>
+                    <span className="font-semibold text-foreground dark:text-foreground truncate">{note.title}</span>
                     {note.isPinned && (
                       <Pin className="w-3 h-3 text-amber-500 fill-amber-500 shrink-0" />
                     )}
                   </div>
-                  <p className="text-[11px] text-muted-foreground dark:text-zinc-400 line-clamp-1">{note.content}</p>
+                  <p className="text-[11px] text-muted-foreground dark:text-muted-foreground line-clamp-1">{note.content}</p>
                 </div>
               ))}
             </div>
@@ -743,9 +743,9 @@ export function OverviewDashboard({
         </div>
 
         {/* Quick Reference Links */}
-        <div className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 space-y-3 shadow-xs">
-          <div className="flex items-center justify-between pb-2 border-b border-border/60 dark:border-zinc-800">
-            <span className="text-xs font-semibold text-foreground dark:text-zinc-200 flex items-center gap-1.5">
+        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 space-y-3 shadow-xs">
+          <div className="flex items-center justify-between pb-2 border-b border-border/60 dark:border-border">
+            <span className="text-xs font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
               <Link2 className="w-3.5 h-3.5 text-blue-500" />
               Saved Links & Vault
             </span>
@@ -755,7 +755,7 @@ export function OverviewDashboard({
                 trigger={
                   <button
                     type="button"
-                    className="text-xs text-[#2D9BF0] hover:underline cursor-pointer inline-flex items-center gap-0.5"
+                    className="text-xs text-primary hover:underline cursor-pointer inline-flex items-center gap-0.5"
                   >
                     <Plus className="w-3 h-3" /> Add Link
                   </button>
@@ -763,7 +763,7 @@ export function OverviewDashboard({
               />
               <Link
                 href={`/trips/${trip.id}/links`}
-                className="text-xs text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 inline-flex items-center gap-0.5"
+                className="text-xs text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200 inline-flex items-center gap-0.5"
               >
                 All ({links.length}) <ArrowUpRight className="w-3 h-3" />
               </Link>
@@ -771,7 +771,7 @@ export function OverviewDashboard({
           </div>
 
           {links.length === 0 ? (
-            <div className="py-4 text-center text-xs text-muted-foreground dark:text-zinc-400">
+            <div className="py-4 text-center text-xs text-muted-foreground dark:text-muted-foreground">
               No bookmarks saved yet. Save travel blogs, Google Maps pins, or tickets.
             </div>
           ) : (
@@ -782,17 +782,17 @@ export function OverviewDashboard({
                   href={link.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center justify-between p-2.5 rounded-sm border border-border/60 dark:border-zinc-800 bg-muted/30 dark:bg-[#121622] text-xs hover:border-[#2D9BF0]/40 transition-colors group cursor-pointer"
+                  className="flex items-center justify-between p-2.5 rounded-sm border border-border/60 dark:border-border bg-muted/30 dark:bg-card-subtle text-xs hover:border-primary/40 transition-colors group cursor-pointer"
                 >
                   <div className="min-w-0 flex-1 pr-2">
-                    <p className="font-semibold text-foreground dark:text-zinc-200 truncate group-hover:text-[#2D9BF0] transition-colors">
+                    <p className="font-semibold text-foreground dark:text-foreground truncate group-hover:text-primary transition-colors">
                       {link.title}
                     </p>
-                    <p className="text-[10px] text-muted-foreground dark:text-zinc-400 truncate font-mono">
+                    <p className="text-[10px] text-muted-foreground dark:text-muted-foreground truncate font-mono">
                       {link.url}
                     </p>
                   </div>
-                  <ExternalLink className="w-3.5 h-3.5 text-muted-foreground dark:text-zinc-400 group-hover:text-[#2D9BF0] shrink-0" />
+                  <ExternalLink className="w-3.5 h-3.5 text-muted-foreground dark:text-muted-foreground group-hover:text-primary shrink-0" />
                 </a>
               ))}
             </div>

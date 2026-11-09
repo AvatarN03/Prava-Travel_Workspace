@@ -133,18 +133,18 @@ export function LinksGrid({ tripId, items }: LinksGridProps) {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-1 border-b border-border/50">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground dark:text-zinc-400 font-semibold">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground dark:text-muted-foreground font-semibold">
               Reference Vault
             </span>
             <span className="text-muted-foreground/40 dark:text-zinc-600 text-xs">•</span>
-            <span className="text-[11px] font-mono text-muted-foreground dark:text-zinc-400">
+            <span className="text-[11px] font-mono text-muted-foreground dark:text-muted-foreground">
               {items.length} {items.length === 1 ? "bookmark" : "bookmarks"} saved
             </span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-zinc-100 font-serif">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-foreground font-serif">
             Reference Vault · <span className="italic font-normal">Links & Confirmations</span>
           </h1>
-          <p className="text-xs text-muted-foreground dark:text-zinc-400 mt-1 max-w-xl">
+          <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1 max-w-xl">
             Bookmark blogs, hotel listings, Google Maps pins, transit trackers, and ticket confirmation URLs.
           </p>
         </div>

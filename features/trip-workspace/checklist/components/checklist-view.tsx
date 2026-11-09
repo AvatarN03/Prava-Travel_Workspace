@@ -129,19 +129,19 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
     return (
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Editorial Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-1 border-b border-border/50 dark:border-zinc-800">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-1 border-b border-border/50 dark:border-border">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground dark:text-zinc-400 font-semibold">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground dark:text-muted-foreground font-semibold">
                 Preparation Roadmap
               </span>
               <span className="text-muted-foreground/40 dark:text-zinc-600 text-xs">•</span>
-              <span className="text-[11px] font-mono text-muted-foreground dark:text-zinc-400">0 tasks</span>
+              <span className="text-[11px] font-mono text-muted-foreground dark:text-muted-foreground">0 tasks</span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-zinc-100 font-serif">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-foreground font-serif">
               Checklist & Tasks · <span className="italic font-normal">Readiness & Packing</span>
             </h1>
-            <p className="text-xs text-muted-foreground dark:text-zinc-400 mt-1 max-w-xl">
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1 max-w-xl">
               Stay on track with packing lists, visa applications, bookings, and pre-departure preparation.
             </p>
           </div>
@@ -151,11 +151,11 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
               size="sm"
               onClick={handleGenerateAi}
               disabled={isAiGenerating}
-              className="h-9 gap-1.5 text-xs font-semibold rounded-sm border-[#2D9BF0]/40 text-[#2D9BF0] hover:bg-[#2D9BF0]/10 dark:bg-[#2D9BF0]/10 dark:hover:bg-[#2D9BF0]/20 cursor-pointer shadow-2xs"
+              className="h-9 gap-1.5 text-xs font-semibold rounded-sm border-primary/40 text-primary hover:bg-primary/10 dark:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer shadow-2xs"
             >
-              {isAiGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-[#2D9BF0]" />}
+              {isAiGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-primary" />}
               <span>AI Packing List</span>
-              <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 bg-[#2D9BF0]/15 text-[#2D9BF0] font-mono">
+              <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 bg-primary/15 text-primary font-mono">
                 -3
               </Badge>
             </Button>
@@ -164,9 +164,9 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
               size="sm"
               onClick={handleSeedEssentials}
               disabled={isSeeding}
-              className="h-9 gap-1.5 text-xs font-medium rounded-sm border-border dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800/60 cursor-pointer shadow-2xs hover:bg-muted/80"
+              className="h-9 gap-1.5 text-xs font-medium rounded-sm border-border dark:border-border dark:text-foreground dark:hover:bg-zinc-800/60 cursor-pointer shadow-2xs hover:bg-muted/80"
             >
-              {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckSquare className="w-3.5 h-3.5 text-muted-foreground dark:text-zinc-400" />}
+              {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckSquare className="w-3.5 h-3.5 text-muted-foreground dark:text-muted-foreground" />}
               <span>Starter Essentials</span>
             </Button>
             <AddTaskDialog
@@ -261,7 +261,7 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
             disabled={isSeeding}
             className="h-9 gap-1.5 text-xs font-medium rounded-sm border-border cursor-pointer hover:bg-muted/80 shadow-2xs"
           >
-            {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckSquare className="w-3.5 h-3.5 text-muted-foreground dark:text-zinc-400" />}
+            {isSeeding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckSquare className="w-3.5 h-3.5 text-muted-foreground dark:text-muted-foreground" />}
             <span>+ Essentials</span>
           </Button>
 
@@ -282,56 +282,56 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
 
       {/* 3-Stat Metric Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-        <Card className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 shadow-2xs hover:border-[#2D9BF0]/40 transition-colors">
+        <Card className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 shadow-2xs hover:border-primary/40 transition-colors">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#2D9BF0]" /> Readiness Score
+            <span className="text-xs font-medium text-muted-foreground dark:text-muted-foreground flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-primary" /> Readiness Score
             </span>
             <span className={`text-[10px] font-medium border rounded-xs px-1.5 py-0.5 ${readinessStatus.color}`}>
               {readinessStatus.label}
             </span>
           </div>
           <div className="mt-2.5 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold font-mono tracking-tight text-foreground dark:text-zinc-100 tabular-nums">
+            <span className="text-2xl font-bold font-mono tracking-tight text-foreground dark:text-foreground tabular-nums">
               {percentage}%
             </span>
-            <span className="text-xs text-muted-foreground dark:text-zinc-400">completed</span>
+            <span className="text-xs text-muted-foreground dark:text-muted-foreground">completed</span>
           </div>
           <div className="h-1.5 w-full rounded-xs bg-muted dark:bg-zinc-800 overflow-hidden mt-2.5">
             <div
-              className={`h-full rounded-xs transition-all duration-300 ${percentage === 100 ? "bg-emerald-500" : percentage >= 50 ? "bg-[#2D9BF0]" : "bg-sky-500"
+              className={`h-full rounded-xs transition-all duration-300 ${percentage === 100 ? "bg-emerald-500" : percentage >= 50 ? "bg-primary" : "bg-sky-500"
                 }`}
               style={{ width: `${percentage}%` }}
             />
           </div>
         </Card>
 
-        <Card className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 shadow-2xs hover:border-[#2D9BF0]/40 transition-colors">
-          <span className="text-xs font-medium text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-[#2D9BF0]" /> Tasks Remaining
+        <Card className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 shadow-2xs hover:border-primary/40 transition-colors">
+          <span className="text-xs font-medium text-muted-foreground dark:text-muted-foreground flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-primary" /> Tasks Remaining
           </span>
           <div className="mt-2.5 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold font-mono tracking-tight text-foreground dark:text-zinc-100 tabular-nums">
+            <span className="text-2xl font-bold font-mono tracking-tight text-foreground dark:text-foreground tabular-nums">
               {pendingCount}
             </span>
-            <span className="text-xs text-muted-foreground dark:text-zinc-400">pending</span>
+            <span className="text-xs text-muted-foreground dark:text-muted-foreground">pending</span>
           </div>
-          <p className="text-[11px] text-muted-foreground dark:text-zinc-400 mt-1 truncate">
+          <p className="text-[11px] text-muted-foreground dark:text-muted-foreground mt-1 truncate">
             {pendingCount === 0 ? "All items checked off!" : "Pending action items before trip"}
           </p>
         </Card>
 
-        <Card className="rounded-sm border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 shadow-2xs hover:border-[#2D9BF0]/40 transition-colors">
-          <span className="text-xs font-medium text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5">
-            <ListTodo className="w-3.5 h-3.5 text-[#2D9BF0]" /> Total Categories
+        <Card className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 shadow-2xs hover:border-primary/40 transition-colors">
+          <span className="text-xs font-medium text-muted-foreground dark:text-muted-foreground flex items-center gap-1.5">
+            <ListTodo className="w-3.5 h-3.5 text-primary" /> Total Categories
           </span>
           <div className="mt-2.5 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold font-mono tracking-tight text-foreground dark:text-zinc-100 tabular-nums">
+            <span className="text-2xl font-bold font-mono tracking-tight text-foreground dark:text-foreground tabular-nums">
               {groupedCategories.length}
             </span>
-            <span className="text-xs text-muted-foreground dark:text-zinc-400">groups</span>
+            <span className="text-xs text-muted-foreground dark:text-muted-foreground">groups</span>
           </div>
-          <p className="text-[11px] text-muted-foreground dark:text-zinc-400 mt-1 truncate">
+          <p className="text-[11px] text-muted-foreground dark:text-muted-foreground mt-1 truncate">
             {completedCount} total tasks fulfilled
           </p>
         </Card>
@@ -373,13 +373,13 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
                 type="button"
                 onClick={() => setFilter(value)}
                 className={`px-2.5 py-1 rounded-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 text-xs ${isActive
-                    ? "bg-[#2D9BF0] text-white font-semibold shadow-2xs"
-                    : "bg-muted/50 dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200 hover:bg-muted dark:hover:bg-zinc-800/60 dark:border dark:border-zinc-800"
+                    ? "bg-primary text-white font-semibold shadow-2xs"
+                    : "bg-muted/50 dark:bg-card-subtle text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200 hover:bg-muted dark:hover:bg-zinc-800/60 dark:border dark:border-border"
                   }`}
               >
                 <span>{label}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-semibold font-mono ${isActive ? "bg-white/20 text-white" : "bg-muted dark:bg-zinc-800 text-muted-foreground dark:text-zinc-300"
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-semibold font-mono ${isActive ? "bg-white/20 text-white" : "bg-muted dark:bg-zinc-800 text-muted-foreground dark:text-foreground"
                     }`}
                 >
                   {count}
@@ -393,11 +393,11 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
       {/* Categorized Tasks Groups */}
       <div className="space-y-6">
         {groupedCategories.length === 0 ? (
-          <Card className="rounded-sm border border-dashed border-border/80 dark:border-zinc-800 p-8 text-center bg-card/40 dark:bg-[#0F131C]">
-            <p className="text-sm font-semibold text-foreground dark:text-zinc-100">
+          <Card className="rounded-sm border border-dashed border-border/80 dark:border-border p-8 text-center bg-card/40 dark:bg-card">
+            <p className="text-sm font-semibold text-foreground dark:text-foreground">
               No {filter === "PENDING" ? "pending" : filter === "COMPLETED" ? "completed" : ""} tasks found
             </p>
-            <p className="text-xs text-muted-foreground dark:text-zinc-400 mt-1">
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">
               Try adjusting your search query or switch task filters.
             </p>
           </Card>
@@ -407,16 +407,16 @@ export function ChecklistView({ tripId, items }: ChecklistViewProps) {
 
             return (
               <div key={category} className="space-y-2">
-                <div className="flex items-center justify-between pb-1.5 border-b border-border/60 dark:border-zinc-800">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border/60 dark:border-border">
                   <div className="flex items-center gap-2">
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground dark:text-zinc-400 font-mono">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground dark:text-muted-foreground font-mono">
                       {category}
                     </h4>
                     <span className="text-[11px] font-mono text-muted-foreground dark:text-zinc-500">
                       ({catItems.length})
                     </span>
                   </div>
-                  <span className="text-[11px] font-mono text-muted-foreground dark:text-zinc-400">
+                  <span className="text-[11px] font-mono text-muted-foreground dark:text-muted-foreground">
                     {catCompleted}/{catItems.length} done
                   </span>
                 </div>

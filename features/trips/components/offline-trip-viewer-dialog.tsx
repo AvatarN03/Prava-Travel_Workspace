@@ -117,9 +117,9 @@ export function OfflineTripViewerDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[88vh] overflow-hidden flex flex-col p-0 rounded-sm border border-border dark:border-zinc-800 bg-background dark:bg-[#0B0F19] text-foreground">
+      <DialogContent className="max-w-3xl max-h-[88vh] overflow-hidden flex flex-col p-0 rounded-sm border border-border dark:border-border bg-background dark:bg-[#0B0F19] text-foreground">
         {/* Header Strip */}
-        <DialogHeader className="p-4 sm:p-5 pb-3 border-b border-border/80 dark:border-zinc-800/80 bg-card dark:bg-[#0F131C] shrink-0">
+        <DialogHeader className="p-4 sm:p-5 pb-3 border-b border-border/80 dark:border-border/80 bg-card dark:bg-card shrink-0">
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-1 min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
@@ -131,18 +131,18 @@ export function OfflineTripViewerDialog({
                   Offline Cache (Read-Only)
                 </Badge>
                 {trip?.destination && (
-                  <span className="flex items-center gap-1 text-xs text-muted-foreground dark:text-zinc-400 font-medium">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground dark:text-muted-foreground font-medium">
                     <MapPin className="h-3 w-3 text-primary" />
                     {trip.destination}
                   </span>
                 )}
               </div>
 
-              <DialogTitle className="text-base sm:text-lg font-bold font-sans text-foreground dark:text-zinc-100 truncate">
+              <DialogTitle className="text-base sm:text-lg font-bold font-sans text-foreground dark:text-foreground truncate">
                 {trip?.title || "Trip Workspace"}
               </DialogTitle>
 
-              <DialogDescription className="text-xs text-muted-foreground dark:text-zinc-400 flex items-center gap-2 flex-wrap">
+              <DialogDescription className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-2 flex-wrap">
                 <span className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
                   {trip ? formatDateRange(trip.startDate, trip.endDate) : "Dates not set"}
@@ -186,7 +186,7 @@ export function OfflineTripViewerDialog({
             className="flex-1 overflow-hidden flex flex-col min-h-0"
           >
             {/* Tabs Bar */}
-            <div className="px-4 sm:px-5 pt-2 border-b border-border/60 dark:border-zinc-800/80 bg-muted/20 dark:bg-[#0D121F] shrink-0 overflow-x-auto">
+            <div className="px-4 sm:px-5 pt-2 border-b border-border/60 dark:border-border/80 bg-muted/20 dark:bg-[#0D121F] shrink-0 overflow-x-auto">
               <TabsList className="bg-transparent h-9 p-0 space-x-1 sm:space-x-2">
                 <TabsTrigger
                   value="itinerary"
@@ -250,7 +250,7 @@ export function OfflineTripViewerDialog({
               {/* 1. ITINERARY TAB */}
               <TabsContent value="itinerary" className="m-0 space-y-4 focus-visible:outline-none">
                 {dayNumbers.length > 1 && (
-                  <div className="flex items-center gap-1.5 flex-wrap pb-2 border-b border-border/50 dark:border-zinc-800">
+                  <div className="flex items-center gap-1.5 flex-wrap pb-2 border-b border-border/50 dark:border-border">
                     <Button
                       type="button"
                       variant={selectedDay === "ALL" ? "default" : "outline"}
@@ -284,7 +284,7 @@ export function OfflineTripViewerDialog({
                     {filteredItinerary.map((item) => (
                       <div
                         key={item.id}
-                        className="p-3 rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] space-y-1.5 shadow-2xs"
+                        className="p-3 rounded-sm border border-border dark:border-border bg-card dark:bg-card space-y-1.5 shadow-2xs"
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2 flex-wrap min-w-0">
@@ -316,19 +316,19 @@ export function OfflineTripViewerDialog({
                           )}
                         </div>
 
-                        <p className="font-semibold text-xs sm:text-sm text-foreground dark:text-zinc-100">
+                        <p className="font-semibold text-xs sm:text-sm text-foreground dark:text-foreground">
                           {item.title}
                         </p>
 
                         {item.location && (
-                          <p className="flex items-center gap-1 text-[11px] text-muted-foreground dark:text-zinc-400">
+                          <p className="flex items-center gap-1 text-[11px] text-muted-foreground dark:text-muted-foreground">
                             <MapPin className="h-3 w-3 text-muted-foreground/70 shrink-0" />
                             <span>{item.location}</span>
                           </p>
                         )}
 
                         {item.description && (
-                          <p className="text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed pt-0.5">
+                          <p className="text-xs text-muted-foreground dark:text-muted-foreground leading-relaxed pt-0.5">
                             {item.description}
                           </p>
                         )}
@@ -349,12 +349,12 @@ export function OfflineTripViewerDialog({
                     {trip.accommodations.map((stay) => (
                       <div
                         key={stay.id}
-                        className="p-3.5 rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] space-y-2 shadow-2xs"
+                        className="p-3.5 rounded-sm border border-border dark:border-border bg-card dark:bg-card space-y-2 shadow-2xs"
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-semibold text-sm text-foreground dark:text-zinc-100">
+                              <span className="font-semibold text-sm text-foreground dark:text-foreground">
                                 {stay.name}
                               </span>
                               {stay.type && (
@@ -385,18 +385,18 @@ export function OfflineTripViewerDialog({
                         </div>
 
                         {stay.address && (
-                          <p className="flex items-center gap-1.5 text-xs text-muted-foreground dark:text-zinc-300">
+                          <p className="flex items-center gap-1.5 text-xs text-muted-foreground dark:text-foreground">
                             <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
                             <span>{stay.address}</span>
                           </p>
                         )}
 
                         {stay.contactPhone && (
-                          <p className="flex items-center gap-1.5 text-xs text-muted-foreground dark:text-zinc-300">
+                          <p className="flex items-center gap-1.5 text-xs text-muted-foreground dark:text-foreground">
                             <Phone className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                             <a
                               href={`tel:${stay.contactPhone}`}
-                              className="font-mono hover:underline text-foreground dark:text-zinc-200"
+                              className="font-mono hover:underline text-foreground dark:text-foreground"
                             >
                               {stay.contactPhone}
                             </a>
@@ -404,7 +404,7 @@ export function OfflineTripViewerDialog({
                         )}
 
                         {stay.notes && (
-                          <div className="pt-1 border-t border-border/40 dark:border-zinc-800/60 text-xs text-muted-foreground dark:text-zinc-400">
+                          <div className="pt-1 border-t border-border/40 dark:border-border/60 text-xs text-muted-foreground dark:text-muted-foreground">
                             {stay.notes}
                           </div>
                         )}
@@ -424,10 +424,10 @@ export function OfflineTripViewerDialog({
                   <div className="space-y-4">
                     {Object.entries(checklistByCategory).map(([category, items]) => (
                       <div key={category} className="space-y-1.5">
-                        <p className="font-sans text-xs font-semibold uppercase tracking-wider text-muted-foreground dark:text-zinc-400">
+                        <p className="font-sans text-xs font-semibold uppercase tracking-wider text-muted-foreground dark:text-muted-foreground">
                           {category} ({items.filter((i) => i.isCompleted).length}/{items.length})
                         </p>
-                        <div className="rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] divide-y divide-border/60 dark:divide-zinc-800/80">
+                        <div className="rounded-sm border border-border dark:border-border bg-card dark:bg-card divide-y divide-border/60 dark:divide-zinc-800/80">
                           {items.map((item) => (
                             <div
                               key={item.id}
@@ -443,7 +443,7 @@ export function OfflineTripViewerDialog({
                                   "flex-1 font-sans",
                                   item.isCompleted
                                     ? "line-through text-muted-foreground dark:text-zinc-500"
-                                    : "text-foreground dark:text-zinc-200"
+                                    : "text-foreground dark:text-foreground"
                                 )}
                               >
                                 {item.title}
@@ -468,14 +468,14 @@ export function OfflineTripViewerDialog({
                     {trip.notes.map((note) => (
                       <div
                         key={note.id}
-                        className="p-3.5 rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] space-y-2 shadow-2xs"
+                        className="p-3.5 rounded-sm border border-border dark:border-border bg-card dark:bg-card space-y-2 shadow-2xs"
                       >
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2">
                             {note.isPinned && (
                               <Pin className="h-3 w-3 text-amber-500 fill-amber-500 shrink-0" />
                             )}
-                            <p className="font-semibold text-xs sm:text-sm text-foreground dark:text-zinc-100">
+                            <p className="font-semibold text-xs sm:text-sm text-foreground dark:text-foreground">
                               {note.title}
                             </p>
                           </div>
@@ -486,7 +486,7 @@ export function OfflineTripViewerDialog({
                           )}
                         </div>
 
-                        <div className="text-xs text-muted-foreground dark:text-zinc-300 whitespace-pre-wrap leading-relaxed font-sans">
+                        <div className="text-xs text-muted-foreground dark:text-foreground whitespace-pre-wrap leading-relaxed font-sans">
                           {note.content}
                         </div>
                       </div>
@@ -497,10 +497,10 @@ export function OfflineTripViewerDialog({
 
               {/* 5. EXPENSES TAB */}
               <TabsContent value="expenses" className="m-0 space-y-4 focus-visible:outline-none">
-                <div className="p-3 rounded-sm border border-border dark:border-zinc-800 bg-muted/30 dark:bg-[#121622] flex items-center justify-between">
+                <div className="p-3 rounded-sm border border-border dark:border-border bg-muted/30 dark:bg-card-subtle flex items-center justify-between">
                   <div>
                     <p className="text-[11px] text-muted-foreground font-sans">Total Recorded Spend</p>
-                    <p className="text-lg font-bold font-mono text-foreground dark:text-zinc-100">
+                    <p className="text-lg font-bold font-mono text-foreground dark:text-foreground">
                       {totalExpense.toLocaleString()} {currencySymbol}
                     </p>
                   </div>
@@ -514,21 +514,21 @@ export function OfflineTripViewerDialog({
                     No expenses logged for this trip.
                   </div>
                 ) : (
-                  <div className="rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] divide-y divide-border/60 dark:divide-zinc-800/80">
+                  <div className="rounded-sm border border-border dark:border-border bg-card dark:bg-card divide-y divide-border/60 dark:divide-zinc-800/80">
                     {trip.expenses.map((expense) => (
                       <div
                         key={expense.id}
                         className="flex items-center justify-between gap-3 px-3 py-2 text-xs"
                       >
                         <div className="min-w-0">
-                          <p className="font-medium text-foreground dark:text-zinc-200 truncate">
+                          <p className="font-medium text-foreground dark:text-foreground truncate">
                             {expense.title}
                           </p>
                           <p className="text-[10px] text-muted-foreground">
                             {new Date(expense.date).toLocaleDateString()} • {expense.category}
                           </p>
                         </div>
-                        <span className="font-mono font-semibold text-foreground dark:text-zinc-100 shrink-0">
+                        <span className="font-mono font-semibold text-foreground dark:text-foreground shrink-0">
                           {expense.amount} {expense.currency}
                         </span>
                       </div>
@@ -541,7 +541,7 @@ export function OfflineTripViewerDialog({
         )}
 
         {/* Footer */}
-        <div className="p-3 px-4 border-t border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] flex items-center justify-between text-xs text-muted-foreground shrink-0">
+        <div className="p-3 px-4 border-t border-border/80 dark:border-border bg-card dark:bg-card flex items-center justify-between text-xs text-muted-foreground shrink-0">
           <span className="text-[11px]">Prava IndexedDB Cache</span>
           <Button
             type="button"

@@ -238,7 +238,7 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
         <div className="flex items-center justify-between">
           <Link
             href="/trips"
-            className="inline-flex items-center font-sans text-xs font-medium text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 transition-colors group cursor-pointer"
+            className="inline-flex items-center font-sans text-xs font-medium text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-100 transition-colors group cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-1.5 group-hover:-translate-x-0.5 transition-transform" />
             <span>Back to Trips</span>
@@ -424,7 +424,7 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                   <TooltipContent
                     side="bottom"
                     align="end"
-                    className="w-64 p-3 space-y-2 border border-border/80 dark:border-zinc-800 bg-popover dark:bg-[#0F131C] text-popover-foreground dark:text-zinc-100 shadow-lg rounded-md z-50 text-left"
+                    className="w-64 p-3 space-y-2 border border-border/80 dark:border-border bg-popover dark:bg-card text-popover-foreground dark:text-foreground shadow-lg rounded-md z-50 text-left"
                   >
                     <div className="flex items-center gap-2">
                       <div className="relative h-6 w-6 shrink-0 rounded-full overflow-hidden ring-1 ring-primary/50 shadow-2xs">
@@ -437,19 +437,19 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                         />
                       </div>
                       <div>
-                        <p className="text-xs font-semibold text-foreground dark:text-zinc-100 flex items-center gap-1.5">
+                        <p className="text-xs font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
                           Ichinose AI
-                          <span className="text-[10px] font-normal text-muted-foreground dark:text-zinc-400">· Travel Copilot</span>
+                          <span className="text-[10px] font-normal text-muted-foreground dark:text-muted-foreground">· Travel Copilot</span>
                         </p>
-                        <p className="text-[10px] text-muted-foreground dark:text-zinc-400">Prava Workspace Assistant</p>
+                        <p className="text-[10px] text-muted-foreground dark:text-muted-foreground">Prava Workspace Assistant</p>
                       </div>
                     </div>
-                    <p className="text-[11px] text-muted-foreground dark:text-zinc-400 leading-snug">
+                    <p className="text-[11px] text-muted-foreground dark:text-muted-foreground leading-snug">
                       Interactive travel assistant for multi-day itineraries, stays, live travel data, and structured trip updates.
                     </p>
                     {userQuota && (
-                      <div className="pt-1.5 border-t border-border/60 dark:border-zinc-800 flex items-center justify-between text-[10px]">
-                        <span className="text-muted-foreground dark:text-zinc-400 font-medium">Monthly AI Credits:</span>
+                      <div className="pt-1.5 border-t border-border/60 dark:border-border flex items-center justify-between text-[10px]">
+                        <span className="text-muted-foreground dark:text-muted-foreground font-medium">Monthly AI Credits:</span>
                         <span
                           className={`font-semibold tabular-nums ${
                             userQuota.remaining > 0 ? "text-primary" : "text-destructive"
@@ -472,7 +472,7 @@ export function WorkspaceHeader({ trip }: WorkspaceHeaderProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 sm:h-8 w-7 sm:w-8 text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-100 cursor-pointer rounded-xs shrink-0"
+                    className="h-7 sm:h-8 w-7 sm:w-8 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-100 cursor-pointer rounded-xs shrink-0"
                   >
                     <MoreHorizontal className="h-4 w-4" />
                     <span className="sr-only">Trip Settings</span>
