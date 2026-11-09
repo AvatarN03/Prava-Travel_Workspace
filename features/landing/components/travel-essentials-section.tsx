@@ -88,7 +88,7 @@ export function TravelEssentialsSection() {
           </motion.h2>
 
           <motion.p
-            className="text-sm sm:text-base text-zinc-600 font-normal leading-relaxed pt-1 break-words [text-wrap:balance]"
+            className="hidden lg:block text-sm sm:text-base text-zinc-600 font-normal leading-relaxed pt-1 break-words [text-wrap:balance]"
             initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
             whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-60px" }}
@@ -170,7 +170,7 @@ export function TravelEssentialsSection() {
             </div>
 
             <div className="pt-3 border-t border-zinc-200/80 text-[11px] text-zinc-500 leading-relaxed font-sans">
-              OpenWeather integration: Afternoon sunshine is warm; morning palace corridors require a light jacket.
+              Afternoon sunshine is warm; morning palace corridors require a light jacket.
             </div>
           </motion.div>
 
@@ -185,7 +185,7 @@ export function TravelEssentialsSection() {
             <div className="space-y-4">
               <div className="flex items-center justify-between text-[11px] text-zinc-500 uppercase tracking-wider font-medium font-sans">
                 <span>Spot FX Converter</span>
-                <span>ECB Central Rates</span>
+                <span>Live Spot Rates</span>
               </div>
 
               <div className="space-y-3">
@@ -227,7 +227,7 @@ export function TravelEssentialsSection() {
             </div>
 
             <div className="pt-3 border-t border-zinc-200/80 text-[11px] text-zinc-500 font-sans">
-              Offline calculator cached in IndexedDB · Zero roaming data needed.
+              Offline calculator cached · Zero roaming data needed.
             </div>
           </motion.div>
 
@@ -284,7 +284,7 @@ export function TravelEssentialsSection() {
               <span className="flex items-center gap-1 text-emerald-600 font-medium">
                 ✓ Indian e-Visa ready
               </span>
-              <span>REST Countries v3.1</span>
+              <span>Travel-ready reference</span>
             </div>
           </motion.div>
         </motion.div>

@@ -13,6 +13,8 @@ import {
   FileText,
   Link2,
   Lock,
+  Menu,
+  X,
   Receipt,
 } from "lucide-react";
 
@@ -34,9 +36,19 @@ type WorkspaceTab =
   | "links";
 
 const easeDecelerate = [0.16, 1, 0.3, 1] as const;
+const workspaceTabs = [
+  { id: "overview", label: "Overview", icon: Compass },
+  { id: "itinerary", label: "Itinerary", icon: Calendar, badge: "18" },
+  { id: "accommodation", label: "Accommodation", icon: BedDouble, badge: "2" },
+  { id: "expenses", label: "Expenses", icon: Receipt, badge: "INR54k" },
+  { id: "notes", label: "Notes", icon: FileText, badge: "3" },
+  { id: "checklist", label: "Checklist", icon: CheckSquare, badge: "4" },
+  { id: "links", label: "Links & Saves", icon: Link2, badge: "4" },
+] satisfies Array<{ id: WorkspaceTab; label: string; icon: typeof Compass; badge?: string }>;
 
 export function WorkspaceShowcase() {
   const [activeTab, setActiveTab] = useState<WorkspaceTab>("overview");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [checkedTasks, setCheckedTasks] = useState<Record<string, boolean>>({
     task1: true,
     task2: true,
@@ -121,7 +133,7 @@ export function WorkspaceShowcase() {
           </motion.h2>
 
           <motion.p
-            className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed pt-1 break-words [text-wrap:balance]"
+            className="hidden lg:block text-sm sm:text-base text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed pt-1 break-words [text-wrap:balance]"
             initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
             whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-60px" }}
@@ -146,7 +158,7 @@ export function WorkspaceShowcase() {
           </div>
 
           {/* The Workspace Window Frame (Retina Display Screen) */}
-          <div className="rounded-lg border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-inner">
+          <div className="relative rounded-lg border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-inner">
             {/* macOS Chrome Header / Title Bar */}
             <div className="flex items-center justify-between border-b border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-100/90 dark:bg-zinc-900/95 px-4 py-2.5 text-xs text-zinc-500 select-none">
               {/* Left Group: Traffic Light Buttons + Left-Aligned Rectangular Address Bar */}
@@ -209,10 +221,53 @@ export function WorkspaceShowcase() {
               </div>
             </div>
 
+            {/* Mobile workspace navigation */}
+            <div className="flex md:hidden items-center justify-between border-b border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/90 dark:bg-zinc-950/90 px-4 py-3">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#2D9BF0]">Workspace</p>
+                <p className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">
+                  {workspaceTabs.find((tab) => tab.id === activeTab)?.label}
+                </p>
+              </div>
+              <button type="button" onClick={() => setIsMobileMenuOpen(true)} className="inline-flex h-9 w-9 items-center justify-center rounded-sm border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-200 cursor-pointer" aria-label="Open workspace menu" aria-expanded={isMobileMenuOpen}>
+                <Menu className="h-4 w-4" />
+              </button>
+            </div>
+
+            <AnimatePresence>
+              {isMobileMenuOpen && (
+                <>
+                  <motion.button type="button" aria-label="Close workspace menu" className="absolute inset-0 z-30 bg-zinc-950/35 md:hidden cursor-pointer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsMobileMenuOpen(false)} />
+                  <motion.aside className="absolute inset-y-0 left-0 z-40 w-[82%] max-w-xs border-r border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 p-4 shadow-2xl md:hidden" initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ duration: 0.28, ease: easeDecelerate }}>
+                    <div className="flex items-center justify-between pb-4 border-b border-zinc-200/80 dark:border-zinc-800/80">
+                      <div>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-[#2D9BF0]">Active Trip</p>
+                        <p className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">Royal Rajasthan Circuit</p>
+                      </div>
+                      <button type="button" onClick={() => setIsMobileMenuOpen(false)} className="inline-flex h-8 w-8 items-center justify-center rounded-sm text-zinc-500 hover:bg-zinc-200/70 dark:hover:bg-zinc-800 cursor-pointer" aria-label="Close workspace menu">
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <nav className="space-y-1 pt-4">
+                      {workspaceTabs.map((tab) => {
+                        const Icon = tab.icon;
+                        const isActive = activeTab === tab.id;
+                        return (
+                          <button key={tab.id} type="button" onClick={() => { setActiveTab(tab.id); setIsMobileMenuOpen(false); }} className={`w-full flex items-center justify-between px-3 py-3 rounded-xs text-xs font-medium cursor-pointer ${isActive ? "text-zinc-950 dark:text-zinc-100 font-semibold bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700" : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/60 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-zinc-800/50"}`}>
+                            <span className="flex items-center gap-2.5"><Icon className="h-3.5 w-3.5" />{tab.label}</span>
+                            {tab.badge && <span className="text-[10px] text-zinc-400 dark:text-zinc-500">{tab.badge}</span>}
+                          </button>
+                        );
+                      })}
+                    </nav>
+                  </motion.aside>
+                </>
+              )}
+            </AnimatePresence>
             {/* Interior Grid: Left Nav Sidebar + Right Active Canvas with increased height */}
             <div className="grid grid-cols-1 md:grid-cols-12 min-h-[660px] md:min-h-[700px] lg:min-h-[740px]">
               {/* Left Workspace Navigation Sidebar */}
-              <div className="md:col-span-3 border-b md:border-b-0 md:border-r border-zinc-200/80 dark:border-zinc-800/80 p-4 sm:p-5 flex flex-col justify-between bg-zinc-50/70 dark:bg-zinc-950/60">
+              <div className="hidden md:flex md:col-span-3 border-b md:border-b-0 md:border-r border-zinc-200/80 dark:border-zinc-800/80 p-4 sm:p-5 flex-col justify-between bg-zinc-50/70 dark:bg-zinc-950/60">
                 <div className="space-y-5">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
@@ -443,7 +498,7 @@ export function WorkspaceShowcase() {
                       </div>
 
                       {/* Card 3: Expense Ledger */}
-                      <div className="rounded-xs border border-zinc-200/90 dark:border-zinc-800 p-4 sm:p-5 space-y-4 bg-zinc-50/70 dark:bg-zinc-950/70 flex flex-col justify-between">
+                      <div className="hidden md:flex rounded-xs border border-zinc-200/90 dark:border-zinc-800 p-4 sm:p-5 space-y-4 bg-zinc-50/70 dark:bg-zinc-950/70 flex-col justify-between">
                         <div className="space-y-3">
                           <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-zinc-500">
                             <span className="font-medium">Expense Ledger</span>
@@ -533,7 +588,7 @@ export function WorkspaceShowcase() {
                       </div>
 
                       {/* Card 4: Immediate Tasks */}
-                      <div className="rounded-xs border border-zinc-200/90 dark:border-zinc-800 p-4 sm:p-5 space-y-4 bg-zinc-50/70 dark:bg-zinc-950/70 flex flex-col justify-between">
+                      <div className="hidden md:flex rounded-xs border border-zinc-200/90 dark:border-zinc-800 p-4 sm:p-5 space-y-4 bg-zinc-50/70 dark:bg-zinc-950/70 flex-col justify-between">
                         <div className="space-y-3">
                           <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-zinc-500">
                             <span className="font-medium">Immediate Tasks</span>
@@ -636,7 +691,7 @@ export function WorkspaceShowcase() {
                         ].map((item, idx) => (
                           <div
                             key={idx}
-                            className="rounded-xs border border-zinc-200 dark:border-zinc-800 p-4 space-y-2 bg-zinc-50/70 dark:bg-zinc-950/70 hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors"
+                            className={`rounded-xs border border-zinc-200 dark:border-zinc-800 p-4 space-y-2 bg-zinc-50/70 dark:bg-zinc-950/70 hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors ${idx === 3 ? "hidden md:block" : ""}`}
                           >
                             <div className="flex items-center justify-between text-xs">
                               <span className="font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">
@@ -893,12 +948,12 @@ export function WorkspaceShowcase() {
                           { id: "task4", label: "Pack breathable linen layers and polarized glasses", cat: "Packing" },
                           { id: "task5", label: "Download offline maps for Jaipur & Udaipur districts", cat: "Navigation" },
                           { id: "task6", label: "Print physical backup vouchers for palace heritage passes", cat: "Backup" },
-                        ].map((task) => (
+                        ].map((task, idx) => (
                           <button
                             key={task.id}
                             type="button"
                             onClick={() => toggleTask(task.id)}
-                            className="w-full flex items-center justify-between p-3 rounded-xs border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-950/70 text-left hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors cursor-pointer"
+                            className={`w-full flex items-center justify-between p-3 rounded-xs border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-950/70 text-left hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors cursor-pointer ${idx === 5 ? "hidden md:flex" : ""}`}
                           >
                             <div className="flex items-center gap-3">
                               <div
@@ -988,7 +1043,7 @@ export function WorkspaceShowcase() {
                         ].map((link, idx) => (
                           <div
                             key={idx}
-                            className="rounded-xs border border-zinc-200 dark:border-zinc-800 p-3.5 bg-zinc-50/70 dark:bg-zinc-950/70 space-y-1.5 hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors"
+                            className={`rounded-xs border border-zinc-200 dark:border-zinc-800 p-3.5 bg-zinc-50/70 dark:bg-zinc-950/70 space-y-1.5 hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors ${idx >= 4 ? "hidden sm:block" : ""}`}
                           >
                             <div className="flex items-center justify-between text-[10px] text-zinc-400">
                               <span className="uppercase font-medium">{link.tag}</span>

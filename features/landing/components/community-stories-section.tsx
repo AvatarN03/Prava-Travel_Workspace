@@ -194,7 +194,7 @@ export function CommunityStoriesSection() {
 
           <div className="lg:col-span-6 space-y-4">
             <motion.p
-              className="text-sm sm:text-base text-zinc-600 font-normal leading-relaxed break-words [text-wrap:balance]"
+              className="hidden lg:block text-sm sm:text-base text-zinc-600 font-normal leading-relaxed break-words [text-wrap:balance]"
               initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
               whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true, margin: "-60px" }}
@@ -262,7 +262,7 @@ export function CommunityStoriesSection() {
               },
               exit: { opacity: 0, transition: { duration: 0.15 } },
             }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            className="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:mx-0 md:px-0 md:pb-0 md:snap-none"
           >
             {filteredStories.map((story) => (
               <motion.div
@@ -277,11 +277,11 @@ export function CommunityStoriesSection() {
                   },
                   exit: { opacity: 0, scale: 0.98, transition: { duration: 0.15 } },
                 }}
-                className="group flex flex-col justify-between rounded-sm border border-zinc-200/90 bg-[#FAFAF9]/90 overflow-hidden hover:border-zinc-300 transition-all cursor-pointer shadow-xs"
+                className="group flex min-w-[78%] snap-start flex-col justify-between rounded-sm border border-zinc-200/90 bg-[#FAFAF9]/90 overflow-hidden hover:border-zinc-300 transition-all cursor-pointer shadow-xs md:min-w-0"
               >
                 <div>
                   {/* Cover Image with Archival Destination Tag */}
-                  <div className="relative h-60 w-full overflow-hidden bg-zinc-100">
+                  <div className="relative h-44 sm:h-52 md:h-60 w-full overflow-hidden bg-zinc-100">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={story.imageUrl}
@@ -294,7 +294,7 @@ export function CommunityStoriesSection() {
                   </div>
 
                   {/* Content */}
-                  <div className="p-5 space-y-2.5">
+                  <div className="p-4 md:p-5 space-y-2.5">
                     <div className="flex items-start justify-between gap-2">
                       <h3 className="font-semibold text-base text-zinc-950 leading-snug group-hover:text-[#2D9BF0] transition-colors break-words">
                         {story.title}
@@ -308,7 +308,7 @@ export function CommunityStoriesSection() {
                 </div>
 
                 {/* Card Footer */}
-                <div className="p-5 pt-3 border-t border-zinc-200/80 flex items-center justify-between text-[11px] text-zinc-500 font-sans">
+                <div className="p-4 md:p-5 pt-3 border-t border-zinc-200/80 flex items-center justify-between text-[11px] text-zinc-500 font-sans">
                   <span className="truncate max-w-[60%] font-medium">By {story.author}</span>
                   <span className="shrink-0 tabular-nums">{story.meta}</span>
                 </div>

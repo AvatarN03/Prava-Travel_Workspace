@@ -111,7 +111,7 @@ export function AiAssistanceSection() {
           </div>
 
           <motion.div
-            className="lg:col-span-6"
+            className="hidden lg:block lg:col-span-6"
             initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
             whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-60px" }}
@@ -127,7 +127,7 @@ export function AiAssistanceSection() {
 
         {/* AI Proposal Card Simulation */}
         <motion.div
-          className="rounded-sm border border-border bg-card shadow-xl overflow-hidden"
+          className="rounded-md border border-border bg-card shadow-xl overflow-hidden max-w-full"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
@@ -146,22 +146,22 @@ export function AiAssistanceSection() {
             </span>
           </div>
 
-          <div className="p-4 sm:p-6 lg:p-8 space-y-5 sm:space-y-6">
+          <div className="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
             {/* User Prompt Row with Default User Image from /avatars/default-avatar.jpg */}
-            <div className="flex items-start gap-2.5 sm:gap-4 min-w-0">
+            <div className="flex items-start justify-end gap-2 sm:gap-4 min-w-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/avatars/default-avatar.jpg"
                 alt="User Avatar"
                 className="h-7 w-7 sm:h-9 sm:w-9 rounded-full object-cover border border-border shrink-0 shadow-2xs mt-0.5"
               />
-              <p className="text-xs sm:text-sm font-medium text-foreground wrap-break-word flex-1 min-w-0 pt-0.5 sm:pt-1.5">
+              <p className="text-right text-xs sm:text-sm font-medium text-foreground wrap-break-word flex-1 min-w-0 pt-0.5 sm:pt-1.5">
                 "{activePrompt}"
               </p>
             </div>
 
             {/* Prava Assistant Proposal Box with Ichinose Image from /avatars/ichinose.png */}
-            <div className="flex items-start gap-2.5 sm:gap-4 min-w-0">
+            <div className="flex items-start gap-2 sm:gap-4 min-w-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/avatars/ichinose.png"
@@ -169,9 +169,9 @@ export function AiAssistanceSection() {
                 className="h-7 w-7 sm:h-9 sm:w-9 rounded-full object-cover border border-primary/50 shrink-0 shadow-2xs mt-0.5"
               />
 
-              <div className="flex-1 min-w-0 space-y-4">
+              <div className="flex-1 min-w-0 space-y-3 sm:space-y-4">
                 {/* Collapsible Reasoning Process */}
-                <div className="rounded-xs border border-border bg-muted/60 p-3 sm:p-3.5 space-y-2 min-w-0">
+                <div className="hidden sm:block rounded-sm border border-border bg-muted/60 p-2.5 sm:p-3.5 space-y-2 min-w-0">
                   <button
                     type="button"
                     onClick={() => setShowReasoning(!showReasoning)}
@@ -205,8 +205,8 @@ export function AiAssistanceSection() {
                 </p>
 
                 {/* Structured Travel Proposal Schedule with Mobile Responsive Rows */}
-                <div className="rounded-xs border border-border overflow-hidden bg-card text-xs shadow-2xs min-w-0">
-                  <div className="flex items-center justify-between p-3 sm:p-4 sm:px-6 bg-muted text-[11px] text-muted-foreground uppercase tracking-wider border-b border-border/80 font-medium">
+                <div className="rounded-sm border border-border overflow-hidden bg-card text-[11px] sm:text-xs shadow-2xs min-w-0">
+                  <div className="flex items-center justify-between p-2.5 sm:p-4 sm:px-6 bg-muted text-[10px] sm:text-[11px] text-muted-foreground uppercase tracking-wider border-b border-border/80 font-medium">
                     <span className="flex items-center gap-1.5 truncate">
                       <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
                       <span className="truncate">Re-sequenced Itinerary</span>
@@ -251,7 +251,7 @@ export function AiAssistanceSection() {
                       return (
                         <div
                           key={index}
-                          className={`p-3 sm:p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 transition-colors ${
+                          className={`p-3 sm:p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 transition-colors ${index >= 2 ? "hidden sm:flex" : ""} ${
                             isChosen
                               ? "hover:bg-muted/60"
                               : "opacity-50 bg-muted/40"
@@ -286,7 +286,7 @@ export function AiAssistanceSection() {
                             <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
                               Include?
                             </span>
-                            <div className="inline-flex items-center rounded-xs p-0.5 bg-muted border border-border shadow-2xs">
+                            <div className="inline-flex items-center rounded-sm p-0.5 bg-muted border border-border shadow-2xs">
                               <button
                                 type="button"
                                 onClick={() => toggleStop(index, true)}
@@ -363,7 +363,7 @@ export function AiAssistanceSection() {
                           setActivePrompt(p);
                           setApplied(false);
                         }}
-                        className="text-[11px] px-2.5 py-1.5 rounded-xs border border-border bg-muted/50 text-muted-foreground hover:border-border hover:text-foreground transition-colors cursor-pointer text-left wrap-break-word max-w-full"
+                        className={`text-[11px] px-2.5 py-1.5 rounded-sm border border-border bg-muted/50 text-muted-foreground hover:border-border hover:text-foreground transition-colors cursor-pointer text-left wrap-break-word max-w-full ${i >= 2 ? "hidden sm:block" : ""}`}
                       >
                         "{p}"
                       </button>

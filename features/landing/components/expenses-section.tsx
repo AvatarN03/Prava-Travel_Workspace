@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { CheckCircle2 } from "lucide-react";
+
 
 const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
@@ -118,7 +118,7 @@ export function ExpensesSection() {
           </div>
 
           <motion.div
-            className="lg:col-span-6"
+            className="hidden lg:block lg:col-span-6"
             initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
             whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-60px" }}
@@ -206,41 +206,38 @@ export function ExpensesSection() {
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.65, delay: 0.15, ease: easeDecelerate }}
         >
-          <div className="flex items-center justify-between p-4 sm:px-6 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-950/60 text-xs text-zinc-500 uppercase tracking-wider font-medium font-sans">
+          <div className="flex items-center justify-between p-4 sm:px-6 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-950/60 text-[10px] sm:text-xs text-zinc-500 uppercase tracking-wider font-medium font-sans">
             <span>Recent Workspace Entries</span>
-            <span>Spot Converted (INR / USD)</span>
+            <span className="hidden sm:inline">Spot Converted (INR / USD)</span>
           </div>
 
           <div className="divide-y divide-zinc-200/80 dark:divide-zinc-800/80">
             {expenseEntries.map((item, index) => (
               <div
                 key={index}
-                className="p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 text-xs hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
+                className="p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 text-[11px] sm:text-xs hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
               >
                 <div className="space-y-1">
-                  <p className="font-medium text-sm text-zinc-900 dark:text-zinc-100">
+                  <p className="font-medium text-xs sm:text-sm text-zinc-900 dark:text-zinc-100">
                     {item.title}
                   </p>
-                  <p className="text-[11px] text-zinc-500 font-sans">
+                  <p className="text-[10px] sm:text-[11px] text-zinc-500 font-sans">
                     <span className="text-[#2D9BF0] font-medium">{item.category}</span> · {item.date} · {item.paidBy}
                   </p>
                 </div>
 
                 <div className="text-left sm:text-right font-sans">
-                  <span className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 tabular-nums">
+                  <span className="font-semibold text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 tabular-nums">
                     {item.inr}
                   </span>
-                  <p className="text-[11px] text-zinc-400 tabular-nums">{item.usd}</p>
+                  <p className="text-[10px] sm:text-[11px] text-zinc-400 tabular-nums">{item.usd}</p>
                 </div>
               </div>
             ))}
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 sm:px-6 bg-zinc-50/40 dark:bg-zinc-950/40 border-t border-zinc-200/80 dark:border-zinc-800/80 text-[11px] text-zinc-500 font-sans">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-              IndexedDB offline persistence with auto-sync
-            </span>
+
             <span className="text-zinc-700 dark:text-zinc-300 font-medium">
               Category breakdowns · CSV export ready
             </span>

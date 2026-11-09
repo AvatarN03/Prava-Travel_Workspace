@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from "motion/react";
 import {
   Bookmark,
   Calendar,
-  CheckCircle2,
   CheckSquare,
   CloudSun,
   FileSpreadsheet,
@@ -288,7 +287,9 @@ export function ScatteredVsUnified() {
                       },
                       exit: { opacity: 0, scale: 0.98, transition: { duration: 0.15 } },
                     }}
-                    className="rounded-md border border-zinc-200/90 bg-white/70 p-4 flex flex-col justify-between space-y-3 opacity-90 hover:opacity-100 transition-opacity"
+                    className={`rounded-md border border-zinc-200/90 bg-white/70 p-4 flex-col justify-between space-y-3 opacity-90 hover:opacity-100 transition-opacity ${
+                      index >= 4 ? "hidden sm:flex" : "flex"
+                    }`}
                   >
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-[10px] font-sans font-semibold uppercase tracking-wider text-zinc-400">
@@ -337,7 +338,9 @@ export function ScatteredVsUnified() {
                       },
                       exit: { opacity: 0, scale: 0.98, transition: { duration: 0.15 } },
                     }}
-                    className={`rounded-md border p-4 flex flex-col justify-between space-y-3 transition-all ${
+                    className={`rounded-md border p-4 flex-col justify-between space-y-3 transition-all ${
+                      index >= 4 ? "hidden sm:flex" : "flex"
+                    } ${
                       item.accent
                         ? "border-[#2D9BF0]/40 bg-[#F0F8FF]/80 shadow-xs"
                         : "border-zinc-200/90 bg-white shadow-xs"
@@ -373,25 +376,6 @@ export function ScatteredVsUnified() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Bottom Editorial Callout */}
-        <motion.div
-          className="rounded-md border border-zinc-200/90 bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs font-sans"
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.6, ease: easeDecelerate }}
-        >
-          <div className="flex items-center gap-2.5">
-            <CheckCircle2 className="h-4 w-4 text-[#2D9BF0] shrink-0" />
-            <span className="text-zinc-700 font-medium">
-              Zero fragmentation. Everything connected to real calendar dates and coordinates.
-            </span>
-          </div>
-          <span className="text-[11px] text-zinc-400 shrink-0 font-medium">
-            Export ready · Offline sync · Multi-currency
-          </span>
-        </motion.div>
       </div>
     </section>
   );

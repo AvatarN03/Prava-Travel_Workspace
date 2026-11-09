@@ -119,7 +119,7 @@ export function ItinerarySection() {
           </div>
 
           <motion.div
-            className="lg:col-span-6"
+            className="hidden lg:block lg:col-span-6"
             initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
             whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-60px" }}
@@ -158,7 +158,7 @@ export function ItinerarySection() {
                   transition: { duration: 0.5, ease: easeDecelerate },
                 },
               }}
-              className="p-5 sm:p-7 lg:p-8 grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-start hover:bg-white transition-colors"
+              className={`p-5 sm:p-7 lg:p-8 grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-start hover:bg-white transition-colors ${item.time === "09:30" || item.time === "17:15" ? "hidden sm:grid" : ""}`}
             >
               {/* Time Column */}
               <div className="md:col-span-3 space-y-1">

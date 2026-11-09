@@ -171,7 +171,7 @@ export function HeroSection({ user }: HeroSectionProps) {
                 <span className="block font-sans text-[10px] font-semibold tracking-wider text-zinc-500 uppercase">
                   Featured Indian Journeys
                 </span>
-                <span className="text-[10px] text-zinc-400 font-sans">
+                <span className="text-[10px] text-zinc-400 font-sans hidden lg:inline">
                   Click to preview
                 </span>
               </div>
@@ -184,7 +184,7 @@ export function HeroSection({ user }: HeroSectionProps) {
                       key={journey.id}
                       type="button"
                       onClick={() => handleSelectJourney(idx)}
-                      className={`relative text-xs px-3.5 py-2.5 rounded-sm font-sans font-medium transition-all duration-200 cursor-pointer border flex items-center justify-between text-left overflow-hidden select-none ${
+                      className={`relative text-xs px-3.5 py-2.5 rounded-sm font-sans font-medium transition-all duration-200 cursor-pointer border flex items-center justify-center sm:justify-between text-center sm:text-left overflow-hidden select-none ${
                         isSelected
                           ? "text-white border-zinc-950 shadow-xs"
                           : "bg-white/90 text-zinc-700 border-zinc-200 hover:border-zinc-300 hover:bg-white shadow-2xs"
@@ -197,8 +197,8 @@ export function HeroSection({ user }: HeroSectionProps) {
                           transition={{ type: "spring", stiffness: 380, damping: 30 }}
                         />
                       )}
-                      <span className="relative z-10 font-semibold">{journey.name}</span>
-                      <span className="relative z-10 opacity-70 text-[10px]">
+                      <span className="relative z-10 font-semibold truncate">{journey.name}</span>
+                      <span className="relative z-10 opacity-70 text-[10px] hidden sm:inline shrink-0 ml-2">
                         {journey.region}
                       </span>
                     </button>
@@ -245,7 +245,7 @@ export function HeroSection({ user }: HeroSectionProps) {
 
           {/* Right Dynamic Indian Workspace Preview Frame */}
           <motion.div
-            className="lg:col-span-6 w-full"
+            className="hidden lg:block lg:col-span-6 w-full"
             initial={{ opacity: 0, y: 24, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2, ease: easeDecelerate }}

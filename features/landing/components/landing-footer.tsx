@@ -27,7 +27,8 @@ export function LandingFooter() {
       <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
         <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-6 text-center md:text-left">
           {/* Column 1 (Left 1/3): Brand & Tagline */}
-          <div className="space-y-1">
+          <div className="flex flex-col md:flex-row items-center gap-2 space-y-1 md:space-y-0">
+            <img src="/logo.png" alt="Prava logo" className="h-8 w-8 object-contain" />
             <span className="font-brand font-medium text-base tracking-[0.24em] uppercase text-zinc-950 dark:text-zinc-50">
               Prava
             </span>
