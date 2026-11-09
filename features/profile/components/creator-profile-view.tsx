@@ -13,10 +13,12 @@ import {
   ListTodo,
   MapPin,
   MessageSquare,
+  Share2,
   Sparkles,
   Tag,
   User,
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -59,6 +61,8 @@ interface CreatorForumPost {
   category: string;
   destination: string | null;
   tags: string[];
+  coverImageUrl: string | null;
+  images: string[];
   upvotes: number;
   replyCount: number;
   createdAt: Date | string | null;
@@ -86,6 +90,28 @@ export function CreatorProfileView({ creator }: CreatorProfileViewProps) {
 
   const forumPosts = creator.forumPosts || [];
 
+  const handleShare = async () => {
+    const profileUrl = window.location.href;
+    const shareData = {
+      title: `${creator.fullName} on Prava`,
+      text: `Explore ${creator.fullName}'s public travel profile on Prava.`,
+      url: profileUrl,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(profileUrl);
+        toast.success("Profile link copied to clipboard.");
+      }
+    } catch (error) {
+      if (error instanceof Error && error.name !== "AbortError") {
+        toast.error("Unable to share this profile.");
+      }
+    }
+  };
+
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -96,12 +122,12 @@ export function CreatorProfileView({ creator }: CreatorProfileViewProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 selection:bg-primary/20 selection:text-primary w-full">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 space-y-6 selection:bg-primary/20 selection:text-primary w-full">
       {/* Instagram-Inspired Creator Identity Hero */}
-      <section className="rounded-xl border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-8 shadow-xs">
+      <section className="relative rounded-xl border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 pr-20 sm:p-8 sm:pr-28 shadow-xs">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
           {/* Avatar (Compact on mobile) */}
-          <div className="relative h-14 w-14 sm:h-24 sm:w-24 rounded-full overflow-hidden border-2 border-border dark:border-zinc-800 bg-muted dark:bg-zinc-900 shadow-xs shrink-0 flex items-center justify-center text-base sm:text-xl font-bold text-foreground dark:text-zinc-100">
+          <div className="relative h-16 w-16 sm:h-28 sm:w-28 rounded-full overflow-hidden border-2 border-border dark:border-zinc-800 bg-muted dark:bg-zinc-900 shadow-xs shrink-0 flex items-center justify-center text-base sm:text-xl font-bold text-foreground dark:text-zinc-100">
             {creator.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -136,52 +162,51 @@ export function CreatorProfileView({ creator }: CreatorProfileViewProps) {
             )}
 
             {/* Instagram-Style Horizontal Metrics Bar */}
-            <div className="flex items-center gap-4 sm:gap-6 pt-1 text-xs text-muted-foreground dark:text-zinc-400">
+            <div className="flex w-full flex-wrap items-center gap-x-5 gap-y-2 pt-1 text-xs text-muted-foreground dark:text-zinc-400">
               <button
                 type="button"
                 onClick={() => setActiveTab("itineraries")}
-                className="hover:text-primary transition-colors cursor-pointer text-left"
+                className="flex items-baseline gap-1 text-left transition-colors hover:text-primary cursor-pointer"
               >
-                <span className="font-bold text-foreground dark:text-zinc-100">{creator.trips.length}</span>{" "}
-                <span className="text-muted-foreground dark:text-zinc-400">
-                  {creator.trips.length === 1 ? "Trip" : "Trips"}
-                </span>
+                <span className="font-bold text-foreground dark:text-zinc-100">{creator.trips.length}</span>
+                <span>{creator.trips.length === 1 ? "Trip" : "Trips"}</span>
               </button>
-
-              <div className="h-3.5 w-px bg-border dark:bg-zinc-800" />
 
               <button
                 type="button"
                 onClick={() => setActiveTab("stories")}
-                className="hover:text-primary transition-colors cursor-pointer text-left"
+                className="flex items-baseline gap-1 text-left transition-colors hover:text-primary cursor-pointer"
               >
-                <span className="font-bold text-foreground dark:text-zinc-100">{creator.stories.length}</span>{" "}
-                <span className="text-muted-foreground dark:text-zinc-400">
-                  {creator.stories.length === 1 ? "Story" : "Stories"}
-                </span>
+                <span className="font-bold text-foreground dark:text-zinc-100">{creator.stories.length}</span>
+                <span>{creator.stories.length === 1 ? "Story" : "Stories"}</span>
               </button>
-
-              <div className="h-3.5 w-px bg-border dark:bg-zinc-800" />
 
               <button
                 type="button"
                 onClick={() => setActiveTab("forum")}
-                className="hover:text-primary transition-colors cursor-pointer text-left"
+                className="flex items-baseline gap-1 text-left transition-colors hover:text-primary cursor-pointer"
               >
-                <span className="font-bold text-foreground dark:text-zinc-100">{forumPosts.length}</span>{" "}
-                <span className="text-muted-foreground dark:text-zinc-400">
-                  {forumPosts.length === 1 ? "Discussion" : "Discussions"}
-                </span>
+                <span className="font-bold text-foreground dark:text-zinc-100">{forumPosts.length}</span>
+                <span>{forumPosts.length === 1 ? "Discussion" : "Discussions"}</span>
               </button>
 
-              <div className="h-3.5 w-px bg-border dark:bg-zinc-800 hidden sm:block" />
-
-              <div className="hidden sm:block text-muted-foreground dark:text-zinc-400">
+              <div className="ml-auto text-right text-[11px] text-muted-foreground dark:text-zinc-400">
                 Joined{" "}
                 <span className="font-medium text-foreground dark:text-zinc-200">{creator.memberSince}</span>
               </div>
             </div>
           </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleShare}
+            className="absolute right-4 top-4 shrink-0 cursor-pointer rounded-sm border-border bg-card text-xs text-muted-foreground hover:border-primary/40 hover:bg-primary/5 hover:text-primary sm:right-8 sm:top-8"
+          >
+            <Share2 className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Share profile</span>
+          </Button>
         </div>
       </section>
 
@@ -197,22 +222,22 @@ export function CreatorProfileView({ creator }: CreatorProfileViewProps) {
                 {activeTab === "forum" && <MessageSquare className="h-3.5 w-3.5 text-primary" />}
                 {activeTab === "about" && <Sparkles className="h-3.5 w-3.5 text-primary" />}
                 <span className="font-semibold">
-                  {activeTab === "itineraries" && `Itineraries (${creator.trips.length})`}
-                  {activeTab === "stories" && `Stories (${creator.stories.length})`}
-                  {activeTab === "forum" && `Discussions (${forumPosts.length})`}
+                  {activeTab === "itineraries" && "Itineraries"}
+                  {activeTab === "stories" && "Stories"}
+                  {activeTab === "forum" && "Discussions"}
                   {activeTab === "about" && "About & DNA"}
                 </span>
               </div>
             </SelectTrigger>
             <SelectContent className="dark:bg-[#0F131C] dark:border-zinc-800">
               <SelectItem value="itineraries" className="text-xs cursor-pointer">
-                Itineraries ({creator.trips.length})
+                Itineraries
               </SelectItem>
               <SelectItem value="stories" className="text-xs cursor-pointer">
-                Stories ({creator.stories.length})
+                Stories
               </SelectItem>
               <SelectItem value="forum" className="text-xs cursor-pointer">
-                Discussions ({forumPosts.length})
+                Discussions
               </SelectItem>
               <SelectItem value="about" className="text-xs cursor-pointer">
                 About & DNA
@@ -230,9 +255,6 @@ export function CreatorProfileView({ creator }: CreatorProfileViewProps) {
             >
               <Compass className="h-4 w-4" />
               <span>Itineraries</span>
-              <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-muted dark:bg-zinc-800 text-muted-foreground dark:text-zinc-300">
-                {creator.trips.length}
-              </span>
             </TabsTrigger>
 
             <TabsTrigger
@@ -241,9 +263,6 @@ export function CreatorProfileView({ creator }: CreatorProfileViewProps) {
             >
               <BookOpen className="h-4 w-4" />
               <span>Stories</span>
-              <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-muted dark:bg-zinc-800 text-muted-foreground dark:text-zinc-300">
-                {creator.stories.length}
-              </span>
             </TabsTrigger>
 
             <TabsTrigger
@@ -252,9 +271,6 @@ export function CreatorProfileView({ creator }: CreatorProfileViewProps) {
             >
               <MessageSquare className="h-4 w-4" />
               <span>Discussions</span>
-              <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-muted dark:bg-zinc-800 text-muted-foreground dark:text-zinc-300">
-                {forumPosts.length}
-              </span>
             </TabsTrigger>
 
             <TabsTrigger
@@ -288,7 +304,11 @@ export function CreatorProfileView({ creator }: CreatorProfileViewProps) {
                 >
                   {/* Cover Image */}
                   {trip.coverImageUrl ? (
-                    <div className="relative h-40 w-full overflow-hidden border-b border-border dark:border-zinc-800 bg-muted dark:bg-zinc-900">
+                    <Link
+                      href={`/trips/${trip.id}/overview`}
+                      className="relative block h-40 w-full overflow-hidden border-b border-border dark:border-zinc-800 bg-muted dark:bg-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+                      aria-label={`Open ${trip.title} itinerary`}
+                    >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={trip.coverImageUrl}
@@ -300,14 +320,18 @@ export function CreatorProfileView({ creator }: CreatorProfileViewProps) {
                         <MapPin className="h-3.5 w-3.5 text-primary" />
                         {trip.destination || "Destination"}
                       </div>
-                    </div>
+                    </Link>
                   ) : (
-                    <div className="h-28 w-full bg-gradient-to-r from-sky-100 to-slate-100 dark:from-sky-950/30 dark:to-slate-900/40 flex items-center justify-between px-4 border-b border-border dark:border-zinc-800">
+                    <Link
+                      href={`/trips/${trip.id}/overview`}
+                      className="block h-28 w-full bg-gradient-to-r from-sky-100 to-slate-100 dark:from-sky-950/30 dark:to-slate-900/40 flex items-center justify-between px-4 border-b border-border dark:border-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+                      aria-label={`Preview ${trip.title} itinerary`}
+                    >
                       <div className="text-xs font-semibold text-primary flex items-center gap-1">
                         <MapPin className="h-3.5 w-3.5" />
                         {trip.destination || "Destination"}
                       </div>
-                    </div>
+                    </Link>
                   )}
 
                   <CardHeader className="p-4 pb-2">
@@ -322,7 +346,9 @@ export function CreatorProfileView({ creator }: CreatorProfileViewProps) {
                       )}
                     </div>
                     <CardTitle className="text-base font-bold text-foreground dark:text-zinc-100 leading-snug line-clamp-1 pt-1 group-hover:text-primary transition-colors">
-                      {trip.title}
+                      <Link href={`/trips/${trip.id}/overview`} className="rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                        {trip.title}
+                      </Link>
                     </CardTitle>
                   </CardHeader>
 
@@ -408,6 +434,16 @@ export function CreatorProfileView({ creator }: CreatorProfileViewProps) {
                       <h3 className="text-sm sm:text-base font-bold text-foreground dark:text-zinc-100 group-hover:text-primary transition-colors line-clamp-1">
                         {post.title}
                       </h3>
+                      {(post.coverImageUrl || post.images.length > 0) && (
+                        <div className="relative mt-2 h-32 overflow-hidden rounded-sm border border-border dark:border-zinc-800 bg-muted dark:bg-zinc-900">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={post.coverImageUrl || post.images[0]}
+                            alt=""
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                      )}
                       <p className="text-xs text-muted-foreground dark:text-zinc-400 line-clamp-2 leading-relaxed">
                         {post.content}
                       </p>

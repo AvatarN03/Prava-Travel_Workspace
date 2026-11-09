@@ -467,6 +467,8 @@ export async function getPublicCreatorProfile(username: string) {
             category: true,
             destination: true,
             tags: true,
+            coverImageUrl: true,
+            images: true,
             upvotes: true,
             createdAt: true,
             _count: {
@@ -565,6 +567,8 @@ export async function getPublicCreatorProfile(username: string) {
           category: post.category,
           destination: post.destination,
           tags: post.tags,
+          coverImageUrl: post.coverImageUrl,
+          images: post.images || [],
           upvotes: post.upvotes ?? 0,
           replyCount: post._count.replies,
           createdAt: post.createdAt,
