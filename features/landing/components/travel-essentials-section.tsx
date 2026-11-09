@@ -1,16 +1,51 @@
-"use client";
+﻿"use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { motion } from "motion/react";
 import { Cloud, Globe2, PhoneCall, Sun, Zap } from "lucide-react";
+
+import {
+  TRAVEL_ESSENTIALS_EXCHANGE_RATE,
+  TRAVEL_ESSENTIALS_FORECAST,
+} from "@/features/landing/travel-essentials-data";
+import { getLandingEssentialsAction } from "@/features/landing/actions";
+
+import type { WeatherData } from "@/features/travel-essentials/types";
 
 const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function TravelEssentialsSection() {
   const [inrAmount, setInrAmount] = useState<number>(10000);
-  const exchangeRate = 83.2; // INR per USD
-  const usdEquivalent = (inrAmount / exchangeRate).toFixed(2);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [usdToInrRate, setUsdToInrRate] = useState(TRAVEL_ESSENTIALS_EXCHANGE_RATE);
+
+  useEffect(() => {
+    let isActive = true;
+
+    getLandingEssentialsAction().then(({ weather: liveWeather, usdToInrRate: liveRate }) => {
+      if (!isActive) return;
+      if (liveWeather) setWeather(liveWeather);
+      if (liveRate) setUsdToInrRate(liveRate);
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  const usdEquivalent = (inrAmount / usdToInrRate).toFixed(2);
+  const currentForecast = useMemo(
+    () =>
+      weather?.forecastDays?.slice(0, 5).map((day, index) => ({
+        day: index === 0 ? "TODAY" : day.dayName.slice(0, 3).toUpperCase(),
+        temp: `${Math.round(day.temperatureMax)}°`,
+        icon: day.weatherCode >= 2 ? Cloud : Sun,
+      })) ?? TRAVEL_ESSENTIALS_FORECAST,
+    [weather]
+  );
+  const currentHigh = weather?.forecastDays?.[0]?.temperatureMax ?? 28;
+  const currentLow = weather?.forecastDays?.[0]?.temperatureMin ?? 15;
 
   return (
     <section
@@ -22,7 +57,7 @@ export function TravelEssentialsSection() {
         {/* Section Header with Responsive Typography */}
         <div className="space-y-3 max-w-2xl">
           <motion.span
-            className="inline-block text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase font-sans"
+            className="inline-block text-[11px] font-semibold tracking-widest text-primary uppercase font-sans"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
@@ -128,19 +163,20 @@ export function TravelEssentialsSection() {
             <div className="space-y-4">
               <div className="flex items-center justify-between text-[11px] text-zinc-500 uppercase tracking-wider font-medium font-sans">
                 <span>Destination Weather</span>
-                <span>Jaipur · Nov</span>
+                <span>{weather?.city ?? "Mumbai"} · Live</span>
               </div>
 
               <div className="flex items-baseline justify-between pt-1">
                 <div>
                   <span className="text-5xl font-light text-zinc-950 tracking-tight tabular-nums">
-                    24°
+                    {weather ? `${Math.round(weather.temperature)}°` : "24°"}
                   </span>
                   <p className="text-xs font-semibold text-zinc-900 mt-1">
-                    Clear & Pleasant
+                    {weather?.weatherDescription ?? "Clear & Pleasant"}
                   </p>
                   <p className="text-[11px] text-zinc-500 tabular-nums font-sans">
-                    High 28° · Low 15° · UV Index 4 (Moderate)
+                    High {Math.round(currentHigh)}° · Low {Math.round(currentLow)}°
+                    {weather?.uvIndex ? ` · UV Index ${Math.round(weather.uvIndex)}` : ""}
                   </p>
                 </div>
                 <Sun className="h-9 w-9 text-amber-500/80 stroke-1" />
@@ -148,13 +184,7 @@ export function TravelEssentialsSection() {
 
               {/* 5-Day Forecast Strip */}
               <div className="grid grid-cols-5 gap-1 pt-3 text-center border-t border-zinc-200/80">
-                {[
-                  { day: "MON", temp: "25°", icon: Sun },
-                  { day: "TUE", temp: "24°", icon: Sun },
-                  { day: "WED", temp: "23°", icon: Cloud },
-                  { day: "THU", temp: "24°", icon: Sun },
-                  { day: "FRI", temp: "26°", icon: Sun },
-                ].map((d, i) => {
+                {currentForecast.map((d, i) => {
                   const Icon = d.icon;
                   return (
                     <div key={i} className="space-y-1">
@@ -212,14 +242,14 @@ export function TravelEssentialsSection() {
                 </div>
 
                 <div className="text-center text-[11px] text-zinc-500 tabular-nums font-sans">
-                  Live Rate: 1 USD = 83.20 INR
+                  Live Rate: 1 USD = {usdToInrRate.toFixed(2)} INR
                 </div>
 
                 <div className="rounded-xs border border-zinc-300/90 bg-white p-3.5 shadow-2xs">
                   <span className="block text-[10px] uppercase text-zinc-500 font-medium tracking-wider font-sans">
                     Equivalent in USD
                   </span>
-                  <div className="text-2xl font-light text-[#2D9BF0] mt-1 tabular-nums font-sans">
+                  <div className="text-2xl font-light text-primary mt-1 tabular-nums font-sans">
                     ${usdEquivalent}
                   </div>
                 </div>
@@ -250,7 +280,7 @@ export function TravelEssentialsSection() {
               <div className="space-y-3.5 text-xs leading-relaxed">
                 <div>
                   <div className="flex items-center gap-1.5 font-semibold text-zinc-900">
-                    <Globe2 className="h-3.5 w-3.5 text-[#2D9BF0]" />
+                    <Globe2 className="h-3.5 w-3.5 text-primary" />
                     <h5>UPI & Digital Payments</h5>
                   </div>
                   <p className="text-[11px] text-zinc-500 mt-0.5 font-sans">
@@ -292,4 +322,5 @@ export function TravelEssentialsSection() {
     </section>
   );
 }
+
 

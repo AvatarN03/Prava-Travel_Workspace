@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 
@@ -7,18 +7,17 @@ import { Check, ChevronDown, ChevronUp, Compass, MapPin, Sparkles } from "lucide
 
 import { Button } from "@/components/ui/button";
 
-const easeDecelerate = [0.16, 1, 0.3, 1] as const;
+import {
+  AI_ASSISTANT_PROPOSAL_STOPS,
+  AI_ASSISTANT_PROMPTS,
+} from "@/features/landing/ai-assistance-data";
 
-const PROMPTS = [
-  "Can you rearrange tomorrow's stops in Jaipur to avoid the afternoon desert heat?",
-  "Find a quiet rooftop chai vantage point overlooking Lake Pichola at sunset",
-  "Suggest a verified artisan block-printing workshop near Amber",
-] as const;
+const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function AiAssistanceSection() {
   const [applied, setApplied] = useState(false);
   const [showReasoning, setShowReasoning] = useState(true);
-  const [activePrompt, setActivePrompt] = useState<string>(PROMPTS[0]);
+  const [activePrompt, setActivePrompt] = useState<string>(AI_ASSISTANT_PROMPTS[0]);
 
   const [acceptedStops, setAcceptedStops] = useState<Record<number, boolean>>({
     0: true,
@@ -149,15 +148,15 @@ export function AiAssistanceSection() {
           <div className="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
             {/* User Prompt Row with Default User Image from /avatars/default-avatar.jpg */}
             <div className="flex items-start justify-end gap-2 sm:gap-4 min-w-0">
+              <p className="text-right text-xs sm:text-sm font-medium text-foreground wrap-break-word flex-1 min-w-0 pt-0.5 sm:pt-1.5">
+                "{activePrompt}"
+              </p>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/avatars/default-avatar.jpg"
                 alt="User Avatar"
                 className="h-7 w-7 sm:h-9 sm:w-9 rounded-full object-cover border border-border shrink-0 shadow-2xs mt-0.5"
               />
-              <p className="text-right text-xs sm:text-sm font-medium text-foreground wrap-break-word flex-1 min-w-0 pt-0.5 sm:pt-1.5">
-                "{activePrompt}"
-              </p>
             </div>
 
             {/* Prava Assistant Proposal Box with Ichinose Image from /avatars/ichinose.png */}
@@ -217,36 +216,7 @@ export function AiAssistanceSection() {
                   </div>
 
                   <div className="divide-y divide-border/80">
-                    {[
-                      {
-                        time: "08:30",
-                        title: "Amer Palace & Sheesh Mahal",
-                        loc: "Amber Ridge · Morning mirror light",
-                        tag: "Outdoor Heritage",
-                        duration: "2h 30m dwell",
-                      },
-                      {
-                        time: "11:30",
-                        title: "Panna Meena Ka Kund Stepwell",
-                        loc: "Geometric stepwell dwell in Amber foothills",
-                        tag: "Architectural Dwell",
-                        duration: "45m dwell",
-                      },
-                      {
-                        time: "13:00",
-                        title: "Anokhi Museum & Lunch",
-                        loc: "1135 AD Amber Ramparts · Shaded thali",
-                        tag: "Shaded Dining",
-                        duration: "1h 30m dining",
-                      },
-                      {
-                        time: "17:15",
-                        title: "Sunset over Nahargarh Fort",
-                        loc: "Aravalli Range crest overlooking Pink City",
-                        tag: "Sunset Overlook",
-                        duration: "1h 45m golden hour",
-                      },
-                    ].map((item, index) => {
+                    {AI_ASSISTANT_PROPOSAL_STOPS.map((item, index) => {
                       const isChosen = acceptedStops[index] !== false;
                       return (
                         <div
@@ -355,7 +325,7 @@ export function AiAssistanceSection() {
                     Try other contextual prompts:
                   </span>
                   <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
-                    {PROMPTS.map((p, i) => (
+                    {AI_ASSISTANT_PROMPTS.map((p, i) => (
                       <button
                         key={i}
                         type="button"
@@ -378,3 +348,4 @@ export function AiAssistanceSection() {
     </section>
   );
 }
+

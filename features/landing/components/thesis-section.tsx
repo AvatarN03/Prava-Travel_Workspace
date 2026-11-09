@@ -1,41 +1,17 @@
-"use client";
+﻿"use client";
 
 import { motion } from "motion/react";
-import { Calendar, CheckCircle2, CreditCard, Hotel } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
+
+import {
+  LANDING_THESIS_CAPABILITIES,
+  LANDING_THESIS_PILLARS,
+} from "@/features/landing/constants";
 
 const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function ThesisSection() {
-  const pillars = [
-    {
-      index: "01",
-      tag: "Daily Route Flow",
-      title: "Multi-Day Itineraries",
-      description:
-        "Organize daily stops, departure times, transport routes, and travel notes in a structured timeline you can adjust anytime.",
-      icon: Calendar,
-      detail: "Timed stops · Map coordinates · Reorderable days",
-    },
-    {
-      index: "02",
-      tag: "Stays & Reservations",
-      title: "Accommodations & Passes",
-      description:
-        "Keep hotel addresses, check-in dates, confirmation numbers, and transit tickets together without searching across email inboxes.",
-      icon: Hotel,
-      detail: "Booking references · Check-in dates · Address cards",
-    },
-    {
-      index: "03",
-      tag: "Budgets & Essentials",
-      title: "Expenses & Travel Tools",
-      description:
-        "Track shared costs with multi-currency conversions, manage packing checklists, and check live weather forecasts and country guides.",
-      icon: CreditCard,
-      detail: "Multi-currency ledger · Packing items · Live weather & FX",
-    },
-  ];
-
+  const pillars = LANDING_THESIS_PILLARS;
   return (
     <section
       data-nav-theme="dark"
@@ -56,7 +32,7 @@ export function ThesisSection() {
           >
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-sm bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 font-semibold uppercase tracking-wider text-[10px] font-sans">
               <span>Section 01</span>
-              <span>·</span>
+              <span>Â·</span>
               <span className="text-[#2D9BF0]">Thesis</span>
             </div>
             <p className="text-zinc-500 dark:text-zinc-400 text-xs font-medium font-sans">
@@ -217,12 +193,7 @@ export function ThesisSection() {
             },
           }}
         >
-          {[
-            { metric: "7 Tabs", desc: "Dedicated trip workspace" },
-            { metric: "Live FX", desc: "Multi-currency budgeting" },
-            { metric: "Offline", desc: "Cached trip itineraries" },
-            { metric: "1-Click", desc: "Community trip cloning" },
-          ].map((item, idx) => (
+          {LANDING_THESIS_CAPABILITIES.map((item, idx) => (
             <motion.div
               key={idx}
               variants={{
@@ -249,4 +220,5 @@ export function ThesisSection() {
     </section>
   );
 }
+
 

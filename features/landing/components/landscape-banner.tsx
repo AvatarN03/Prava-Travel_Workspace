@@ -5,29 +5,25 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 
-const easeDecelerate = [0.16, 1, 0.3, 1] as const;
+import { LANDSCAPE_BANNER_IMAGE } from "@/features/landing/landscape-banner-data";
 
-const BANNER_IMAGE = {
-  src: "https://images.unsplash.com/photo-1506461883276-594a12b11cf3?auto=format&fit=crop&w=2000&q=85",
-  alt: "Scenic tea hills mist and mountain highway",
-} as const;
+const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function LandscapeBanner() {
   return (
     <section
-      data-nav-theme="dark"
-      data-always-dark="true"
-      className="relative w-full h-[460px] sm:h-[540px] overflow-hidden flex items-center justify-center border-y border-zinc-200 dark:border-zinc-800"
+      data-nav-theme="light"
+      className="relative flex h-[460px] w-full items-center justify-center overflow-hidden border-y border-zinc-200 sm:h-[540px]"
     >
       {/* Background Scenic Himalayan Pass / Tea Estate Landscape */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={BANNER_IMAGE.src}
-        alt={BANNER_IMAGE.alt}
+        src={LANDSCAPE_BANNER_IMAGE.src}
+        alt={LANDSCAPE_BANNER_IMAGE.alt}
         className="absolute inset-0 h-full w-full object-cover object-center brightness-[0.55] contrast-[1.08]"
       />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-black/65" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/35 to-black/65" />
 
       {/* Center Editorial Content with Responsive Typography */}
       <div className="relative z-10 mx-auto max-w-3xl px-4 sm:px-6 text-center space-y-4 sm:space-y-5">

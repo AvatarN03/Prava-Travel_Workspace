@@ -1,57 +1,23 @@
-"use client";
+﻿"use client";
 
 import { motion } from "motion/react";
 
+import { EXPENSE_ENTRIES } from "@/features/landing/expenses-data";
 
 const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function ExpensesSection() {
-  const expenseEntries = [
-    {
-      title: "Samode Haveli Heritage Suite",
-      category: "Accommodation",
-      date: "Nov 14",
-      paidBy: "Credit Card",
-      inr: "₹18,500",
-      usd: "≈ $222 USD",
-    },
-    {
-      title: "Vande Bharat Express (Delhi — Jaipur AC Exec)",
-      category: "Transport",
-      date: "Nov 15",
-      paidBy: "Personal",
-      inr: "₹3,600",
-      usd: "≈ $43 USD",
-    },
-    {
-      title: "Amer Palace & Jantar Mantar Heritage Pass",
-      category: "Activities",
-      date: "Nov 16",
-      paidBy: "UPI",
-      inr: "₹1,800",
-      usd: "≈ $21 USD",
-    },
-    {
-      title: "Royal Thali Tasting at 1135 AD Amer",
-      category: "Food & Dining",
-      date: "Nov 16",
-      paidBy: "UPI",
-      inr: "₹3,400",
-      usd: "≈ $41 USD",
-    },
-  ];
-
   return (
     <section
       data-nav-theme="dark"
-      className="py-16 sm:py-24 lg:py-28 border-t border-zinc-200/80 dark:border-zinc-800/80 bg-[#FAFAF9]/80 dark:bg-zinc-950/60 backdrop-blur-xs transition-colors"
+      className="py-16 sm:py-24 lg:py-28 border-t border-zinc-200/80 dark:border-zinc-800/80 bg-canvas/80 dark:bg-zinc-950/60 backdrop-blur-xs transition-colors"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-10 lg:px-16 space-y-10 sm:space-y-12">
         {/* Editorial Split Header with Responsive Typography */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end">
           <div className="lg:col-span-6 space-y-3">
             <motion.span
-              className="inline-block text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase font-sans"
+              className="inline-block text-[11px] font-semibold tracking-widest text-primary uppercase font-sans"
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
@@ -191,7 +157,7 @@ export function ExpensesSection() {
             <span className="text-[11px] uppercase tracking-wider text-zinc-500 font-medium font-sans">
               Remaining Headroom
             </span>
-            <div className="text-2xl sm:text-3xl font-light text-[#2D9BF0] tabular-nums">
+            <div className="text-2xl sm:text-3xl font-light text-primary tabular-nums">
               ₹95,800
             </div>
             <p className="text-xs text-zinc-500 font-sans">Approx. $1,151 USD at live ECB spot rate</p>
@@ -212,7 +178,7 @@ export function ExpensesSection() {
           </div>
 
           <div className="divide-y divide-zinc-200/80 dark:divide-zinc-800/80">
-            {expenseEntries.map((item, index) => (
+            {EXPENSE_ENTRIES.map((item, index) => (
               <div
                 key={index}
                 className="p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 text-[11px] sm:text-xs hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
@@ -222,7 +188,7 @@ export function ExpensesSection() {
                     {item.title}
                   </p>
                   <p className="text-[10px] sm:text-[11px] text-zinc-500 font-sans">
-                    <span className="text-[#2D9BF0] font-medium">{item.category}</span> · {item.date} · {item.paidBy}
+                    <span className="text-primary font-medium">{item.category}</span> · {item.date} · {item.paidBy}
                   </p>
                 </div>
 
@@ -247,4 +213,5 @@ export function ExpensesSection() {
     </section>
   );
 }
+
 

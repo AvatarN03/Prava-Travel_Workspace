@@ -17,15 +17,9 @@ import {
 import { HeroBackgroundPattern } from "./hero-background-pattern";
 import { INDIAN_JOURNEYS } from "../hero-journeys";
 
-import type { User } from "@supabase/supabase-js";
-
-interface HeroSectionProps {
-  user: User | null;
-}
-
 const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
-export function HeroSection({ user }: HeroSectionProps) {
+export function HeroSection() {
   const [selectedJourneyIndex, setSelectedJourneyIndex] = useState(0);
   const [photoIndex, setPhotoIndex] = useState(0);
 
@@ -146,7 +140,7 @@ export function HeroSection({ user }: HeroSectionProps) {
                 asChild
                 className="bg-zinc-950 hover:bg-black text-white text-xs font-medium px-5 py-2.5 h-10 rounded-sm gap-2 cursor-pointer shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
-                <Link href={user ? "/dashboard" : "/auth?tab=signup"}>
+                <Link href="/dashboard">
                   <span>Start Planning</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>

@@ -2,40 +2,18 @@
 
 import { motion } from "motion/react";
 
+import { CORE_PHILOSOPHY_PRINCIPLES } from "@/features/landing/core-philosophy-data";
+
 const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function CorePhilosophySection() {
-  const principles = [
-    {
-      num: "01",
-      title: "PLAN",
-      subtitle: "Build your trip your way.",
-      description:
-        "No rigid pre-baked templates. Add stops, flexible timeblocks, and open exploration hours with total creative freedom.",
-    },
-    {
-      num: "02",
-      title: "ORGANIZE",
-      subtitle: "Keep everything together.",
-      description:
-        "Accommodations, vouchers, passes, express train routes, UPI payments, and split expenses reside in a single coherent workspace.",
-    },
-    {
-      num: "03",
-      title: "ASSIST",
-      subtitle: "Use AI when you need it.",
-      description:
-        "Never an overbearing chatbot. Contextual intelligence that respects your taste, solves route puzzles, and stays quiet otherwise.",
-    },
-  ];
-
   return (
     <section data-nav-theme="light" className="py-16 sm:py-24 lg:py-28 bg-[#FAFAF9] border-t border-zinc-200/80">
       <div className="mx-auto max-w-7xl px-4 sm:px-10 lg:px-16 space-y-12 sm:space-y-16">
         {/* Section Header with Responsive Typography */}
         <div className="space-y-3 max-w-2xl">
           <motion.span
-            className="inline-block text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase font-sans"
+            className="inline-block font-sans text-[11px] font-semibold uppercase tracking-widest text-primary"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
@@ -118,9 +96,9 @@ export function CorePhilosophySection() {
             },
           }}
         >
-          {principles.map((item, index) => (
+          {CORE_PHILOSOPHY_PRINCIPLES.map((item) => (
             <motion.div
-              key={index}
+              key={item.num}
               variants={{
                 hidden: { opacity: 0, y: 16 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: easeDecelerate } },

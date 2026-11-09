@@ -7,17 +7,13 @@ import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
+import { CTA_BANNER_CONTENT } from "@/features/landing/cta-banner-data";
+
 import { CtaBackgroundPattern } from "./cta-background-pattern";
-
-import type { User } from "@supabase/supabase-js";
-
-interface CtaBannerProps {
-  user: User | null;
-}
 
 const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
-export function CtaBanner({ user }: CtaBannerProps) {
+export function CtaBanner() {
   return (
     <section
       data-nav-theme="light"
@@ -28,13 +24,13 @@ export function CtaBanner({ user }: CtaBannerProps) {
 
       <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-10 space-y-6">
         <motion.span
-          className="inline-block text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase font-sans"
+          className="inline-block font-sans text-[11px] font-semibold uppercase tracking-widest text-primary"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.5, ease: easeDecelerate }}
         >
-          Get Started
+          {CTA_BANNER_CONTENT.eyebrow}
         </motion.span>
 
         <motion.h2
@@ -54,7 +50,7 @@ export function CtaBanner({ user }: CtaBannerProps) {
           }}
         >
           <span className="block">
-            {["Make", "space"].map((word) => (
+            {CTA_BANNER_CONTENT.titlePrimary.map((word) => (
               <motion.span
                 key={word}
                 variants={{
@@ -73,7 +69,7 @@ export function CtaBanner({ user }: CtaBannerProps) {
             ))}
           </span>
           <span className="block font-serif italic font-normal text-zinc-800 mt-1 sm:mt-2">
-            {["for", "the", "journey."].map((word) => (
+            {CTA_BANNER_CONTENT.titleAccent.map((word) => (
               <motion.span
                 key={word}
                 variants={{
@@ -100,7 +96,7 @@ export function CtaBanner({ user }: CtaBannerProps) {
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.7, delay: 0.25, ease: easeDecelerate }}
         >
-          Plan less chaotically. Travel more intentionally.
+          {CTA_BANNER_CONTENT.description}
         </motion.p>
 
         <motion.div
@@ -114,8 +110,8 @@ export function CtaBanner({ user }: CtaBannerProps) {
             asChild
             className="bg-zinc-950 hover:bg-black text-white text-xs font-medium px-6 h-11 rounded-sm gap-2 cursor-pointer shadow-none transition-all hover:scale-102 active:scale-98 font-sans"
           >
-            <Link href={user ? "/dashboard" : "/auth?tab=signup"}>
-              <span>Start Planning</span>
+            <Link href="/dashboard">
+              <span>{CTA_BANNER_CONTENT.primaryAction}</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </Button>
@@ -124,7 +120,7 @@ export function CtaBanner({ user }: CtaBannerProps) {
             href="#workspace"
             className="text-xs font-medium text-zinc-600 hover:text-zinc-950 transition-colors cursor-pointer px-4 py-2.5 font-sans hover:underline underline-offset-4"
           >
-            Explore Prava
+            {CTA_BANNER_CONTENT.secondaryAction}
           </a>
         </motion.div>
       </div>

@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 
 import type { User } from "@supabase/supabase-js";
 
+import { PRICING_FEATURES } from "@/features/landing/pricing-data";
+
 interface PricingSectionProps {
   user: User | null;
 }
@@ -30,7 +32,7 @@ export function PricingSection({ user }: PricingSectionProps) {
         {/* Section Header with Responsive Typography */}
         <div className="text-center max-w-2xl mx-auto space-y-4">
           <motion.span
-            className="inline-block text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase font-sans"
+            className="inline-block font-sans text-[11px] font-semibold uppercase tracking-widest text-primary"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
@@ -151,7 +153,7 @@ export function PricingSection({ user }: PricingSectionProps) {
                   />
                 )}
                 <span className="relative z-10">Annual</span>
-                <span className="relative z-10 bg-[#2D9BF0] text-white text-[10px] px-1.5 py-0.5 rounded-xs font-semibold">
+                <span className="relative z-10 rounded-xs bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-white">
                   Save 16.5%
                 </span>
               </button>
@@ -179,7 +181,7 @@ export function PricingSection({ user }: PricingSectionProps) {
               hidden: { opacity: 0, y: 20 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: easeDecelerate } },
             }}
-            className="rounded-sm border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-900/80 p-6 sm:p-8 flex flex-col justify-between space-y-8 shadow-xs"
+            className="flex flex-col justify-between space-y-8 rounded-sm border border-zinc-200 bg-canvas p-6 shadow-xs dark:border-zinc-800 dark:bg-zinc-900/80 sm:p-8"
           >
             <div className="space-y-6">
               <div className="flex items-center justify-between">
@@ -210,30 +212,15 @@ export function PricingSection({ user }: PricingSectionProps) {
 
               {/* Feature Checklist */}
               <ul className="space-y-3 text-xs text-zinc-700 dark:text-zinc-300 pt-2 border-t border-zinc-200/80 dark:border-zinc-800/80 font-sans">
-                <li className="flex items-start gap-2.5">
-                  <Check className="h-4 w-4 text-[#2D9BF0] shrink-0 mt-0.5" />
-                  <span>
-                    <strong>10 Trips</strong> total workspace capacity
-                  </span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Check className="h-4 w-4 text-[#2D9BF0] shrink-0 mt-0.5" />
-                  <span>
-                    <strong>30 AI Workspace Credits</strong> per month (Proposal Actions)
-                  </span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Check className="h-4 w-4 text-[#2D9BF0] shrink-0 mt-0.5" />
-                  <span>Full 7-tab trip workspace (Itinerary, Stays, Expenses, Notes)</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Check className="h-4 w-4 text-[#2D9BF0] shrink-0 mt-0.5" />
-                  <span>Live travel essentials (Weather, Currency FX, Emergency)</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Check className="h-4 w-4 text-[#2D9BF0] shrink-0 mt-0.5" />
-                  <span>Offline cache via IndexedDB for flights & roaming</span>
-                </li>
+                {PRICING_FEATURES.free.map((feature) => (
+                  <li key={feature.emphasis ?? feature.text} className="flex items-start gap-2.5">
+                    <Check className="h-4 w-4 shrink-0 text-primary" />
+                    <span>
+                      {feature.emphasis ? <strong>{feature.emphasis}</strong> : feature.text}
+                      {feature.suffix}
+                    </span>
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -254,10 +241,10 @@ export function PricingSection({ user }: PricingSectionProps) {
               hidden: { opacity: 0, y: 20 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: easeDecelerate } },
             }}
-            className="relative rounded-sm border-2 border-[#2D9BF0] bg-white dark:bg-zinc-900 p-6 sm:p-8 flex flex-col justify-between space-y-8 shadow-xl shadow-[#2D9BF0]/5"
+            className="relative flex flex-col justify-between space-y-8 rounded-sm border-2 border-primary bg-white p-6 shadow-xl shadow-primary/5 dark:bg-zinc-900 sm:p-8"
           >
             {/* Popular Badge */}
-            <div className="absolute -top-3 right-6 bg-[#2D9BF0] text-white text-[10px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-xs shadow-xs flex items-center gap-1 font-sans">
+            <div className="absolute -top-3 right-6 flex items-center gap-1 rounded-xs bg-primary px-2.5 py-0.5 font-sans text-[10px] font-semibold uppercase tracking-wider text-white shadow-xs">
               <Sparkles className="h-3 w-3" />
               <span>Recommended</span>
             </div>
@@ -292,34 +279,15 @@ export function PricingSection({ user }: PricingSectionProps) {
 
               {/* Feature Checklist */}
               <ul className="space-y-3 text-xs text-zinc-700 dark:text-zinc-300 pt-2 border-t border-zinc-200/80 dark:border-zinc-800/80 font-sans">
-                <li className="flex items-start gap-2.5">
-                  <Check className="h-4 w-4 text-[#2D9BF0] shrink-0 mt-0.5" />
-                  <span>
-                    <strong>25 Active Trips</strong> with unlimited trip archives
-                  </span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Check className="h-4 w-4 text-[#2D9BF0] shrink-0 mt-0.5" />
-                  <span>
-                    <strong>150 AI Workspace Credits</strong> per month (5x capacity)
-                  </span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Check className="h-4 w-4 text-[#2D9BF0] shrink-0 mt-0.5" />
-                  <span>AI Route & Itinerary Resequencing (heat & transit buffers)</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Check className="h-4 w-4 text-[#2D9BF0] shrink-0 mt-0.5" />
-                  <span>Publish unlimited public itineraries & travel stories</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Check className="h-4 w-4 text-[#2D9BF0] shrink-0 mt-0.5" />
-                  <span>Verified Creator badge & custom @username profile</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Check className="h-4 w-4 text-[#2D9BF0] shrink-0 mt-0.5" />
-                  <span>Priority multi-device cloud synchronization</span>
-                </li>
+                {PRICING_FEATURES.pro.map((feature) => (
+                  <li key={feature.emphasis ?? feature.text} className="flex items-start gap-2.5">
+                    <Check className="h-4 w-4 shrink-0 text-primary" />
+                    <span>
+                      {feature.emphasis ? <strong>{feature.emphasis}</strong> : feature.text}
+                      {feature.suffix}
+                    </span>
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -336,22 +304,22 @@ export function PricingSection({ user }: PricingSectionProps) {
 
         {/* Guarantee Banner */}
         <motion.div
-          className="max-w-2xl mx-auto rounded-sm border border-zinc-200/80 dark:border-zinc-800/80 bg-[#FAFAF9]/80 dark:bg-zinc-900/60 p-4 flex flex-wrap items-center justify-around gap-4 text-xs text-zinc-500 font-sans"
+          className="mx-auto flex max-w-2xl flex-wrap items-center justify-around gap-4 rounded-sm border border-zinc-200/80 bg-canvas/80 p-4 font-sans text-xs text-zinc-500 dark:border-zinc-800/80 dark:bg-zinc-900/60"
           initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.6, delay: 0.2, ease: easeDecelerate }}
         >
           <div className="flex items-center gap-1.5 font-medium">
-            <ShieldCheck className="h-4 w-4 text-[#2D9BF0]" />
+            <ShieldCheck className="h-4 w-4 text-primary" />
             <span>Encrypted Payments</span>
           </div>
           <div className="flex items-center gap-1.5 font-medium">
-            <Zap className="h-4 w-4 text-[#2D9BF0]" />
+            <Zap className="h-4 w-4 text-primary" />
             <span>Instant Activation</span>
           </div>
           <div className="flex items-center gap-1.5 font-medium">
-            <Check className="h-4 w-4 text-[#2D9BF0]" />
+            <Check className="h-4 w-4 text-primary" />
             <span>Cancel Anytime</span>
           </div>
         </motion.div>

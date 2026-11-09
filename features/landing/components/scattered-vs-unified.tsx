@@ -1,132 +1,18 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 
 import { AnimatePresence, motion } from "motion/react";
+
 import {
-  Bookmark,
-  Calendar,
-  CheckSquare,
-  CloudSun,
-  FileSpreadsheet,
-  FileText,
-  Hotel,
-  MapPin,
-  MessageSquare,
-  Receipt,
-  Search,
-  Sparkles,
-  Train,
-} from "lucide-react";
+  SCATTERED_ITEMS,
+  UNIFIED_ITEMS,
+} from "@/features/landing/scattered-vs-unified-data";
 
 const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function ScatteredVsUnified() {
   const [mode, setMode] = useState<"scattered" | "unified">("scattered");
-
-  const scatteredItems = [
-    {
-      icon: Search,
-      header: "Browser Tab 1",
-      title: '"best dal baati churma and lassi near old jaipur"',
-      detail: "14 tabs open · conflicting blog reviews",
-    },
-    {
-      icon: FileText,
-      header: "Quick Note (Untitled 4)",
-      title: "- buy UPI One World pass at Delhi airport?\n- Kabir says visit Panna Meena Stepwell early\n- luggage cloakroom at Jaipur Jn??",
-      detail: "Unformatted notes app scratchpad",
-    },
-    {
-      icon: Train,
-      header: "IRCTC Train Confirmation",
-      title: "Vande Bharat Express 20978 · Exec Chair Car C1",
-      detail: "Depart 06:10 · New Delhi to Jaipur · PNR: 2458991204",
-    },
-    {
-      icon: MapPin,
-      header: "Saved Pins (42 items)",
-      title: "Unsorted Rajasthan pins",
-      detail: "Pins clustered across Jaipur, Jodhpur & Udaipur without days",
-    },
-    {
-      icon: FileSpreadsheet,
-      header: "Trip Budget & Split_final",
-      title: "Samode Haveli: ₹37,000\nVande Bharat: ₹7,200",
-      detail: "Total?: Missing auto-rickshaw receipts",
-    },
-    {
-      icon: Bookmark,
-      header: "Saved Reel",
-      title: '"Secret rooftop overlooking Lake Pichola at sunset"',
-      detail: "No location tagged · screenshot buried in gallery",
-    },
-    {
-      icon: CloudSun,
-      header: "Weather App",
-      title: "Jaipur 28°C · Dry desert breeze on Tuesday",
-      detail: "Need to shift open-air Amer Palace to morning",
-    },
-    {
-      icon: MessageSquare,
-      header: "Group Chat",
-      title: '"Hey did anyone book the sunset boat on Lake Pichola yet?"',
-      detail: "Sent 2 days ago · no confirmation",
-    },
-  ];
-
-  const unifiedItems = [
-    {
-      icon: Calendar,
-      header: "Itinerary Tab",
-      title: "08:30 Amer Palace & Sheesh Mahal",
-      detail: "Scheduled in Day 02 morning corridor with scenic Aravalli transit buffer",
-      accent: true,
-    },
-    {
-      icon: Hotel,
-      header: "Accommodations Tab",
-      title: "Samode Haveli · Deluxe Suite",
-      detail: "Check-in Nov 14, booking voucher code, and hotel phone stored in one card",
-    },
-    {
-      icon: Receipt,
-      header: "Expenses Tab",
-      title: "Multi-Currency Ledger & Categories",
-      detail: "Logged ₹54,200 with automatic USD conversion · Categorized & tracked against budget",
-    },
-    {
-      icon: FileText,
-      header: "Notes Tab",
-      title: "Rajasthan Rail & UPI Transit Guide",
-      detail: "Clean markdown doc with pinned IRCTC schedules & verified station tips",
-    },
-    {
-      icon: CheckSquare,
-      header: "Checklist Tab",
-      title: "Packing & Pre-Trip To-Dos",
-      detail: "Verified ILP permits, camera gear, and electrolyte packs checked off",
-    },
-    {
-      icon: Bookmark,
-      header: "Links & Bookmarks",
-      title: "Lake Pichola Sunset Pier",
-      detail: "Saved restaurant reservation and verified boat jetty coordinate links",
-    },
-    {
-      icon: CloudSun,
-      header: "Travel Essentials",
-      title: "Live Weather, FX & Country Guide",
-      detail: "5-day forecast, ECB exchange rates, and 24/7 tourist helpline (1363)",
-    },
-    {
-      icon: Sparkles,
-      header: "Workspace AI",
-      title: "Contextual Route Proposals",
-      detail: "Suggests optimal morning stop order to avoid desert midday heat",
-      accent: true,
-    },
-  ];
 
   return (
     <section
@@ -138,7 +24,7 @@ export function ScatteredVsUnified() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end">
           <div className="lg:col-span-7 space-y-3">
             <motion.span
-              className="inline-block font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase"
+              className="inline-block font-sans text-[11px] font-semibold tracking-widest text-primary uppercase"
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
@@ -272,7 +158,7 @@ export function ScatteredVsUnified() {
               }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
             >
-              {scatteredItems.map((item, index) => {
+              {SCATTERED_ITEMS.map((item, index) => {
                 const Icon = item.icon;
                 return (
                   <motion.div
@@ -323,7 +209,7 @@ export function ScatteredVsUnified() {
               }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
             >
-              {unifiedItems.map((item, index) => {
+              {UNIFIED_ITEMS.map((item, index) => {
                 const Icon = item.icon;
                 return (
                   <motion.div
@@ -342,7 +228,7 @@ export function ScatteredVsUnified() {
                       index >= 4 ? "hidden sm:flex" : "flex"
                     } ${
                       item.accent
-                        ? "border-[#2D9BF0]/40 bg-[#F0F8FF]/80 shadow-xs"
+                        ? "border-primary/40 bg-[#F0F8FF]/80 shadow-xs"
                         : "border-zinc-200/90 bg-white shadow-xs"
                     }`}
                   >
@@ -351,7 +237,7 @@ export function ScatteredVsUnified() {
                         <span
                           className={
                             item.accent
-                              ? "text-[#2D9BF0]"
+                              ? "text-primary"
                               : "text-zinc-500"
                           }
                         >
@@ -359,7 +245,7 @@ export function ScatteredVsUnified() {
                         </span>
                         <Icon
                           className={`h-3.5 w-3.5 ${
-                            item.accent ? "text-[#2D9BF0]" : "text-zinc-400"
+                            item.accent ? "text-primary" : "text-zinc-400"
                           }`}
                         />
                       </div>
@@ -380,4 +266,5 @@ export function ScatteredVsUnified() {
     </section>
   );
 }
+
 
