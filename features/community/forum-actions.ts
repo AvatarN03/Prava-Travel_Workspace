@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 
 import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -38,9 +38,67 @@ function getCategoryLabel(category: string): string {
   }
 }
 
-/**
- * Fetch forum discussions with author profiles, attached trips, and reply counts using Prisma
- */
+const getCachedForumPostRecords = unstable_cache(
+  async (category?: ForumCategory, searchQuery?: string) => {
+    const trimmedSearch = searchQuery?.trim();
+
+    return db.communityPost.findMany({
+      where: {
+        ...(category && category !== "ALL" ? { category } : {}),
+        ...(trimmedSearch
+          ? {
+              OR: [
+                { title: { contains: trimmedSearch, mode: "insensitive" } },
+                { content: { contains: trimmedSearch, mode: "insensitive" } },
+                { destination: { contains: trimmedSearch, mode: "insensitive" } },
+              ],
+            }
+          : {}),
+      },
+      select: {
+        id: true,
+        profileId: true,
+        slug: true,
+        title: true,
+        content: true,
+        category: true,
+        tags: true,
+        destination: true,
+        coverImageUrl: true,
+        images: true,
+        isEdited: true,
+        createdAt: true,
+        profile: {
+          select: {
+            fullName: true,
+            username: true,
+            avatarUrl: true,
+          },
+        },
+        linkedTrip: {
+          select: {
+            id: true,
+            title: true,
+            destination: true,
+            startDate: true,
+            endDate: true,
+            coverImageUrl: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    });
+  },
+  ["forum-discussions"],
+  { tags: ["forum-feed"], revalidate: 60 }
+);
+
+function invalidateForumFeed() {
+  revalidateTag("forum-feed", "max");
+}
+
+/** Fetch forum discussions with author profiles, attached trips, and saved-state overlays. */
 export async function getForumDiscussions(
   category?: ForumCategory,
   searchQuery?: string
@@ -55,61 +113,20 @@ export async function getForumDiscussions(
       currentUserId = null;
     }
 
-    const trimmedSearch = searchQuery?.trim();
-
-    const posts = await db.communityPost.findMany({
-      where: {
-        ...(category && category !== "ALL" ? { category } : {}),
-        ...(trimmedSearch
-          ? {
-              OR: [
-                { title: { contains: trimmedSearch, mode: "insensitive" } },
-                { content: { contains: trimmedSearch, mode: "insensitive" } },
-                { destination: { contains: trimmedSearch, mode: "insensitive" } },
-              ],
-            }
-          : {}),
-      },
-      include: {
-        profile: {
-          select: {
-            id: true,
-            fullName: true,
-            username: true,
-            avatarUrl: true,
-            isPublic: true,
-            bio: true,
-          },
-        },
-        linkedTrip: {
-          select: {
-            id: true,
-            title: true,
-            destination: true,
-            startDate: true,
-            endDate: true,
-            coverImageUrl: true,
-          },
-        },
-        _count: {
-          select: { replies: true },
-        },
-        ...(currentUserId
-          ? {
-              upvoteRecords: {
-                where: { profileId: currentUserId },
-                select: { profileId: true },
+    const posts = await getCachedForumPostRecords(category, searchQuery);
+    const savedPostIds = currentUserId && posts.length > 0
+      ? new Set(
+          (
+            await db.communitySavedPost.findMany({
+              where: {
+                profileId: currentUserId,
+                postId: { in: posts.map((post) => post.id) },
               },
-              savedRecords: {
-                where: { profileId: currentUserId },
-                select: { profileId: true },
-              },
-            }
-          : {}),
-      },
-      orderBy: { createdAt: "desc" },
-      take: 50,
-    });
+              select: { postId: true },
+            })
+          ).map((savedPost) => savedPost.postId)
+        )
+      : new Set<string>();
 
     return posts.map((post) => {
       let linkedTrip = null;
@@ -153,15 +170,8 @@ export async function getForumDiscussions(
         authorName: post.profile?.fullName || post.profile?.username || "Traveler",
         authorUsername: post.profile?.username || null,
         authorAvatarUrl: post.profile?.avatarUrl || null,
-        isCreatorPublic: Boolean(post.profile?.isPublic),
-        authorBio: post.profile?.bio || null,
         createdAt: post.createdAt ? formatRelativeTime(post.createdAt) : "Just now",
-        upvotes: Number(post.upvotes) || 0,
-        views: Number(post.views) || 0,
-        repliesCount: Number(post._count.replies) || 0,
-        hasUpvoted: Boolean(post.upvoteRecords && post.upvoteRecords.length > 0),
-        hasSaved: Boolean(post.savedRecords && post.savedRecords.length > 0),
-        isAuthor: Boolean(currentUserId && post.profileId === currentUserId),
+        hasSaved: savedPostIds.has(post.id),
         linkedTrip,
       };
     });
@@ -189,16 +199,6 @@ export async function getForumPostBySlug(slugOrId: string): Promise<ForumPost | 
     const isValidUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
       decoded
     );
-
-    // Increment view count safely in background
-    try {
-      await db.communityPost.updateMany({
-        where: isValidUuid ? { OR: [{ id: decoded }, { slug: decoded }] } : { slug: decoded },
-        data: { views: { increment: 1 } },
-      });
-    } catch (viewError) {
-      console.warn("Non-fatal error incrementing discussion views:", viewError);
-    }
 
     const post = await db.communityPost.findFirst({
       where: isValidUuid
@@ -342,6 +342,23 @@ export async function getForumThread(postId: string): Promise<ForumPost | null> 
   return getForumPostBySlug(postId);
 }
 
+/** Record one view when a visitor opens a discussion; reads remain side-effect free. */
+export async function recordForumPostView(slugOrId: string) {
+  try {
+    const decoded = decodeURIComponent(slugOrId).trim();
+    const isValidUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      decoded
+    );
+
+    await db.communityPost.updateMany({
+      where: isValidUuid ? { OR: [{ id: decoded }, { slug: decoded }] } : { slug: decoded },
+      data: { views: { increment: 1 } },
+    });
+  } catch (error) {
+    console.warn("Non-fatal error recording discussion view:", error);
+  }
+}
+
 /**
  * Create a real forum discussion with auto-generated slug
  */
@@ -392,6 +409,7 @@ export async function createForumDiscussion(input: CreateDiscussionInput) {
     });
 
     revalidatePath("/forum");
+    invalidateForumFeed();
     return { success: true, postId: post.id, slug: post.slug || slug };
   } catch (error) {
     console.error("Error creating forum discussion:", error);
@@ -450,6 +468,7 @@ export async function updateForumDiscussion(postId: string, input: UpdateDiscuss
     });
 
     revalidatePath("/forum");
+    invalidateForumFeed();
     if (updated.slug) {
       revalidatePath(`/forum/${updated.slug}`);
     }
@@ -496,6 +515,7 @@ export async function deleteForumDiscussion(postId: string) {
     });
 
     revalidatePath("/forum");
+    invalidateForumFeed();
     return { success: true };
   } catch (error) {
     console.error("Error deleting forum discussion:", error);
@@ -537,7 +557,6 @@ export async function postForumReply(postId: string, content: string) {
       },
     });
 
-    revalidatePath("/forum");
     if (reply.post?.slug) {
       revalidatePath(`/forum/${reply.post.slug}`);
     }
@@ -595,7 +614,6 @@ export async function updateForumReply(replyId: string, content: string) {
       },
     });
 
-    revalidatePath("/forum");
     if (reply.post?.slug) {
       revalidatePath(`/forum/${reply.post.slug}`);
     }
@@ -645,7 +663,6 @@ export async function deleteForumReply(replyId: string) {
       where: { id: replyId },
     });
 
-    revalidatePath("/forum");
     if (reply.post?.slug) {
       revalidatePath(`/forum/${reply.post.slug}`);
     }
@@ -701,7 +718,6 @@ export async function toggleForumPostUpvote(postId: string) {
         }),
       ]);
 
-      revalidatePath("/forum");
       return { success: true, hasUpvoted: false };
     } else {
       await db.$transaction([
@@ -719,7 +735,6 @@ export async function toggleForumPostUpvote(postId: string) {
         }),
       ]);
 
-      revalidatePath("/forum");
       return { success: true, hasUpvoted: true };
     }
   } catch (error) {

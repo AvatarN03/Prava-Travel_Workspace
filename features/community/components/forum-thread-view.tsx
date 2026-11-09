@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 
 import {
   ArrowLeft,
@@ -42,6 +42,7 @@ import {
   deleteForumReply,
   getForumPostBySlug,
   postForumReply,
+  recordForumPostView,
   toggleForumPostUpvote,
   toggleSaveDiscussion,
   updateForumReply,
@@ -59,13 +60,65 @@ interface ForumThreadViewProps {
   userTrips: UserTripOption[];
 }
 
+const getAuthorInitials = (name: string) =>
+  name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .substring(0, 2);
+
+function ForumAuthorProfile({ post }: { post: ForumPost }) {
+  const profileHref = post.authorUsername
+    ? `/u/${encodeURIComponent(post.authorUsername)}`
+    : undefined;
+  const content = (
+    <>
+      <Avatar className="h-11 w-11 border border-border">
+        {post.authorAvatarUrl && (
+          <AvatarImage src={post.authorAvatarUrl} alt={`${post.authorName}'s avatar`} referrerPolicy="no-referrer" />
+        )}
+        <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
+          {getAuthorInitials(post.authorName)}
+        </AvatarFallback>
+      </Avatar>
+      <span className="min-w-0">
+        <span className="block truncate text-sm font-semibold text-foreground group-hover:text-primary">
+          {post.authorName}
+        </span>
+        {post.authorUsername && (
+          <span className="mt-0.5 block truncate text-xs text-muted-foreground">@{post.authorUsername}</span>
+        )}
+      </span>
+    </>
+  );
+
+  return (
+    <Card className="rounded-md border border-border bg-card shadow-2xs">
+      <CardContent className="p-4">
+        <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Posted by</p>
+        {profileHref ? (
+          <Link href={profileHref} className="group flex items-center gap-3 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary">
+            {content}
+          </Link>
+        ) : (
+          <div className="flex items-center gap-3">{content}</div>
+        )}
+        {post.isCreatorPublic && (
+          <Badge variant="outline" className="mt-3 rounded-sm border-border px-1.5 py-0 text-[10px] text-muted-foreground">Verified creator</Badge>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 export function ForumThreadView({
   initialPost,
   userTrips = [],
 }: ForumThreadViewProps) {
   const router = useRouter();
   const [post, setPost] = useState<ForumPost>(initialPost);
-  const [upvotes, setUpvotes] = useState(initialPost.upvotes);
+  const [upvotes, setUpvotes] = useState(initialPost.upvotes ?? 0);
   const [hasUpvoted, setHasUpvoted] = useState(Boolean(initialPost.hasUpvoted));
   const [hasSaved, setHasSaved] = useState(Boolean(initialPost.hasSaved));
   const [replies, setReplies] = useState<ForumReply[]>(initialPost.replies || []);
@@ -84,12 +137,20 @@ export function ForumThreadView({
   const [editingReplyId, setEditingReplyId] = useState<string | null>(null);
   const [editingReplyContent, setEditingReplyContent] = useState("");
   const [isCloningTrip, setIsCloningTrip] = useState(false);
+  const hasRecordedView = useRef(false);
+
+  useEffect(() => {
+    if (hasRecordedView.current) return;
+
+    hasRecordedView.current = true;
+    void recordForumPostView(post.slug);
+  }, [post.slug]);
 
   const refreshThread = useCallback(async () => {
     const fresh = await getForumPostBySlug(post.slug);
     if (fresh) {
       setPost(fresh);
-      setUpvotes(fresh.upvotes);
+      setUpvotes(fresh.upvotes ?? 0);
       setHasUpvoted(Boolean(fresh.hasUpvoted));
       setHasSaved(Boolean(fresh.hasSaved));
       setReplies(fresh.replies || []);
@@ -213,15 +274,6 @@ export function ForumThreadView({
     setSaveTipDialogOpen(true);
   };
 
-  const getAuthorInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .substring(0, 2);
-  };
-
   const attachedVisual = post.coverImageUrl || (post.images && post.images[0]) || null;
 
   return (
@@ -232,11 +284,12 @@ export function ForumThreadView({
           <Link href="/forum">
             <Button
               variant="ghost"
-              size="sm"
-              className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground cursor-pointer -ml-2"
+              size="icon"
+              aria-label="Back to discussions"
+              title="Back to discussions"
+              className="h-8 w-8 rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer -ml-2"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              Discussions
             </Button>
           </Link>
           <span className="text-muted-foreground/40 text-xs">/</span>
@@ -257,7 +310,7 @@ export function ForumThreadView({
             variant={hasUpvoted ? "default" : "outline"}
             size="sm"
             onClick={handleUpvote}
-            className={`h-8 text-xs gap-1.5 cursor-pointer ${
+            className={`h-8 rounded-sm text-xs gap-1.5 cursor-pointer ${
               hasUpvoted
                 ? "bg-primary text-primary-foreground font-semibold"
                 : "border-border text-foreground hover:bg-muted"
@@ -271,7 +324,7 @@ export function ForumThreadView({
             variant="outline"
             size="sm"
             onClick={handleToggleBookmark}
-            className={`h-8 text-xs gap-1.5 cursor-pointer border-border ${
+            className={`h-8 rounded-sm text-xs gap-1.5 cursor-pointer border-border bg-card ${
               hasSaved
                 ? "text-primary border-primary/40 bg-primary/5 font-semibold"
                 : "text-muted-foreground hover:text-foreground"
@@ -285,7 +338,7 @@ export function ForumThreadView({
             variant="outline"
             size="sm"
             onClick={() => handleOpenSaveTip(post.content, post.authorName)}
-            className="h-8 text-xs gap-1.5 border-border text-muted-foreground hover:text-foreground cursor-pointer"
+            className="h-8 rounded-sm text-xs gap-1.5 border-border bg-card text-muted-foreground hover:border-primary/40 hover:bg-primary/5 hover:text-primary cursor-pointer"
             title="Save tip to your trip notes"
           >
             <Sparkles className="h-3.5 w-3.5 text-primary" />
@@ -299,7 +352,7 @@ export function ForumThreadView({
               navigator.clipboard.writeText(window.location.href);
               toast.success("Discussion link copied to clipboard!");
             }}
-            className="h-8 text-xs gap-1.5 border-border text-muted-foreground hover:text-foreground cursor-pointer"
+            className="h-8 rounded-sm text-xs gap-1.5 border-border bg-card text-muted-foreground hover:border-primary/40 hover:bg-muted hover:text-foreground cursor-pointer"
           >
             <Share2 className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Share</span>
@@ -349,7 +402,7 @@ export function ForumThreadView({
               </h1>
 
               {/* Author & Timestamp Bar */}
-              <div className="flex items-center justify-between gap-3 pt-1 pb-3 border-b border-border">
+              <div className="hidden">
                 <div className="flex items-center gap-2.5">
                   <Avatar className="h-8 w-8 border border-border">
                     {post.authorAvatarUrl && (
@@ -395,6 +448,14 @@ export function ForumThreadView({
                     {replies.length}
                   </span>
                 </div>
+              </div>
+
+              {/* Post metadata */}
+              <div className="flex items-center justify-end gap-3 border-b border-border pb-3 pt-1 text-xs text-muted-foreground">
+                <span>{post.createdAt}</span>
+                {post.isEdited && <span className="italic">(edited)</span>}
+                <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" />{post.views}</span>
+                <span className="flex items-center gap-1"><MessageSquare className="h-3.5 w-3.5" />{replies.length}</span>
               </div>
 
               {/* Discussion Body Content */}
@@ -476,6 +537,7 @@ export function ForumThreadView({
 
         {/* Right Section: Comments & Travel Advice Stream (Cols 5/12) */}
         <div className="lg:col-span-5 xl:col-span-5 space-y-4 lg:sticky lg:top-16">
+          <ForumAuthorProfile post={post} />
           <div className="flex items-center justify-between px-1">
             <h2 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2">
               <MessageSquare className="h-4 w-4 text-primary" />

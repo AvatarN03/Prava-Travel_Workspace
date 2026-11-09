@@ -15,10 +15,10 @@ export default function ForumLoading() {
         </div>
       </div>
 
-      {/* Filter Controls: Category Select + Bookmark Button */}
+      {/* Filter controls */}
       <div className="flex items-center gap-2 w-full">
         <div className="h-9 w-full sm:w-64 bg-card border border-border rounded-sm" />
-        <div className="h-9 w-32 bg-card border border-border rounded-sm shrink-0" />
+        <div className="h-9 w-20 bg-card border border-border rounded-sm shrink-0" />
       </div>
 
       {/* Results Meta */}
@@ -26,46 +26,47 @@ export default function ForumLoading() {
         <div className="h-4 w-40 bg-muted/60 rounded-xs" />
       </div>
 
-      {/* Discussions Grid Layout (3 Columns on Desktop) */}
+      {/* Stacked discussion cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-md border border-border bg-card overflow-hidden shadow-2xs flex flex-col justify-between"
+            className="h-[420px] sm:h-[400px] rounded-md border border-border bg-card overflow-hidden shadow-2xs flex flex-col"
           >
-            {/* Visual Thumbnail Cover */}
-            <div className="h-32 w-full bg-muted/50 border-b border-border" />
+            {/* 50% visual cover, including the category badge */}
+            <div className="relative h-1/2 w-full shrink-0 bg-muted/50 border-b border-border">
+              <div className="absolute right-3 top-3 h-5 w-20 rounded-sm bg-muted/70" />
+            </div>
 
-            {/* Content Body */}
-            <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
+            {/* 50% content section */}
+            <div className="h-1/2 p-4 space-y-3 flex flex-col justify-between">
               <div className="space-y-2.5">
-                {/* Header Row: Category Badge & Bookmark */}
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="h-5 w-20 bg-muted/60 rounded-sm" />
-                    <div className="h-4 w-16 bg-muted/40 rounded-xs" />
-                  </div>
-                  <div className="h-5 w-5 bg-muted/40 rounded-xs" />
-                </div>
-
-                {/* Post Title & Description Excerpt */}
-                <div className="space-y-1.5 pt-1">
+                {/* Two-line title, then location and date */}
+                <div className="space-y-1.5 pt-0.5">
                   <div className="h-4.5 w-4/5 bg-muted/80 rounded-xs" />
-                  <div className="h-3 w-full bg-muted/50 rounded-xs" />
-                  <div className="h-3 w-3/4 bg-muted/50 rounded-xs" />
+                  <div className="h-4.5 w-3/5 bg-muted/80 rounded-xs" />
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="h-3 w-24 bg-muted/50 rounded-xs" />
+                  <div className="h-3 w-16 bg-muted/40 rounded-xs" />
+                </div>
+                <div className="h-6 w-4/5 bg-muted/40 border border-border rounded-md" />
+                <div className="flex gap-1">
+                  <div className="h-4 w-12 bg-muted/50 rounded-sm" />
+                  <div className="h-4 w-16 bg-muted/50 rounded-sm" />
                 </div>
               </div>
 
-              {/* Author & Activity Metrics Footer */}
+              {/* Author and bookmark footer */}
               <div className="pt-3 border-t border-border/60 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-6 w-6 rounded-full bg-muted/60" />
-                  <div className="h-3 w-20 bg-muted/60 rounded-xs" />
+                  <div className="h-5 w-5 rounded-full bg-muted/60" />
+                  <div className="space-y-1">
+                    <div className="h-3 w-20 bg-muted/60 rounded-xs" />
+                    <div className="h-2.5 w-14 bg-muted/40 rounded-xs" />
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-10 bg-muted/40 rounded-xs" />
-                  <div className="h-3 w-10 bg-muted/40 rounded-xs" />
-                </div>
+                <div className="h-7 w-7 bg-muted/40 rounded-sm" />
               </div>
             </div>
           </div>

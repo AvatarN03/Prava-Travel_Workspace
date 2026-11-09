@@ -41,9 +41,9 @@ export interface ForumPost {
   isCreatorPublic?: boolean;
   authorBio?: string | null;
   createdAt: string;
-  upvotes: number;
-  views: number;
-  repliesCount: number;
+  upvotes?: number;
+  views?: number;
+  repliesCount?: number;
   hasUpvoted?: boolean;
   hasSaved?: boolean;
   isEdited?: boolean;
