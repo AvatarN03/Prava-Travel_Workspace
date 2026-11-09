@@ -1,124 +1,58 @@
+const Skeleton = ({ className }: { className: string }) => (
+  <div className={`animate-pulse rounded-sm bg-muted/70 dark:bg-card-subtle ${className}`} />
+);
+
 export default function DashboardLoading() {
   return (
-    <div className="space-y-6 pb-10 animate-pulse">
-      {/* Workspace Header with Editorial Typography */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 pb-10">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div className="space-y-2">
-          <div className="h-3 w-28 bg-primary/30 rounded-xs" />
-          <div className="h-8 w-64 bg-muted/80 rounded-sm" />
-          <div className="h-4 w-96 max-w-full bg-muted/60 rounded-xs" />
+          <Skeleton className="h-3 w-28 bg-primary/25" />
+          <Skeleton className="h-8 w-64 max-w-full" />
+          <Skeleton className="h-4 w-96 max-w-full" />
         </div>
-        <div className="h-9 w-28 bg-primary/40 rounded-sm self-end sm:self-auto shrink-0" />
+        <Skeleton className="h-9 w-28 self-end sm:self-auto" />
       </div>
 
-      {/* Hero Section: Upcoming Trip Card (Full Width) */}
-      <div className="rounded-lg border border-border/80 bg-card p-5 sm:p-6 space-y-4 shadow-2xs">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-5 w-24 bg-emerald-500/20 rounded-full" />
-            <div className="h-5 w-32 bg-primary/20 rounded-full" />
+      <div className="overflow-hidden rounded-md border border-border/80 bg-card shadow-2xs">
+        <div className="grid grid-cols-1 lg:grid-cols-12">
+          <div className="space-y-5 p-6 sm:p-7 lg:col-span-7">
+            <div className="flex gap-2"><Skeleton className="h-5 w-24" /><Skeleton className="h-5 w-28" /></div>
+            <div className="space-y-2"><Skeleton className="h-8 w-3/4" /><Skeleton className="h-4 w-48" /></div>
+            <Skeleton className="h-4 w-2/3" />
+            <Skeleton className="h-2 w-full rounded-full" />
+            <div className="flex gap-2"><Skeleton className="h-7 w-24" /><Skeleton className="h-7 w-28" /><Skeleton className="h-7 w-24" /></div>
+            <div className="flex justify-between border-t border-border/60 pt-4"><Skeleton className="h-9 w-40" /><Skeleton className="h-9 w-28" /></div>
           </div>
-          <div className="h-7 w-20 bg-muted/50 rounded-sm" />
-        </div>
-        <div className="space-y-2">
-          <div className="h-7 w-72 max-w-full bg-muted/80 rounded-sm" />
-          <div className="flex items-center gap-3">
-            <div className="h-4 w-36 bg-muted/60 rounded-xs" />
-            <div className="h-4 w-44 bg-muted/60 rounded-xs" />
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-3 pt-2">
-          <div className="h-14 bg-muted/40 rounded-sm border border-border/50" />
-          <div className="h-14 bg-muted/40 rounded-sm border border-border/50" />
-          <div className="h-14 bg-muted/40 rounded-sm border border-border/50" />
-        </div>
-      </div>
-
-      {/* Main 2-Column Grid (7 cols / 5 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column (7 cols) */}
-        <div className="lg:col-span-7 space-y-6">
-          {/* Recent Trips List */}
-          <div className="rounded-lg border border-border/80 bg-card p-5 space-y-4 shadow-2xs">
-            <div className="flex items-center justify-between pb-2 border-b border-border/60">
-              <div className="h-4 w-28 bg-muted/80 rounded-xs" />
-              <div className="h-3 w-16 bg-muted/60 rounded-xs" />
-            </div>
-            <div className="space-y-3">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-3 p-2.5 rounded-sm bg-muted/30 border border-border/40">
-                  <div className="h-12 w-16 bg-muted/70 rounded-xs shrink-0" />
-                  <div className="space-y-1.5 flex-1 min-w-0">
-                    <div className="h-4 w-40 bg-muted/80 rounded-xs" />
-                    <div className="h-3 w-28 bg-muted/50 rounded-xs" />
-                  </div>
-                  <div className="h-5 w-16 bg-muted/50 rounded-full" />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Financial Snapshot Card */}
-          <div className="rounded-lg border border-border/80 bg-card p-5 space-y-4 shadow-2xs">
-            <div className="flex items-center justify-between">
-              <div className="h-4 w-36 bg-muted/80 rounded-xs" />
-              <div className="h-6 w-24 bg-muted/50 rounded-sm" />
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              <div className="h-16 bg-muted/40 rounded-sm" />
-              <div className="h-16 bg-muted/40 rounded-sm" />
-              <div className="h-16 bg-muted/40 rounded-sm" />
-            </div>
-            <div className="h-2 w-full bg-muted/60 rounded-full" />
+          <div className="min-h-64 border-t border-border/60 p-5 lg:col-span-5 lg:border-t-0 lg:border-l">
+            <Skeleton className="h-full min-h-54 w-full" />
           </div>
         </div>
 
-        {/* Right Column (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
-          {/* Active Trip Workspace Card */}
-          <div className="rounded-lg border border-border/80 bg-card p-5 space-y-3 shadow-2xs">
-            <div className="h-4 w-44 bg-muted/80 rounded-xs" />
-            <div className="grid grid-cols-2 gap-2">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="h-10 bg-muted/30 rounded-sm border border-border/40" />
-              ))}
-            </div>
-          </div>
-
-          {/* Travel Essentials 2x3 Grid */}
-          <div className="rounded-lg border border-border/80 bg-card p-5 space-y-3 shadow-2xs">
-            <div className="h-4 w-36 bg-muted/80 rounded-xs" />
-            <div className="grid grid-cols-3 gap-2.5">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="h-16 bg-muted/30 rounded-sm border border-border/40" />
-              ))}
-            </div>
-          </div>
-
-          {/* AI Assistant Card */}
-          <div className="rounded-lg border border-primary/20 bg-card p-5 space-y-3 shadow-2xs">
-            <div className="flex items-center gap-2">
-              <div className="h-6 w-6 rounded-full bg-primary/20" />
-              <div className="h-4 w-32 bg-muted/80 rounded-xs" />
-            </div>
-            <div className="h-12 bg-muted/30 rounded-sm border border-border/40" />
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Section: Cross-Trip Metrics Overview */}
-      <div className="pt-2 space-y-3">
-        <div className="h-3 w-48 bg-muted/70 rounded-xs" />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="p-4 rounded-sm border border-border/80 bg-card space-y-2 shadow-2xs">
-              <div className="flex items-center justify-between">
-                <div className="h-3 w-20 bg-muted/60 rounded-xs" />
-                <div className="h-4 w-4 bg-muted/50 rounded-xs" />
+        <div className="border-t border-border/60 p-6 sm:p-7">
+          <Skeleton className="mb-4 h-3 w-32" />
+          <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="space-y-3 xl:border-r xl:border-border/60 xl:pr-5 last:border-0">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-9 w-full" />
               </div>
-              <div className="h-7 w-24 bg-muted/80 rounded-sm" />
-              <div className="h-2.5 w-32 bg-muted/50 rounded-xs" />
-            </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="rounded-md border border-border/80 bg-card p-5 shadow-2xs"><Skeleton className="mb-3 h-4 w-36" /><Skeleton className="h-40 w-full" /></div>
+        <div className="rounded-md border border-border/80 bg-card p-5 shadow-2xs"><Skeleton className="mx-auto h-32 w-32 rounded-full bg-primary/15" /><Skeleton className="mt-4 h-4 w-3/4" /><Skeleton className="mt-2 h-9 w-full" /></div>
+      </div>
+
+      <div className="space-y-3 pt-2">
+        <Skeleton className="h-3 w-48" />
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="space-y-2 rounded-sm border border-border/80 bg-card p-4 shadow-2xs"><Skeleton className="h-3 w-20" /><Skeleton className="h-7 w-24" /><Skeleton className="h-2.5 w-32" /></div>
           ))}
         </div>
       </div>

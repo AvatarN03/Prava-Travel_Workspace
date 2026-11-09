@@ -48,11 +48,6 @@ export interface UpcomingTripDetails extends Trip {
     percentUtilized: number;
     categoryBreakdown: CategoryExpenseBreakdown[];
   };
-  nextCheckpoint: {
-    title: string;
-    dueDate: Date | null;
-    daysRemaining: number | null;
-  } | null;
   featuredStop: {
     title: string;
     subtitle: string;
@@ -78,9 +73,6 @@ export interface DashboardSummary {
     totalItineraryCount: number;
   };
   upcomingTrip: UpcomingTripDetails | null;
-  recentTrips: Trip[];
-  urgentTasks: (ChecklistItem & { tripTitle: string })[];
-  allTrips: Trip[];
   generalExpenses: Expense[];
 }
 
@@ -106,9 +98,6 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
         totalItineraryCount: 0,
       },
       upcomingTrip: null,
-      recentTrips: [],
-      urgentTasks: [],
-      allTrips: [],
       generalExpenses: [],
     };
   }
@@ -172,7 +161,6 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
   let tripSpend = 0;
   let pendingTasksCount = 0;
   let totalItineraryCount = 0;
-  const urgentTasks: (ChecklistItem & { tripTitle: string })[] = [];
 
   trips.forEach((trip) => {
     tripSpend += trip.expenses.reduce((acc, curr) => acc + curr.amount, 0);
@@ -180,12 +168,6 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
     pendingTasksCount += pendingItems.length;
     totalItineraryCount += trip.itinerary.length;
 
-    pendingItems.forEach((task) => {
-      urgentTasks.push({
-        ...task,
-        tripTitle: trip.title,
-      });
-    });
   });
 
   const generalSpend = generalExpenses.reduce((acc, curr) => acc + curr.amount, 0);
@@ -194,7 +176,15 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
   // Identify next upcoming/active trip:
   // First priority: ACTIVE trip, then PLANNING trip with earliest start date, else most recent trip
   const now = new Date();
-  const activeTrip = trips.find((t) => t.status === "ACTIVE");
+  const isWithinTripDates = (trip: Trip) => {
+    const startsBeforeOrToday = !trip.startDate || new Date(trip.startDate) <= now;
+    const endsAfterOrToday = !trip.endDate || new Date(trip.endDate) >= now;
+    return startsBeforeOrToday && endsAfterOrToday;
+  };
+
+  const activeTrip = trips.find(
+    (t) => t.status === "ACTIVE" && isWithinTripDates(t)
+  );
   const upcomingPlanning = trips
     .filter((t) => t.status === "PLANNING" && t.startDate && new Date(t.startDate) >= now)
     .sort((a, b) => new Date(a.startDate!).getTime() - new Date(b.startDate!).getTime())[0];
@@ -213,14 +203,9 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
     }
 
     // 2. Ongoing and Past Trip Status calculation
-    const isOngoing =
-      selectedTrip.status === "ACTIVE" ||
-      Boolean(
-        selectedTrip.startDate &&
-        new Date(selectedTrip.startDate) <= now &&
-        selectedTrip.endDate &&
-        new Date(selectedTrip.endDate) >= now
-      );
+    const isOngoing = isWithinTripDates(selectedTrip) &&
+      (selectedTrip.status === "ACTIVE" ||
+        Boolean(selectedTrip.startDate && selectedTrip.endDate));
 
     const isPastTrip =
       !isOngoing &&
@@ -316,30 +301,7 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
         tripTotalSpent > 0 ? Math.round((amount / tripTotalSpent) * 100) : 0,
     }));
 
-    // 5. Next Checkpoint calculation
-    // Earliest pending task with a due date or fallback to first activity
-    const pendingWithDue = selectedTrip.checklistItems
-      .filter((c) => !c.isCompleted && c.dueDate)
-      .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime())[0];
-
-    let nextCheckpoint: UpcomingTripDetails["nextCheckpoint"] = null;
-    if (pendingWithDue && pendingWithDue.dueDate) {
-      const dueMs = new Date(pendingWithDue.dueDate).getTime();
-      const daysRem = Math.ceil((dueMs - now.getTime()) / (1000 * 60 * 60 * 24));
-      nextCheckpoint = {
-        title: pendingWithDue.title,
-        dueDate: pendingWithDue.dueDate,
-        daysRemaining: daysRem,
-      };
-    } else if (selectedTrip.itinerary[0]) {
-      nextCheckpoint = {
-        title: selectedTrip.itinerary[0].title,
-        dueDate: selectedTrip.itinerary[0].date,
-        daysRemaining: countdownDays,
-      };
-    }
-
-    // 6. Featured Stop calculation
+    // 5. Featured Stop calculation
     let featuredStop: UpcomingTripDetails["featuredStop"] = null;
     if (selectedTrip.itinerary[0]) {
       featuredStop = {
@@ -380,7 +342,6 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
         percentUtilized,
         categoryBreakdown,
       },
-      nextCheckpoint,
       featuredStop,
     };
   }
@@ -404,9 +365,6 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
       totalItineraryCount,
     },
     upcomingTrip: upcomingTripDetails,
-    recentTrips: trips.slice(0, 5),
-    urgentTasks: urgentTasks.slice(0, 5),
-    allTrips: trips,
     generalExpenses,
   };
 }

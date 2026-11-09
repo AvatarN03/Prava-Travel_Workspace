@@ -7,22 +7,19 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
-  Compass,
-  Flag,
   MapPin,
   Plane,
-  Plus,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { CreateTripDialog } from "@/features/trips";
 
 import { formatDateRange } from "@/lib/utils";
 
 import type { UpcomingTripDetails } from "../queries";
+import { TripWorkspaceSummary } from "./trip-workspace-summary";
 
 interface UpcomingTripCardProps {
   trip: UpcomingTripDetails;
@@ -30,7 +27,7 @@ interface UpcomingTripCardProps {
 
 export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
   const getStatusBadge = (status: string, isPastTrip?: boolean, isOngoing?: boolean) => {
-    if (isOngoing || status === "ACTIVE") {
+    if (isOngoing) {
       return { label: "• ONGOING", variant: "default" as const };
     }
     if (isPastTrip || status === "COMPLETED") {
@@ -145,28 +142,6 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
                   </span>
                 </div>
 
-                {/* Past Trip Callout to Create New Trip */}
-                {trip.isPastTrip && (
-                  <div className="p-3.5 rounded-md bg-primary/5 border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                    <div className="space-y-0.5">
-                      <span className="font-semibold text-foreground">
-                        Ready to plan your next adventure?
-                      </span>
-                      <p className="text-muted-foreground">
-                        This journey concluded {trip.daysSinceEnd !== null && trip.daysSinceEnd !== undefined ? `${trip.daysSinceEnd} ${trip.daysSinceEnd === 1 ? "day" : "days"} ago` : "recently"}. Start drafting a fresh itinerary!
-                      </p>
-                    </div>
-                    <CreateTripDialog
-                      trigger={
-                        <Button size="sm" className="dashboard-btn-primary h-8 px-3 gap-1.5 shrink-0 self-start sm:self-auto">
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>Create new trip</span>
-                        </Button>
-                      }
-                    />
-                  </div>
-                )}
-
                 {/* Progress / Logistics readiness gauge */}
                 <div className="pt-2 space-y-2.5">
                   <div className="flex items-center justify-between font-sans text-xs">
@@ -212,33 +187,28 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
               </div>
 
               {/* Bottom Actions Bar */}
-              <div className="pt-4 border-t border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5 flex-wrap w-full sm:w-auto">
-                  <Button asChild className="dashboard-btn-primary h-9 px-4 gap-2 w-full sm:w-auto">
+              <div className="pt-4 border-t border-border/60 flex items-center justify-between gap-3">
+                <Button asChild className="dashboard-btn-primary h-9 px-4 gap-2">
                     <Link href={`/trips/${trip.id}`}>
-                      {trip.isPastTrip ? "View trip memories & details" : "Open trip workspace"}
+                      Open trip workspace
                       <ArrowRight className="w-4 h-4 ml-0.5" />
                     </Link>
-                  </Button>
+                </Button>
 
-                  {trip.isPastTrip && (
-                    <CreateTripDialog
-                      trigger={
-                        <Button className="dashboard-btn-primary h-9 px-4 gap-1.5 w-full sm:w-auto">
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>Create new trip</span>
-                        </Button>
-                      }
-                    />
-                  )}
-                </div>
+                <Link
+                  href="/trips"
+                  className="inline-flex items-center gap-2 h-9 px-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                >
+                  View my trips
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
             </div>
 
-            {/* Right Column: Featured Image & Next Checkpoint (5 cols on desktop) */}
-            <div className="lg:col-span-5 p-5 dashboard-surface-subtle border-t lg:border-t-0 lg:border-l border-border/60 flex flex-col justify-between gap-4">
+            {/* Right Column: Featured Image (5 cols on desktop) */}
+            <div className="lg:col-span-5 h-full p-5 dashboard-surface-subtle border-t lg:border-t-0 lg:border-l border-border/60 flex flex-col">
               {/* Featured Stop Image Card */}
-              <div className="relative w-full aspect-16/10 sm:aspect-video lg:aspect-auto lg:h-55 rounded-md overflow-hidden border border-border/60 shadow-xs group">
+              <div className="relative w-full aspect-16/10 sm:aspect-video lg:aspect-auto lg:flex-1 min-h-0 rounded-md overflow-hidden border border-border/60 shadow-xs group">
                 <Image
                   src={trip.coverImageUrl || fallbackCover}
                   alt={trip.title}
@@ -263,54 +233,9 @@ export function UpcomingTripCard({ trip }: UpcomingTripCardProps) {
                   </div>
                 )}
               </div>
-
-              {/* Next Checkpoint Alert Box */}
-              {trip.nextCheckpoint ? (
-                <div className="p-3.5 rounded-md dashboard-interactive-row flex items-start justify-between gap-3 text-xs">
-                  <div className="flex items-start gap-2.5 min-w-0">
-                    <div className="p-1 rounded-sm dashboard-icon-box shrink-0 mt-0.5">
-                      <Flag className="w-3.5 h-3.5" />
-                    </div>
-                    <div className="space-y-0.5 min-w-0">
-                      <span className="font-sans text-[11px] font-semibold text-foreground">
-                        {trip.isPastTrip ? "Final checkpoint" : "Next checkpoint"}
-                      </span>
-                      <p className="font-sans text-muted-foreground truncate font-medium">
-                        {trip.nextCheckpoint.title}
-                      </p>
-                    </div>
-                  </div>
-
-                  {trip.nextCheckpoint.daysRemaining !== null && (
-                    <Badge variant="outline" className="font-sans text-[11px] shrink-0 tabular-nums">
-                      {trip.isPastTrip
-                        ? "Completed"
-                        : trip.nextCheckpoint.daysRemaining > 0
-                        ? `In ${trip.nextCheckpoint.daysRemaining}d`
-                        : trip.nextCheckpoint.daysRemaining === 0
-                        ? "Today"
-                        : "Overdue"}
-                    </Badge>
-                  )}
-                </div>
-              ) : (
-                <div className="p-3.5 rounded-md dashboard-surface-subtle flex items-center justify-between font-sans text-xs text-muted-foreground">
-                  <span className="inline-flex items-center gap-1.5">
-                    <Compass className="w-3.5 h-3.5 text-primary" />
-                    {trip.isPastTrip ? "All trip checkpoints recorded" : "All trip checkpoints in order"}
-                  </span>
-                  {!trip.isPastTrip && (
-                    <Link
-                      href={`/trips/${trip.id}/checklist`}
-                      className="text-primary hover:underline font-medium"
-                    >
-                      Add task
-                    </Link>
-                  )}
-                </div>
-              )}
             </div>
           </div>
+          <TripWorkspaceSummary trip={trip} />
         </CardContent>
       </Card>
     </div>

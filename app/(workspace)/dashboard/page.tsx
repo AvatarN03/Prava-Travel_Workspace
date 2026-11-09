@@ -3,16 +3,12 @@ import type { Metadata } from "next";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { ActiveTripWorkspaceCard } from "@/features/dashboard/components/active-trip-workspace-card";
 import { AiAssistantCard } from "@/features/dashboard/components/ai-assistant-card";
 import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
 import { DashboardMetrics } from "@/features/dashboard/components/dashboard-metrics";
 import { DashboardQuickActions } from "@/features/dashboard/components/dashboard-quick-actions";
-import { FinancialSnapshotCard } from "@/features/dashboard/components/financial-snapshot-card";
-import { RecentTripsList } from "@/features/dashboard/components/recent-trips-list";
 import { TravelEssentialsGrid } from "@/features/dashboard/components/travel-essentials-grid";
 import { UpcomingTripCard } from "@/features/dashboard/components/upcoming-trip-card";
-import { UrgentChecklist } from "@/features/dashboard/components/urgent-checklist";
 import { CreateTripDialog } from "@/features/trips";
 
 import { getDashboardSummary } from "@/features/dashboard/queries";
@@ -31,7 +27,7 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const summary = await getDashboardSummary();
-  const { user, metrics, upcomingTrip, recentTrips, urgentTasks, generalExpenses } = summary;
+  const { user, metrics, upcomingTrip, generalExpenses } = summary;
 
   const firstName = getUserFirstName(user);
   const greeting = getTimeBasedGreeting();
@@ -79,25 +75,9 @@ export default async function DashboardPage() {
           {/* Hero Section: Upcoming or Past Trip Card (Full Width) */}
           {upcomingTrip && <UpcomingTripCard trip={upcomingTrip} />}
 
-          {/* Main 2-Column Grid (Linear / Notion Productivity Layout) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left Column: My Trips & Financials (7 Columns on desktop) */}
-            <div className="lg:col-span-7 space-y-6">
-              <RecentTripsList trips={recentTrips} />
-
-              {upcomingTrip && <FinancialSnapshotCard trip={upcomingTrip} />}
-
-              {urgentTasks.length > 0 && <UrgentChecklist tasks={urgentTasks} />}
-            </div>
-
-            {/* Right Column: Active Trip Context, Essentials & AI Assist (5 Columns on desktop) */}
-            <div className="lg:col-span-5 space-y-6">
-              {upcomingTrip && <ActiveTripWorkspaceCard trip={upcomingTrip} />}
-
-              <TravelEssentialsGrid />
-
-              <AiAssistantCard />
-            </div>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <TravelEssentialsGrid />
+            <AiAssistantCard />
           </div>
 
           {/* Bottom Section: Cross-Trip Metrics Overview */}
