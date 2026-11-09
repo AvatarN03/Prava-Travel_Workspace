@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 
 import {
   AlertTriangle,
-  ArrowLeft,
   CheckCircle2,
   Eye,
   EyeOff,
@@ -143,13 +142,6 @@ function ResetPasswordForm() {
 
           <div className="flex items-center gap-3 sm:gap-4">
             <ThemeToggle />
-            <Link
-              href="/auth"
-              className="group inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer px-2.5 py-1.5 rounded-sm hover:bg-muted"
-            >
-              <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" />
-              <span>Back to Sign In</span>
-            </Link>
           </div>
         </div>
       </header>
