@@ -33,7 +33,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || "https://prava.app"
+    process.env.NEXT_PUBLIC_APP_URL!
   ),
   title: {
     default: "Prava — Travel Workspace",
