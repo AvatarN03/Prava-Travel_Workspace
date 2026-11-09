@@ -13,6 +13,8 @@ import { ButtonGroup } from "@/components/ui/button-group";
 
 import { cn } from "@/lib/utils";
 
+import { LANDING_NAV_ITEMS } from "@/features/landing/constants";
+
 import type { User } from "@supabase/supabase-js";
 
 interface LandingHeaderProps {
@@ -161,12 +163,7 @@ export function LandingHeader({ user }: LandingHeaderProps) {
 
         {/* Center Editorial Links with Dynamic Theme Color Transition */}
         <nav className="hidden md:flex items-center gap-8 text-xs font-medium tracking-normal">
-          {[
-            { id: "workspace", label: "Workspace" },
-            { id: "travel-tools", label: "Travel Tools" },
-            { id: "community", label: "Community" },
-            { id: "pricing", label: "Pricing" },
-          ].map((item) => (
+          {LANDING_NAV_ITEMS.map((item) => (
             <a
               key={item.id}
               href={`#${item.id}`}
@@ -263,12 +260,7 @@ export function LandingHeader({ user }: LandingHeaderProps) {
           )}
         >
           <nav className="flex flex-col space-y-3 text-sm font-medium">
-            {[
-              { id: "workspace", label: "Workspace" },
-              { id: "travel-tools", label: "Travel Tools" },
-              { id: "community", label: "Community" },
-              { id: "pricing", label: "Pricing" },
-            ].map((item) => (
+            {LANDING_NAV_ITEMS.map((item) => (
               <a
                 key={item.id}
                 href={`#${item.id}`}

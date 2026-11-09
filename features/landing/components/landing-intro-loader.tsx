@@ -24,19 +24,19 @@ export function LandingIntroLoader({ onDissolve, onComplete }: LandingIntroLoade
     // Stage 1: Brand Logo & Name appear smoothly
     const t1 = setTimeout(() => {
       setStage("brand");
-    }, 60);
+    }, 120);
 
     // Stage 2: "Travel Workspace" slides from center to right
     const t2 = setTimeout(() => {
       setStage("slide-tag");
-    }, 280);
+    }, 520);
 
     // Stage 3: Smooth dissolve transition starts
     const t3 = setTimeout(() => {
       setStage("dissolve");
       setIsVisible(false);
       onDissolveRef.current?.();
-    }, 850);
+    }, 1450);
 
     return () => {
       clearTimeout(t1);
@@ -53,11 +53,11 @@ export function LandingIntroLoader({ onDissolve, onComplete }: LandingIntroLoade
           initial={{ opacity: 1 }}
           exit={{
             opacity: 0,
-            scale: 1.02,
-            filter: "blur(6px)",
-            transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+            scale: 1.015,
+            filter: "blur(4px)",
+            transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
           }}
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#070B12] text-zinc-50 overflow-hidden select-none pointer-events-auto touch-none"
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#070B12] text-zinc-50 overflow-hidden select-none pointer-events-auto touch-none transform-gpu will-change-[opacity,transform,filter]"
         >
           {/* Ambient Cerulean Radial Glow */}
           <div

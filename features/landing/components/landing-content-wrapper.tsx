@@ -59,10 +59,10 @@ export function LandingContentWrapper({ children }: LandingContentWrapperProps) 
       <div
         id="prava-landing-root"
         className={cn(
-          "transition-all duration-700 ease-out",
+          "transform-gpu transition-[opacity,transform,filter] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[opacity,transform,filter]",
           !isDissolving
-            ? "max-h-screen overflow-hidden opacity-0 scale-[0.99] filter blur-xs pointer-events-none invisible"
-            : "min-h-screen opacity-100 scale-100 filter-none pointer-events-auto visible"
+            ? "pointer-events-none opacity-0 scale-[0.985] blur-[3px]"
+            : "pointer-events-auto opacity-100 scale-100 blur-0"
         )}
       >
         {children}
