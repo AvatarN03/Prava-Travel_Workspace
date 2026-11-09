@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, unstable_cache } from "next/cache";
 
 import { callOpenRouterFree } from "@/lib/ai";
 import { syncUserProfile } from "@/lib/auth";
@@ -8,6 +8,41 @@ import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 
 import type { TemplateTripItem } from "./types";
+
+const getCachedPublicTemplateRecords = unstable_cache(
+  () =>
+    db.trip.findMany({
+      where: {
+        OR: [{ isPublic: true }, { isTemplate: true }],
+      },
+      include: {
+        profile: {
+          select: {
+            id: true,
+            fullName: true,
+            username: true,
+            avatarUrl: true,
+            bio: true,
+            isPublic: true,
+            defaultCurrency: true,
+          },
+        },
+        itinerary: { orderBy: [{ dayNumber: "asc" }, { order: "asc" }] },
+        accommodations: true,
+        expenses: true,
+        checklistItems: true,
+        notes: true,
+        linkedBlogPosts: {
+          where: { status: "PUBLISHED" },
+          select: { slug: true, title: true },
+          take: 1,
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+  ["public-trip-templates"],
+  { tags: ["templates-feed"], revalidate: 120 }
+);
 
 /**
  * Fetch all authentic public trips and templates from PostgreSQL.
@@ -21,35 +56,7 @@ export async function getPublicTripTemplates(): Promise<TemplateTripItem[]> {
     } = await supabase.auth.getUser();
 
     const [publicDbTrips, userTrips] = await Promise.all([
-      db.trip.findMany({
-        where: {
-          OR: [{ isPublic: true }, { isTemplate: true }],
-        },
-        include: {
-          profile: {
-            select: {
-              id: true,
-              fullName: true,
-              username: true,
-              avatarUrl: true,
-              bio: true,
-              isPublic: true,
-              defaultCurrency: true,
-            },
-          },
-          itinerary: { orderBy: [{ dayNumber: "asc" }, { order: "asc" }] },
-          accommodations: true,
-          expenses: true,
-          checklistItems: true,
-          notes: true,
-          linkedBlogPosts: {
-            where: { status: "PUBLISHED" },
-            select: { slug: true, title: true },
-            take: 1,
-          },
-        },
-        orderBy: { createdAt: "desc" },
-      }),
+      getCachedPublicTemplateRecords(),
       user
         ? db.trip.findMany({
             where: { profileId: user.id },

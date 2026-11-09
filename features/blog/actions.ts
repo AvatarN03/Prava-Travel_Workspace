@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 
 import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -9,6 +9,40 @@ import { generateSlug } from "@/lib/utils";
 
 import { blogPostSchema, type BlogPostInput } from "./schema";
 import type { StoryItem } from "./types";
+
+const getCachedPublishedStoryRecords = unstable_cache(
+  () =>
+    db.blogPost.findMany({
+      where: { status: "PUBLISHED" },
+      include: {
+        profile: {
+          select: {
+            id: true,
+            fullName: true,
+            username: true,
+            avatarUrl: true,
+            bio: true,
+            isPublic: true,
+          },
+        },
+        linkedTrip: {
+          select: {
+            id: true,
+            title: true,
+            destination: true,
+          },
+        },
+      },
+      orderBy: { publishedAt: "desc" },
+    }),
+  ["published-stories"],
+  { tags: ["stories-feed"], revalidate: 120 }
+);
+
+function invalidateStoriesFeed() {
+  revalidateTag("stories-feed", "max");
+  revalidateTag("templates-feed", "max");
+}
 
 /**
  * Internal helper to authenticate the current user.
@@ -85,6 +119,7 @@ export async function createBlogPost(input: BlogPostInput) {
     });
 
     revalidatePath("/stories");
+    invalidateStoriesFeed();
     revalidatePath("/profile");
 
     return { success: true, post };
@@ -144,6 +179,7 @@ export async function updateBlogPost(postId: string, input: BlogPostInput) {
     });
 
     revalidatePath("/stories");
+    invalidateStoriesFeed();
     revalidatePath(`/stories/${post.slug}`);
     revalidatePath("/profile");
 
@@ -173,6 +209,7 @@ export async function deleteBlogPost(postId: string) {
     await db.blogPost.delete({ where: { id: postId } });
 
     revalidatePath("/stories");
+    invalidateStoriesFeed();
     revalidatePath("/profile");
 
     return { success: true };
@@ -332,29 +369,7 @@ export async function getPublishedStory(slugOrId: string) {
 export async function getAllPublishedStories() {
   try {
     const user = await getAuthUser();
-    const posts = await db.blogPost.findMany({
-      where: { status: "PUBLISHED" },
-      include: {
-        profile: {
-          select: {
-            id: true,
-            fullName: true,
-            username: true,
-            avatarUrl: true,
-            bio: true,
-            isPublic: true,
-          },
-        },
-        linkedTrip: {
-          select: {
-            id: true,
-            title: true,
-            destination: true,
-          },
-        },
-      },
-      orderBy: { publishedAt: "desc" },
-    });
+    const posts = await getCachedPublishedStoryRecords();
 
     let likedPostIds = new Set<string>();
     if (user && posts.length > 0) {
@@ -443,6 +458,7 @@ export async function toggleStoryPublishStatus(postId: string) {
     });
 
     revalidatePath("/stories");
+    invalidateStoriesFeed();
     revalidatePath("/stories/manage");
     return { success: true, post };
   } catch (error) {
@@ -499,6 +515,7 @@ export async function toggleStoryLike(postId: string) {
       ]);
 
       revalidatePath("/stories");
+      invalidateStoriesFeed();
       revalidatePath(`/stories/${post.slug}`);
       return { success: true, hasLiked: false, upvotes: Math.max(0, updatedPost.upvotes ?? 0) };
     } else {
@@ -519,6 +536,7 @@ export async function toggleStoryLike(postId: string) {
       ]);
 
       revalidatePath("/stories");
+      invalidateStoriesFeed();
       revalidatePath(`/stories/${post.slug}`);
       return { success: true, hasLiked: true, upvotes: updatedPost.upvotes ?? 1 };
     }

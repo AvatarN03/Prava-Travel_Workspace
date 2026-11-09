@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import { deleteUnusedTripCoverImage } from "@/features/storage";
 import { syncUserProfile } from "@/lib/auth";
@@ -170,6 +170,7 @@ export async function updateTrip(
     revalidatePath("/trips");
     revalidatePath(`/trips/${id}`);
     revalidatePath("/dashboard");
+    revalidateTag("templates-feed", "max");
 
     return { success: true, data: updated };
   } catch (error) {
@@ -225,6 +226,7 @@ export async function deleteTrip(
 
     revalidatePath("/trips");
     revalidatePath("/dashboard");
+    revalidateTag("templates-feed", "max");
 
     return { success: true, data: { id } };
   } catch (error) {
@@ -412,6 +414,7 @@ export async function toggleTripPublicStatus(
     revalidatePath(`/trips/${tripId}`);
     revalidatePath("/forum");
     revalidatePath("/templates");
+    revalidateTag("templates-feed", "max");
 
     return { success: true, data: updated };
   } catch (error) {
