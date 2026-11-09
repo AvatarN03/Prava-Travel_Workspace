@@ -124,9 +124,10 @@ export function OverviewDashboard({
   }
 
   // Budget calculations & category breakdowns for segmented progress bar
-  const budget = trip.budget || (totalSpent > 0 ? totalSpent * 1.4 : 1000);
+  const budget = trip.budget ?? 0;
+  const hasBudget = budget > 0;
   const spentPercent = budget > 0 ? Math.min(100, Math.round((totalSpent / budget) * 100)) : 0;
-  const headroom = Math.max(0, budget - totalSpent);
+  const headroom = hasBudget ? Math.max(0, budget - totalSpent) : null;
 
   const categoryTotals = useMemo(() => {
     const totals: Record<string, number> = {
@@ -323,9 +324,9 @@ export function OverviewDashboard({
       </div>
 
       {/* ── 2x2 Elevated Feature Cards Grid (Matching Landing Showcase) ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-12">
         {/* Card 1: Today's Route / Active Schedule */}
-        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs xl:col-span-8">
           <div className="space-y-3">
             <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground dark:text-muted-foreground border-b border-border/60 dark:border-border pb-2">
               <span className="font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
@@ -399,7 +400,7 @@ export function OverviewDashboard({
         </div>
 
         {/* Card 2: Current Stay / Next Lodging */}
-        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs xl:col-span-4">
           <div className="space-y-3">
             <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground dark:text-muted-foreground border-b border-border/60 dark:border-border pb-2">
               <span className="font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
@@ -496,7 +497,7 @@ export function OverviewDashboard({
         </div>
 
         {/* Card 3: Expense Ledger & Budget Progress */}
-        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs xl:col-span-5">
           <div className="space-y-3">
             <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground dark:text-muted-foreground border-b border-border/60 dark:border-border pb-2">
               <span className="font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
@@ -504,7 +505,7 @@ export function OverviewDashboard({
                 Expense Ledger
               </span>
               <span className="font-semibold text-foreground dark:text-foreground font-mono tabular-nums">
-                ${totalSpent.toLocaleString(undefined, { maximumFractionDigits: 0 })} / ${budget.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                ${totalSpent.toLocaleString(undefined, { maximumFractionDigits: 0 })} / {hasBudget ? `$${budget.toLocaleString(undefined, { maximumFractionDigits: 0 })}` : "Not set"}
               </span>
             </div>
 
@@ -596,7 +597,7 @@ export function OverviewDashboard({
               <div className="flex items-center justify-between text-[10px] text-muted-foreground dark:text-muted-foreground">
                 <span>{spentPercent}% allocated</span>
                 <span className="font-medium text-foreground dark:text-foreground tabular-nums">
-                  ${headroom.toLocaleString(undefined, { maximumFractionDigits: 0 })} headroom left
+                  {headroom === null ? "Set a budget to track headroom" : `$${headroom.toLocaleString(undefined, { maximumFractionDigits: 0 })} headroom left`}
                 </span>
               </div>
             </div>
@@ -640,7 +641,7 @@ export function OverviewDashboard({
         </div>
 
         {/* Card 4: Immediate Tasks & Checklist */}
-        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs xl:col-span-7">
           <div className="space-y-3">
             <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground dark:text-muted-foreground border-b border-border/60 dark:border-border pb-2">
               <span className="font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
@@ -689,9 +690,9 @@ export function OverviewDashboard({
       </div>
 
       {/* ── Bottom Section: Pinned Notes & Quick Reference Links ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-2">
+      <div className="grid grid-cols-1 gap-5 pt-2 xl:grid-cols-12">
         {/* Pinned Notes Shelf */}
-        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 space-y-3 shadow-xs">
+        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 space-y-3 shadow-xs xl:col-span-7">
           <div className="flex items-center justify-between pb-2 border-b border-border/60 dark:border-border">
             <span className="text-xs font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-primary" />
@@ -743,7 +744,7 @@ export function OverviewDashboard({
         </div>
 
         {/* Quick Reference Links */}
-        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 space-y-3 shadow-xs">
+        <div className="rounded-sm border border-border/80 dark:border-border bg-card dark:bg-card p-4 sm:p-5 space-y-3 shadow-xs xl:col-span-5">
           <div className="flex items-center justify-between pb-2 border-b border-border/60 dark:border-border">
             <span className="text-xs font-semibold text-foreground dark:text-foreground flex items-center gap-1.5">
               <Link2 className="w-3.5 h-3.5 text-blue-500" />

@@ -1,104 +1,60 @@
+const Skeleton = ({ className }: { className: string }) => (
+  <div className={`animate-pulse rounded-sm bg-muted/70 dark:bg-card-subtle ${className}`} />
+);
+
 export default function TripWorkspaceRootLoading() {
   return (
-    <div className="w-full max-w-7xl mx-auto min-w-0 space-y-4 animate-pulse">
-      {/* 1. Top Link: Back to Trips */}
-      <div className="flex items-center gap-1.5 pb-0.5">
-        <div className="h-3.5 w-3.5 bg-muted/60 rounded-xs" />
-        <div className="h-3.5 w-20 bg-muted/60 rounded-xs" />
+    <div className="mx-auto w-full max-w-7xl min-w-0 space-y-4">
+      <div className="flex items-center gap-2 py-1">
+        <Skeleton className="h-3.5 w-3.5" />
+        <Skeleton className="h-3.5 w-20" />
       </div>
 
-      {/* 2. Cover Banner with Destination & Title Inside */}
-      <div className="h-44 sm:h-52 w-full rounded-md bg-muted/60 relative overflow-hidden p-4 sm:p-6 flex flex-col justify-end">
-        <div className="space-y-2">
-          {/* Destination Pill & Countdown */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="h-5 w-24 rounded-xs bg-black/40 border border-white/10" />
-            <div className="h-5 w-20 rounded-xs bg-black/40 border border-white/10" />
-          </div>
-          {/* Trip Title */}
-          <div className="h-8 sm:h-10 w-48 sm:w-80 bg-white/25 rounded-sm" />
+      <section className="relative h-52 overflow-hidden rounded-md border border-border/80 bg-card-subtle sm:h-60">
+        <div className="absolute inset-0 bg-linear-to-br from-primary/15 via-transparent to-muted/30" />
+        <div className="absolute inset-x-0 bottom-0 space-y-3 p-5 sm:p-6">
+          <div className="flex gap-2"><Skeleton className="h-5 w-32 bg-black/25 dark:bg-black/35" /><Skeleton className="h-5 w-24 bg-black/25 dark:bg-black/35" /></div>
+          <Skeleton className="h-9 w-3/4 max-w-120 bg-card/70 dark:bg-card/30" />
         </div>
+      </section>
+
+      <div className="flex items-center justify-between border-b border-border/60 pb-3">
+        <div className="flex items-center gap-2"><Skeleton className="h-7 w-28" /><Skeleton className="h-7 w-20" /></div>
+        <div className="flex gap-2"><Skeleton className="h-8 w-24" /><Skeleton className="h-8 w-8" /></div>
       </div>
 
-      {/* 3. Action Control Strip & Metadata Below Banner (Single Row) */}
-      <div className="space-y-2 pt-0.5">
-        <div className="flex items-center justify-between gap-2 w-full flex-nowrap">
-          {/* Left: Workspace Eyebrow */}
-          <div className="flex items-center gap-1.5 min-w-0">
-            <div className="h-3.5 w-3.5 rounded-xs bg-primary/40 shrink-0" />
-            <div className="h-3.5 w-24 rounded-xs bg-primary/30 truncate" />
-          </div>
-
-          {/* Right: Actions Row (Status, AI Assistant, Menu) */}
-          <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap shrink-0">
-            <div className="h-7 sm:h-8 w-26.25 sm:w-30 rounded-xs bg-card border border-border/80 shrink-0" />
-            <div className="h-7 sm:h-8 w-20 sm:w-24 rounded-xs bg-card border border-primary/40 shrink-0" />
-            <div className="h-7 sm:h-8 w-7 sm:w-8 rounded-xs bg-card border border-border/80 shrink-0" />
-          </div>
-        </div>
+      <div className="md:hidden">
+        <Skeleton className="h-10 w-full" />
       </div>
 
-      {/* 4. Navigation Bar Skeleton (Matches WorkspaceNav Responsive Behavior) */}
-      {/* Mobile Phones (< sm): 1-Tap Select Dropdown */}
-      <div className="sm:hidden p-2 border-b border-border/80">
-        <div className="h-10 w-full rounded-sm bg-card border border-border/80" />
-      </div>
-      {/* Tablet (sm to md): Scrollable Tab Strip */}
-      <div className="hidden sm:flex md:hidden items-center gap-2 overflow-x-auto pb-1 border-b border-border/60">
-        {["Overview", "Itinerary", "Accommodations", "Expenses", "Notes", "Checklist", "Links"].map((tab, i) => (
-          <div
-            key={tab}
-            className={`h-9 px-3.5 rounded-sm shrink-0 ${
-              i === 0
-                ? "bg-primary/20 border-b-2 border-primary w-24"
-                : "bg-card-subtle border border-border/60 w-24"
-            }`}
-          />
-        ))}
-      </div>
-
-      {/* 5. Default Tab Content Skeleton (Overview) */}
-      <div className="pt-2 space-y-6">
-        {/* Metric Header Strip */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div
-              key={i}
-              className="p-3.5 rounded-sm border border-border/80 bg-card space-y-2 shadow-2xs"
-            >
-              <div className="flex items-center justify-between">
-                <div className="h-3 w-16 bg-muted/60 rounded-xs" />
-                <div className="h-3.5 w-3.5 bg-muted/50 rounded-xs" />
-              </div>
-              <div className="space-y-1">
-                <div className="h-6 w-20 bg-muted/80 rounded-sm" />
-                <div className="h-3 w-16 bg-primary/30 rounded-xs" />
-              </div>
+      <div className="space-y-5 pt-2">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="space-y-2 rounded-sm border border-border/80 bg-card p-3.5 shadow-2xs">
+              <Skeleton className="h-3 w-16" />
+              <Skeleton className="h-6 w-20" />
+              <Skeleton className="h-2.5 w-12 bg-primary/20" />
             </div>
           ))}
         </div>
 
-        {/* 2x2 Feature Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {Array.from({ length: 4 }).map((_, j) => (
-            <div
-              key={j}
-              className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 space-y-4 shadow-xs"
-            >
-              <div className="flex items-center justify-between pb-2 border-b border-border/60">
-                <div className="h-4 w-32 bg-muted/80 rounded-xs" />
-                <div className="h-3 w-20 bg-primary/30 rounded-xs" />
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
+          <section className="space-y-4 rounded-sm border border-border/80 bg-card p-4 shadow-2xs lg:col-span-7 sm:p-5">
+            <div className="flex items-center justify-between border-b border-border/60 pb-3"><Skeleton className="h-4 w-36" /><Skeleton className="h-3 w-20" /></div>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="flex gap-3 rounded-sm border border-border/60 p-3">
+                <Skeleton className="h-8 w-10 shrink-0" />
+                <div className="flex-1 space-y-2"><Skeleton className="h-4 w-2/3" /><Skeleton className="h-3 w-full" /><Skeleton className="h-3 w-1/3" /></div>
               </div>
-              <div className="space-y-3">
-                <div className="h-12 bg-card-subtle rounded-sm border border-border/60" />
-                <div className="h-12 bg-card-subtle rounded-sm border border-border/60" />
-              </div>
-              <div className="pt-2 border-t border-border/60 flex justify-between">
-                <div className="h-3 w-24 bg-muted/40 rounded-xs" />
-                <div className="h-3 w-16 bg-primary/20 rounded-xs" />
-              </div>
-            </div>
-          ))}
+            ))}
+          </section>
+
+          <section className="space-y-4 rounded-sm border border-border/80 bg-card p-4 shadow-2xs lg:col-span-5 sm:p-5">
+            <div className="flex items-center justify-between border-b border-border/60 pb-3"><Skeleton className="h-4 w-28" /><Skeleton className="h-3 w-16" /></div>
+            <Skeleton className="h-24 w-full" />
+            <div className="grid grid-cols-2 gap-3"><Skeleton className="h-16 w-full" /><Skeleton className="h-16 w-full" /></div>
+            <Skeleton className="h-9 w-full bg-primary/15" />
+          </section>
         </div>
       </div>
     </div>

@@ -42,10 +42,10 @@ export default function OverviewLoading() {
         ))}
       </div>
 
-      {/* 2x2 Feature Cards Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      {/* Asymmetric workspace cards: route leads, followed by supporting trip operations. */}
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-12">
         {/* Card 1: Today's Route / Active Schedule */}
-        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs xl:col-span-8">
           <div className="space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-border/60">
               <div className="h-4 w-36 bg-muted/80 rounded-xs" />
@@ -73,7 +73,7 @@ export default function OverviewLoading() {
         </div>
 
         {/* Card 2: Current Stay */}
-        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs xl:col-span-4">
           <div className="space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-border/60">
               <div className="h-4 w-28 bg-muted/80 rounded-xs" />
@@ -102,7 +102,7 @@ export default function OverviewLoading() {
         </div>
 
         {/* Card 3: Expense Ledger & Budget */}
-        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs xl:col-span-5">
           <div className="space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-border/60">
               <div className="h-4 w-32 bg-muted/80 rounded-xs" />
@@ -139,7 +139,7 @@ export default function OverviewLoading() {
         </div>
 
         {/* Card 4: Immediate Tasks & Checklist */}
-        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs">
+        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xs xl:col-span-7">
           <div className="space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-border/60">
               <div className="h-4 w-32 bg-muted/80 rounded-xs" />
@@ -167,10 +167,10 @@ export default function OverviewLoading() {
         </div>
       </div>
 
-      {/* Bottom Section: Pinned Notes & Quick Reference Links */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-1">
+      {/* Reference material follows the same wide-notes, compact-links hierarchy. */}
+      <div className="grid grid-cols-1 gap-5 pt-1 xl:grid-cols-12">
         {/* Pinned Notes Shelf */}
-        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 space-y-3 shadow-xs">
+        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 space-y-3 shadow-xs xl:col-span-7">
           <div className="flex items-center justify-between pb-2 border-b border-border/60">
             <div className="h-4 w-28 bg-muted/80 rounded-xs" />
             <div className="h-3 w-16 bg-primary/30 rounded-xs" />
@@ -192,7 +192,7 @@ export default function OverviewLoading() {
         </div>
 
         {/* Quick Reference Links */}
-        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 space-y-3 shadow-xs">
+        <div className="rounded-sm border border-border/80 bg-card p-4 sm:p-5 space-y-3 shadow-xs xl:col-span-5">
           <div className="flex items-center justify-between pb-2 border-b border-border/60">
             <div className="h-4 w-36 bg-muted/80 rounded-xs" />
             <div className="h-3 w-16 bg-primary/30 rounded-xs" />
