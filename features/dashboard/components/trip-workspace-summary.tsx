@@ -53,11 +53,15 @@ export function TripWorkspaceSummary({ trip }: TripWorkspaceSummaryProps) {
             </div>
             <div>
               <p className="text-[10px] text-muted-foreground">Budget</p>
-              <p className="mt-0.5 text-sm font-semibold tabular-nums text-muted-foreground">{formatAmount(financials.allocatedBudget)}</p>
+              <p className="mt-0.5 text-sm font-semibold tabular-nums text-muted-foreground">
+                {financials.allocatedBudget === null ? "Not set" : formatAmount(financials.allocatedBudget)}
+              </p>
             </div>
             <div>
               <p className="text-[10px] text-muted-foreground">Left</p>
-              <p className="mt-0.5 text-sm font-semibold tabular-nums text-primary">{formatAmount(financials.remainingBudget)}</p>
+              <p className="mt-0.5 text-sm font-semibold tabular-nums text-primary">
+                {financials.remainingBudget === null ? "—" : formatAmount(financials.remainingBudget)}
+              </p>
             </div>
           </div>
           <div className="mt-3 space-y-1.5">

@@ -45,6 +45,7 @@ export async function createChecklistItem(input: CreateChecklistItemInput) {
 
     revalidatePath(`/trips/${tripId}/checklist`);
     revalidatePath(`/trips/${tripId}/overview`);
+    revalidatePath("/dashboard");
 
     return { success: true, data: item };
   } catch (error) {
@@ -79,6 +80,7 @@ export async function updateChecklistItem(input: UpdateChecklistItemInput) {
 
     revalidatePath(`/trips/${tripId}/checklist`);
     revalidatePath(`/trips/${tripId}/overview`);
+    revalidatePath("/dashboard");
 
     return { success: true, data: updated };
   } catch (error) {
@@ -106,6 +108,7 @@ export async function deleteChecklistItem(input: DeleteChecklistItemInput) {
 
     revalidatePath(`/trips/${tripId}/checklist`);
     revalidatePath(`/trips/${tripId}/overview`);
+    revalidatePath("/dashboard");
 
     return { success: true, data: { id } };
   } catch (error) {
@@ -170,6 +173,7 @@ export async function seedEssentialChecklist(tripId: string) {
 
     revalidatePath(`/trips/${tripId}/checklist`);
     revalidatePath(`/trips/${tripId}/overview`);
+    revalidatePath("/dashboard");
 
     return { success: true, count: toInsert.length };
   } catch (error) {
@@ -320,6 +324,7 @@ Return ONLY a valid JSON array of objects with keys "title" (concise actionable 
 
     revalidatePath(`/trips/${tripId}/checklist`);
     revalidatePath(`/trips/${tripId}/overview`);
+    revalidatePath("/dashboard");
 
     const updatedQuota = await getUserAiCredits(user.id);
 
@@ -358,6 +363,7 @@ export async function toggleChecklistItem(input: ToggleChecklistItemInput) {
 
     revalidatePath(`/trips/${tripId}/checklist`);
     revalidatePath(`/trips/${tripId}/overview`);
+    revalidatePath("/dashboard");
 
     return { success: true, data: updated };
   } catch (error) {

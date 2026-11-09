@@ -41,6 +41,7 @@ export async function createNote(input: CreateNoteInput) {
 
     revalidatePath(`/trips/${tripId}/notes`);
     revalidatePath(`/trips/${tripId}/overview`);
+    revalidatePath("/dashboard");
 
     return { success: true, data: note };
   } catch (error) {
@@ -74,6 +75,7 @@ export async function updateNote(input: UpdateNoteInput) {
 
     revalidatePath(`/trips/${tripId}/notes`);
     revalidatePath(`/trips/${tripId}/overview`);
+    revalidatePath("/dashboard");
 
     return { success: true, data: updated };
   } catch (error) {
@@ -101,6 +103,7 @@ export async function deleteNote(input: DeleteNoteInput) {
 
     revalidatePath(`/trips/${tripId}/notes`);
     revalidatePath(`/trips/${tripId}/overview`);
+    revalidatePath("/dashboard");
 
     return { success: true, data: { id } };
   } catch (error) {
@@ -129,6 +132,7 @@ export async function togglePinNote(input: TogglePinNoteInput) {
 
     revalidatePath(`/trips/${tripId}/notes`);
     revalidatePath(`/trips/${tripId}/overview`);
+    revalidatePath("/dashboard");
 
     return { success: true, data: updated };
   } catch (error) {

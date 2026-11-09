@@ -43,8 +43,8 @@ export interface UpcomingTripDetails extends Trip {
   financials: {
     currency: string;
     totalSpent: number;
-    allocatedBudget: number;
-    remainingBudget: number;
+    allocatedBudget: number | null;
+    remainingBudget: number | null;
     percentUtilized: number;
     categoryBreakdown: CategoryExpenseBreakdown[];
   };
@@ -66,6 +66,7 @@ export interface DashboardSummary {
     activeTrips: number;
     planningTrips: number;
     completedTrips: number;
+    totalBudget: number;
     totalSpend: number;
     tripSpend: number;
     generalSpend: number;
@@ -91,6 +92,7 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
         activeTrips: 0,
         planningTrips: 0,
         completedTrips: 0,
+        totalBudget: 0,
         totalSpend: 0,
         tripSpend: 0,
         generalSpend: 0,
@@ -159,11 +161,13 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
   const completedTrips = trips.filter((t) => t.status === "COMPLETED").length;
 
   let tripSpend = 0;
+  let totalBudget = 0;
   let pendingTasksCount = 0;
   let totalItineraryCount = 0;
 
   trips.forEach((trip) => {
     tripSpend += trip.expenses.reduce((acc, curr) => acc + curr.amount, 0);
+    totalBudget += trip.budget ?? 0;
     const pendingItems = trip.checklistItems.filter((i) => !i.isCompleted);
     pendingTasksCount += pendingItems.length;
     totalItineraryCount += trip.itinerary.length;
@@ -265,23 +269,11 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
       selectedTrip.expenses[0]?.currency || defaultCurrency;
     const tripTotalSpent = selectedTrip.expenses.reduce((acc, curr) => acc + curr.amount, 0);
 
-    // Realistic allocated budget baseline based on currency:
-    const isINR = tripCurrency.toUpperCase() === "INR";
-    const defaultBaseBudget = isINR ? 75000 : 1500;
-    const bufferStep = isINR ? 10000 : 500;
-    const roundCeil = isINR ? 1000 : 100;
-
-    const allocatedBudget =
-      tripTotalSpent > 0
-        ? Math.max(
-            Math.ceil((tripTotalSpent * 1.35) / roundCeil) * roundCeil,
-            tripTotalSpent + bufferStep
-          )
-        : defaultBaseBudget;
-
-    const remainingBudget = Math.max(0, allocatedBudget - tripTotalSpent);
+    // A trip budget is user-owned data. Never manufacture a planning amount for the dashboard.
+    const allocatedBudget = selectedTrip.budget ?? null;
+    const remainingBudget = allocatedBudget === null ? null : Math.max(0, allocatedBudget - tripTotalSpent);
     const percentUtilized =
-      allocatedBudget > 0
+      allocatedBudget !== null && allocatedBudget > 0
         ? Math.min(100, Math.round((tripTotalSpent / allocatedBudget) * 1000) / 10)
         : 0;
 
@@ -358,6 +350,7 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
       activeTrips,
       planningTrips,
       completedTrips,
+      totalBudget,
       totalSpend,
       tripSpend,
       generalSpend,

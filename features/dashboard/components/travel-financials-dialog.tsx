@@ -55,6 +55,7 @@ const OVERHEAD_CATEGORIES = [
 interface TravelFinancialsDialogProps {
   metrics: {
     totalSpend: number;
+    totalBudget: number;
     tripSpend: number;
     generalSpend: number;
   };
@@ -178,7 +179,15 @@ export function TravelFinancialsDialog({
 
         <div className="space-y-4 py-2 flex-1 overflow-y-auto pr-1">
           {/* Spend Summary Matrix */}
-          <div className="grid grid-cols-3 gap-2.5 p-3 rounded-lg dashboard-surface-subtle">
+          <div className="grid grid-cols-2 gap-2.5 p-3 rounded-lg dashboard-surface-subtle sm:grid-cols-4">
+            <div className="space-y-0.5">
+              <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">
+                Total Budget
+              </span>
+              <div className="text-lg font-bold font-mono text-foreground">
+                {currency} {metrics.totalBudget.toLocaleString()}
+              </div>
+            </div>
             <div className="space-y-0.5">
               <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">
                 Total Spend

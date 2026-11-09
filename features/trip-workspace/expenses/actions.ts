@@ -47,6 +47,7 @@ export async function createExpense(input: CreateExpenseInput) {
 
     revalidatePath(`/trips/${tripId}/expenses`);
     revalidatePath(`/trips/${tripId}/overview`);
+    revalidatePath("/dashboard");
 
     return { success: true, data: item };
   } catch (error) {
@@ -83,6 +84,7 @@ export async function updateExpense(input: UpdateExpenseInput) {
 
     revalidatePath(`/trips/${tripId}/expenses`);
     revalidatePath(`/trips/${tripId}/overview`);
+    revalidatePath("/dashboard");
 
     return { success: true, data: updated };
   } catch (error) {
@@ -110,6 +112,7 @@ export async function deleteExpense(input: DeleteExpenseInput) {
 
     revalidatePath(`/trips/${tripId}/expenses`);
     revalidatePath(`/trips/${tripId}/overview`);
+    revalidatePath("/dashboard");
 
     return { success: true, data: { id } };
   } catch (error) {

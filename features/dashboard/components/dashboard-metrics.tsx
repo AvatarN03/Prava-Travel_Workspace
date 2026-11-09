@@ -20,6 +20,7 @@ interface DashboardMetricsProps {
     activeTrips: number;
     planningTrips: number;
     completedTrips: number;
+    totalBudget: number;
     totalSpend: number;
     tripSpend?: number;
     generalSpend?: number;
@@ -38,6 +39,10 @@ export function DashboardMetrics({
   const { symbol, locale } = getCurrencyConfig(currency);
 
   const formattedSpend = `${symbol}${metrics.totalSpend.toLocaleString(locale, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  })}`;
+  const formattedBudget = `${symbol}${metrics.totalBudget.toLocaleString(locale, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   })}`;
@@ -72,18 +77,20 @@ export function DashboardMetrics({
       <Card className="dashboard-card">
         <CardHeader className="p-4 pb-1">
           <div className="flex items-center justify-between">
-            <span className="font-sans text-xs font-medium text-muted-foreground">Total Budget Spent</span>
+            <span className="font-sans text-xs font-medium text-muted-foreground">Total Trip Budget</span>
             <Wallet className="w-4 h-4 text-primary" />
           </div>
         </CardHeader>
         <CardContent className="p-4 pt-1">
           <div className="font-sans text-2xl font-semibold tabular-nums text-foreground">
-            {formattedSpend}
+            {formattedBudget}
           </div>
           <div className="mt-1 flex items-center justify-between font-sans text-[11px] text-muted-foreground">
+            <span className="tabular-nums">{formattedSpend} spent</span>
             <TravelFinancialsDialog
               metrics={{
                 totalSpend: metrics.totalSpend,
+                totalBudget: metrics.totalBudget,
                 tripSpend: metrics.tripSpend ?? metrics.totalSpend,
                 generalSpend: metrics.generalSpend ?? 0,
               }}
