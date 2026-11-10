@@ -170,18 +170,8 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
 
   return (
     <header className="sticky top-0 z-30 shrink-0 flex h-16 w-full items-center justify-between border-b border-border bg-background/80 backdrop-blur-md px-2 sm:px-4 md:px-6 rounded-none md:rounded-tl-3xl transition-colors">
-        {/* Left: Mobile Trigger & Page Title */}
+        {/* Left: Page Title */}
         <div className="flex items-center gap-1.5 sm:gap-4 min-w-0">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden h-8 w-8 shrink-0 text-muted-foreground hover:text-foreground cursor-pointer"
-            onClick={onMobileMenuOpen}
-          >
-            <Menu className="h-6 w-6" />
-            <span className="sr-only">Open sidebar</span>
-          </Button>
-
           <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
             <div className="hidden sm:flex h-7 w-7 items-center justify-center rounded-xs bg-primary/10 text-primary border border-primary/20 shadow-2xs shrink-0">
               <PageIcon className="h-4 w-4" />
@@ -193,7 +183,7 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
         </div>
 
         {/* Right: Weather Pill, Theme Toggle, Notifications & User Profile */}
-        <div className="flex items-center gap-0.5 sm:gap-2 md:gap-2.5 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
           {/* Live Weather Header Widget */}
           <TopBarWeather />
 
@@ -389,6 +379,16 @@ export function TopBar({ onMobileMenuOpen, initialUserInfo }: TopBarProps) {
               </PopoverContent>
             </Popover>
           )}
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden h-8 w-8 shrink-0 text-muted-foreground hover:text-foreground cursor-pointer"
+            onClick={onMobileMenuOpen}
+          >
+            <Menu className="h-6 w-6" />
+            <span className="sr-only">Open sidebar</span>
+          </Button>
         </div>
     </header>
   );

@@ -10,13 +10,11 @@ export interface ProfileWithStats {
   isPublic: boolean;
   defaultCurrency: string;
   aiAutoPropose: boolean;
-  emailNotifications: boolean;
   offlineMode: boolean;
   travelPreferences: string | null;
   createdAt: string;
   totalTrips: number;
-  publishedTrips: number;
-  publishedTemplates?: number;
+  templatesCount: number;
   publishedStories: number;
   forumDiscussions: number;
   tier: "free" | "pro";

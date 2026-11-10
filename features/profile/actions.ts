@@ -3,13 +3,13 @@
 import { cache } from "react";
 import { revalidatePath } from "next/cache";
 
+import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { deleteUserStorageFolder, pruneUnusedUserAvatars } from "@/lib/storage";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient, getAuthenticatedUser } from "@/lib/supabase/server";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
 import { validateUsername } from "./reserved-usernames";
-import { generateSmartUniqueUsername } from "./username-generator";
 
 import {
   updateGeneralPreferencesSchema,
@@ -29,7 +29,9 @@ const getCachedProfile = cache(async (): Promise<{ success: boolean; profile?: P
       return { success: false, error: "Unauthorized" };
     }
 
-    let profile = await db.profile.findUnique({
+    await syncUserProfile(user);
+
+    const profile = await db.profile.findUniqueOrThrow({
       where: { id: user.id },
       include: {
         _count: {
@@ -38,63 +40,11 @@ const getCachedProfile = cache(async (): Promise<{ success: boolean; profile?: P
           },
         },
         trips: {
-          where: { isPublic: true },
+          where: { isPublic: true, isTemplate: true },
           select: { id: true },
         },
       },
     });
-
-    if (!profile) {
-      const userMeta = user.user_metadata || {};
-      const fullName = userMeta.full_name || userMeta.name || null;
-      const initialUsername =
-        userMeta.username ||
-        (await generateSmartUniqueUsername(fullName || user.email || "traveler", user.id));
-
-      // Auto-create profile with smart unique username and avatar
-      profile = await db.profile.create({
-        data: {
-          id: user.id,
-          email: user.email || "",
-          fullName: fullName,
-          avatarUrl: userMeta.avatar_url || userMeta.picture || null,
-          username: initialUsername,
-          defaultCurrency: "INR",
-        },
-        include: {
-          _count: {
-            select: {
-              trips: true,
-            },
-          },
-          trips: {
-            where: { isPublic: true },
-            select: { id: true },
-          },
-        },
-      });
-    } else if (!profile.username) {
-      // Backfill missing username if profile existed prior
-      const generatedUsername = await generateSmartUniqueUsername(
-        profile.fullName || profile.email || "traveler",
-        profile.id
-      );
-      profile = await db.profile.update({
-        where: { id: profile.id },
-        data: { username: generatedUsername },
-        include: {
-          _count: {
-            select: {
-              trips: true,
-            },
-          },
-          trips: {
-            where: { isPublic: true },
-            select: { id: true },
-          },
-        },
-      });
-    }
 
     const isPro = await hasActiveProSubscription(user.id);
     const tier = isPro ? ("pro" as const) : ("free" as const);
@@ -141,13 +91,11 @@ const getCachedProfile = cache(async (): Promise<{ success: boolean; profile?: P
         isPublic: profile.isPublic,
         defaultCurrency: (profile as unknown as { defaultCurrency?: string }).defaultCurrency || "INR",
         aiAutoPropose: (profile as unknown as { aiAutoPropose?: boolean }).aiAutoPropose ?? true,
-        emailNotifications: (profile as unknown as { emailNotifications?: boolean }).emailNotifications ?? true,
         offlineMode: (profile as unknown as { offlineMode?: boolean }).offlineMode ?? false,
         travelPreferences: (profile as unknown as { travelPreferences?: string | null }).travelPreferences || null,
         createdAt: profile.createdAt.toISOString(),
         totalTrips: profile._count.trips,
-        publishedTrips: profile.trips.length,
-        publishedTemplates: profile.trips.length,
+        templatesCount: profile.trips.length,
         publishedStories: publishedStoriesCount,
         forumDiscussions: communityDiscussionsCount,
         tier,
@@ -219,6 +167,8 @@ export async function updateProfile(input: UpdateProfileInput) {
     if (authError || !user) {
       return { success: false, error: "Unauthorized" };
     }
+
+    await syncUserProfile(user);
 
     const parsed = updateProfileSchema.safeParse(input);
     if (!parsed.success) {
@@ -319,6 +269,8 @@ export async function updateGeneralPreferences(input: UpdateGeneralPreferencesIn
       return { success: false, error: "Unauthorized" };
     }
 
+    await syncUserProfile(user);
+
     const parsed = updateGeneralPreferencesSchema.safeParse(input);
     if (!parsed.success) {
       return { success: false, error: "Invalid preferences data" };
@@ -327,7 +279,6 @@ export async function updateGeneralPreferences(input: UpdateGeneralPreferencesIn
     const {
       defaultCurrency,
       aiAutoPropose,
-      emailNotifications,
       offlineMode,
       travelPreferences,
     } = parsed.data;
@@ -337,7 +288,6 @@ export async function updateGeneralPreferences(input: UpdateGeneralPreferencesIn
       data: {
         defaultCurrency,
         aiAutoPropose,
-        emailNotifications,
         offlineMode,
         ...(travelPreferences !== undefined && { travelPreferences: travelPreferences?.trim() || null }),
       },

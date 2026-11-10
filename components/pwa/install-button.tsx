@@ -100,7 +100,10 @@ export function InstallButton({
       variant={variant}
       size={size}
       onClick={() => promptInstall()}
-      className={cn("gap-1.5 font-sans cursor-pointer text-xs", className)}
+      className={cn(
+        "gap-1.5 border-zinc-950 bg-zinc-950 font-sans text-xs text-white hover:bg-zinc-800 dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-white",
+        className
+      )}
     >
       <Download className="h-3.5 w-3.5" />
       <span>Install App</span>

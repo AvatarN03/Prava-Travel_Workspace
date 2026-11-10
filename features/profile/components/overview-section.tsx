@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { Camera, ExternalLink, Globe, Loader2, Lock, Save } from "lucide-react";
+import { ExternalLink, Globe, Loader2, Lock, Save } from "lucide-react";
 
 import { AvatarUpload } from "@/components/storage";
 import { Badge } from "@/components/ui/badge";
@@ -71,10 +71,13 @@ export function OverviewSection({
                 onAvatarUpdated={onAvatarUpdated}
               />
               <div className="space-y-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="font-sans text-base font-semibold text-foreground dark:text-zinc-100">
-                    {profile.fullName || profile.username || "Travel Creator"}
-                  </h3>
+                <h3 className="font-sans text-base font-semibold text-foreground dark:text-zinc-100">
+                  {profile.fullName || profile.username || "Travel Creator"}
+                </h3>
+                <p className="font-sans text-xs font-mono text-muted-foreground dark:text-zinc-400">
+                  @{profile.username || "traveler"}
+                </p>
+                <div className="flex items-center gap-2 flex-wrap pt-0.5">
                   <Badge variant={profile.isPublic ? "default" : "secondary"} className="text-[10px] border-border dark:border-zinc-800">
                     {profile.isPublic ? (
                       <span className="flex items-center gap-1">
@@ -95,56 +98,49 @@ export function OverviewSection({
                     </Badge>
                   )}
                 </div>
-                <p className="font-sans text-xs font-mono text-muted-foreground dark:text-zinc-400">
-                  @{profile.username || "traveler"}
-                </p>
-                <p className="font-sans text-[11px] text-muted-foreground dark:text-zinc-400 flex items-center gap-1.5 pt-0.5">
-                  <Camera className="h-3 w-3 text-primary shrink-0" />
-                  <span>Click badge in top-right to upload photo</span>
-                </p>
               </div>
             </div>
 
             {/* Live Platform Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full lg:w-auto">
+            <div className="grid w-full grid-cols-2 gap-2 sm:grid-cols-4 lg:w-auto">
               <div
-                className="rounded-sm border border-border dark:border-zinc-800 bg-muted/30 dark:bg-[#121622] px-3 py-1.5 text-center min-w-[80px]"
+                className="flex h-16 min-w-0 flex-col items-center justify-center rounded-sm border border-border bg-muted/30 px-2 text-center sm:w-28"
                 title="Total created personal and collaborative trips"
               >
-                <div className="font-sans text-sm font-bold text-foreground dark:text-zinc-100 tabular-nums">
+                <div className="font-sans text-sm font-bold tabular-nums text-foreground">
                   {profile.totalTrips ?? 0}
                 </div>
-                <div className="font-sans text-[10px] font-medium text-muted-foreground dark:text-zinc-400">Total Trips</div>
+                <div className="font-sans text-[10px] font-medium text-muted-foreground">Workspaces</div>
               </div>
 
               <div
-                className="rounded-sm border border-border dark:border-zinc-800 bg-muted/30 dark:bg-[#121622] px-3 py-1.5 text-center min-w-[80px]"
+                className="flex h-16 min-w-0 flex-col items-center justify-center rounded-sm border border-border bg-muted/30 px-2 text-center sm:w-28"
                 title="Trips published to Community Templates"
               >
-                <div className="font-sans text-sm font-bold text-primary tabular-nums">
-                  {profile.publishedTrips ?? 0}
+                <div className="font-sans text-sm font-bold tabular-nums text-primary">
+                  {profile.templatesCount ?? 0}
                 </div>
-                <div className="font-sans text-[10px] font-medium text-muted-foreground dark:text-zinc-400">Trip Templates</div>
+                <div className="font-sans text-[10px] font-medium text-muted-foreground">Templates</div>
               </div>
 
               <div
-                className="rounded-sm border border-border dark:border-zinc-800 bg-muted/30 dark:bg-[#121622] px-3 py-1.5 text-center min-w-[80px]"
+                className="flex h-16 min-w-0 flex-col items-center justify-center rounded-sm border border-border bg-muted/30 px-2 text-center sm:w-28"
                 title="Travel stories and guides written"
               >
-                <div className="font-sans text-sm font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
+                <div className="font-sans text-sm font-bold tabular-nums text-success">
                   {profile.publishedStories ?? 0}
                 </div>
-                <div className="font-sans text-[10px] font-medium text-muted-foreground dark:text-zinc-400">Stories</div>
+                <div className="font-sans text-[10px] font-medium text-muted-foreground">Stories</div>
               </div>
 
               <div
-                className="rounded-sm border border-border dark:border-zinc-800 bg-muted/30 dark:bg-[#121622] px-3 py-1.5 text-center min-w-[80px]"
+                className="flex h-16 min-w-0 flex-col items-center justify-center rounded-sm border border-border bg-muted/30 px-2 text-center sm:w-28"
                 title="Discussion threads started in Traveler Forum"
               >
-                <div className="font-sans text-sm font-bold text-indigo-600 dark:text-indigo-400 tabular-nums">
+                <div className="font-sans text-sm font-bold tabular-nums text-primary">
                   {profile.forumDiscussions ?? 0}
                 </div>
-                <div className="font-sans text-[10px] font-medium text-muted-foreground dark:text-zinc-400">Discussions</div>
+                <div className="font-sans text-[10px] font-medium text-muted-foreground">Discussions</div>
               </div>
             </div>
           </div>

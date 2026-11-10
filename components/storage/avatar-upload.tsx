@@ -170,7 +170,7 @@ export function AvatarUpload({
   const isBusy = isUploading || isRemoving;
 
   return (
-    <div className="relative inline-block group select-none">
+    <div className="relative inline-block select-none">
       <input
         ref={fileInputRef}
         type="file"
@@ -199,24 +199,17 @@ export function AvatarUpload({
           <img
             src={avatarUrl}
             alt={name || "User Avatar"}
-            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+            className="h-full w-full object-cover"
           />
         ) : (
           <span>{getInitials(name)}</span>
         )}
 
-        {/* Hover Camera Overlay / Uploading Spinner (Desktop) */}
-        <div
-          className={`absolute inset-0 bg-black/40 flex items-center justify-center text-white transition-opacity ${
-            isBusy ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-          }`}
-        >
-          {isBusy ? (
+        {isBusy && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background/75 text-primary">
             <Loader2 className={`${cameraIconClasses} animate-spin`} />
-          ) : (
-            <Camera className={cameraIconClasses} />
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Prominent Camera / Upload Badge in Top-Right Corner */}

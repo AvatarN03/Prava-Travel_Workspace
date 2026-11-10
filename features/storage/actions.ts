@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
 import {
   deleteImageFromStorage,
@@ -160,6 +161,8 @@ export async function updateProfileAvatar(avatarUrl: string | null) {
     if (authError || !user) {
       return { success: false, error: "Unauthorized" };
     }
+
+    await syncUserProfile(user);
 
     await db.profile.update({
       where: { id: user.id },

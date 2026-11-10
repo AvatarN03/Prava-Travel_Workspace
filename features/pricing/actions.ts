@@ -55,10 +55,6 @@ export async function getAccountUsage(): Promise<{
       orderBy: { createdAt: "desc" },
     });
 
-    const userMetadata = user.user_metadata || {};
-    const metaProSince = userMetadata.pro_since ? new Date(userMetadata.pro_since) : null;
-    const isMetaPro = userMetadata.tier === "pro" || userMetadata.is_pro === true;
-
     // Determine cycle anchor day
     // If subscription has a currentPeriodStart or createdAt, use that day of the month (e.g. 15th).
     // Otherwise, default to 1 (1st of the month).
@@ -71,8 +67,6 @@ export async function getAccountUsage(): Promise<{
       anchorDay = new Date(userSubscriptions[0].currentPeriodStart).getDate();
     } else if (userSubscriptions.length > 0 && userSubscriptions[0].createdAt) {
       anchorDay = new Date(userSubscriptions[0].createdAt).getDate();
-    } else if (metaProSince) {
-      anchorDay = metaProSince.getDate();
     }
 
     // Helper to calculate cycle start, end, and renewal dates
@@ -113,9 +107,10 @@ export async function getAccountUsage(): Promise<{
       // 1. Check database subscriptions
       for (const sub of userSubscriptions) {
         const subStatus = sub.status.toLowerCase();
-        const subStart = sub.currentPeriodStart
-          ? new Date(sub.currentPeriodStart)
-          : new Date(sub.createdAt);
+        // A recurring subscription record keeps its original creation time.
+        // `currentPeriodStart` moves forward every renewal, so using it here
+        // incorrectly marked the immediately preceding paid cycle as Free.
+        const subStart = new Date(sub.createdAt);
 
         let subEnd: Date;
         if (["active", "trialing"].includes(subStatus)) {
@@ -133,15 +128,24 @@ export async function getAccountUsage(): Promise<{
         }
       }
 
-      // 2. Check metadata fallback (simulation / metadata tier)
-      if (isMetaPro && metaProSince) {
-        if (cEnd >= metaProSince) {
-          return true;
-        }
-      } else if (isMetaPro && isPro) {
-        if (cEnd >= activeCycle.start) {
-          return true;
-        }
+      // Older records predate SubscriptionPeriod snapshots. If the current
+      // Polar record renewed directly after this cycle, it was a continuous
+      // paid interval even when its legacy `createdAt` was overwritten on the
+      // renewal. This protects the immediately preceding cycle (for example,
+      // Sep 19–Oct 18 before an Oct 19 renewal) from being labelled Free.
+      if (isPro && subscription?.currentPeriodStart) {
+        const renewal = new Date(subscription.currentPeriodStart);
+        const previousCalendarDay = new Date(
+          renewal.getFullYear(),
+          renewal.getMonth(),
+          renewal.getDate() - 1
+        );
+        const cycleEndDay = new Date(
+          cEnd.getFullYear(),
+          cEnd.getMonth(),
+          cEnd.getDate()
+        );
+        if (cycleEndDay.getTime() === previousCalendarDay.getTime()) return true;
       }
 
       return false;
@@ -278,8 +282,11 @@ export async function getAccountUsage(): Promise<{
         aiConversations: {
           select: {
             messages: {
-              where: { role: "user" },
-              select: { id: true },
+              where: {
+                role: "user",
+                createdAt: { gte: activeCycle.start, lte: activeCycle.end },
+              },
+              select: { creditsCost: true },
             },
           },
         },
@@ -290,7 +297,7 @@ export async function getAccountUsage(): Promise<{
 
     const tripUsage: TripAiUsageItem[] = userTrips.map((t) => {
       const credits = t.aiConversations.reduce(
-        (sum, c) => sum + (c.messages?.length || 0),
+        (sum, c) => sum + c.messages.reduce((messageTotal, message) => messageTotal + message.creditsCost, 0),
         0
       );
       return {
@@ -462,7 +469,6 @@ export async function getUserPricingCurrency(requestedCurrency?: string): Promis
  */
 export async function createPolarCheckoutSession(params?: {
   billingCycle?: "monthly" | "annual";
-  redirectUrl?: string;
 }): Promise<PolarCheckoutResult> {
   try {
     const supabase = await createClient();
@@ -486,7 +492,10 @@ export async function createPolarCheckoutSession(params?: {
     }
 
     const billingCycle = params?.billingCycle || "annual";
-    const productId = process.env.POLAR_PRODUCT_ID;
+    const productId =
+      billingCycle === "annual"
+        ? process.env.POLAR_ANNUAL_PRODUCT_ID || process.env.POLAR_PRODUCT_ID
+        : process.env.POLAR_MONTHLY_PRODUCT_ID;
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const successUrl = `${appUrl}/subscription?checkout=success&checkout_id={CHECKOUT_ID}`;
 
@@ -538,25 +547,20 @@ export async function createPolarCheckoutSession(params?: {
       url.searchParams.set("client_reference_id", user.id);
       url.searchParams.set("metadata[userId]", user.id);
       url.searchParams.set("metadata[billingCycle]", billingCycle);
-      if (params?.redirectUrl) {
-        url.searchParams.set("success_url", params.redirectUrl);
-      }
+      url.searchParams.set("success_url", successUrl);
       return {
         success: true,
         checkoutUrl: url.toString(),
       };
     }
 
-    // 4. Dev simulation fallback when no Polar keys are configured
-    const planCostDesc =
-      billingCycle === "annual"
-        ? "₹2,000 / year (₹167/mo • Save ₹400 discount)"
-        : "₹200 / month";
-
+    // Never synthesize an entitlement: only verified Polar webhooks may grant Pro.
     return {
-      success: true,
-      isSimulation: true,
-      message: `Polar Checkout sandbox ready for Pro Wanderer (${planCostDesc}). Configure POLAR_ACCESS_TOKEN and POLAR_PRODUCT_ID in .env to initiate live sandbox checkout sessions.`,
+      success: false,
+      error:
+        billingCycle === "monthly"
+          ? "Monthly billing is not configured yet. Please select Yearly or contact support."
+          : "Polar checkout is unavailable. Please try again later.",
     };
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Failed to create checkout session";
@@ -702,43 +706,5 @@ export async function createPolarCustomerPortalSession(): Promise<{
           ? err.message
           : "Failed to open billing portal. Please check your Polar access token scopes.",
     };
-  }
-}
-
-
-/**
- * Development simulation action to activate Pro Wanderer tier
- */
-export async function simulatePolarUpgrade(params: {
-  billingCycle: "monthly" | "annual";
-}): Promise<{ success: boolean; error?: string }> {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return { success: false, error: "Unauthorized" };
-    }
-
-    const { error: updateError } = await supabase.auth.updateUser({
-      data: {
-        tier: "pro",
-        is_pro: true,
-        billing_cycle: params.billingCycle,
-        pro_since: new Date().toISOString(),
-      },
-    });
-
-    if (updateError) {
-      return { success: false, error: updateError.message };
-    }
-
-    return { success: true };
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Failed to activate Pro tier";
-    return { success: false, error: message };
   }
 }

@@ -10,7 +10,6 @@ export {
   createPolarCustomerPortalSession,
   getAccountUsage,
   getUserPricingCurrency,
-  simulatePolarUpgrade,
 } from "./actions";
 
 // Config & Constants

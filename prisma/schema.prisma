@@ -21,7 +21,6 @@ model Profile {
   // General & Workspace Preferences
   defaultCurrency    String   @default("INR") @map("default_currency")
   aiAutoPropose      Boolean  @default(true) @map("ai_auto_propose")
-  emailNotifications Boolean  @default(true) @map("email_notifications")
   offlineMode        Boolean  @default(false) @map("offline_mode")
   travelPreferences  String?  @map("travel_preferences")
 
@@ -366,10 +365,30 @@ model Subscription {
   updatedAt           DateTime  @updatedAt @map("updated_at")
 
   profile             Profile   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  periods             SubscriptionPeriod[]
 
   @@index([userId])
   @@index([status])
   @@map("subscriptions")
+}
+
+// Immutable snapshots of each billing interval received from Polar webhooks.
+// The parent Subscription holds the latest live state; Usage reads these rows
+// to render previous cycle entitlements without guessing from the current one.
+model SubscriptionPeriod {
+  id             String   @id @default(uuid()) @db.Uuid
+  subscriptionId String   @map("subscription_id") @db.Uuid
+  periodStart    DateTime @map("period_start")
+  periodEnd      DateTime? @map("period_end")
+  status         String
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@unique([subscriptionId, periodStart])
+  @@index([subscriptionId, periodStart])
+  @@map("subscription_periods")
 }
 
 model WebhookEvent {

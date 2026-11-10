@@ -49,7 +49,6 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
   // General & Workspace Preferences (Loaded from Database)
   const [defaultCurrency, setDefaultCurrency] = useState(initialProfile.defaultCurrency || "INR");
   const [aiAutoPropose, setAiAutoPropose] = useState(initialProfile.aiAutoPropose ?? true);
-  const [emailNotifications, setEmailNotifications] = useState(initialProfile.emailNotifications ?? true);
   const [offlineMode, setOfflineMode] = useState(initialProfile.offlineMode ?? false);
   const [travelPreferences, setTravelPreferences] = useState(initialProfile.travelPreferences || "");
 
@@ -65,7 +64,6 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
   const [activeTab, setActiveTab] = useState<TabKey>(validInitialTab);
   const [isSaving, startSaving] = useTransition();
   const [isSavingAiPreferences, startSavingAiPreferences] = useTransition();
-  const [isUpdatingNotification, setIsUpdatingNotification] = useState(false);
   const [isUpdatingCurrency, setIsUpdatingCurrency] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
@@ -81,15 +79,15 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
 
   const handleTabChange = (tab: TabKey) => {
     setActiveTab(tab);
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href);
-      if (tab === "overview") {
-        url.searchParams.delete("tab");
-      } else {
-        url.searchParams.set("tab", tab);
-      }
-      window.history.replaceState(null, "", url.pathname + url.search);
+    const params = new URLSearchParams(searchParams.toString());
+    if (tab === "overview") {
+      params.delete("tab");
+    } else {
+      params.set("tab", tab);
     }
+    router.replace(params.size > 0 ? `/profile?${params.toString()}` : "/profile", {
+      scroll: false,
+    });
   };
 
   const handleSaveProfile = () => {
@@ -128,6 +126,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
   };
 
   const handleUpdateCurrency = async (newCurrency: string) => {
+    const previousCurrency = defaultCurrency;
     setDefaultCurrency(newCurrency);
     setIsUpdatingCurrency(true);
     try {
@@ -136,7 +135,6 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
         aiAutoPropose,
         offlineMode,
         travelPreferences: travelPreferences.trim() || null,
-        emailNotifications,
       });
 
       if (res.success && res.profile) {
@@ -147,9 +145,11 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
         toast.success(`Default currency updated to ${newCurrency}.`);
       } else {
         toast.error(res.error || "Failed to update default currency.");
+        setDefaultCurrency(previousCurrency);
       }
     } catch {
       toast.error("Failed to update default currency.");
+      setDefaultCurrency(previousCurrency);
     } finally {
       setIsUpdatingCurrency(false);
     }
@@ -163,7 +163,6 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
     startSavingAiPreferences(async () => {
       const res = await updateGeneralPreferences({
         defaultCurrency,
-        emailNotifications,
         aiAutoPropose: aiData.aiAutoPropose,
         offlineMode: aiData.offlineMode,
         travelPreferences: aiData.travelPreferences.trim() || null,
@@ -181,40 +180,6 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
         toast.error(res.error || "Failed to save AI preferences.");
       }
     });
-  };
-
-  const handleUpdateNotification = async (checked: boolean) => {
-    setEmailNotifications(checked);
-    setIsUpdatingNotification(true);
-    try {
-      const res = await updateGeneralPreferences({
-        defaultCurrency,
-        aiAutoPropose,
-        offlineMode,
-        travelPreferences: travelPreferences.trim() || null,
-        emailNotifications: checked,
-      });
-
-      if (res.success && res.profile) {
-        setProfile((prev) => ({
-          ...prev,
-          emailNotifications: (res.profile as unknown as { emailNotifications?: boolean }).emailNotifications ?? checked,
-        }));
-        toast.success(
-          checked
-            ? "Trip departure reminders enabled in database."
-            : "Trip departure reminders disabled in database."
-        );
-      } else {
-        toast.error(res.error || "Failed to update reminder settings.");
-        setEmailNotifications(!checked);
-      }
-    } catch {
-      toast.error("Failed to update reminder settings.");
-      setEmailNotifications(!checked);
-    } finally {
-      setIsUpdatingNotification(false);
-    }
   };
 
   const handleSignOut = async () => {
@@ -298,16 +263,17 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
                   onClick={() => handleTabChange(item.id)}
                   className={cn(
                     "flex w-full items-center gap-2.5 px-3 py-2 font-sans text-xs rounded-sm transition-colors text-left cursor-pointer",
+                    "border transition-colors",
                     isActive
-                      ? "bg-primary/10 text-primary font-semibold border-l-2 border-primary"
-                      : "text-muted-foreground hover:bg-accent hover:text-foreground font-medium border-l-2 border-transparent"
+                      ? "border-zinc-950 bg-zinc-950 text-white font-semibold shadow-xs dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-950"
+                      : "border-transparent text-muted-foreground hover:border-border hover:bg-muted/50 hover:text-foreground font-medium"
                   )}
                   aria-current={isActive ? "page" : undefined}
                 >
                   <Icon
                     className={cn(
                       "h-4 w-4 shrink-0",
-                      isActive ? "text-primary" : "text-muted-foreground"
+                      isActive ? "text-current" : "text-muted-foreground"
                     )}
                   />
                   <span>{item.label}</span>
@@ -348,9 +314,6 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
               setTravelPreferences={setTravelPreferences}
               onSaveAiPreferences={handleSaveAiPreferences}
               isSavingAiPreferences={isSavingAiPreferences}
-              emailNotifications={emailNotifications}
-              onUpdateNotification={handleUpdateNotification}
-              isUpdatingNotification={isUpdatingNotification}
             />
           )}
 
@@ -415,9 +378,6 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
             setTravelPreferences={setTravelPreferences}
             onSaveAiPreferences={handleSaveAiPreferences}
             isSavingAiPreferences={isSavingAiPreferences}
-            emailNotifications={emailNotifications}
-            onUpdateNotification={handleUpdateNotification}
-            isUpdatingNotification={isUpdatingNotification}
           />
         </div>
 

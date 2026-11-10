@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import {
   AlertCircle,
@@ -47,12 +47,7 @@ export function UsageView({ initialUsage }: UsageViewProps) {
   const aiPct = Math.min(100, Math.round((usage.aiCreditsUsed / usage.aiCreditsQuota) * 100));
   const isCreditsExhausted = usage.aiCreditsRemaining <= 0;
 
-  // Calculate days remaining in current month
-  const daysUntilRenewal = useMemo(() => {
-    const now = new Date();
-    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    return Math.max(1, lastDayOfMonth.getDate() - now.getDate());
-  }, []);
+  const daysUntilRenewal = usage.daysUntilRenewal ?? 0;
 
   return (
     <div className="space-y-8 w-full max-w-7xl mx-auto pb-16">
@@ -112,8 +107,8 @@ export function UsageView({ initialUsage }: UsageViewProps) {
                 Monthly AI Planning Credits Depleted ({usage.aiCreditsUsed} / {usage.aiCreditsQuota})
               </h3>
               <p className="font-sans text-xs text-rose-600/90 dark:text-rose-400/90 leading-relaxed tabular-nums">
-                You have reached your {usage.aiCreditsQuota} AI assistant credits limit for this month. AI itinerary suggestions and proposals
-                are paused until your quota renews on the 1st of next month ({daysUntilRenewal} days remaining).
+                You have reached your {usage.aiCreditsQuota} AI assistant credits limit for this billing cycle. AI itinerary suggestions and proposals
+                are paused until your quota renews on {usage.nextRenewalDate} ({daysUntilRenewal} days remaining).
               </p>
             </div>
           </div>
@@ -135,7 +130,7 @@ export function UsageView({ initialUsage }: UsageViewProps) {
                     AI Assistant Credits
                   </CardTitle>
                   <CardDescription className="font-sans text-[11px] text-muted-foreground dark:text-zinc-400">
-                    Monthly AI interaction quota
+                    AI interaction quota for this billing cycle
                   </CardDescription>
                 </div>
               </div>
@@ -173,7 +168,7 @@ export function UsageView({ initialUsage }: UsageViewProps) {
               </div>
               <div className="flex justify-between items-center text-[11px] text-muted-foreground dark:text-zinc-400 font-medium">
                 <span className={isCreditsExhausted ? "font-semibold text-rose-600 dark:text-rose-400 tabular-nums" : "font-semibold text-foreground dark:text-zinc-200 tabular-nums"}>
-                  {usage.aiCreditsRemaining} credits left this month
+                  {usage.aiCreditsRemaining} credits left this cycle
                 </span>
                 <span className="font-sans font-medium tabular-nums">{aiPct}% utilized</span>
               </div>
@@ -260,11 +255,12 @@ export function UsageView({ initialUsage }: UsageViewProps) {
               <Layers className="h-3.5 w-3.5" />
             </span>
             <h2 className="font-sans text-sm sm:text-base font-semibold tracking-tight text-foreground dark:text-zinc-100">
-              Trip-by-Trip AI Usage Breakdown
+              <span className="sm:hidden">AI Usage This Cycle</span>
+              <span className="hidden sm:inline">Trip-by-Trip AI Usage This Cycle</span>
             </h2>
           </div>
-          <span className="font-sans text-xs text-muted-foreground dark:text-zinc-400 tabular-nums">
-            {usage.tripUsage?.length || 0} workspaces evaluated
+          <span className="hidden sm:inline font-sans text-xs text-muted-foreground dark:text-zinc-400 tabular-nums">
+            Latest {usage.tripUsage?.length || 0} workspaces · this billing cycle
           </span>
         </div>
 
@@ -273,19 +269,19 @@ export function UsageView({ initialUsage }: UsageViewProps) {
             {usage.tripUsage.map((trip) => (
               <div
                 key={trip.id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 hover:bg-muted/30 dark:hover:bg-[#121622]/50 transition-colors gap-3"
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-3.5 hover:bg-muted/30 dark:hover:bg-[#121622]/50 transition-colors gap-2.5 sm:gap-3"
               >
                 <div className="flex items-center gap-3 min-w-0 w-full sm:w-auto">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xs bg-primary/10 text-primary border border-primary/20 dark:bg-primary/15 dark:border-primary/25 font-bold text-xs">
                     <Compass className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1 sm:flex-initial">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs sm:text-sm font-semibold text-foreground dark:text-zinc-100 truncate">
+                    <div className="space-y-1 sm:space-y-0">
+                      <span className="block text-xs sm:text-sm font-semibold leading-snug text-foreground dark:text-zinc-100 line-clamp-2 sm:truncate">
                         {trip.title}
                       </span>
                       {trip.destination && (
-                        <span className="text-[10px] text-muted-foreground dark:text-zinc-400 font-medium bg-muted dark:bg-[#121622] px-1.5 py-0.5 rounded-xs border border-border/80 dark:border-zinc-800">
+                        <span className="inline-flex max-w-full truncate text-[10px] text-muted-foreground dark:text-zinc-400 font-medium bg-muted dark:bg-[#121622] px-1.5 py-0.5 rounded-xs border border-border/80 dark:border-zinc-800">
                           {trip.destination}
                         </span>
                       )}
@@ -296,14 +292,14 @@ export function UsageView({ initialUsage }: UsageViewProps) {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t border-border/40 dark:border-zinc-800/60 sm:border-0">
+                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:justify-end sm:gap-4 w-full sm:w-auto shrink-0 pt-2.5 sm:pt-0 border-t border-border/40 dark:border-zinc-800/60 sm:border-0">
                   {/* Credits Consumed Indicator */}
                   <div className="flex-1 sm:flex-initial sm:text-right space-y-1 min-w-0 sm:min-w-[140px]">
                     <div className="flex items-center justify-between sm:justify-end gap-1.5">
                       <div className="flex items-center gap-1.5">
                         <Sparkles className="h-3 w-3 text-primary shrink-0" />
                         <span className="text-xs font-semibold tabular-nums text-foreground dark:text-zinc-200">
-                          {trip.creditsUsed} credits
+                          {trip.creditsUsed} <span className="font-medium text-muted-foreground dark:text-zinc-400">credits</span>
                         </span>
                       </div>
                       <span className="text-[10px] text-muted-foreground dark:text-zinc-400 font-medium sm:hidden tabular-nums">
@@ -317,12 +313,12 @@ export function UsageView({ initialUsage }: UsageViewProps) {
                       />
                     </div>
                     <span className="text-[10px] text-muted-foreground dark:text-zinc-400 hidden sm:block font-medium tabular-nums">
-                      {trip.percentageOfQuota}% of monthly quota
+                      {trip.percentageOfQuota}% of cycle quota
                     </span>
                   </div>
 
-                  <Link href={`/trips/${trip.id}`} className="shrink-0">
-                    <Button variant="ghost" size="sm" className="h-8 text-xs rounded-xs font-medium gap-1 cursor-pointer dark:hover:bg-zinc-800 dark:text-zinc-300">
+                  <Link href={`/trips/${trip.id}`} className="shrink-0 self-center">
+                    <Button variant="ghost" size="sm" className="h-8 px-2 text-xs rounded-xs font-medium gap-1 cursor-pointer dark:hover:bg-zinc-800 dark:text-zinc-300">
                       <span>Open</span>
                       <ExternalLink className="h-3 w-3" />
                     </Button>
@@ -356,18 +352,18 @@ export function UsageView({ initialUsage }: UsageViewProps) {
               Billing & Quota Cycles History
             </h2>
           </div>
-          <span className="text-xs text-muted-foreground dark:text-zinc-400">
-            Past 6 calendar cycles
+          <span className="hidden sm:inline text-xs text-muted-foreground dark:text-zinc-400">
+            Last 6 billing cycles
           </span>
         </div>
 
-        <div className="rounded-md border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-xs overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+        <div className="rounded-md border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-xs overflow-hidden">
+          <table className="w-full table-fixed sm:table-auto text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-border/80 dark:border-zinc-800 bg-muted/40 dark:bg-[#121622] text-muted-foreground dark:text-zinc-400 font-semibold text-[11px] uppercase tracking-wider">
-                <th className="p-3 pl-4">Billing Cycle</th>
-                <th className="p-3 text-center">AI Credits</th>
-                <th className="p-3 pr-4 text-right">Cycle Status</th>
+                <th className="w-[43%] sm:w-auto p-3 pl-4">Billing Cycle</th>
+                <th className="p-3 pr-4 text-right sm:text-center sm:pr-3">AI Credits</th>
+                <th className="hidden sm:table-cell p-3 pr-4 text-right">Cycle Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/60 dark:divide-zinc-800/80">
@@ -378,12 +374,19 @@ export function UsageView({ initialUsage }: UsageViewProps) {
                 );
                 const isProCycle = item.plan.toLowerCase().includes("pro");
                 return (
-                  <tr key={item.id} className="hover:bg-muted/20 dark:hover:bg-[#121622]/40 transition-colors">
+                  <tr
+                    key={item.id}
+                    className={`transition-colors hover:bg-muted/20 dark:hover:bg-[#121622]/40 ${
+                      item.status === "Active Cycle"
+                        ? "bg-primary/8 dark:bg-primary/10"
+                        : "bg-transparent"
+                    }`}
+                  >
                     <td className="p-3 pl-4 font-medium text-foreground">
                       <div className="space-y-1">
                         <div>
                           <span className="font-semibold text-foreground dark:text-zinc-100">{item.month}</span>
-                          <span className="text-[10px] text-muted-foreground dark:text-zinc-400 block font-normal tabular-nums">
+                          <span className="hidden sm:block text-[10px] text-muted-foreground dark:text-zinc-400 font-normal tabular-nums">
                             {item.period}
                           </span>
                         </div>
@@ -396,20 +399,21 @@ export function UsageView({ initialUsage }: UsageViewProps) {
                                 : "text-muted-foreground dark:text-zinc-400 font-normal"
                             }`}
                           >
-                            {item.plan}
+                            <span className="sm:hidden">{isProCycle ? "Pro" : "Free"}</span>
+                            <span className="hidden sm:inline">{item.plan}</span>
                           </Badge>
                         </div>
                       </div>
                     </td>
-                    <td className="p-3 text-center">
-                      <div className="inline-flex flex-col items-center gap-1">
+                    <td className="p-3 pr-4 text-right sm:p-3 sm:text-center">
+                      <div className="inline-flex flex-col items-end sm:items-center gap-1">
                         <span className="font-semibold tabular-nums text-foreground dark:text-zinc-100 text-xs">
                           {item.aiCreditsUsed}{" "}
                           <span className="text-muted-foreground dark:text-zinc-400 font-normal text-[11px]">
                             / {item.aiCreditsQuota} Credits
                           </span>
                         </span>
-                        <div className="flex items-center gap-1.5 w-24">
+                        <div className="flex items-center justify-end gap-1.5 w-20 sm:w-24">
                           <div className="h-1.5 w-full rounded-xs bg-muted dark:bg-[#121622] overflow-hidden">
                             <div
                               className={`h-full transition-all duration-300 ${
@@ -428,7 +432,7 @@ export function UsageView({ initialUsage }: UsageViewProps) {
                         </div>
                       </div>
                     </td>
-                    <td className="p-3 pr-4 text-right">
+                    <td className="hidden sm:table-cell p-3 pr-4 text-right">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded-xs text-[10px] font-semibold uppercase tracking-wider border ${
                           item.status === "Active Cycle"
@@ -450,7 +454,7 @@ export function UsageView({ initialUsage }: UsageViewProps) {
       {/* ── Billing Cycle & Subscription Quick Link ── */}
       <Card className="rounded-md border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-xs font-sans">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 gap-4">
-          <div className="flex items-center gap-5">
+          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-5">
             <div className="flex items-center gap-2.5 text-xs text-muted-foreground dark:text-zinc-400">
               <Calendar className="h-4 w-4 text-primary shrink-0" />
               <div>
@@ -470,8 +474,8 @@ export function UsageView({ initialUsage }: UsageViewProps) {
             </div>
           </div>
 
-          <Link href="/subscription">
-            <Button variant="outline" size="sm" className="h-8 text-xs rounded-sm font-medium gap-1.5 cursor-pointer border-border/80 dark:border-zinc-800 hover:bg-muted/70 dark:hover:bg-[#121622] dark:text-zinc-200 shadow-2xs">
+          <Link href="/subscription" className="w-full sm:w-auto">
+            <Button variant="outline" size="sm" className="h-8 w-full sm:w-auto text-xs rounded-sm font-medium gap-1.5 cursor-pointer border-border/80 dark:border-zinc-800 hover:bg-muted/70 dark:hover:bg-[#121622] dark:text-zinc-200 shadow-2xs">
               <CreditCard className="h-3.5 w-3.5 text-primary" />
               <span>View Subscription & Plans</span>
               <ArrowUpRight className="h-3 w-3" />

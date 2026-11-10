@@ -212,21 +212,28 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Enforce 1:1 user-to-subscription invariant: prune any superseded subscription rows for this user
-      try {
-        const deleted = await client.subscription.deleteMany({
+      // Keep every subscription row. A customer can legitimately have a prior
+      // cancelled subscription, and those rows are required for historical usage.
+      // Upserting by Polar's subscription ID keeps webhook retries idempotent.
+      if (currentPeriodStart) {
+        await client.subscriptionPeriod.upsert({
           where: {
-            userId,
-            id: { not: savedSub.id },
+            subscriptionId_periodStart: {
+              subscriptionId: savedSub.id,
+              periodStart: currentPeriodStart,
+            },
+          },
+          create: {
+            subscriptionId: savedSub.id,
+            periodStart: currentPeriodStart,
+            periodEnd: currentPeriodEnd,
+            status,
+          },
+          update: {
+            periodEnd: currentPeriodEnd,
+            status,
           },
         });
-        if (deleted?.count > 0) {
-          console.info(
-            `[Polar Webhook] Pruned ${deleted.count} stale duplicate subscription(s) for user ${userId}`
-          );
-        }
-      } catch (pruneErr) {
-        console.warn("[Polar Webhook] Pruning duplicate subscriptions warning:", pruneErr);
       }
 
       console.info(

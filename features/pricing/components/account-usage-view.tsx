@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 
+import { ChevronDown as ChevronDownIcon, X } from "lucide";
 import {
   ArrowUpRight,
   Check,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
   Compass,
   CreditCard,
@@ -20,7 +22,6 @@ import {
   Sparkles,
   Zap,
 } from "lucide-react";
-import { ChevronDown, X } from "lucide";
 import { MorphIcon } from "morphicons/react";
 import { toast } from "sonner";
 
@@ -41,14 +42,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -61,7 +54,6 @@ import {
   createPolarCheckoutSession,
   createPolarCustomerPortalSession,
   getUserPricingCurrency,
-  simulatePolarUpgrade,
 } from "../actions";
 
 import { SUPPORTED_CURRENCIES } from "@/features/travel-essentials";
@@ -71,25 +63,34 @@ import type { AccountUsageData, ConvertedPricingDTO } from "../actions";
 interface AccountUsageViewProps {
   initialUsage: AccountUsageData;
   initialPricing?: ConvertedPricingDTO;
+  billingAvailability: {
+    annual: boolean;
+    monthly: boolean;
+  };
 }
 
-export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageViewProps) {
+export function AccountUsageView({
+  initialUsage,
+  initialPricing,
+  billingAvailability,
+}: AccountUsageViewProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const checkoutSuccess = searchParams?.get("checkout") === "success";
 
   const usage = initialUsage;
   const [pricing, setPricing] = useState<ConvertedPricingDTO | null>(initialPricing || null);
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">(
+    billingAvailability.annual ? "annual" : "monthly"
+  );
   const [openFaqItems, setOpenFaqItems] = useState<string[]>([]);
   const [isPending, startTransition] = useTransition();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isOpeningPortal, setIsOpeningPortal] = useState(false);
-  const [simulationModalOpen, setSimulationModalOpen] = useState(false);
-  const [simulationMessage, setSimulationMessage] = useState("");
 
   const isPro = usage.tier === "pro";
   const isAnnual = billingCycle === "annual";
+  const checkoutAvailable = billingAvailability[billingCycle];
 
   useEffect(() => {
     if (!pricing) {
@@ -114,27 +115,23 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
   const handleStartPolarCheckout = async () => {
     setIsCheckingOut(true);
     try {
-      const res = await createPolarCheckoutSession({
-        billingCycle,
-        redirectUrl: typeof window !== "undefined" ? window.location.href : undefined,
-      });
+      const res = await createPolarCheckoutSession({ billingCycle });
 
       if (!res.success) {
         toast.error(res.error || "Failed to initiate Polar checkout");
-        setIsCheckingOut(false);
         return;
       }
 
-      if (res.checkoutUrl) {
-        toast.info("Redirecting to Polar Checkout...");
-        window.location.href = res.checkoutUrl;
-      } else if (res.isSimulation) {
-        setSimulationMessage(res.message || "");
-        setSimulationModalOpen(true);
-        setIsCheckingOut(false);
+      if (!res.checkoutUrl) {
+        toast.error("Polar did not return a checkout link. Please try again.");
+        return;
       }
+
+      toast.info("Redirecting to Polar Checkout...");
+      window.location.href = res.checkoutUrl;
     } catch {
       toast.error("An unexpected error occurred contacting Polar.");
+    } finally {
       setIsCheckingOut(false);
     }
   };
@@ -175,24 +172,6 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
     }
   };
 
-  const handleConfirmSimulationUpgrade = async () => {
-    setIsCheckingOut(true);
-    try {
-      const res = await simulatePolarUpgrade({ billingCycle });
-      if (res.success) {
-        toast.success("Pro Wanderer tier activated successfully!");
-        setSimulationModalOpen(false);
-        router.refresh();
-      } else {
-        toast.error(res.error || "Failed to activate Pro tier");
-      }
-    } catch {
-      toast.error("Upgrade error");
-    } finally {
-      setIsCheckingOut(false);
-    }
-  };
-
   const proMonthlyDisplay = pricing ? pricing.formattedMonthly : "₹200";
   const proAnnualMonthlyDisplay = pricing ? pricing.formattedAnnualMonthly : "₹167";
   const proAnnualTotalDisplay = pricing ? pricing.formattedAnnual : "₹2,000";
@@ -206,13 +185,13 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 dark:border-zinc-800 pb-5">
         <div className="space-y-1">
           <span className="font-sans text-[11px] font-semibold tracking-widest text-primary uppercase block">
-            Membership & Quotas
+            Account billing
           </span>
           <h1 className="font-sans text-2xl sm:text-3xl font-light tracking-tight text-foreground dark:text-zinc-50">
-            Workspace <span className="font-serif italic font-normal text-foreground dark:text-zinc-100">Subscription & Plans</span>
+            Subscription <span className="font-serif italic font-normal text-foreground dark:text-zinc-100">& Billing</span>
           </h1>
           <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 mt-1 max-w-2xl leading-relaxed">
-            Manage your workspace membership tier, compare plan privileges, and upgrade via Polar Checkout.
+            Compare workspace capacity, review your entitlement, and manage a Polar-billed plan.
           </p>
         </div>
 
@@ -228,7 +207,7 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
               >
                 <Globe className={`h-3.5 w-3.5 text-primary ${isPending ? "animate-spin" : ""}`} />
                 <span>{activeCurrencyCode} ({currencySymbol})</span>
-                <span className="text-[10px] text-muted-foreground dark:text-zinc-400 ml-0.5">▼</span>
+                <ChevronDown className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-52 max-h-64 overflow-y-auto rounded-sm border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-md">
@@ -249,36 +228,6 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {!isPro ? (
-            <Button
-              onClick={handleStartPolarCheckout}
-              disabled={isCheckingOut}
-              className="font-sans text-xs font-semibold h-8 px-3.5 rounded-sm shadow-xs gap-1.5 cursor-pointer active:scale-[0.99] transition-all"
-            >
-              {isCheckingOut ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Zap className="h-3.5 w-3.5 text-amber-300 fill-amber-300" />
-              )}
-              Upgrade with Polar ({isAnnual ? `${proAnnualMonthlyDisplay}/mo` : `${proMonthlyDisplay}/mo`})
-            </Button>
-          ) : (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleOpenCustomerPortal}
-              disabled={isOpeningPortal}
-              className="h-8 text-xs rounded-sm font-sans font-semibold border-border/80 dark:border-zinc-800 text-foreground dark:text-zinc-200 gap-1.5 cursor-pointer hover:bg-muted/70 dark:hover:bg-zinc-800/60 shadow-2xs"
-              title="Manage billing and payment methods on Polar (opens in a new tab)"
-            >
-              {isOpeningPortal ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <ExternalLink className="h-3.5 w-3.5 text-primary" />
-              )}
-              Manage Subscription
-            </Button>
-          )}
         </div>
       </div>
 
@@ -312,12 +261,14 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
       )}
 
       {/* ── Current Active Tier Summary Card ── */}
-      <div className="relative rounded-md overflow-hidden border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-5 sm:p-6 shadow-xs">
+      <div className={`relative rounded-md overflow-hidden border bg-card p-5 sm:p-6 shadow-xs ${
+        isPro ? "border-primary/35" : "border-border"
+      }`}>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <span className="font-sans text-[10px] font-semibold uppercase tracking-[0.16em] text-primary bg-primary/10 border border-primary/20 rounded-xs px-2 py-0.5">
-                Current Active Tier
+                Current plan
               </span>
               <Badge
                 variant="secondary"
@@ -342,8 +293,8 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
             </h2>
             <p className="font-sans text-xs sm:text-sm text-muted-foreground dark:text-zinc-400 max-w-xl leading-relaxed">
               {isPro
-                ? "You have access to 25 workspace trips, 150 monthly AI assistant credits, structured itinerary proposals, rich travel story covers, and verified creator privileges."
-                : "You are currently on the Free Explorer tier with 10 trip workspace slots and 30 AI assistant credits per month."}
+                ? `Your Pro entitlement is active${usage.nextRenewalDate ? ` through ${usage.nextRenewalDate}` : ""}. You have 25 trip slots and 150 AI credits per billing cycle.`
+                : "Free Explorer includes 10 trip slots and 30 AI credits per billing cycle. Upgrade only when you need more capacity."}
             </p>
 
             {/* Quota metric chips */}
@@ -353,10 +304,15 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
                 <span className="font-semibold tabular-nums text-foreground dark:text-zinc-100">{usage.tripsUsed} / {usage.tripsQuota}</span>
                 <span className="text-muted-foreground dark:text-zinc-400 text-[11px]">Trips</span>
               </div>
+              {isPro && usage.subscription?.cancelAtPeriodEnd && (
+                <span className="text-[11px] font-medium text-warning">
+                  Cancels at the end of this paid period
+                </span>
+              )}
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xs bg-muted/50 dark:bg-[#121622] border border-border/70 dark:border-zinc-800 font-sans text-xs">
                 <Sparkles className="h-3.5 w-3.5 text-amber-500" />
                 <span className="font-semibold tabular-nums text-foreground dark:text-zinc-100">{usage.aiCreditsUsed} / {usage.aiCreditsQuota}</span>
-                <span className="text-muted-foreground dark:text-zinc-400 text-[11px]">Monthly AI Credits</span>
+                <span className="text-muted-foreground dark:text-zinc-400 text-[11px]">AI credits</span>
               </div>
             </div>
           </div>
@@ -369,6 +325,18 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
                 <ArrowUpRight className="h-3 w-3" />
               </Button>
             </Link>
+            {isPro && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleOpenCustomerPortal}
+                disabled={isOpeningPortal}
+                className="h-8 text-xs rounded-sm font-semibold gap-1.5 cursor-pointer border-border"
+              >
+                {isOpeningPortal ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ExternalLink className="h-3.5 w-3.5" />}
+                Manage billing
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -377,14 +345,14 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span className="font-sans text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500 block mb-0.5">
-              Tier Privileges
+            <span className="font-sans text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground block mb-0.5">
+              Plan comparison
             </span>
             <h2 className="font-sans text-base sm:text-lg font-semibold tracking-tight text-foreground dark:text-zinc-50">
-              Available Plans & Feature Privileges
+              Choose the capacity you need
             </h2>
             <p className="font-sans text-xs text-muted-foreground dark:text-zinc-400 mt-0.5">
-              Choose the plan that fits your travel frequency. Localized in {activeCurrencyCode} ({currencySymbol}).
+              Prices are shown in {activeCurrencyCode} ({currencySymbol}) and confirmed by Polar at checkout.
             </p>
           </div>
 
@@ -393,7 +361,8 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
             <button
               type="button"
               onClick={() => setBillingCycle("annual")}
-              className={`py-1.5 px-3 rounded-xs font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer border ${isAnnual
+              disabled={!billingAvailability.annual}
+              className={`py-1.5 px-3 rounded-xs font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer border disabled:cursor-not-allowed disabled:opacity-50 ${isAnnual
                   ? "bg-card dark:bg-[#0F131C] text-foreground dark:text-zinc-100 shadow-2xs border-border/80 dark:border-zinc-800"
                   : "border-transparent text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
                 }`}
@@ -407,7 +376,8 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
             <button
               type="button"
               onClick={() => setBillingCycle("monthly")}
-              className={`py-1.5 px-3 rounded-xs font-semibold text-xs transition-colors flex items-center justify-center cursor-pointer border ${!isAnnual
+              disabled={!billingAvailability.monthly}
+              className={`py-1.5 px-3 rounded-xs font-semibold text-xs transition-colors flex items-center justify-center cursor-pointer border disabled:cursor-not-allowed disabled:opacity-50 ${!isAnnual
                   ? "bg-card dark:bg-[#0F131C] text-foreground dark:text-zinc-100 shadow-2xs border-border/80 dark:border-zinc-800"
                   : "border-transparent text-muted-foreground dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200"
                 }`}
@@ -432,8 +402,8 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
 
             const subPriceText = isPlanPro
               ? isAnnual
-                ? `Total ${proAnnualTotalDisplay} / year • Save ${savingsDisplay} discount • Billed annually`
-                : `Total ${proMonthlyDisplay} / month • Renews 1st of every month • Cancel anytime`
+                ? `Total ${proAnnualTotalDisplay} / year • Save ${savingsDisplay} • Billed annually`
+                : `Total ${proMonthlyDisplay} / month • Billed monthly`
               : "Free forever workspace tier";
 
             return (
@@ -444,9 +414,14 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
                     : "border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-xs"
                   }`}
               >
-                {isPlanPro && (
+                {isPlanPro && !isCurrent && (
                   <div className="absolute -top-2.5 right-4 rounded-xs bg-primary px-2.5 py-0.5 font-sans text-[10px] font-semibold uppercase tracking-wider text-primary-foreground shadow-xs">
                     {plan.badge || "Recommended"}
+                  </div>
+                )}
+                {isCurrent && (
+                  <div className="absolute -top-2.5 right-4 rounded-xs border border-primary/25 bg-card px-2.5 py-0.5 font-sans text-[10px] font-semibold uppercase tracking-wider text-primary shadow-xs">
+                    Your plan
                   </div>
                 )}
 
@@ -528,7 +503,7 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
                   ) : isPlanPro ? (
                     <Button
                       onClick={handleStartPolarCheckout}
-                      disabled={isCheckingOut}
+                      disabled={isCheckingOut || !checkoutAvailable}
                       className="w-full h-8 text-xs rounded-sm font-sans font-semibold shadow-xs cursor-pointer gap-1.5 active:scale-[0.99] transition-all"
                     >
                       {isCheckingOut ? (
@@ -536,7 +511,7 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
                       ) : (
                         <Zap className="h-3.5 w-3.5 text-amber-300 fill-amber-300" />
                       )}
-                      Upgrade with Polar ({monthlyPrice}/mo)
+                      {checkoutAvailable ? `Upgrade with Polar (${monthlyPrice}/mo)` : "Billing option unavailable"}
                     </Button>
                   ) : (
                     <Button
@@ -559,36 +534,38 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-4 w-4 text-primary" />
           <h2 className="font-sans text-sm sm:text-base font-semibold tracking-tight text-foreground dark:text-zinc-100">
-            Subscription Details & Terms
+            Billing details
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card className="rounded-md border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 shadow-xs space-y-3">
-            <h3 className="font-sans text-xs font-semibold text-foreground dark:text-zinc-100">Billing Cycle & Renewal</h3>
+            <h3 className="font-sans text-xs font-semibold text-foreground dark:text-zinc-100">Billing cycle & renewal</h3>
             <div className="space-y-2 font-sans text-xs text-muted-foreground dark:text-zinc-400">
               <div className="flex items-center justify-between">
-                <span>Active Cycle Window</span>
+                <span>Current billing cycle</span>
                 <span className="font-semibold text-foreground dark:text-zinc-200 tabular-nums">{usage.billingCycleStart} – {usage.billingCycleEnd}</span>
               </div>
               <Separator className="border-border/60 dark:border-zinc-800" />
               <div className="flex items-center justify-between">
-                <span>Next Quota Renewal</span>
-                <span className="font-semibold text-foreground dark:text-zinc-200 tabular-nums">1st of next month</span>
+                <span>Next renewal</span>
+                <span className="font-semibold text-foreground dark:text-zinc-200 tabular-nums">
+                  {usage.nextRenewalDate || "Next billing cycle"}
+                </span>
               </div>
               <Separator className="border-border/60 dark:border-zinc-800" />
               <div className="flex items-center justify-between">
-                <span>Payment Processor</span>
+                <span>Billing provider</span>
                 <span className="text-foreground dark:text-zinc-200 font-medium flex items-center gap-1.5">
                   <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-                  Polar Checkout
+                  Polar
                 </span>
               </div>
             </div>
           </Card>
 
           <Card className="rounded-md border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] p-4 sm:p-5 shadow-xs space-y-3">
-            <h3 className="font-sans text-xs font-semibold text-foreground dark:text-zinc-100">Quick Navigation</h3>
+            <h3 className="font-sans text-xs font-semibold text-foreground dark:text-zinc-100">Related settings</h3>
             <div className="space-y-2 font-sans">
               <Link
                 href="/usage"
@@ -596,7 +573,7 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
               >
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-3.5 w-3.5 text-primary" />
-                  <span className="font-medium text-foreground dark:text-zinc-200">Check AI Credit & Trip Usage</span>
+                  <span className="font-medium text-foreground dark:text-zinc-200">Usage and limits</span>
                 </div>
                 <ChevronRight className="h-3.5 w-3.5 text-muted-foreground dark:text-zinc-400" />
               </Link>
@@ -606,7 +583,7 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
               >
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-3.5 w-3.5 text-primary" />
-                  <span className="font-medium text-foreground dark:text-zinc-200">Account & Currency Preferences</span>
+                  <span className="font-medium text-foreground dark:text-zinc-200">Account settings</span>
                 </div>
                 <ChevronRight className="h-3.5 w-3.5 text-muted-foreground dark:text-zinc-400" />
               </Link>
@@ -654,7 +631,7 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
                     )}
                   >
                     <MorphIcon
-                      icon={isOpen ? X : ChevronDown}
+                      icon={isOpen ? X : ChevronDownIcon}
                       size={15}
                       strokeWidth={2.2}
                       className="transition-colors duration-300"
@@ -673,78 +650,6 @@ export function AccountUsageView({ initialUsage, initialPricing }: AccountUsageV
         </Accordion>
       </div>
 
-      {/* ── Polar Checkout Simulation Modal ── */}
-      <Dialog open={simulationModalOpen} onOpenChange={setSimulationModalOpen}>
-        <DialogContent className="sm:max-w-md p-5 border border-border/80 dark:border-zinc-800 bg-card dark:bg-[#0F131C] rounded-md shadow-xl space-y-4">
-          <DialogHeader className="space-y-1.5">
-            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-xs bg-primary/10 border border-primary/20 font-sans text-[10px] font-semibold uppercase tracking-wider text-primary w-fit">
-              <ShieldCheck className="h-3 w-3" />
-              <span>Polar Checkout</span>
-            </div>
-            <DialogTitle className="font-sans text-base sm:text-lg font-semibold tracking-tight text-foreground dark:text-zinc-100">
-              Upgrade to Pro Wanderer
-            </DialogTitle>
-            <DialogDescription className="font-sans text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed">
-              Complete checkout via Polar.sh (Merchant of Record).
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="rounded-md border border-border/80 dark:border-zinc-800 bg-muted/30 dark:bg-[#121622] p-3.5 space-y-2 font-sans text-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground dark:text-zinc-400">Selected Plan:</span>
-              <span className="font-semibold text-foreground dark:text-zinc-200">Pro Wanderer ({isAnnual ? "Yearly" : "Monthly"})</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground dark:text-zinc-400">Rate:</span>
-              <span className="font-semibold tabular-nums text-foreground dark:text-zinc-100">
-                {isAnnual ? `${proAnnualMonthlyDisplay} / mo (${proAnnualTotalDisplay} / yr)` : `${proMonthlyDisplay} / mo`}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground dark:text-zinc-400">Currency:</span>
-              <span className="font-medium tabular-nums text-foreground dark:text-zinc-200">{activeCurrencyCode} ({currencySymbol})</span>
-            </div>
-            {isAnnual && (
-              <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400 font-medium">
-                <span>Annual Discount:</span>
-                <span className="tabular-nums">Save {savingsDisplay} (discount of ₹400)</span>
-              </div>
-            )}
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground dark:text-zinc-400">Billing Renewal:</span>
-              <span className="font-semibold text-foreground dark:text-zinc-200">Recurring on 1st of every month</span>
-            </div>
-            <Separator className="border-border/60 dark:border-zinc-800" />
-            <div className="text-[11px] text-muted-foreground dark:text-zinc-400 leading-relaxed pt-0.5">
-              {simulationMessage}
-            </div>
-          </div>
-
-          <DialogFooter className="flex flex-col sm:flex-row gap-2 pt-1 font-sans">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSimulationModalOpen(false)}
-              className="text-xs rounded-sm cursor-pointer border-border/80 dark:border-zinc-800"
-            >
-              Cancel
-            </Button>
-            <Button
-              size="sm"
-              onClick={handleConfirmSimulationUpgrade}
-              disabled={isCheckingOut}
-              className="font-semibold text-xs rounded-sm gap-1.5 cursor-pointer shadow-xs active:scale-[0.99] transition-all"
-            >
-              {isCheckingOut ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Zap className="h-3.5 w-3.5 text-amber-300 fill-amber-300" />
-              )}
-              Activate Pro Wanderer
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

@@ -69,7 +69,9 @@ function getTopBarWeatherIcon(code?: number, iconCode?: string) {
 }
 
 export function TopBarWeather() {
-  const [weather, setWeather] = useState<WeatherData | null>(() => getCachedWeather());
+  // Browser storage is unavailable during SSR. Reading it lazily here caused the
+  // server to render the fallback icon while the client rendered cached weather.
+  const [weather, setWeather] = useState<WeatherData | null>(null);
   const [isDetecting, startDetecting] = useTransition();
   const [open, setOpen] = useState(false);
 
@@ -80,8 +82,12 @@ export function TopBarWeather() {
       setWeather(updatedData);
     });
 
-    // If no fresh weather data in cache, silently resolve city via IP and fetch weather
-    if (!weather) {
+    const cachedWeather = getCachedWeather();
+
+    if (cachedWeather) {
+      setWeather(cachedWeather);
+    } else {
+      // If no fresh weather data is cached, silently resolve city via IP and fetch weather.
       startDetecting(async () => {
         try {
           const loc = await detectLocationViaIP();

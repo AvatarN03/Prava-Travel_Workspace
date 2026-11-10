@@ -65,8 +65,6 @@ export interface ConvertedPricingDTO {
 export interface PolarCheckoutResult {
   success: boolean;
   checkoutUrl?: string;
-  isSimulation?: boolean;
-  message?: string;
   error?: string;
 }
 

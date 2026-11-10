@@ -23,7 +23,7 @@ Polar integration relies on key server-only credentials managed securely in the 
 | Parameter Contract | Purpose & Security Scope |
 |---|---|
 | **Organization Token** | Server-only Polar Organization Access Token (OAT) used to initiate checkout sessions and customer portal sessions. |
-| **Product Identifier** | Recurring subscription plan identifier mapped to the Pro tier in the workspace database. |
+| **Product Identifier** | `POLAR_PRODUCT_ID` is the annual Pro product. Set `POLAR_MONTHLY_PRODUCT_ID` as well only when a distinct monthly Polar product has been configured. |
 | **Webhook Signature Secret** | Cryptographic secret used by the webhook endpoint to validate incoming `Standard Webhooks` headers. |
 | **Server Target** | Target environment indicator (`sandbox` or `production`) steering API communication. |
 
@@ -39,7 +39,7 @@ Polar integration relies on key server-only credentials managed securely in the 
    - **Pricing Model**: `Recurring / Subscription`
    - **Billing Interval**: Monthly or Annual (e.g. ₹200/mo or $5/mo)
 4. Save the product and copy its **Product ID** (e.g. `9a4c80fd-...`).
-5. Set `POLAR_PRODUCT_ID=<your_product_id>` in `.env`.
+5. Set `POLAR_PRODUCT_ID=<your_annual_product_id>` in `.env`. If you offer a separate monthly product, set `POLAR_MONTHLY_PRODUCT_ID=<your_monthly_product_id>` too; otherwise the monthly choice is unavailable in the workspace UI.
 
 ---
 

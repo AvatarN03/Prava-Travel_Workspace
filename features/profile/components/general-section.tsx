@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Bell,
   Compass,
   Globe,
   HardDrive,
@@ -58,9 +57,6 @@ interface GeneralSectionProps {
     travelPreferences: string;
   }) => void;
   isSavingAiPreferences: boolean;
-  emailNotifications: boolean;
-  onUpdateNotification: (checked: boolean) => void;
-  isUpdatingNotification: boolean;
 }
 
 export function GeneralSection({
@@ -76,9 +72,6 @@ export function GeneralSection({
   setTravelPreferences,
   onSaveAiPreferences,
   isSavingAiPreferences,
-  emailNotifications,
-  onUpdateNotification,
-  isUpdatingNotification,
 }: GeneralSectionProps) {
   const {
     isSyncing,
@@ -312,40 +305,6 @@ export function GeneralSection({
             Save AI Travel Preferences
           </Button>
         </CardFooter>
-      </Card>
-
-      {/* 3. Notifications & Trip Alerts */}
-      <Card className="rounded-sm border border-border dark:border-zinc-800 bg-card dark:bg-[#0F131C] shadow-xs">
-        <CardHeader className="p-4 pb-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-primary/10 border border-primary/20 text-primary">
-              <Bell className="h-3.5 w-3.5" />
-            </div>
-            <div>
-              <CardTitle className="font-sans text-sm font-semibold text-foreground dark:text-zinc-100">Notifications & Alerts</CardTitle>
-              <CardDescription className="font-sans text-xs text-muted-foreground dark:text-zinc-400">
-                Manage notifications for upcoming travel departures and task checklists.
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-
-        <CardContent className="p-4 pt-0 space-y-4 text-xs">
-          <div className="flex items-center justify-between py-1">
-            <div className="space-y-0.5 pr-4">
-              <p className="font-sans font-semibold text-foreground dark:text-zinc-200">Trip Departure & Milestone Reminders</p>
-              <p className="font-sans text-muted-foreground dark:text-zinc-400 text-[11px]">
-                Receive checklist alerts and countdown notices before your scheduled departure
-              </p>
-            </div>
-            <Switch
-              checked={emailNotifications}
-              onCheckedChange={onUpdateNotification}
-              className="cursor-pointer"
-              disabled={isUpdatingNotification}
-            />
-          </div>
-        </CardContent>
       </Card>
     </div>
   );

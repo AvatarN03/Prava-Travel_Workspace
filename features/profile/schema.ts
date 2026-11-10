@@ -13,7 +13,6 @@ export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export const updateGeneralPreferencesSchema = z.object({
   defaultCurrency: z.string().min(1).max(10).default("INR"),
   aiAutoPropose: z.boolean().default(true),
-  emailNotifications: z.boolean().default(true),
   offlineMode: z.boolean().default(false),
   travelPreferences: z.string().max(1000).optional().nullable(),
 });

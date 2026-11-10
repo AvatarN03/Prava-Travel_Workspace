@@ -28,12 +28,13 @@ export function isSubscriptionActive(subscription: UserSubscriptionDetails | nul
 }
 
 /**
- * Synchronizes and deduplicates subscription records for a user.
- * If multiple subscriptions exist in PostgreSQL for the same user, it identifies
- * the single canonical subscription (prioritizing active/trialing with latest period end or updatedAt),
- * and permanently prunes any stale/superseded duplicate records.
+ * Selects the subscription that currently represents a user's entitlement.
+ *
+ * Subscription rows are an audit trail: a user can have a prior cancelled
+ * subscription and a newer active subscription. Reading entitlement data must
+ * never delete those records, because Usage relies on them for cycle history.
  */
-export async function syncAndDeduplicateUserSubscriptions(
+async function getCanonicalUserSubscription(
   userId: string
 ): Promise<UserSubscriptionDetails | null> {
   if (!userId) return null;
@@ -55,7 +56,7 @@ export async function syncAndDeduplicateUserSubscriptions(
       return subscriptions[0];
     }
 
-    // Multiple records found for the user! Determine canonical subscription
+    // Multiple subscriptions are valid. Determine the current entitlement only.
     const now = new Date();
     const activeSubs = subscriptions.filter(
       (s) =>
@@ -80,37 +81,15 @@ export async function syncAndDeduplicateUserSubscriptions(
       )[0];
     }
 
-    // Prune all duplicate/superseded subscriptions for this user
-    const duplicateIds = subscriptions
-      .filter((s) => s.id !== canonical.id)
-      .map((s) => s.id);
-
-    if (duplicateIds.length > 0) {
-      try {
-        await client.subscription.deleteMany({
-          where: {
-            id: { in: duplicateIds },
-            userId,
-          },
-        });
-        console.info(
-          `[Subscription Deduplicator] Cleaned up ${duplicateIds.length} duplicate subscription(s) for user ${userId}. Retained canonical subscription: ${canonical.polarSubscriptionId} (Status: ${canonical.status})`
-        );
-      } catch (delError) {
-        console.warn("[Subscription Deduplicator] Failed to prune duplicate subscriptions:", delError);
-      }
-    }
-
     return canonical;
   } catch (error) {
-    console.error("Error in syncAndDeduplicateUserSubscriptions:", error);
+    console.error("Error selecting a canonical user subscription:", error);
     return null;
   }
 }
 
 /**
- * Retrieve the latest database-backed subscription for an authenticated Prava user.
- * Automatically runs self-healing deduplication if multiple entries exist.
+ * Retrieve the database-backed subscription that currently controls entitlement.
  */
 export async function getUserSubscription(
   userId: string
@@ -118,7 +97,7 @@ export async function getUserSubscription(
   if (!userId) return null;
 
   try {
-    const canonical = await syncAndDeduplicateUserSubscriptions(userId);
+    const canonical = await getCanonicalUserSubscription(userId);
     return canonical;
   } catch (error) {
     console.error("Error retrieving user subscription from database:", error);
