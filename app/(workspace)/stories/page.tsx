@@ -19,9 +19,6 @@ export default async function StoriesPage() {
   const res = await getAllPublishedStories();
   const stories = res.success && res.stories ? res.stories : [];
 
-  // Extract all unique tags
-  const allTags = Array.from(new Set(stories.flatMap((s) => s.tags)));
-
   return (
     <div className="max-w-7xl mx-auto space-y-8 pb-12">
       {/* Top Banner */}
@@ -54,23 +51,6 @@ export default async function StoriesPage() {
           </Link>
         </div>
       </div>
-
-      {/* Tags Filter Strip */}
-      {allTags.length > 0 && (
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-          <span className="text-xs font-semibold text-muted-foreground shrink-0 mr-1">
-            Explore Topics:
-          </span>
-          {allTags.map((tag) => (
-            <span
-              key={tag}
-              className="inline-flex items-center px-2.5 py-1 rounded-full bg-muted/60 hover:bg-muted text-xs font-medium text-foreground cursor-pointer transition-colors shrink-0"
-            >
-              #{tag}
-            </span>
-          ))}
-        </div>
-      )}
 
       {/* Stories Grid */}
       {stories.length === 0 ? (

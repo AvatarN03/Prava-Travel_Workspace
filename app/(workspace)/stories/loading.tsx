@@ -15,17 +15,6 @@ export default function StoriesLoading() {
         </div>
       </div>
 
-      {/* Tags Filter Strip */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-        <div className="h-4 w-24 bg-muted/60 rounded-xs shrink-0 mr-1" />
-        {["Japan", "Europe", "Solo Travel", "Food Guides", "Budget"].map((tag) => (
-          <div
-            key={tag}
-            className="h-6 px-3 bg-muted/40 border border-border/60 rounded-full w-20 shrink-0"
-          />
-        ))}
-      </div>
-
       {/* 3-Column Stories Grid Matching StoryCard */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {Array.from({ length: 6 }).map((_, i) => (

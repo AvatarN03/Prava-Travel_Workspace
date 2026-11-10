@@ -4,27 +4,16 @@ import { notFound } from "next/navigation";
 
 import {
   ArrowLeft,
-  Camera,
   Clock,
   Compass,
-  Globe,
   MapPin,
-  Sparkles,
-  User,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { MarkdownRenderer, StoryHeaderActions } from "@/features/blog";
 import { StoryLikeButton } from "@/features/blog/components/story-like-button";
 import { StoryPhotoGallery } from "@/features/blog/components/story-photo-gallery";
+import { StoryTagList } from "@/features/blog/components/story-tag-list";
 import { CloneTripButton } from "@/features/templates";
 
 import { getPublishedStory } from "@/features/blog";
@@ -84,8 +73,10 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
     .toUpperCase()
     .substring(0, 2);
 
-  const wordCount = story.content.split(/\s+/).filter(Boolean).length;
-  const readTimeMin = Math.max(1, Math.ceil(wordCount / 200));
+  const readTimeMin = Math.max(
+    1,
+    Math.ceil(story.content.split(/\s+/).filter(Boolean).length / 200)
+  );
 
   const publishedDate = story.publishedAt
     ? new Date(story.publishedAt).toLocaleDateString("en-US", {
@@ -96,7 +87,6 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
     : "Draft";
 
   const imagesList = story.images || [];
-
   return (
     <div className="space-y-8 max-w-7xl mx-auto w-full py-2 pb-20 selection:bg-primary/20 selection:text-primary">
       {/* Top Navigation & Action Bar */}
@@ -105,7 +95,8 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
           href="/stories"
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >
-          <ArrowLeft className="w-3.5 h-3.5" /> Back to Stories
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Back to Stories</span>
         </Link>
 
         <div className="flex items-center gap-2">
@@ -120,17 +111,8 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
 
       {/* Hero Story Header Banner */}
       <header className="space-y-4">
-        <div className="flex items-center gap-2 flex-wrap">
-          {story.tags.map((tag) => (
-            <Badge
-              key={tag}
-              variant="secondary"
-              className="text-xs px-2.5 py-0.5 border-border"
-            >
-              #{tag}
-            </Badge>
-          ))}
-          <div className="flex items-center gap-2 text-xs text-muted-foreground ml-auto">
+        <div className="flex items-center">
+          <div className="ml-auto flex items-center gap-2 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               <Clock className="w-3.5 h-3.5 text-primary" /> {readTimeMin} min read
             </span>
@@ -148,6 +130,10 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
             {story.excerpt}
           </p>
         )}
+
+        {story.tags.length > 0 && (
+          <StoryTagList tags={story.tags} />
+        )}
       </header>
 
       {/* Hero Cover Image (Wide 7XL Aspect) */}
@@ -162,10 +148,8 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
         </div>
       )}
 
-      {/* 2-Column Responsive Layout: Left (Article & Multi-Photos Gallery) | Right (Author & Linked Trip Companion) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Main Article Content Column (Left 8 Cols) */}
-        <div className="lg:col-span-8 space-y-8 min-w-0">
+      {/* Story Content */}
+      <div className="min-w-0 space-y-8">
           {/* Story Body Content */}
           <article className="prose prose-neutral dark:prose-invert max-w-none text-base sm:text-[15px] leading-relaxed dark:text-zinc-200">
             <MarkdownRenderer content={story.content} />
@@ -209,274 +193,48 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
             </div>
           )}
 
-          {/* Author Bio & Engagement Card */}
-          <div className="p-6 rounded-xl border border-border bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 shadow-xs">
-            <div className="flex items-start gap-4">
-              {authorUsername ? (
-                <Link
-                  href={`/u/${authorUsername}`}
-                  className="shrink-0"
-                  title={`View ${authorName}'s profile`}
-                >
-                  <Avatar className="h-12 w-12 border-2 border-border hover:ring-2 hover:ring-primary transition-all">
-                    {story.profile?.avatarUrl && (
-                      <AvatarImage src={story.profile.avatarUrl} alt={authorName} />
-                    )}
-                    <AvatarFallback className="bg-primary/10 text-primary font-bold text-sm">
-                      {authorInitials}
-                    </AvatarFallback>
-                  </Avatar>
-                </Link>
-              ) : (
+          {/* Author Identity */}
+          <div className="rounded-xl border border-border bg-card p-5 shadow-xs">
+            {authorUsername ? (
+              <Link
+                href={`/u/${authorUsername}`}
+                className="group flex items-center gap-4 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                title={`View ${authorName}'s profile`}
+              >
+                <Avatar className="h-12 w-12 border-2 border-border transition-all group-hover:ring-2 group-hover:ring-primary">
+                  {story.profile?.avatarUrl && (
+                    <AvatarImage src={story.profile.avatarUrl} alt={authorName} />
+                  )}
+                  <AvatarFallback className="bg-primary/10 text-sm font-bold text-primary">
+                    {authorInitials}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="min-w-0">
+                  <span className="block truncate text-sm font-bold text-foreground transition-colors group-hover:text-primary">
+                    {authorName}
+                  </span>
+                  <span className="block truncate font-mono text-xs text-muted-foreground transition-colors group-hover:text-primary">
+                    @{authorUsername}
+                  </span>
+                </span>
+              </Link>
+            ) : (
+              <div className="flex items-center gap-4">
                 <Avatar className="h-12 w-12 border-2 border-border">
                   {story.profile?.avatarUrl && (
                     <AvatarImage src={story.profile.avatarUrl} alt={authorName} />
                   )}
-                  <AvatarFallback className="bg-primary/10 text-primary font-bold text-sm">
+                  <AvatarFallback className="bg-primary/10 text-sm font-bold text-primary">
                     {authorInitials}
                   </AvatarFallback>
                 </Avatar>
-              )}
-
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs text-muted-foreground">Written by</span>
-                  {authorUsername ? (
-                    <Link
-                      href={`/u/${authorUsername}`}
-                      className="text-sm font-bold text-foreground hover:text-primary transition-colors cursor-pointer"
-                      title={`View ${authorName}'s profile`}
-                    >
-                      {authorName}
-                    </Link>
-                  ) : (
-                    <span className="text-sm font-bold text-foreground">
-                      {authorName}
-                    </span>
-                  )}
-                  {authorUsername && (
-                    <Link
-                      href={`/u/${authorUsername}`}
-                      className="text-xs text-muted-foreground hover:text-primary font-mono transition-colors"
-                      title={`View @${authorUsername}'s profile`}
-                    >
-                      @{authorUsername}
-                    </Link>
-                  )}
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed max-w-md">
-                  {story.profile?.bio || "Traveler and creator on Prava. Exploring destinations and creating actionable itinerary plans."}
-                </p>
-                {authorUsername && (
-                  <div className="pt-1.5">
-                    <Link href={`/u/${authorUsername}`}>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-xs h-7 gap-1.5 cursor-pointer border-border hover:bg-muted"
-                      >
-                        <User className="h-3 w-3 text-primary" /> View Creator Profile & Trips
-                      </Button>
-                    </Link>
-                  </div>
-                )}
+                <span className="text-sm font-bold text-foreground">{authorName}</span>
               </div>
-            </div>
+            )}
 
-            <div className="shrink-0 flex sm:flex-col items-center gap-2 pt-3 sm:pt-0 border-t sm:border-t-0 sm:border-l border-border sm:pl-5 w-full sm:w-auto justify-between sm:justify-center">
-              <span className="text-[11px] text-muted-foreground font-medium">Liked this story?</span>
-              <StoryLikeButton
-                storyId={story.id}
-                initialUpvotes={story.upvotes ?? 0}
-                initialHasLiked={(story as unknown as { hasLiked?: boolean }).hasLiked ?? false}
-                size="default"
-              />
-            </div>
           </div>
         </div>
 
-        {/* Right Sticky Companion Sidebar (Right 4 Cols - Desktop) */}
-        <aside className="lg:col-span-4 space-y-5 lg:sticky lg:top-20 hidden lg:block">
-          {/* Author Card */}
-          <Card className="border border-border bg-card shadow-2xs rounded-md">
-            <CardHeader className="pb-3 border-b border-border/60">
-              <CardTitle className="text-xs uppercase tracking-wider font-semibold text-muted-foreground flex items-center gap-1.5">
-                <User className="h-3.5 w-3.5 text-primary" /> Creator
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3.5 pt-4">
-              <div className="flex items-center gap-3">
-                {authorUsername ? (
-                  <Link href={`/u/${authorUsername}`} className="shrink-0" title={`View ${authorName}'s profile`}>
-                    <Avatar className="h-11 w-11 border border-border hover:ring-2 hover:ring-primary transition-all">
-                      {story.profile?.avatarUrl && (
-                        <AvatarImage src={story.profile.avatarUrl} alt={authorName} />
-                      )}
-                      <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
-                        {authorInitials}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Link>
-                ) : (
-                  <Avatar className="h-11 w-11 border border-border">
-                    {story.profile?.avatarUrl && (
-                      <AvatarImage src={story.profile.avatarUrl} alt={authorName} />
-                    )}
-                    <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
-                      {authorInitials}
-                    </AvatarFallback>
-                  </Avatar>
-                )}
-
-                <div className="min-w-0">
-                  {authorUsername ? (
-                    <Link
-                      href={`/u/${authorUsername}`}
-                      className="text-sm font-bold text-foreground hover:text-primary transition-colors block truncate"
-                      title={`View ${authorName}'s profile`}
-                    >
-                      {authorName}
-                    </Link>
-                  ) : (
-                    <h4 className="text-sm font-bold text-foreground truncate">
-                      {authorName}
-                    </h4>
-                  )}
-                  {authorUsername && (
-                    <Link
-                      href={`/u/${authorUsername}`}
-                      className="text-xs text-muted-foreground hover:text-primary font-mono transition-colors block"
-                      title={`View @${authorUsername}'s profile`}
-                    >
-                      @{authorUsername}
-                    </Link>
-                  )}
-                </div>
-              </div>
-
-              {story.profile?.bio && (
-                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
-                  {story.profile.bio}
-                </p>
-              )}
-
-              {authorUsername && (
-                <Link href={`/u/${authorUsername}`} className="block">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full text-xs h-8 gap-1.5 cursor-pointer border-border"
-                  >
-                    <Globe className="h-3.5 w-3.5 text-primary" /> Visit Creator Profile
-                  </Button>
-                </Link>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Linked Itinerary Card */}
-          {story.linkedTrip && (
-            <Card className="border border-border bg-card shadow-2xs rounded-md">
-              <CardHeader className="pb-3 border-b border-border/60">
-                <CardTitle className="text-xs uppercase tracking-wider font-semibold text-muted-foreground flex items-center gap-1.5">
-                  <Compass className="h-3.5 w-3.5 text-primary" /> Attached Blueprint
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 pt-4">
-                <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-foreground">
-                    {story.linkedTrip.title}
-                  </h4>
-                  {story.linkedTrip.destination && (
-                    <p className="text-xs text-muted-foreground flex items-center gap-1">
-                      <MapPin className="h-3 w-3 text-primary" /> {story.linkedTrip.destination}
-                    </p>
-                  )}
-                </div>
-
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Clone all activities, stays, checklists, and notes into your workspace with 1 click.
-                </p>
-
-                <div className="pt-1">
-                  <CloneTripButton
-                    tripId={story.linkedTrip.id}
-                    tripTitle={story.linkedTrip.title}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Photo Gallery Quick Preview (If Story Has Multiple Photos) */}
-          {imagesList.length > 0 && (
-            <Card className="border border-border bg-card shadow-2xs rounded-md">
-              <CardHeader className="pb-3 border-b border-border/60 flex flex-row items-center justify-between">
-                <CardTitle className="text-xs uppercase tracking-wider font-semibold text-muted-foreground flex items-center gap-1.5">
-                  <Camera className="h-3.5 w-3.5 text-primary" /> Gallery
-                </CardTitle>
-                <Badge variant="secondary" className="text-[10px]">
-                  {imagesList.length} {imagesList.length === 1 ? "photo" : "photos"}
-                </Badge>
-              </CardHeader>
-              <CardContent className="pt-3">
-                <div className="grid grid-cols-3 gap-2">
-                  {imagesList.slice(0, 6).map((imgUrl, i) => (
-                    <div
-                      key={imgUrl + i}
-                      className="relative aspect-square rounded-md overflow-hidden border border-border bg-muted/30"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={imgUrl}
-                        alt="Photo preview"
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-                {imagesList.length > 6 && (
-                  <p className="text-[10px] text-muted-foreground pt-2 text-center">
-                    +{imagesList.length - 6} more in article gallery below
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Quick Reading Stats */}
-          <Card className="border border-border bg-card shadow-2xs rounded-md">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs uppercase tracking-wider font-semibold text-muted-foreground flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5 text-primary" /> Story Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 text-xs pt-2">
-              <div className="flex items-center justify-between py-1 border-b border-border/60">
-                <span className="text-muted-foreground">Word Count</span>
-                <span className="font-semibold text-foreground">{wordCount} words</span>
-              </div>
-              <div className="flex items-center justify-between py-1 border-b border-border/60">
-                <span className="text-muted-foreground">Reading Time</span>
-                <span className="font-semibold text-foreground">{readTimeMin} min</span>
-              </div>
-              <div className="flex items-center justify-between py-1 border-b border-border/60">
-                <span className="text-muted-foreground">Published</span>
-                <span className="font-semibold text-foreground">{publishedDate}</span>
-              </div>
-              <div className="pt-2 flex items-center justify-between">
-                <span className="text-muted-foreground">Upvotes</span>
-                <StoryLikeButton
-                  storyId={story.id}
-                  initialUpvotes={story.upvotes ?? 0}
-                  initialHasLiked={(story as unknown as { hasLiked?: boolean }).hasLiked ?? false}
-                  variant="pill"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </aside>
-      </div>
     </div>
   );
 }

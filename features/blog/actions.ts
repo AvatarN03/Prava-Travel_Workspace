@@ -397,7 +397,9 @@ export async function getAllPublishedStories() {
         content: post.content,
         coverImageUrl: post.coverImageUrl,
         images: post.images || [],
-        tags: post.tags,
+        // Discovery cards intentionally receive a compact tag preview only.
+        // Full tag lists remain available on the individual story route and editor.
+        tags: post.tags.slice(0, 3),
         status: post.status,
         upvotes: post.upvotes ?? 0,
         hasLiked,
