@@ -1,20 +1,63 @@
 "use server";
 
 import { revalidatePath, unstable_cache } from "next/cache";
+import type { Prisma } from "@prisma/client";
 
 import { callOpenRouterFree } from "@/lib/ai";
 import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 
-import type { TemplateTripItem } from "./types";
+import type {
+  DurationFilter,
+  InclusionFilter,
+  SortOption,
+  TemplateTripItem,
+} from "./types";
 
 const getCachedPublicTemplateRecords = unstable_cache(
-  () =>
-    db.trip.findMany({
-      where: {
-        OR: [{ isPublic: true }, { isTemplate: true }],
-      },
+  async (searchQuery?: string, inclusionFilter?: InclusionFilter) => {
+    const filters: Prisma.TripWhereInput[] = [
+      { OR: [{ isPublic: true }, { isTemplate: true }] },
+    ];
+
+    if (searchQuery) {
+      filters.push({
+        OR: [
+          { title: { contains: searchQuery, mode: "insensitive" } },
+          { destination: { contains: searchQuery, mode: "insensitive" } },
+          { description: { contains: searchQuery, mode: "insensitive" } },
+          {
+            profile: {
+              is: {
+                OR: [
+                  { fullName: { contains: searchQuery, mode: "insensitive" } },
+                  { username: { contains: searchQuery, mode: "insensitive" } },
+                ],
+              },
+            },
+          },
+          { itinerary: { some: { title: { contains: searchQuery, mode: "insensitive" } } } },
+        ],
+      });
+    }
+
+    if (inclusionFilter === "HAS_STAYS") filters.push({ accommodations: { some: {} } });
+    if (inclusionFilter === "HAS_EXPENSES") {
+      filters.push({
+        OR: [
+          { expenses: { some: { amount: { gt: 0 } } } },
+          { accommodations: { some: { cost: { gt: 0 } } } },
+        ],
+      });
+    }
+    if (inclusionFilter === "HAS_CHECKLIST") filters.push({ checklistItems: { some: {} } });
+    if (inclusionFilter === "HAS_STORY") {
+      filters.push({ linkedBlogPosts: { some: { status: "PUBLISHED" } } });
+    }
+
+    return db.trip.findMany({
+      where: { AND: filters },
       include: {
         profile: {
           select: {
@@ -39,24 +82,49 @@ const getCachedPublicTemplateRecords = unstable_cache(
         },
       },
       orderBy: { createdAt: "desc" },
-    }),
+    });
+  },
   ["public-trip-templates"],
-  { tags: ["templates-feed"], revalidate: 120 }
+  { tags: ["templates-feed"], revalidate: 60 }
 );
+
+export interface TemplateDiscoveryFilters {
+  searchQuery?: string;
+  durationFilter?: DurationFilter;
+  inclusionFilter?: InclusionFilter;
+  sortBy?: SortOption;
+}
+
+const durationFilters: DurationFilter[] = ["ALL", "WEEKEND", "SHORT", "EXTENDED", "LONG"];
+const inclusionFilters: InclusionFilter[] = ["ALL", "HAS_STAYS", "HAS_EXPENSES", "HAS_CHECKLIST", "HAS_STORY"];
+const sortOptions: SortOption[] = ["NEWEST", "MOST_ACTIONABLE", "DURATION"];
 
 /**
  * Fetch all authentic public trips and templates from PostgreSQL.
  * Computes live expense totals, durations, inclusions, and linked travel stories.
  */
-export async function getPublicTripTemplates(): Promise<TemplateTripItem[]> {
+export async function getPublicTripTemplates(
+  filters: TemplateDiscoveryFilters = {}
+): Promise<TemplateTripItem[]> {
   try {
+    const searchQuery = filters.searchQuery?.trim() || undefined;
+    const durationFilter = durationFilters.includes(filters.durationFilter as DurationFilter)
+      ? filters.durationFilter!
+      : "ALL";
+    const inclusionFilter = inclusionFilters.includes(filters.inclusionFilter as InclusionFilter)
+      ? filters.inclusionFilter!
+      : "ALL";
+    const cachedInclusionFilter = inclusionFilter === "ALL" ? undefined : inclusionFilter;
+    const sortBy = sortOptions.includes(filters.sortBy as SortOption)
+      ? filters.sortBy!
+      : "NEWEST";
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     const [publicDbTrips, userTrips] = await Promise.all([
-      getCachedPublicTemplateRecords(),
+      getCachedPublicTemplateRecords(searchQuery, cachedInclusionFilter),
       user
         ? db.trip.findMany({
             where: { profileId: user.id },
@@ -177,7 +245,24 @@ export async function getPublicTripTemplates(): Promise<TemplateTripItem[]> {
       };
     });
 
-    return mappedTemplates;
+    const durationFilteredTemplates = mappedTemplates.filter((template) => {
+      if (durationFilter === "WEEKEND") return template.durationDays <= 3;
+      if (durationFilter === "SHORT") return template.durationDays >= 4 && template.durationDays <= 7;
+      if (durationFilter === "EXTENDED") return template.durationDays >= 8 && template.durationDays <= 14;
+      if (durationFilter === "LONG") return template.durationDays >= 15;
+      return true;
+    });
+
+    return durationFilteredTemplates.sort((a, b) => {
+      if (sortBy === "MOST_ACTIONABLE") {
+        return (
+          b.metrics.activityCount + b.metrics.checklistCount -
+          (a.metrics.activityCount + a.metrics.checklistCount)
+        );
+      }
+      if (sortBy === "DURATION") return a.durationDays - b.durationDays;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
   } catch (error) {
     console.error("Error fetching public trip templates:", error);
     return [];

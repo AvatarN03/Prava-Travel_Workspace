@@ -5,14 +5,12 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
 import {
-  BookOpen,
   Calendar,
   Check,
   CheckSquare,
   Clock,
   Compass,
   FileText,
-  Globe,
   Loader2,
   MapPin,
   Sparkles,
@@ -24,12 +22,13 @@ import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import { cloneTripTemplate } from "../actions";
 
@@ -78,107 +77,59 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent" />
 
-        {/* Top-Left Badges: Duration & Destination */}
-        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
-          <Badge className="bg-background/90 text-foreground text-[10px] font-bold uppercase tracking-wider backdrop-blur-xs border border-border shadow-xs">
-            <Clock className="w-3 h-3 mr-1 text-primary" />
-            {trip.durationDays} {trip.durationDays === 1 ? "Day" : "Days"}
-          </Badge>
-
-          {trip.destination && (
-            <span className="inline-flex items-center gap-1 rounded-sm bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-xs">
-              <MapPin className="w-3 h-3 text-primary" /> {trip.destination}
-            </span>
-          )}
-        </div>
-
-        {/* Top-Right: Your Template or Budget Badge */}
+        {/* Top-Right Ownership Marker */}
         <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
           {trip.isOwn && (
             <Badge className="bg-primary text-primary-foreground border-0 text-[10px] font-bold uppercase tracking-wider shadow-xs gap-1">
               <User className="w-3 h-3" /> Yours
             </Badge>
           )}
-
-          {trip.metrics.expenseTotal > 0 && (
-            <span className="inline-flex items-center gap-1 rounded-sm bg-emerald-950/80 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold text-emerald-300 backdrop-blur-xs">
-              <Wallet className="w-3 h-3" />
-              ~{trip.metrics.expenseTotal.toLocaleString()}{" "}
-              {trip.metrics.currency}
-            </span>
-          )}
         </div>
 
         {/* Bottom Banner Title Overlay */}
         <div className="absolute bottom-2.5 left-3 right-3 text-white">
-          <h3
-            onClick={() => onPreview(trip)}
-            className="text-base font-bold leading-snug line-clamp-1 drop-shadow-xs group-hover:text-primary transition-colors cursor-pointer"
-          >
-            {trip.title}
-          </h3>
+          <TooltipProvider delayDuration={250}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={() => onPreview(trip)}
+                  className="block w-full rounded-sm text-left text-base font-bold leading-snug line-clamp-2 drop-shadow-xs transition-colors group-hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  {trip.title}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs whitespace-normal break-words text-xs leading-relaxed sm:max-w-sm">
+                {trip.title}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
 
       {/* Card Content & Details */}
-      <CardHeader className="p-4 pb-2 space-y-2.5">
-        {/* Creator Attribution */}
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <Avatar className="h-7 w-7 border border-border shrink-0">
-              {trip.author.avatarUrl ? (
-                <AvatarImage src={trip.author.avatarUrl} alt={trip.author.fullName || ""} />
-              ) : null}
-              <AvatarFallback className="text-[10px] font-bold bg-muted text-foreground">
-                {authorInitials}
-              </AvatarFallback>
-            </Avatar>
-
-            <div className="flex flex-col min-w-0 leading-tight">
-              {trip.author.username && trip.author.isPublic ? (
-                <Link
-                  href={`/u/${trip.author.username}`}
-                  className="text-xs font-semibold text-foreground hover:text-primary transition-colors truncate"
-                >
-                  {trip.author.fullName || trip.author.username}
-                </Link>
-              ) : (
-                <span className="text-xs font-semibold text-foreground truncate">
-                  {trip.author.fullName || trip.author.username || "Prava Traveler"}
-                </span>
-              )}
-              {trip.author.username && (
-                <span className="text-[10px] text-muted-foreground font-mono truncate">
-                  @{trip.author.username}
-                </span>
-              )}
-            </div>
+      <CardContent className="flex flex-1 flex-col gap-3 p-4 pb-3">
+        <div className="flex items-start justify-between gap-4 text-xs text-muted-foreground">
+          <div className="min-w-0 space-y-1">
+            {trip.destination && (
+              <span className="flex min-w-0 items-center gap-1.5 font-medium text-foreground">
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />
+                <span className="truncate">{trip.destination}</span>
+              </span>
+            )}
+            {trip.metrics.expenseTotal > 0 && (
+              <span className="flex items-center gap-1 font-semibold text-primary">
+                <Wallet className="h-3 w-3" />
+                ~{trip.metrics.expenseTotal.toLocaleString()} {trip.metrics.currency}
+              </span>
+            )}
           </div>
-
-          {trip.isOwn ? (
-            <Badge className="bg-primary/15 text-primary border border-primary/30 text-[9px] px-1.5 py-0 gap-1 shrink-0 font-bold">
-              <User className="h-2.5 w-2.5 text-primary" /> Your Template
-            </Badge>
-          ) : trip.author.isPublic ? (
-            <Badge variant="secondary" className="text-[9px] px-1 py-0 gap-0.5 shrink-0">
-              <Globe className="h-2.5 w-2.5 text-primary" /> Creator
-            </Badge>
-          ) : null}
+          <span className="flex shrink-0 items-center gap-1 pt-0.5">
+            <Clock className="h-3 w-3 text-primary" />
+            {trip.durationDays} {trip.durationDays === 1 ? "day" : "days"}
+          </span>
         </div>
 
-        {/* Description */}
-        {trip.description ? (
-          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-            {trip.description}
-          </p>
-        ) : (
-          <p className="text-xs text-muted-foreground/60 italic">
-            Authentic community travel blueprint ready to clone.
-          </p>
-        )}
-      </CardHeader>
-
-      <CardContent className="p-4 pt-0 pb-3 space-y-3 flex-1 flex flex-col justify-between">
         {/* "What's Included" Asset Strip */}
         <div className="grid grid-cols-2 gap-1.5 pt-1">
           <div className="dashboard-surface-subtle flex items-center gap-1.5 px-2 py-1 text-[11px] text-foreground">
@@ -214,23 +165,28 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
           )}
         </div>
 
-        {/* Cross-Link: Connected Travel Story */}
-        {trip.linkedStory && (
-          <Link
-            href={`/stories/${trip.linkedStory.slug}`}
-            className="flex items-center justify-between gap-2 p-2 rounded-sm border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors text-[11px] text-primary"
-          >
-            <div className="flex items-center gap-1.5 min-w-0">
-              <BookOpen className="h-3.5 w-3.5 shrink-0" />
-              <span className="font-semibold truncate">
-                Story: {trip.linkedStory.title}
-              </span>
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider shrink-0">
-              Read →
+        <div className="mt-auto flex min-w-0 items-center gap-2.5 border-t border-border/60 pt-3">
+          <Avatar className="h-7 w-7 shrink-0 border border-border">
+            {trip.author.avatarUrl ? (
+              <AvatarImage src={trip.author.avatarUrl} alt={trip.author.fullName || ""} />
+            ) : null}
+            <AvatarFallback className="bg-muted text-[10px] font-bold text-foreground">
+              {authorInitials}
+            </AvatarFallback>
+          </Avatar>
+          {trip.author.username && trip.author.isPublic ? (
+            <Link
+              href={`/u/${trip.author.username}`}
+              className="min-w-0 truncate text-xs font-semibold text-foreground transition-colors hover:text-primary"
+            >
+              {trip.author.fullName || trip.author.username}
+            </Link>
+          ) : (
+            <span className="min-w-0 truncate text-xs font-semibold text-foreground">
+              {trip.author.fullName || trip.author.username || "Prava Traveler"}
             </span>
-          </Link>
-        )}
+          )}
+        </div>
       </CardContent>
 
       {/* Card Footer Actions */}
@@ -239,46 +195,39 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
           variant="outline"
           size="sm"
           onClick={() => onPreview(trip)}
-          className="flex-1 h-8 text-xs cursor-pointer border-border hover:border-primary/50"
+          className={`h-8 text-xs cursor-pointer border-border hover:border-primary/50 ${
+            trip.isOwn ? "w-full" : "flex-1"
+          }`}
         >
           Preview Itinerary
         </Button>
 
-        {trip.isOwn ? (
-          <Button
-            size="sm"
-            disabled={true}
-            variant="secondary"
-            className="flex-1 h-8 text-xs gap-1.5 opacity-90 cursor-not-allowed bg-primary/10 text-primary border border-primary/25 font-semibold"
-          >
-            <User className="h-3.5 w-3.5 text-primary" />
-            <span>Your Template</span>
-          </Button>
-        ) : trip.isCloned ? (
-          <Button
-            size="sm"
-            disabled={true}
-            variant="secondary"
-            className="flex-1 h-8 text-xs gap-1.5 opacity-90 cursor-not-allowed bg-muted text-muted-foreground border border-border"
-          >
-            <Check className="h-3.5 w-3.5 text-emerald-500" />
-            <span>Already Cloned</span>
-          </Button>
-        ) : (
-          <Button
-            size="sm"
-            onClick={handleQuickClone}
-            disabled={isCloning}
-            className="dashboard-btn-primary flex-1 h-8 text-xs gap-1.5 shadow-xs"
-          >
-            {isCloning ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <Sparkles className="h-3.5 w-3.5" />
-            )}
-            <span>Clone Plan</span>
-          </Button>
-        )}
+        {!trip.isOwn &&
+          (trip.isCloned ? (
+            <Button
+              size="sm"
+              disabled={true}
+              variant="secondary"
+              className="flex-1 h-8 text-xs gap-1.5 opacity-90 cursor-not-allowed bg-muted text-muted-foreground border border-border"
+            >
+              <Check className="h-3.5 w-3.5 text-emerald-500" />
+              <span>Already Cloned</span>
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              onClick={handleQuickClone}
+              disabled={isCloning}
+              className="dashboard-btn-primary flex-1 h-8 text-xs gap-1.5 shadow-xs"
+            >
+              {isCloning ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Sparkles className="h-3.5 w-3.5" />
+              )}
+              <span>Clone Plan</span>
+            </Button>
+          ))}
       </CardFooter>
     </Card>
   );

@@ -1,16 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 
 import {
   ArrowUpDown,
   Clock,
   Compass,
   Filter,
+  LoaderCircle,
   Plus,
   Search,
-  Sparkles,
   X,
 } from "lucide-react";
 
@@ -23,6 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+import { getPublicTripTemplates } from "../actions";
 import { TemplateCard } from "./template-card";
 import { TemplatePreviewDialog } from "./template-preview-dialog";
 
@@ -64,8 +66,14 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
   const [durationFilter, setDurationFilter] = useState<DurationFilter>("ALL");
   const [inclusionFilter, setInclusionFilter] = useState<InclusionFilter>("ALL");
   const [sortBy, setSortBy] = useState<SortOption>("NEWEST");
+  const [trips, setTrips] = useState(initialTrips);
   const [previewTrip, setPreviewTrip] = useState<TemplateTripItem | null>(null);
   const [clonedIds, setClonedIds] = useState<Set<string>>(new Set());
+  const [isFetching, startFetching] = useTransition();
+  const [isSearchPending, setIsSearchPending] = useState(false);
+  const latestRequestId = useRef(0);
+  const previousSearchQuery = useRef(searchQuery);
+  const isInitialFetch = useRef(true);
 
   const handleCloned = (tripId: string) => {
     setClonedIds((prev) => new Set(prev).add(tripId));
@@ -84,68 +92,41 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
     setSortBy("NEWEST");
   };
 
-  const filteredTrips = useMemo(() => {
-    let result = initialTrips.map((t) => ({
-      ...t,
-      isCloned: t.isCloned || clonedIds.has(t.id),
-    }));
+  const requestTemplates = useCallback(() => {
+    const requestId = ++latestRequestId.current;
 
-    // 1. Destination & Keyword Search Filter
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
-      result = result.filter((trip) => {
-        return (
-          trip.title.toLowerCase().includes(q) ||
-          (trip.destination && trip.destination.toLowerCase().includes(q)) ||
-          (trip.description && trip.description.toLowerCase().includes(q)) ||
-          (trip.author.fullName && trip.author.fullName.toLowerCase().includes(q)) ||
-          (trip.author.username && trip.author.username.toLowerCase().includes(q)) ||
-          trip.itinerary.some((i) => i.title.toLowerCase().includes(q))
-        );
+    startFetching(async () => {
+      const nextTrips = await getPublicTripTemplates({
+        searchQuery,
+        durationFilter,
+        inclusionFilter,
+        sortBy,
       });
+
+      if (requestId === latestRequestId.current) {
+        setTrips(nextTrips);
+        setIsSearchPending(false);
+      }
+    });
+  }, [durationFilter, inclusionFilter, searchQuery, sortBy]);
+
+  useEffect(() => {
+    if (isInitialFetch.current) {
+      isInitialFetch.current = false;
+      return;
     }
 
-    // 2. Duration Filter
-    if (durationFilter === "WEEKEND") {
-      result = result.filter((t) => t.durationDays <= 3);
-    } else if (durationFilter === "SHORT") {
-      result = result.filter((t) => t.durationDays >= 4 && t.durationDays <= 7);
-    } else if (durationFilter === "EXTENDED") {
-      result = result.filter((t) => t.durationDays >= 8 && t.durationDays <= 14);
-    } else if (durationFilter === "LONG") {
-      result = result.filter((t) => t.durationDays >= 15);
-    }
+    const searchChanged = previousSearchQuery.current !== searchQuery;
+    previousSearchQuery.current = searchQuery;
+    const timeout = window.setTimeout(requestTemplates, searchChanged ? 400 : 0);
 
-    // 3. Inclusions Filter
-    if (inclusionFilter === "HAS_STAYS") {
-      result = result.filter((t) => t.inclusions.hasStays);
-    } else if (inclusionFilter === "HAS_EXPENSES") {
-      result = result.filter((t) => t.inclusions.hasExpenses);
-    } else if (inclusionFilter === "HAS_CHECKLIST") {
-      result = result.filter((t) => t.inclusions.hasChecklist);
-    } else if (inclusionFilter === "HAS_STORY") {
-      result = result.filter((t) => t.inclusions.hasStory);
-    }
+    return () => window.clearTimeout(timeout);
+  }, [durationFilter, inclusionFilter, requestTemplates, searchQuery, sortBy]);
 
-    // 4. Sorting
-    if (sortBy === "MOST_ACTIONABLE") {
-      result.sort(
-        (a, b) =>
-          b.metrics.activityCount +
-          b.metrics.checklistCount -
-          (a.metrics.activityCount + a.metrics.checklistCount)
-      );
-    } else if (sortBy === "DURATION") {
-      result.sort((a, b) => a.durationDays - b.durationDays);
-    } else {
-      // NEWEST
-      result.sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-    }
-
-    return result;
-  }, [initialTrips, searchQuery, durationFilter, inclusionFilter, sortBy, clonedIds]);
+  const filteredTrips = trips.map((trip) => ({
+    ...trip,
+    isCloned: trip.isCloned || clonedIds.has(trip.id),
+  }));
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-12">
@@ -172,11 +153,20 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
             placeholder="Search destination, keyword, creator..."
             className="pl-8.5 h-9 text-xs bg-card border-border text-foreground rounded-sm"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setIsSearchPending(true);
+            }}
           />
-          {searchQuery && (
+          {(isFetching || isSearchPending) && (
+            <LoaderCircle className="absolute right-2.5 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />
+          )}
+          {searchQuery && !isFetching && !isSearchPending && (
             <button
-              onClick={() => setSearchQuery("")}
+              onClick={() => {
+                setSearchQuery("");
+                setIsSearchPending(true);
+              }}
               className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground cursor-pointer"
             >
               <X className="h-4 w-4" />
@@ -193,21 +183,23 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
             Showing <strong className="text-foreground font-semibold">{filteredTrips.length}</strong> trip{" "}
             {filteredTrips.length === 1 ? "template" : "templates"}
           </span>
-          <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-muted-foreground/80">
-            • <Sparkles className="w-3 h-3 text-primary ml-0.5" /> 1-Click Atomic Workspace Clone
-          </span>
         </div>
 
         {/* Right: Inclusions Select, Duration Select, Sort Select & Reset (Single Horizontal Row) */}
-        <div className="flex items-center gap-2 w-full md:w-auto shrink-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none flex-nowrap">
+        <div className="flex w-full shrink-0 flex-nowrap items-center justify-end gap-2 md:w-auto">
           {/* Inclusion Filter Dropdown */}
           <Select
             value={inclusionFilter}
             onValueChange={(val) => setInclusionFilter(val as InclusionFilter)}
           >
-            <SelectTrigger className="h-8 text-xs min-w-32.5 sm:w-38.75 shrink-0 bg-background border-border text-foreground rounded-sm">
-              <Filter className="w-3.5 h-3.5 mr-1.5 text-muted-foreground shrink-0" />
-              <SelectValue placeholder="Inclusions" />
+            <SelectTrigger
+              aria-label="Filter inclusions"
+              className="h-8 w-9 shrink-0 justify-center rounded-sm border-border bg-background px-0 text-xs text-foreground max-sm:[&>svg:last-child]:hidden sm:w-38.75 sm:justify-between sm:px-3"
+            >
+              <Filter className="h-3.5 w-3.5 shrink-0 text-muted-foreground sm:mr-1.5" />
+              <span className="max-sm:!hidden min-w-0 sm:inline">
+                <SelectValue placeholder="Inclusions" />
+              </span>
             </SelectTrigger>
             <SelectContent className="rounded-sm">
               {INCLUSION_OPTIONS.map((opt) => (
@@ -223,9 +215,14 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
             value={durationFilter}
             onValueChange={(val) => setDurationFilter(val as DurationFilter)}
           >
-            <SelectTrigger className="h-8 text-xs min-w-32.5 sm:w-38.75 shrink-0 bg-background border-border text-foreground rounded-sm">
-              <Clock className="w-3.5 h-3.5 mr-1.5 text-muted-foreground shrink-0" />
-              <SelectValue placeholder="Duration" />
+            <SelectTrigger
+              aria-label="Filter duration"
+              className="h-8 w-9 shrink-0 justify-center rounded-sm border-border bg-background px-0 text-xs text-foreground max-sm:[&>svg:last-child]:hidden sm:w-38.75 sm:justify-between sm:px-3"
+            >
+              <Clock className="h-3.5 w-3.5 shrink-0 text-muted-foreground sm:mr-1.5" />
+              <span className="max-sm:!hidden min-w-0 sm:inline">
+                <SelectValue placeholder="Duration" />
+              </span>
             </SelectTrigger>
             <SelectContent className="rounded-sm">
               {DURATION_OPTIONS.map((opt) => (
@@ -241,9 +238,14 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
             value={sortBy}
             onValueChange={(val) => setSortBy(val as SortOption)}
           >
-            <SelectTrigger className="h-8 text-xs min-w-31.25 sm:w-36.25 shrink-0 bg-background border-border text-foreground rounded-sm">
-              <ArrowUpDown className="w-3.5 h-3.5 mr-1.5 text-muted-foreground shrink-0" />
-              <SelectValue placeholder="Sort by" />
+            <SelectTrigger
+              aria-label="Sort templates"
+              className="h-8 w-9 shrink-0 justify-center rounded-sm border-border bg-background px-0 text-xs text-foreground max-sm:[&>svg:last-child]:hidden sm:w-36.25 sm:justify-between sm:px-3"
+            >
+              <ArrowUpDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground sm:mr-1.5" />
+              <span className="max-sm:!hidden min-w-0 sm:inline">
+                <SelectValue placeholder="Sort by" />
+              </span>
             </SelectTrigger>
             <SelectContent className="rounded-sm">
               {SORT_OPTIONS.map((opt) => (
