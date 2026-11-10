@@ -1,8 +1,14 @@
-import { type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function proxy(request: NextRequest) {
+  // The keepalive endpoint authenticates with its own server-side bearer secret.
+  // Avoid an unnecessary Supabase session refresh for this machine-to-machine request.
+  if (request.nextUrl.pathname === "/api/internal/keepalive") {
+    return NextResponse.next();
+  }
+
   return await updateSession(request);
 }
 

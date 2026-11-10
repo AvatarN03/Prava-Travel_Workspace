@@ -1,0 +1,38 @@
+name: Supabase keepalive
+
+on:
+  schedule:
+    # Daily at 17:23 UTC (22:53 Asia/Kolkata), away from the top-of-hour queue.
+    - cron: "23 17 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  heartbeat:
+    name: Database heartbeat
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Call protected keepalive endpoint
+        env:
+          KEEPALIVE_SECRET: ${{ secrets.SUPABASE_KEEPALIVE_SECRET }}
+          KEEPALIVE_URL: ${{ secrets.SUPABASE_KEEPALIVE_URL }}
+        run: |
+          if [ -z "$KEEPALIVE_URL" ] || [ -z "$KEEPALIVE_SECRET" ]; then
+            echo "SUPABASE_KEEPALIVE_URL and SUPABASE_KEEPALIVE_SECRET must be configured."
+            exit 1
+          fi
+
+          curl --fail --show-error --silent \
+            --retry 3 \
+            --retry-all-errors \
+            --retry-delay 10 \
+            --connect-timeout 10 \
+            --max-time 30 \
+            --request POST \
+            --header "Accept: application/json" \
+            --header "Authorization: Bearer $KEEPALIVE_SECRET" \
+            "$KEEPALIVE_URL"
