@@ -1,6 +1,10 @@
 name: Supabase keepalive
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/supabase-keepalive.yml"
   schedule:
     # Daily at 17:23 UTC (22:53 Asia/Kolkata), away from the top-of-hour queue.
     - cron: "23 17 * * *"
