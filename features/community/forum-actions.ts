@@ -113,7 +113,14 @@ export async function getForumDiscussions(
       currentUserId = null;
     }
 
-    const posts = await getCachedForumPostRecords(category, searchQuery);
+    // Canonicalize empty filters so the initial feed and a cleared feed share
+    // the same cache entry: `(undefined, undefined)`.
+    const normalizedCategory = category === "ALL" ? undefined : category;
+    const normalizedSearchQuery = searchQuery?.trim() || undefined;
+    const posts = await getCachedForumPostRecords(
+      normalizedCategory,
+      normalizedSearchQuery
+    );
     const savedPostIds = currentUserId && posts.length > 0
       ? new Set(
           (

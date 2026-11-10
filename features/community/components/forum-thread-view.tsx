@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+  type FormEvent,
+  type KeyboardEvent,
+} from "react";
 
 import {
   ArrowLeft,
@@ -26,6 +34,7 @@ import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,
@@ -212,12 +221,12 @@ export function ForumThreadView({
     }
   };
 
-  const handleSendReply = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newReplyText.trim()) return;
+  const submitReply = useCallback(() => {
+    const content = newReplyText.trim();
+    if (!content || isSubmittingReply) return;
 
     startSubmitReply(async () => {
-      const res = await postForumReply(post.id, newReplyText.trim());
+      const res = await postForumReply(post.id, content);
       if (res.success) {
         toast.success("Reply added to discussion!");
         setNewReplyText("");
@@ -226,6 +235,22 @@ export function ForumThreadView({
         toast.error(res.error || "Failed to post reply. Please sign in.");
       }
     });
+  }, [isSubmittingReply, newReplyText, post.id, refreshThread]);
+
+  const handleSendReply = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    submitReply();
+  };
+
+  const handleReplyKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (
+      event.key === "Enter" &&
+      !event.shiftKey &&
+      !event.nativeEvent.isComposing
+    ) {
+      event.preventDefault();
+      submitReply();
+    }
   };
 
   const handleSaveReplyEdit = async (replyId: string) => {
@@ -296,16 +321,10 @@ export function ForumThreadView({
           <Badge variant="secondary" className="text-[11px] font-medium py-0.5">
             {post.categoryLabel}
           </Badge>
-          {post.destination && (
-            <span className="flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3 text-primary" />
-              {post.destination}
-            </span>
-          )}
         </div>
 
         {/* Global Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="ml-auto flex items-center justify-end gap-2">
           <Button
             variant={hasUpvoted ? "default" : "outline"}
             size="sm"
@@ -320,30 +339,32 @@ export function ForumThreadView({
             <span>{upvotes}</span>
           </Button>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleToggleBookmark}
-            className={`h-8 rounded-sm text-xs gap-1.5 cursor-pointer border-border bg-card ${
-              hasSaved
-                ? "text-primary border-primary/40 bg-primary/5 font-semibold"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <Bookmark className={`h-3.5 w-3.5 ${hasSaved ? "fill-current" : ""}`} />
-            <span className="hidden sm:inline">{hasSaved ? "Saved" : "Save"}</span>
-          </Button>
+          <ButtonGroup className="rounded-sm bg-primary/5">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleToggleBookmark}
+              className={`h-8 rounded-sm text-xs gap-1.5 cursor-pointer border-primary/25 bg-card ${
+                hasSaved
+                  ? "bg-primary/10 text-primary font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Bookmark className={`h-3.5 w-3.5 ${hasSaved ? "fill-current" : ""}`} />
+              <span className="hidden sm:inline">{hasSaved ? "Saved" : "Save"}</span>
+            </Button>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleOpenSaveTip(post.content, post.authorName)}
-            className="h-8 rounded-sm text-xs gap-1.5 border-border bg-card text-muted-foreground hover:border-primary/40 hover:bg-primary/5 hover:text-primary cursor-pointer"
-            title="Save tip to your trip notes"
-          >
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <span className="hidden sm:inline">Save to Trip</span>
-          </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleOpenSaveTip(post.content, post.authorName)}
+              className="h-8 rounded-sm text-xs gap-1.5 border-primary/25 bg-card text-muted-foreground hover:bg-primary/5 hover:text-primary cursor-pointer"
+              title="Save tip to your trip notes"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <span className="hidden sm:inline">Save to Trip</span>
+            </Button>
+          </ButtonGroup>
 
           <Button
             variant="outline"
@@ -451,11 +472,19 @@ export function ForumThreadView({
               </div>
 
               {/* Post metadata */}
-              <div className="flex items-center justify-end gap-3 border-b border-border pb-3 pt-1 text-xs text-muted-foreground">
-                <span>{post.createdAt}</span>
-                {post.isEdited && <span className="italic">(edited)</span>}
-                <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" />{post.views}</span>
-                <span className="flex items-center gap-1"><MessageSquare className="h-3.5 w-3.5" />{replies.length}</span>
+              <div className="flex items-start justify-between gap-3 border-b border-border pb-3 pt-1 text-xs text-muted-foreground">
+                {post.destination && (
+                  <span className="flex max-w-24 items-start gap-1 text-primary sm:max-w-40 md:max-w-56">
+                    <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                    <span className="break-words">{post.destination}</span>
+                  </span>
+                )}
+                <div className="ml-auto flex flex-wrap items-start justify-end gap-x-3 gap-y-1 text-right">
+                  <span>{post.createdAt}</span>
+                  {post.isEdited && <span className="italic">(edited)</span>}
+                  <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" />{post.views}</span>
+                  <span className="flex items-center gap-1"><MessageSquare className="h-3.5 w-3.5" />{replies.length}</span>
+                </div>
               </div>
 
               {/* Discussion Body Content */}
@@ -538,36 +567,38 @@ export function ForumThreadView({
         {/* Right Section: Comments & Travel Advice Stream (Cols 5/12) */}
         <div className="lg:col-span-5 xl:col-span-5 space-y-4 lg:sticky lg:top-16">
           <ForumAuthorProfile post={post} />
-          <div className="flex items-center justify-between px-1">
-            <h2 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2">
-              <MessageSquare className="h-4 w-4 text-primary" />
+          <div className="flex items-center justify-between border-b border-border px-1 pb-2">
+            <h2 className="flex items-center gap-2 text-sm font-semibold tracking-tight text-foreground">
+              <MessageSquare className="h-4 w-4 text-muted-foreground" />
               Traveler Advice & Comments
             </h2>
-            <Badge variant="secondary" className="text-xs font-semibold px-2 rounded-sm">
+            <Badge variant="secondary" className="rounded-sm px-2 text-xs font-semibold">
               {replies.length}
             </Badge>
           </div>
 
           {/* Quick Reply Composer */}
-          <Card className="border border-border bg-card shadow-2xs rounded-md p-3.5 space-y-2.5">
+          <Card className="space-y-3 rounded-sm border border-border bg-card p-4 shadow-none">
             <form onSubmit={handleSendReply} className="space-y-2.5">
               <Textarea
                 rows={3}
                 placeholder="Share your advice, route recommendations, or answer this question..."
                 value={newReplyText}
                 onChange={(e) => setNewReplyText(e.target.value)}
-                className="text-xs resize-none bg-background border-border focus-visible:ring-primary rounded-md"
+                onKeyDown={handleReplyKeyDown}
+                aria-describedby="reply-keyboard-hint"
+                className="resize-none rounded-sm border-border bg-background text-xs focus-visible:ring-primary"
                 disabled={isSubmittingReply}
               />
               <div className="flex items-center justify-between">
-                <span className="text-[10px] text-muted-foreground">
-                  Be supportive & constructive
+                <span id="reply-keyboard-hint" className="text-[10px] text-muted-foreground">
+                  Enter to post · Shift + Enter for a new line
                 </span>
                 <Button
                   type="submit"
                   size="sm"
                   disabled={isSubmittingReply || !newReplyText.trim()}
-                  className="h-7 text-xs gap-1.5 font-semibold shadow-xs cursor-pointer rounded-md"
+                  className="h-7 cursor-pointer gap-1.5 rounded-sm text-xs font-semibold shadow-none"
                 >
                   {isSubmittingReply ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -581,52 +612,60 @@ export function ForumThreadView({
           </Card>
 
           {/* Single Parent Card for Advice Stream (No repetitive cards or borders) */}
-          <Card className="border border-border bg-card shadow-2xs rounded-md overflow-hidden">
+          <Card className="overflow-hidden rounded-sm border border-border bg-card shadow-none">
             {replies.length === 0 ? (
-              <div className="text-center py-8 p-4 space-y-1">
+              <div className="space-y-1 p-5 py-8 text-center">
                 <p className="text-xs font-semibold text-foreground">No advice posted yet</p>
                 <p className="text-[11px] text-muted-foreground">
                   Be the first traveler to help out with route advice or recommendations!
                 </p>
               </div>
             ) : (
-              <div className="divide-y divide-border/60 max-h-[calc(100vh-260px)] overflow-y-auto pr-0.5 scrollbar-thin">
+              <div className="max-h-[calc(100vh-260px)] divide-y divide-border overflow-y-auto scrollbar-thin">
                 {replies.map((reply) => (
                   <div
                     key={reply.id}
-                    className="p-3.5 space-y-2 hover:bg-muted/15 transition-colors"
+                    className="space-y-3 p-4 transition-colors hover:bg-muted/50"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-6 w-6 border border-border">
-                          {reply.authorAvatarUrl && (
-                            <AvatarImage src={reply.authorAvatarUrl} alt={reply.authorName} />
-                          )}
-                          <AvatarFallback className="text-[9px] bg-primary/10 text-primary font-semibold">
-                            {getAuthorInitials(reply.authorName)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex items-center gap-1.5 text-xs">
-                          <span className="font-semibold text-foreground text-[11px] sm:text-xs">
+                      {reply.authorUsername ? (
+                        <Link
+                          href={`/u/${encodeURIComponent(reply.authorUsername)}`}
+                          className="group flex min-w-0 items-center gap-2 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                        >
+                          <Avatar className="h-7 w-7 shrink-0 border border-border">
+                            {reply.authorAvatarUrl && (
+                              <AvatarImage src={reply.authorAvatarUrl} alt={reply.authorName} />
+                            )}
+                            <AvatarFallback className="bg-muted text-[10px] font-semibold text-foreground">
+                              {getAuthorInitials(reply.authorName)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="truncate text-[11px] font-semibold text-foreground group-hover:text-primary sm:text-xs">
                             {reply.authorName}
                           </span>
-                          {reply.authorUsername && (
-                            <Link
-                              href={`/u/${reply.authorUsername}`}
-                              className="text-[11px] text-primary hover:underline"
-                            >
-                              @{reply.authorUsername}
-                            </Link>
-                          )}
-                          {reply.authorId === post.authorId && (
-                            <Badge variant="outline" className="text-[9px] py-0 px-1 border-primary/30 text-primary rounded-sm">
-                              Author
-                            </Badge>
-                          )}
+                        </Link>
+                      ) : (
+                        <div className="flex min-w-0 items-center gap-2">
+                          <Avatar className="h-7 w-7 shrink-0 border border-border">
+                            {reply.authorAvatarUrl && (
+                              <AvatarImage src={reply.authorAvatarUrl} alt={reply.authorName} />
+                            )}
+                            <AvatarFallback className="bg-muted text-[10px] font-semibold text-foreground">
+                              {getAuthorInitials(reply.authorName)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="truncate text-[11px] font-semibold text-foreground sm:text-xs">
+                            {reply.authorName}
+                          </span>
                         </div>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground shrink-0">
+                      )}
+                      <div className="flex shrink-0 items-center gap-1.5 text-[10px] text-muted-foreground">
+                        {reply.authorId === post.authorId && (
+                          <Badge variant="outline" className="rounded-sm border-border px-1 py-0 text-[9px] text-muted-foreground">
+                            Author
+                          </Badge>
+                        )}
                         {reply.isEdited && <span className="italic">(edited)</span>}
                         <span>{reply.createdAt}</span>
 
@@ -636,16 +675,16 @@ export function ForumThreadView({
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-5 w-5 cursor-pointer text-muted-foreground hover:text-foreground"
+                              className="h-5 w-5 cursor-pointer rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground"
                               title="Comment options"
                             >
                               <MoreVertical className="h-3 w-3" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-popover border-border text-xs rounded-md shadow-md">
+                          <DropdownMenuContent align="end" className="rounded-sm border-border bg-popover text-xs shadow-md">
                             <DropdownMenuItem
                               onClick={() => handleOpenSaveTip(reply.content, reply.authorName)}
-                              className="gap-2 cursor-pointer"
+                              className="cursor-pointer gap-2"
                             >
                               <Bookmark className="h-3.5 w-3.5 text-primary" />
                               Save Tip to Trip
@@ -658,14 +697,14 @@ export function ForumThreadView({
                                     setEditingReplyId(reply.id);
                                     setEditingReplyContent(reply.content);
                                   }}
-                                  className="gap-2 cursor-pointer"
+                                  className="cursor-pointer gap-2"
                                 >
                                   <Edit3 className="h-3.5 w-3.5" />
                                   Edit Reply
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => handleDeleteReply(reply.id)}
-                                  className="gap-2 text-destructive cursor-pointer hover:bg-destructive/10"
+                                  className="cursor-pointer gap-2 text-destructive hover:bg-destructive/10"
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
                                   Delete Reply
@@ -679,33 +718,33 @@ export function ForumThreadView({
 
                     {/* Reply Content or Inline Editor */}
                     {editingReplyId === reply.id ? (
-                      <div className="space-y-2 pt-1 pl-8">
+                      <div className="space-y-2 pt-1">
                         <Textarea
                           rows={3}
                           value={editingReplyContent}
                           onChange={(e) => setEditingReplyContent(e.target.value)}
-                          className="text-xs bg-background border-border rounded-md"
+                          className="rounded-sm border-border bg-background text-xs"
                         />
                         <div className="flex justify-end gap-1.5">
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => setEditingReplyId(null)}
-                            className="text-xs h-6 px-2 rounded-md border-border"
+                            className="h-6 rounded-sm border-border px-2 text-xs"
                           >
                             Cancel
                           </Button>
                           <Button
                             size="sm"
                             onClick={() => handleSaveReplyEdit(reply.id)}
-                            className="text-xs h-6 px-2.5 rounded-md cursor-pointer"
+                            className="h-6 cursor-pointer rounded-sm px-2.5 text-xs"
                           >
                             Save
                           </Button>
                         </div>
                       </div>
                     ) : (
-                      <p className="text-xs text-foreground/90 leading-relaxed whitespace-pre-line pl-8">
+                      <p className="whitespace-pre-line text-xs leading-relaxed text-foreground/90">
                         {reply.content}
                       </p>
                     )}
@@ -716,7 +755,6 @@ export function ForumThreadView({
           </Card>
         </div>
       </div>
-
       {/* Edit Discussion Modal */}
       <EditDiscussionDialog
         post={post}

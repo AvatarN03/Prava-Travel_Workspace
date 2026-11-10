@@ -15,6 +15,7 @@ import {
   BookmarkCheck,
   Compass,
   LayoutGrid,
+  LoaderCircle,
   MapPin,
   MessageSquare,
   Package,
@@ -84,7 +85,8 @@ export function CommunityForumView({
   const [showBookmarkedOnly, setShowBookmarkedOnly] = useState(false);
   const [posts, setPosts] = useState<ForumPost[]>(initialPosts);
   const [newDiscussionOpen, setNewDiscussionOpen] = useState(false);
-  const [, startTransition] = useTransition();
+  const [isFetching, startTransition] = useTransition();
+  const [isSearchPending, setIsSearchPending] = useState(false);
   const requestSequence = useRef(0);
   const isInitialSearch = useRef(true);
   const skipNextSearchRequest = useRef(false);
@@ -111,9 +113,11 @@ export function CommunityForumView({
 
           if (requestId === requestSequence.current) {
             setPosts(freshPosts);
+            setIsSearchPending(false);
           }
         } catch {
           if (requestId === requestSequence.current) {
+            setIsSearchPending(false);
             toast.error("Could not refresh discussions. Please try again.");
           }
         }
@@ -217,10 +221,20 @@ export function CommunityForumView({
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search topics, destinations..."
-              className="pl-8.5 h-9 text-xs bg-background border-border rounded-sm"
+              className="h-9 pl-8.5 pr-8 text-xs bg-background border-border rounded-sm"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setIsSearchPending(true);
+              }}
+              aria-busy={isSearchPending || isFetching}
             />
+            {(isSearchPending || isFetching) && (
+              <LoaderCircle
+                className="absolute right-2.5 top-2.5 h-4 w-4 animate-spin text-primary"
+                aria-label="Searching discussions"
+              />
+            )}
           </div>
 
           <Button
