@@ -385,7 +385,6 @@ export async function getPublicCreatorProfile(username: string) {
         bio: true,
         avatarUrl: true,
         isPublic: true,
-        travelPreferences: true,
         createdAt: true,
         trips: {
           where: {
@@ -399,36 +398,44 @@ export async function getPublicCreatorProfile(username: string) {
             destination: true,
             startDate: true,
             endDate: true,
-            status: true,
             coverImageUrl: true,
             isTemplate: true,
+            isPublic: true,
+            createdAt: true,
+            updatedAt: true,
             itinerary: {
-              take: 5,
               orderBy: [{ dayNumber: "asc" }, { order: "asc" }],
               select: {
-                id: true,
                 title: true,
                 dayNumber: true,
-                time: true,
                 category: true,
+                description: true,
                 location: true,
+                cost: true,
               },
             },
             accommodations: {
-              take: 3,
               select: {
-                id: true,
                 name: true,
                 type: true,
                 address: true,
+                cost: true,
+                currency: true,
               },
             },
-            _count: {
-              select: {
-                itinerary: true,
-                accommodations: true,
-                checklistItems: true,
-              },
+            expenses: {
+              select: { amount: true, currency: true },
+            },
+            checklistItems: {
+              select: { title: true },
+            },
+            notes: {
+              select: { title: true },
+            },
+            linkedBlogPosts: {
+              where: { status: "PUBLISHED" },
+              select: { slug: true, title: true },
+              take: 1,
             },
           },
         },
@@ -463,19 +470,11 @@ export async function getPublicCreatorProfile(username: string) {
             id: true,
             slug: true,
             title: true,
-            content: true,
             category: true,
             destination: true,
             tags: true,
             coverImageUrl: true,
             images: true,
-            upvotes: true,
-            createdAt: true,
-            _count: {
-              select: {
-                replies: true,
-              },
-            },
           },
         },
       },
@@ -485,21 +484,43 @@ export async function getPublicCreatorProfile(username: string) {
       return { success: false, error: "Creator profile not found or private." };
     }
 
-    let likedPostIds = new Set<string>();
-    if (currentUser && profile.blogPosts.length > 0) {
-      try {
-        const likes = await db.blogPostLike.findMany({
-          where: {
-            profileId: currentUser.id,
-            postId: { in: profile.blogPosts.map((p) => p.id) },
-          },
-          select: { postId: true },
-        });
-        likedPostIds = new Set(likes.map((l) => l.postId));
-      } catch (err) {
-        console.warn("Could not query user likes for creator profile:", err);
-      }
-    }
+    const [likes, savedPosts, currentUserTrips] = currentUser
+      ? await Promise.all([
+          profile.blogPosts.length > 0
+            ? db.blogPostLike.findMany({
+                where: {
+                  profileId: currentUser.id,
+                  postId: { in: profile.blogPosts.map((post) => post.id) },
+                },
+                select: { postId: true },
+              })
+            : Promise.resolve([]),
+          profile.communityPosts.length > 0
+            ? db.communitySavedPost.findMany({
+                where: {
+                  profileId: currentUser.id,
+                  postId: { in: profile.communityPosts.map((post) => post.id) },
+                },
+                select: { postId: true },
+              })
+            : Promise.resolve([]),
+          db.trip.findMany({
+            where: { profileId: currentUser.id },
+            select: {
+              title: true,
+              destination: true,
+              notes: {
+                where: { category: "ClonedTemplate" },
+                select: { content: true },
+              },
+            },
+          }),
+        ])
+      : [[], [], []];
+
+    const likedPostIds = new Set(likes.map((like) => like.postId));
+    const savedPostIds = new Set(savedPosts.map((savedPost) => savedPost.postId));
+    const isOwnProfile = currentUser?.id === profile.id;
 
     return {
       success: true,
@@ -539,11 +560,40 @@ export async function getPublicCreatorProfile(username: string) {
             : null,
         })),
         trips: profile.trips.map((t) => {
-          let durationDays = 1;
-          if (t.startDate && t.endDate) {
-            const diffTime = Math.abs(new Date(t.endDate).getTime() - new Date(t.startDate).getTime());
-            durationDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-          }
+          const durationDays =
+            t.startDate && t.endDate
+              ? Math.max(
+                  1,
+                  Math.ceil(
+                    (new Date(t.endDate).getTime() - new Date(t.startDate).getTime()) /
+                      (1000 * 60 * 60 * 24)
+                  ) + 1
+                )
+              : Math.max(
+                  1,
+                  t.itinerary.length > 0
+                    ? Math.max(...t.itinerary.map((item) => item.dayNumber || 1))
+                    : 1
+                );
+          const expenseTotal = Math.round(
+            t.expenses.reduce((total, expense) => total + (expense.amount || 0), 0) +
+              t.accommodations.reduce((total, stay) => total + (stay.cost || 0), 0)
+          );
+          const currency =
+            t.expenses.find((expense) => expense.currency)?.currency ||
+            t.accommodations.find((stay) => stay.currency)?.currency ||
+            "INR";
+          const isCloned =
+            isOwnProfile ||
+            currentUserTrips.some(
+              (trip) =>
+                trip.notes.some((note) => note.content === t.id) ||
+                trip.title.toLowerCase() === `${t.title} (plan)`.toLowerCase() ||
+                (trip.title.toLowerCase() === t.title.toLowerCase() &&
+                  (trip.destination || "").toLowerCase() ===
+                    (t.destination || "").toLowerCase())
+            );
+
           return {
             id: t.id,
             title: t.title,
@@ -552,26 +602,69 @@ export async function getPublicCreatorProfile(username: string) {
             coverImageUrl: t.coverImageUrl,
             durationDays,
             isTemplate: t.isTemplate,
-            activityCount: t._count.itinerary,
-            accommodationCount: t._count.accommodations,
-            checklistCount: t._count.checklistItems,
-            sampleItinerary: t.itinerary,
+            isPublic: t.isPublic,
+            isOwn: isOwnProfile,
+            isCloned,
+            createdAt: t.createdAt,
+            updatedAt: t.updatedAt,
+            author: {
+              id: profile.id,
+              fullName: profile.fullName,
+              username: profile.username,
+              avatarUrl: profile.avatarUrl,
+              bio: profile.bio,
+              isPublic: profile.isPublic,
+            },
+            metrics: {
+              activityCount: t.itinerary.length,
+              accommodationCount: t.accommodations.length,
+              checklistCount: t.checklistItems.length,
+              notesCount: t.notes.length,
+              expenseTotal,
+              currency,
+            },
+            inclusions: {
+              hasStays: t.accommodations.length > 0,
+              hasExpenses: expenseTotal > 0,
+              hasChecklist: t.checklistItems.length > 0,
+              hasNotes: t.notes.length > 0,
+              hasStory: t.linkedBlogPosts.length > 0,
+            },
+            itinerary: t.itinerary.map((item) => ({
+              day: item.dayNumber || 1,
+              title: item.title,
+              category: item.category,
+              description: item.description,
+              location: item.location,
+              cost: item.cost,
+            })),
+            accommodations: t.accommodations.map((stay) => ({
+              name: stay.name,
+              type: stay.type,
+              address: stay.address,
+              cost: stay.cost,
+              currency: stay.currency || currency,
+            })),
+            checklistHighlights: t.checklistItems.slice(0, 5).map((item) => item.title),
+            tips: t.notes.slice(0, 4).map((note) => note.title),
+            linkedStory: t.linkedBlogPosts[0]
+              ? {
+                  slug: t.linkedBlogPosts[0].slug,
+                  title: t.linkedBlogPosts[0].title,
+                }
+              : null,
           };
         }),
-        travelPreferences: profile.travelPreferences || null,
         forumPosts: profile.communityPosts.map((post) => ({
           id: post.id,
           slug: post.slug,
           title: post.title,
-          content: post.content,
           category: post.category,
           destination: post.destination,
           tags: post.tags,
           coverImageUrl: post.coverImageUrl,
           images: post.images || [],
-          upvotes: post.upvotes ?? 0,
-          replyCount: post._count.replies,
-          createdAt: post.createdAt,
+          hasSaved: savedPostIds.has(post.id),
         })),
       },
     };

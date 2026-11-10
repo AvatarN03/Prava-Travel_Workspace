@@ -1,14 +1,23 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-import { CreatorProfileView, getPublicCreatorProfile } from "@/features/profile";
+import {
+  CreatorProfileView,
+  getPublicCreatorProfile,
+} from "@/features/profile";
 
 interface PublicProfilePageProps {
   params: Promise<{ username: string }>;
 }
+
+export const metadata: Metadata = {
+  title: "Creator Profile",
+  description: "Explore public travel creator profiles, shared itineraries, stories, and discussions on Prava.",
+};
 
 export default async function PublicCreatorProfilePage({ params }: PublicProfilePageProps) {
   const { username } = await params;
