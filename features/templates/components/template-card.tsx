@@ -112,9 +112,9 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
         <div className="flex items-start justify-between gap-4 text-xs text-muted-foreground">
           <div className="min-w-0 space-y-1">
             {trip.destination && (
-              <span className="flex min-w-0 items-center gap-1.5 font-medium text-foreground">
-                <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />
-                <span className="truncate">{trip.destination}</span>
+              <span className="flex min-w-0 flex-wrap items-start gap-x-1.5 font-medium text-foreground">
+                <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                <span className="min-w-0 flex-1 break-words">{trip.destination}</span>
               </span>
             )}
             {trip.metrics.expenseTotal > 0 && (
@@ -165,26 +165,38 @@ export function TemplateCard({ trip, onPreview, onCloned }: TemplateCardProps) {
           )}
         </div>
 
-        <div className="mt-auto flex min-w-0 items-center gap-2.5 border-t border-border/60 pt-3">
-          <Avatar className="h-7 w-7 shrink-0 border border-border">
-            {trip.author.avatarUrl ? (
-              <AvatarImage src={trip.author.avatarUrl} alt={trip.author.fullName || ""} />
-            ) : null}
-            <AvatarFallback className="bg-muted text-[10px] font-bold text-foreground">
-              {authorInitials}
-            </AvatarFallback>
-          </Avatar>
-          {trip.author.username && trip.author.isPublic ? (
+        <div className="mt-auto flex min-w-0 items-center border-t border-border/60 pt-3">
+          {trip.author.username ? (
             <Link
               href={`/u/${trip.author.username}`}
-              className="min-w-0 truncate text-xs font-semibold text-foreground transition-colors hover:text-primary"
+              className="group/author flex min-w-0 items-center gap-2.5 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
-              {trip.author.fullName || trip.author.username}
+              <Avatar className="h-7 w-7 shrink-0 border border-border transition-colors group-hover/author:border-primary">
+                {trip.author.avatarUrl ? (
+                  <AvatarImage src={trip.author.avatarUrl} alt={trip.author.fullName || ""} />
+                ) : null}
+                <AvatarFallback className="bg-muted text-[10px] font-bold text-foreground">
+                  {authorInitials}
+                </AvatarFallback>
+              </Avatar>
+              <span className="min-w-0 truncate text-xs font-semibold text-foreground transition-colors group-hover/author:text-primary">
+                {trip.author.fullName || trip.author.username}
+              </span>
             </Link>
           ) : (
-            <span className="min-w-0 truncate text-xs font-semibold text-foreground">
-              {trip.author.fullName || trip.author.username || "Prava Traveler"}
-            </span>
+            <>
+              <Avatar className="h-7 w-7 shrink-0 border border-border">
+                {trip.author.avatarUrl ? (
+                  <AvatarImage src={trip.author.avatarUrl} alt={trip.author.fullName || ""} />
+                ) : null}
+                <AvatarFallback className="bg-muted text-[10px] font-bold text-foreground">
+                  {authorInitials}
+                </AvatarFallback>
+              </Avatar>
+              <span className="ml-2.5 min-w-0 truncate text-xs font-semibold text-foreground">
+                {trip.author.fullName || "Prava Traveler"}
+              </span>
+            </>
           )}
         </div>
       </CardContent>

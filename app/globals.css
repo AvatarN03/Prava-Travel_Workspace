@@ -103,6 +103,43 @@
   --ring: 45 155 240;
 }
 
+/* Template preview deliberately contrasts with the surrounding application theme. */
+.template-preview-inverted {
+  --background: 9 14 26;
+  --foreground: 241 245 249;
+  --card: 15 19 28;
+  --card-foreground: 241 245 249;
+  --card-subtle: 18 22 34;
+  --popover: 15 19 28;
+  --popover-foreground: 241 245 249;
+  --secondary: 24 55 79;
+  --secondary-foreground: 186 230 253;
+  --muted: 30 41 59;
+  --muted-foreground: 148 163 184;
+  --accent: 15 51 78;
+  --accent-foreground: 186 230 253;
+  --border: 51 65 85;
+  --input: 51 65 85;
+}
+
+.dark .template-preview-inverted {
+  --background: 255 255 255;
+  --foreground: 17 24 39;
+  --card: 255 255 255;
+  --card-foreground: 17 24 39;
+  --card-subtle: 244 247 250;
+  --popover: 255 255 255;
+  --popover-foreground: 17 24 39;
+  --secondary: 219 239 251;
+  --secondary-foreground: 12 92 145;
+  --muted: 226 232 240;
+  --muted-foreground: 100 116 139;
+  --accent: 240 249 255;
+  --accent-foreground: 12 92 145;
+  --border: 226 232 240;
+  --input: 226 232 240;
+}
+
 /* =========================================================
    TAILWIND v4 THEME MAPPINGS
    ========================================================= */
