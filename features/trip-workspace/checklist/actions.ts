@@ -68,7 +68,7 @@ export async function updateChecklistItem(input: UpdateChecklistItemInput) {
     }
 
     const updated = await db.checklistItem.update({
-      where: { id },
+      where: { id, tripId },
       data: {
         title,
         category: category || "General",
@@ -103,7 +103,7 @@ export async function deleteChecklistItem(input: DeleteChecklistItemInput) {
     }
 
     await db.checklistItem.delete({
-      where: { id },
+      where: { id, tripId },
     });
 
     revalidatePath(`/trips/${tripId}/checklist`);
@@ -357,7 +357,7 @@ export async function toggleChecklistItem(input: ToggleChecklistItemInput) {
     }
 
     const updated = await db.checklistItem.update({
-      where: { id },
+      where: { id, tripId },
       data: { isCompleted },
     });
 

@@ -67,7 +67,7 @@ export async function updateAccommodation(input: UpdateAccommodationInput) {
     }
 
     const updated = await db.accommodation.update({
-      where: { id },
+      where: { id, tripId },
       data: {
         name,
         type: type || "Hotel",
@@ -106,7 +106,7 @@ export async function deleteAccommodation(input: DeleteAccommodationInput) {
     }
 
     await db.accommodation.delete({
-      where: { id },
+      where: { id, tripId },
     });
 
     revalidatePath(`/trips/${tripId}/accommodations`);

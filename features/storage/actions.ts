@@ -81,6 +81,10 @@ export async function deleteUnusedTripCoverImage(
   if (!coverImageUrl) return;
 
   try {
+    const supabase = await createClient();
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user || user.id !== userId) return;
+
     const inUseCount = await db.trip.count({
       where: { coverImageUrl },
     });

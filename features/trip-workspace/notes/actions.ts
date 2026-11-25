@@ -64,7 +64,7 @@ export async function updateNote(input: UpdateNoteInput) {
     }
 
     const updated = await db.note.update({
-      where: { id },
+      where: { id, tripId },
       data: {
         title,
         content,
@@ -98,7 +98,7 @@ export async function deleteNote(input: DeleteNoteInput) {
     }
 
     await db.note.delete({
-      where: { id },
+      where: { id, tripId },
     });
 
     revalidatePath(`/trips/${tripId}/notes`);
@@ -126,7 +126,7 @@ export async function togglePinNote(input: TogglePinNoteInput) {
     }
 
     const updated = await db.note.update({
-      where: { id },
+      where: { id, tripId },
       data: { isPinned },
     });
 

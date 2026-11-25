@@ -66,7 +66,7 @@ export async function updateItineraryItem(input: UpdateItineraryInput) {
     }
 
     const updated = await db.itineraryItem.update({
-      where: { id },
+      where: { id, tripId },
       data: {
         dayNumber: dayNumber ?? null,
         date: date ? new Date(date) : null,
@@ -104,7 +104,7 @@ export async function deleteItineraryItem(input: DeleteItineraryInput) {
     }
 
     await db.itineraryItem.delete({
-      where: { id },
+      where: { id, tripId },
     });
 
     revalidatePath(`/trips/${tripId}/itinerary`);

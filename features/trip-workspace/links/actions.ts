@@ -62,7 +62,7 @@ export async function updateLink(input: UpdateLinkInput) {
     }
 
     const updated = await db.link.update({
-      where: { id },
+      where: { id, tripId },
       data: {
         title,
         url,
@@ -95,7 +95,7 @@ export async function deleteLink(input: DeleteLinkInput) {
     }
 
     await db.link.delete({
-      where: { id },
+      where: { id, tripId },
     });
 
     revalidatePath(`/trips/${tripId}/links`);

@@ -70,7 +70,7 @@ export async function updateExpense(input: UpdateExpenseInput) {
     }
 
     const updated = await db.expense.update({
-      where: { id },
+      where: { id, tripId },
       data: {
         title,
         amount,
@@ -107,7 +107,7 @@ export async function deleteExpense(input: DeleteExpenseInput) {
     }
 
     await db.expense.delete({
-      where: { id },
+      where: { id, tripId },
     });
 
     revalidatePath(`/trips/${tripId}/expenses`);
