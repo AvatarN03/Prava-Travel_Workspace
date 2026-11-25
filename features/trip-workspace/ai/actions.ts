@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 import { buildTripContext } from "@/services/ai/context-builder";
+import { reserveAiCredits } from "@/services/ai/credit-reservation";
 import { evaluatePromptComplexity } from "@/services/ai/credit-evaluator";
 import { isItineraryPlanningIntent, runTripAgentGraph } from "@/services/ai/trip-agent-graph";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
@@ -258,6 +259,8 @@ export async function getUserAiCredits(userId: string): Promise<UserAiQuotaDTO> 
       data: { user },
     } = await supabase.auth.getUser();
 
+    if (!user || user.id !== userId) throw new Error("Unauthorized");
+
     const isPro = await hasActiveProSubscription(userId);
     const quota = isPro ? 150 : 30;
 
@@ -289,7 +292,7 @@ export async function getUserAiCredits(userId: string): Promise<UserAiQuotaDTO> 
     };
   } catch (err) {
     console.error("Error calculating user AI credits:", err);
-    return { used: 0, quota: 30, remaining: 30, isPro: false };
+    return { used: 30, quota: 30, remaining: 0, isPro: false };
   }
 }
 
@@ -521,9 +524,10 @@ export async function sendTripMessage(tripId: string, prompt: string, conversati
     const requiredCredits = evaluation.creditsCost;
 
     // Monthly AI Credits Check
-    const userQuota = await getUserAiCredits(user.id);
+    const reservation = await reserveAiCredits(user.id, conversation.id, trimmedPrompt, requiredCredits);
+    const userQuota = reservation.userQuota;
 
-    if (userQuota.remaining < requiredCredits) {
+    if (!reservation.success) {
       return {
         success: false,
         error: `⚠️ **Insufficient AI Credits (${userQuota.remaining}/${userQuota.quota})**\nThis **${evaluation.label}** task requires **${requiredCredits} AI credits**, but you have **${userQuota.remaining}** remaining this month. Upgrade to Pro Wanderer for 150 credits/month, or wait until your quota renews on the 1st of next month.`,
@@ -533,14 +537,7 @@ export async function sendTripMessage(tripId: string, prompt: string, conversati
     }
 
     // Persist user's message with evaluated creditsCost
-    const userMsg = await db.aiMessage.create({
-      data: {
-        conversationId: conversation.id,
-        role: "user",
-        content: trimmedPrompt,
-        creditsCost: requiredCredits,
-      },
-    });
+    const userMsg = reservation.message;
 
     // Execute Trip Agent Graph: Tools (Weather/Currency) -> Gemini Flash Lite / OpenRouter Free Cascade
     const agentResult = await runTripAgentGraph({

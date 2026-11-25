@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { GEMINI_TRIPS_MODELS, getGeminiClient } from "@/lib/ai";
 import { db } from "@/lib/db";
+import { refundAiCredits, reserveAiCredits } from "@/services/ai/credit-reservation";
 import { getUserAiCredits } from "../ai/actions";
 import { verifyTripOwnership } from "../common/auth-check";
 
@@ -194,6 +195,7 @@ export async function generateAiChecklist(tripId: string): Promise<{
   error?: string;
   message?: string;
 }> {
+  let reservationToRefund: { userId: string; messageId: string } | null = null;
   try {
     const { authorized, isOwner, user, trip } = await verifyTripOwnership(tripId);
     if (!authorized || !isOwner || !user || !trip) {
@@ -279,16 +281,6 @@ Return ONLY a valid JSON array of objects with keys "title" (concise actionable 
 
     const startOrder = existing.length;
 
-    await db.checklistItem.createMany({
-      data: toInsert.map((item, idx) => ({
-        tripId,
-        title: item.title,
-        category: item.category,
-        isCompleted: false,
-        order: startOrder + idx,
-      })),
-    });
-
     // Record credit usage in AI conversation thread
     let conversation = await db.aiConversation.findFirst({
       where: { tripId, profileId: user.id },
@@ -305,22 +297,35 @@ Return ONLY a valid JSON array of objects with keys "title" (concise actionable 
       });
     }
 
-    await db.aiMessage.createMany({
-      data: [
-        {
-          conversationId: conversation.id,
-          role: "user",
-          content: `Generate tailored packing & travel checklist for ${destination}`,
-          creditsCost: REQUIRED_CREDITS,
-        },
-        {
-          conversationId: conversation.id,
+    const reservation = await reserveAiCredits(
+      user.id, conversation.id, `Generate tailored packing & travel checklist for ${destination}`, REQUIRED_CREDITS
+    );
+    if (!reservation.success) {
+      return { success: false, error: `Insufficient AI credits (${reservation.userQuota.remaining}/${reservation.userQuota.quota}). AI Checklist generation requires ${REQUIRED_CREDITS} credits.` };
+    }
+    reservationToRefund = { userId: user.id, messageId: reservation.message.id };
+
+    const conversationId = conversation.id;
+    await db.$transaction(async (tx) => {
+      await tx.checklistItem.createMany({
+        data: toInsert.map((item, idx) => ({
+          tripId,
+          title: item.title,
+          category: item.category,
+          isCompleted: false,
+          order: startOrder + idx,
+        })),
+      });
+      await tx.aiMessage.create({
+        data: {
+          conversationId,
           role: "model",
-          content: `Generated ${toInsert.length} tailored checklist items for ${destination} across ${Array.from(new Set(toInsert.map((i) => i.category))).join(", ")}.`,
+          content: `Generated ${toInsert.length} tailored checklist items for ${destination}.`,
           creditsCost: 0,
         },
-      ],
+      });
     });
+    reservationToRefund = null;
 
     revalidatePath(`/trips/${tripId}/checklist`);
     revalidatePath(`/trips/${tripId}/overview`);
@@ -335,6 +340,10 @@ Return ONLY a valid JSON array of objects with keys "title" (concise actionable 
       userQuota: updatedQuota,
     };
   } catch (error) {
+    if (reservationToRefund) {
+      try { await refundAiCredits(reservationToRefund.userId, reservationToRefund.messageId); }
+      catch (refundError) { console.error("Error refunding checklist credits:", refundError); }
+    }
     console.error("Error generating AI checklist:", error);
     return {
       success: false,

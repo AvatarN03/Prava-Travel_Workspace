@@ -4,6 +4,7 @@ import { validateEvent } from "@polar-sh/sdk/webhooks";
 import { Webhook } from "standardwebhooks";
 
 import { db } from "@/lib/db";
+import { isStaleSubscriptionEvent } from "@/services/subscription/webhook-order";
 
 export const dynamic = "force-dynamic";
 
@@ -80,186 +81,90 @@ export async function POST(req: NextRequest) {
 
   // 2. Verify signature before parsing or trusting any payload
   try {
-    event = verifyWebhookPayload(rawBody, headers, webhookSecret);
+    verifyWebhookPayload(rawBody, headers, webhookSecret);
+    // Keep Polar's original field names regardless of the verification strategy.
+    event = JSON.parse(rawBody);
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : "Invalid signature";
     console.warn("[Polar Webhook] Signature verification rejected request:", errMsg);
     return new Response(`Invalid webhook signature: ${errMsg}`, { status: 403 });
   }
 
-  // 3. Extract unique event identifier (Standard Webhook header or payload event ID)
-  const eventId =
-    (headers["webhook-id"] as string) ||
-    event.id ||
-    `${event.type}_${event.data?.id}_${event.timestamp || Date.now()}`;
-
-  const client = db as any;
-
-  // 4. Enforce idempotency: skip processing if already handled
-  try {
-    const existingEvent = await client.webhookEvent.findUnique({
-      where: { id: eventId },
-    });
-
-    if (existingEvent) {
-      console.info(`[Polar Webhook] Event ${eventId} already processed. Skipping duplicate.`);
-      return NextResponse.json({ received: true, duplicate: true }, { status: 200 });
-    }
-  } catch (err) {
-    // If webhookEvent table is not yet migrated, continue with defensive fallback
-    console.warn("[Polar Webhook] Idempotency table check skipped:", err);
+  const eventId = headers["webhook-id"];
+  const eventTimestamp = Date.parse(event?.timestamp);
+  if (!eventId || !event?.type || !Number.isFinite(eventTimestamp)) {
+    return NextResponse.json({ error: "Invalid webhook event" }, { status: 400 });
   }
 
-  console.info(`[Polar Webhook] Processing event type: ${event.type} (ID: ${eventId})`);
-
-  // 5. Handle Subscription Lifecycle Events
-  const subscriptionEvents = [
-    "subscription.created",
-    "subscription.updated",
-    "subscription.active",
-    "subscription.canceled",
-    "subscription.revoked",
-    "subscription.uncanceled",
-    "subscription.past_due",
-    "subscription.paused",
-    "subscription.resumed",
+  const subscriptionEvents = new Set([
+    "subscription.created", "subscription.updated", "subscription.active",
+    "subscription.canceled", "subscription.revoked", "subscription.uncanceled",
+    "subscription.past_due", "subscription.paused", "subscription.resumed",
     "subscription.cycled",
-  ];
+  ]);
 
-  if (subscriptionEvents.includes(event.type)) {
-    const subData = event.data;
-    const polarSubscriptionId = subData.id;
-    const polarCustomerId = subData.customer_id;
-    const polarProductId = subData.product_id;
-    const status = (subData.status || "active").toLowerCase();
-    const currentPeriodStart = subData.current_period_start
-      ? new Date(subData.current_period_start)
-      : null;
-    const currentPeriodEnd = subData.current_period_end
-      ? new Date(subData.current_period_end)
-      : null;
-    const cancelAtPeriodEnd = Boolean(subData.cancel_at_period_end);
-
-    // Resolve internal Prava userId
-    let userId: string | null =
-      subData.customer?.external_id ||
-      subData.customer?.external_customer_id ||
-      subData.metadata?.userId ||
-      subData.customer_metadata?.userId ||
-      null;
-
-    // Fallback: lookup existing subscription record
-    if (!userId) {
-      try {
-        const existingSub = await client.subscription.findUnique({
-          where: { polarSubscriptionId },
-          select: { userId: true },
-        });
-        if (existingSub?.userId) {
-          userId = existingSub.userId;
-        }
-      } catch {
-        // Continue fallback search
-      }
-    }
-
-    // Fallback: match by customer email
-    if (!userId && subData.customer?.email) {
-      try {
-        const profile = await db.profile.findUnique({
-          where: { email: subData.customer.email },
-          select: { id: true },
-        });
-        if (profile?.id) {
-          userId = profile.id;
-        }
-      } catch {
-        // Fallback search ended
-      }
-    }
-
-    if (!userId) {
-      console.warn(
-        `[Polar Webhook] Could not resolve Prava userId for subscription ${polarSubscriptionId}. Customer email: ${subData.customer?.email}`
-      );
-      return NextResponse.json(
-        { received: true, warning: "User not resolved" },
-        { status: 200 }
-      );
-    }
-
-    // 6. Upsert subscription state atomically in PostgreSQL
-    try {
-      const savedSub = await client.subscription.upsert({
-        where: { polarSubscriptionId },
-        create: {
-          userId,
-          polarSubscriptionId,
-          polarCustomerId,
-          polarProductId,
-          status,
-          currentPeriodStart,
-          currentPeriodEnd,
-          cancelAtPeriodEnd,
-        },
-        update: {
-          status,
-          currentPeriodStart,
-          currentPeriodEnd,
-          cancelAtPeriodEnd,
-          polarCustomerId,
-          polarProductId,
-        },
-      });
-
-      // Keep every subscription row. A customer can legitimately have a prior
-      // cancelled subscription, and those rows are required for historical usage.
-      // Upserting by Polar's subscription ID keeps webhook retries idempotent.
-      if (currentPeriodStart) {
-        await client.subscriptionPeriod.upsert({
-          where: {
-            subscriptionId_periodStart: {
-              subscriptionId: savedSub.id,
-              periodStart: currentPeriodStart,
-            },
-          },
-          create: {
-            subscriptionId: savedSub.id,
-            periodStart: currentPeriodStart,
-            periodEnd: currentPeriodEnd,
-            status,
-          },
-          update: {
-            periodEnd: currentPeriodEnd,
-            status,
-          },
-        });
-      }
-
-      console.info(
-        `[Polar Webhook] Successfully synchronized subscription ${polarSubscriptionId} (Status: ${status}) for user ${userId}`
-      );
-    } catch (upsertError) {
-      console.error("[Polar Webhook] Failed to upsert subscription:", upsertError);
-      return NextResponse.json(
-        { error: "Database synchronization failed" },
-        { status: 500 }
-      );
-    }
-  }
-
-  // 7. Persist processed event ID to guarantee idempotency on retries
   try {
-    await client.webhookEvent.create({
-      data: {
-        id: eventId,
-        eventType: event.type,
-      },
-    });
-  } catch (err) {
-    // Non-critical if event ID already exists or table is migrating
-    console.warn("[Polar Webhook] Could not persist webhookEvent idempotency key:", err);
-  }
+    const outcome = await db.$transaction(async (tx) => {
+      // Serializing by delivery ID makes duplicate handling atomic, even for concurrent retries.
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`polar-event:${eventId}`}, 0))`;
+      if (await tx.webhookEvent.findUnique({ where: { id: eventId } })) return "duplicate";
 
-  return NextResponse.json({ received: true }, { status: 200 });
+      if (subscriptionEvents.has(event.type)) {
+        const sub = event.data;
+        if (!sub?.id || !sub.customer_id || !sub.product_id || !sub.status) {
+          throw new Error("Invalid subscription event");
+        }
+        const modifiedTimestamp = Date.parse(sub.modified_at || sub.created_at || event.timestamp);
+        if (!Number.isFinite(modifiedTimestamp)) throw new Error("Invalid subscription timestamp");
+        const watermarkId = `polar-subscription-watermark:${sub.id}`;
+        await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${watermarkId}, 0))`;
+        const watermark = await tx.webhookEvent.findUnique({ where: { id: watermarkId } });
+        const stale = isStaleSubscriptionEvent(modifiedTimestamp, eventTimestamp, watermark?.eventType ?? null);
+
+        if (!stale) {
+          const existing = await tx.subscription.findUnique({ where: { polarSubscriptionId: sub.id } });
+          let userId: string | null = existing?.userId || sub.customer?.external_id ||
+            sub.customer?.external_customer_id || sub.metadata?.userId || sub.customer_metadata?.userId || null;
+          if (!userId && sub.customer?.email) {
+            userId = (await tx.profile.findUnique({ where: { email: sub.customer.email }, select: { id: true } }))?.id || null;
+          }
+          if (!userId || !(await tx.profile.findUnique({ where: { id: userId }, select: { id: true } }))) {
+            throw new Error("Subscription user could not be resolved");
+          }
+          const periodStart = sub.current_period_start ? new Date(sub.current_period_start) : null;
+          const periodEnd = sub.current_period_end ? new Date(sub.current_period_end) : null;
+          if ((periodStart && !Number.isFinite(periodStart.getTime())) || (periodEnd && !Number.isFinite(periodEnd.getTime()))) {
+            throw new Error("Invalid subscription period");
+          }
+          const status = String(sub.status).toLowerCase();
+          const values = { polarCustomerId: sub.customer_id, polarProductId: sub.product_id, status,
+            currentPeriodStart: periodStart, currentPeriodEnd: periodEnd,
+            cancelAtPeriodEnd: Boolean(sub.cancel_at_period_end) };
+          const saved = await tx.subscription.upsert({
+            where: { polarSubscriptionId: sub.id },
+            create: { userId, polarSubscriptionId: sub.id, ...values },
+            update: values,
+          });
+          if (periodStart) {
+            await tx.subscriptionPeriod.upsert({
+              where: { subscriptionId_periodStart: { subscriptionId: saved.id, periodStart } },
+              create: { subscriptionId: saved.id, periodStart, periodEnd, status },
+              update: { periodEnd, status },
+            });
+          }
+          await tx.webhookEvent.upsert({
+            where: { id: watermarkId },
+            create: { id: watermarkId, eventType: `${modifiedTimestamp}:${eventTimestamp}` },
+            update: { eventType: `${modifiedTimestamp}:${eventTimestamp}` },
+          });
+        }
+      }
+      await tx.webhookEvent.create({ data: { id: eventId, eventType: event.type } });
+      return "processed";
+    });
+    return NextResponse.json({ received: true, duplicate: outcome === "duplicate" });
+  } catch (error) {
+    console.error("[Polar Webhook] Processing failed:", error);
+    return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 });
+  }
 }
