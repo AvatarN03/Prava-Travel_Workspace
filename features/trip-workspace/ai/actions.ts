@@ -691,6 +691,17 @@ export async function acceptAiProposal(
 
     // Execute changes transactionally
     await db.$transaction(async (tx) => {
+      // Claim the pending proposal before applying any changes. Competing
+      // accept/reject requests cannot both transition the same proposal.
+      const claimed = await tx.aiProposal.updateMany({
+        where: { id: proposalId, tripId, status: "PENDING" },
+        data: {
+          status: changesToApply.length < payload.changes.length ? "PARTIAL" : "ACCEPTED",
+          resolvedAt: new Date(),
+        },
+      });
+      if (claimed.count !== 1) throw new Error("Proposal has already been resolved");
+
       for (const change of changesToApply) {
         if (change.domain === "itinerary") {
           if (change.action === "create") {
@@ -765,15 +776,6 @@ export async function acceptAiProposal(
         }
       }
 
-      // Update proposal status
-      const isPartial = changesToApply.length < payload.changes.length;
-      await tx.aiProposal.update({
-        where: { id: proposalId },
-        data: {
-          status: isPartial ? "PARTIAL" : "ACCEPTED",
-          resolvedAt: new Date(),
-        },
-      });
     });
 
     revalidatePath(`/trips/${tripId}/itinerary`);
@@ -827,13 +829,17 @@ export async function rejectAiProposal(tripId: string, proposalId: string) {
       return { success: false, error: "Proposal not found" };
     }
 
-    await db.aiProposal.update({
-      where: { id: proposalId },
+    const rejected = await db.aiProposal.updateMany({
+      where: { id: proposalId, tripId, status: "PENDING" },
       data: {
         status: "REJECTED",
         resolvedAt: new Date(),
       },
     });
+
+    if (rejected.count !== 1) {
+      return { success: false, error: "Proposal has already been resolved" };
+    }
 
     revalidatePath(`/trips/${tripId}`);
 
