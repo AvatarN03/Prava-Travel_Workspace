@@ -134,7 +134,7 @@ export function DeleteAccountDialog({
       } else {
         // Show farewell note toast
         toast.success(
-          "Thank you for using Prava! Your account and personal data have been permanently deleted. You are always welcome back whenever you're ready to plan your next journey.",
+          "Your Prava account and workspace data have been deleted. Thank you for traveling with us.",
           {
             duration: 8000,
           }
@@ -185,6 +185,7 @@ export function DeleteAccountDialog({
                 <li>All published travel stories, forum posts, upvotes, and replies</li>
                 <li>All AI conversation histories, saved bookmarks, and custom avatars</li>
               </ul>
+              <p>Deleting your account does not cancel a paid subscription. Manage billing before continuing.</p>
             </div>
 
             {/* Confirmation checkbox */}
@@ -361,7 +362,7 @@ export function DeleteAccountDialog({
                 Thank you for traveling with Prava
               </DialogTitle>
               <p className="text-xs text-muted-foreground dark:text-zinc-400 leading-relaxed max-w-sm mx-auto">
-                Your account and all associated personal data have been completely deleted. We are grateful to have been part of your travels, and you are always welcome back whenever you're ready to plan your next journey.
+                Your Prava account and workspace data have been deleted. We are grateful to have been part of your travels.
               </p>
             </div>
 

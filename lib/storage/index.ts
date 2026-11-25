@@ -392,6 +392,7 @@ export async function pruneUnusedUserAvatars(
  * Invoked during complete account deletion.
  */
 export async function deleteUserStorageFolder(userId: string): Promise<{ success: boolean; deletedCount: number }> {
+  let totalDeleted = 0;
   try {
     const supabase = await getStorageClient();
     const folders: Array<"avatars" | "trips" | "posts" | "community" | "stories"> = [
@@ -402,26 +403,38 @@ export async function deleteUserStorageFolder(userId: string): Promise<{ success
       "stories",
     ];
 
-    let totalDeleted = 0;
+    const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+    if (bucketsError || !buckets) throw bucketsError || new Error("Could not list storage buckets");
 
-    for (const folder of folders) {
-      const folderPath = `${folder}/${userId}`;
-      const { data: files, error: listError } = await supabase.storage
-        .from(STORAGE_BUCKET)
-        .list(folderPath, { limit: 100 });
-
-      if (!listError && files && files.length > 0) {
-        const filePaths = files
-          .filter((f) => f.name && f.name !== ".emptyFolderPlaceholder")
-          .map((f) => `${folderPath}/${f.name}`);
-
-        if (filePaths.length > 0) {
-          const { error: removeError } = await supabase.storage
-            .from(STORAGE_BUCKET)
-            .remove(filePaths);
-
-          if (!removeError) {
-            totalDeleted += filePaths.length;
+    for (const bucket of buckets) {
+      const storage = supabase.storage.from(bucket.name);
+      for (const folder of folders) {
+        const pendingFolders = [`${folder}/${userId}`];
+        while (pendingFolders.length > 0) {
+          const folderPath = pendingFolders.pop()!;
+          const filePaths: string[] = [];
+          let offset = 0;
+          while (true) {
+            const { data: files, error: listError } = await storage.list(folderPath, {
+              limit: 100,
+              offset,
+              sortBy: { column: "name", order: "asc" },
+            });
+            if (listError || !files) throw listError || new Error("Could not list storage files");
+            for (const file of files) {
+              if (!file.name || file.name === ".emptyFolderPlaceholder") continue;
+              const path = `${folderPath}/${file.name}`;
+              if (file.id === null) pendingFolders.push(path);
+              else filePaths.push(path);
+            }
+            if (files.length < 100) break;
+            offset += files.length;
+          }
+          for (let i = 0; i < filePaths.length; i += 100) {
+            const batch = filePaths.slice(i, i + 100);
+            const { error: removeError } = await storage.remove(batch);
+            if (removeError) throw removeError;
+            totalDeleted += batch.length;
           }
         }
       }
@@ -430,6 +443,6 @@ export async function deleteUserStorageFolder(userId: string): Promise<{ success
     return { success: true, deletedCount: totalDeleted };
   } catch (err) {
     console.warn("Storage folder purge warning:", err);
-    return { success: false, deletedCount: 0 };
+    return { success: false, deletedCount: totalDeleted };
   }
 }

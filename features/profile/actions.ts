@@ -9,6 +9,8 @@ import { deleteUserStorageFolder, pruneUnusedUserAvatars } from "@/lib/storage";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient, getAuthenticatedUser } from "@/lib/supabase/server";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
+
+import { deleteAccountData } from "./account-deletion";
 import { validateUsername } from "./reserved-usernames";
 
 import {
@@ -721,34 +723,42 @@ export async function deleteAccountAction(otpToken: string): Promise<{ success: 
 
     const userId = user.id;
 
-    // 2. Purge user files from Supabase Storage
-    try {
-      await deleteUserStorageFolder(userId);
-    } catch (storageErr) {
-      console.warn("Storage deletion warning during account delete:", storageErr);
+    // Validate administrative configuration before deleting any data.
+    const adminClient = createAdminClient();
+    const deletion = await deleteAccountData({
+      storage: async () => {
+        const result = await deleteUserStorageFolder(userId);
+        if (!result.success) throw new Error("Storage cleanup failed");
+      },
+      workspace: async () => {
+        // deleteMany also succeeds when a previous attempt already removed the profile.
+        await db.profile.deleteMany({ where: { id: userId } });
+      },
+      auth: async () => {
+        const { error } = await adminClient.auth.admin.deleteUser(userId);
+        if (error) throw error;
+      },
+    });
+
+    if (!deletion.success) {
+      return {
+        success: false,
+        error: "Account deletion was not completed. Some data may already have been removed. Please request a new verification code and try again, or contact support if the problem continues.",
+      };
     }
 
-    // 3. Delete Profile from Prisma database (PostgreSQL cascades and deletes all trips, expenses, stories, posts, etc.)
+    // Auth deletion is already complete; a session cleanup failure cannot undo it.
     try {
-      await db.profile.delete({
-        where: { id: userId },
-      });
-    } catch (dbErr) {
-      console.error("Prisma profile delete error:", dbErr);
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.warn("Could not clear the deleted account session:", error);
     }
 
-    // 4. Delete Auth User from Supabase Auth via Admin Client
     try {
-      const adminClient = createAdminClient();
-      await adminClient.auth.admin.deleteUser(userId);
-    } catch (adminErr) {
-      console.error("Supabase admin deleteUser error:", adminErr);
+      revalidatePath("/", "layout");
+    } catch (error) {
+      console.warn("Could not revalidate after account deletion:", error);
     }
-
-    // 5. Sign out of active session
-    await supabase.auth.signOut();
-
-    revalidatePath("/", "layout");
 
     return { success: true };
   } catch (error) {
