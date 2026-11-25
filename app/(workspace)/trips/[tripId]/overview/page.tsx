@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { OverviewDashboard } from "@/features/trip-workspace";
 
@@ -18,11 +18,13 @@ export const metadata = {
 
 export default async function OverviewPage({ params }: OverviewPageProps) {
   const { tripId } = await params;
-  const { authorized, trip } = await verifyTripOwnership(tripId);
+  const { authorized, trip, isOwner } = await verifyTripOwnership(tripId);
 
   if (!authorized || !trip) {
     notFound();
   }
+
+  if (!isOwner) redirect(`/trips/${tripId}/itinerary`);
 
   // Query all workspace entities for this trip in parallel
   const [itinerary, accommodations, expenses, notes, checklist, links] =

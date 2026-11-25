@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -10,8 +10,7 @@ import { generateSlug } from "@/lib/utils";
 import { blogPostSchema, type BlogPostInput } from "./schema";
 import type { StoryItem } from "./types";
 
-const getCachedPublishedStoryRecords = unstable_cache(
-  () =>
+const getPublishedStoryRecords = () =>
     db.blogPost.findMany({
       where: { status: "PUBLISHED" },
       include: {
@@ -30,14 +29,12 @@ const getCachedPublishedStoryRecords = unstable_cache(
             id: true,
             title: true,
             destination: true,
+            isPublic: true,
           },
         },
       },
       orderBy: { publishedAt: "desc" },
-    }),
-  ["published-stories"],
-  { tags: ["stories-feed"], revalidate: 120 }
-);
+    });
 
 function invalidateStoriesFeed() {
   revalidateTag("stories-feed", "max");
@@ -98,6 +95,9 @@ export async function createBlogPost(input: BlogPostInput) {
     }
 
     const { title, excerpt, content, coverImageUrl, images, tags, status, linkedTripId } = parsed.data;
+    if (linkedTripId && !(await db.trip.findFirst({ where: { id: linkedTripId, profileId: user.id }, select: { id: true } }))) {
+      return { success: false, error: "Trip not found or unauthorized" };
+    }
     const baseSlug = parsed.data.slug || generateSlug(title);
     const slug = await resolveUniqueSlug(baseSlug);
     const isPublishing = status === "PUBLISHED";
@@ -153,6 +153,9 @@ export async function updateBlogPost(postId: string, input: BlogPostInput) {
     }
 
     const { title, excerpt, content, coverImageUrl, images, tags, status, linkedTripId } = parsed.data;
+    if (linkedTripId && !(await db.trip.findFirst({ where: { id: linkedTripId, profileId: user.id }, select: { id: true } }))) {
+      return { success: false, error: "Trip not found or unauthorized" };
+    }
 
     let slug = existing.slug;
     if (parsed.data.slug && parsed.data.slug !== existing.slug) {
@@ -230,12 +233,12 @@ export async function getMyBlogPosts() {
     const posts = await db.blogPost.findMany({
       where: { profileId: user.id },
       include: {
-        linkedTrip: { select: { id: true, title: true, destination: true } },
+        linkedTrip: { select: { id: true, title: true, destination: true, profileId: true } },
       },
       orderBy: { updatedAt: "desc" },
     });
 
-    return { success: true, posts };
+    return { success: true, posts: posts.map((post) => ({ ...post, linkedTrip: post.linkedTrip?.profileId === user.id ? post.linkedTrip : null, linkedTripId: post.linkedTrip?.profileId === user.id ? post.linkedTripId : null })) };
   } catch (error) {
     console.error("Error fetching blog posts:", error);
     return { success: false, error: "Failed to load blog posts", posts: [] };
@@ -265,7 +268,7 @@ export async function getBlogPostForEdit(slugOrId: string) {
         ],
       },
       include: {
-        linkedTrip: { select: { id: true, title: true, destination: true } },
+        linkedTrip: { select: { id: true, title: true, destination: true, profileId: true } },
       },
     });
 
@@ -273,7 +276,7 @@ export async function getBlogPostForEdit(slugOrId: string) {
       return { success: false, error: "Blog post not found" };
     }
 
-    return { success: true, post };
+    return { success: true, post: { ...post, linkedTrip: post.linkedTrip?.profileId === user.id ? post.linkedTrip : null, linkedTripId: post.linkedTrip?.profileId === user.id ? post.linkedTripId : null } };
   } catch (error) {
     console.error("Error fetching blog post for edit:", error);
     return { success: false, error: "Failed to load blog post" };
@@ -327,6 +330,7 @@ export async function getPublishedStory(slugOrId: string) {
             destination: true,
             coverImageUrl: true,
             isPublic: true,
+            profileId: true,
           },
         },
       },
@@ -353,6 +357,10 @@ export async function getPublishedStory(slugOrId: string) {
       success: true,
       story: {
         ...post,
+        linkedTrip: post.linkedTrip && (post.linkedTrip.isPublic || post.linkedTrip.profileId === user?.id)
+          ? { id: post.linkedTrip.id, title: post.linkedTrip.title, destination: post.linkedTrip.destination, coverImageUrl: post.linkedTrip.coverImageUrl, isPublic: post.linkedTrip.isPublic }
+          : null,
+        linkedTripId: post.linkedTrip && (post.linkedTrip.isPublic || post.linkedTrip.profileId === user?.id) ? post.linkedTripId : null,
         upvotes: post.upvotes ?? 0,
         hasLiked,
       },
@@ -369,7 +377,7 @@ export async function getPublishedStory(slugOrId: string) {
 export async function getAllPublishedStories() {
   try {
     const user = await getAuthUser();
-    const posts = await getCachedPublishedStoryRecords();
+    const posts = await getPublishedStoryRecords();
 
     let likedPostIds = new Set<string>();
     if (user && posts.length > 0) {
@@ -414,7 +422,7 @@ export async function getAllPublishedStories() {
               bio: post.profile.bio,
             }
           : null,
-        linkedTrip: post.linkedTrip
+        linkedTrip: post.linkedTrip?.isPublic
           ? {
               id: post.linkedTrip.id,
               title: post.linkedTrip.title,

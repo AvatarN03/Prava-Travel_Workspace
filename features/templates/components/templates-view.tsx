@@ -38,8 +38,6 @@ import type {
 const INCLUSION_OPTIONS: { value: InclusionFilter; label: string }[] = [
   { value: "ALL", label: "All Inclusions" },
   { value: "HAS_STAYS", label: "Has Stays" },
-  { value: "HAS_EXPENSES", label: "Has Budget" },
-  { value: "HAS_CHECKLIST", label: "Has Packing List" },
   { value: "HAS_STORY", label: "Has Creator Story" },
 ];
 
@@ -143,7 +141,7 @@ export function TemplatesView({ initialTrips }: TemplatesViewProps) {
             </span>
           </h1>
           <p className="font-sans text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed max-w-2xl">
-            Real trip blueprints published by travelers. Preview complete day-by-day schedules, accommodations, and estimated budgets, then clone directly into your workspace.
+            Real trip blueprints published by travelers. Preview day-by-day schedules and accommodations, then clone them into your workspace.
           </p>
         </div>
 

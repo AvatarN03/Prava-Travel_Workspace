@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath, unstable_cache } from "next/cache";
+import { revalidatePath } from "next/cache";
 import type { Prisma } from "@prisma/client";
 
 import { callOpenRouterFree } from "@/lib/ai";
@@ -15,10 +15,9 @@ import type {
   TemplateTripItem,
 } from "./types";
 
-const getCachedPublicTemplateRecords = unstable_cache(
-  async (searchQuery?: string, inclusionFilter?: InclusionFilter) => {
+async function getPublicTemplateRecords(searchQuery?: string, inclusionFilter?: InclusionFilter) {
     const filters: Prisma.TripWhereInput[] = [
-      { OR: [{ isPublic: true }, { isTemplate: true }] },
+      { isPublic: true },
     ];
 
     if (searchQuery) {
@@ -43,15 +42,6 @@ const getCachedPublicTemplateRecords = unstable_cache(
     }
 
     if (inclusionFilter === "HAS_STAYS") filters.push({ accommodations: { some: {} } });
-    if (inclusionFilter === "HAS_EXPENSES") {
-      filters.push({
-        OR: [
-          { expenses: { some: { amount: { gt: 0 } } } },
-          { accommodations: { some: { cost: { gt: 0 } } } },
-        ],
-      });
-    }
-    if (inclusionFilter === "HAS_CHECKLIST") filters.push({ checklistItems: { some: {} } });
     if (inclusionFilter === "HAS_STORY") {
       filters.push({ linkedBlogPosts: { some: { status: "PUBLISHED" } } });
     }
@@ -71,10 +61,7 @@ const getCachedPublicTemplateRecords = unstable_cache(
           },
         },
         itinerary: { orderBy: [{ dayNumber: "asc" }, { order: "asc" }] },
-        accommodations: true,
-        expenses: true,
-        checklistItems: true,
-        notes: true,
+        accommodations: { select: { name: true, type: true, address: true } },
         linkedBlogPosts: {
           where: { status: "PUBLISHED" },
           select: { slug: true, title: true },
@@ -83,10 +70,7 @@ const getCachedPublicTemplateRecords = unstable_cache(
       },
       orderBy: { createdAt: "desc" },
     });
-  },
-  ["public-trip-templates"],
-  { tags: ["templates-feed"], revalidate: 60 }
-);
+}
 
 export interface TemplateDiscoveryFilters {
   searchQuery?: string;
@@ -96,7 +80,7 @@ export interface TemplateDiscoveryFilters {
 }
 
 const durationFilters: DurationFilter[] = ["ALL", "WEEKEND", "SHORT", "EXTENDED", "LONG"];
-const inclusionFilters: InclusionFilter[] = ["ALL", "HAS_STAYS", "HAS_EXPENSES", "HAS_CHECKLIST", "HAS_STORY"];
+const inclusionFilters: InclusionFilter[] = ["ALL", "HAS_STAYS", "HAS_STORY"];
 const sortOptions: SortOption[] = ["NEWEST", "MOST_ACTIONABLE", "DURATION"];
 
 /**
@@ -124,7 +108,7 @@ export async function getPublicTripTemplates(
     } = await supabase.auth.getUser();
 
     const [publicDbTrips, userTrips] = await Promise.all([
-      getCachedPublicTemplateRecords(searchQuery, cachedInclusionFilter),
+      getPublicTemplateRecords(searchQuery, cachedInclusionFilter),
       user
         ? db.trip.findMany({
             where: { profileId: user.id },
@@ -171,17 +155,7 @@ export async function getPublicTripTemplates(
                 : 3
             );
 
-      // Compute total expenses from expenses and accommodations
-      const expenseListTotal = t.expenses.reduce((acc, curr) => acc + (curr.amount || 0), 0);
-      const accommodationsTotal = t.accommodations.reduce((acc, curr) => acc + (curr.cost || 0), 0);
-      const totalExpense = Math.round(expenseListTotal + accommodationsTotal);
-
-      // Detect predominant currency
-      const currencies = [
-        ...t.expenses.map((e) => e.currency),
-        ...t.accommodations.map((a) => a.currency),
-      ].filter(Boolean);
-      const currency = currencies[0] || t.profile?.defaultCurrency || "INR";
+      const currency = t.profile?.defaultCurrency || "INR";
 
       return {
         id: t.id,
@@ -207,16 +181,16 @@ export async function getPublicTripTemplates(
         metrics: {
           activityCount: t.itinerary.length,
           accommodationCount: t.accommodations.length,
-          checklistCount: t.checklistItems.length,
-          notesCount: t.notes.length,
-          expenseTotal: totalExpense,
+          checklistCount: 0,
+          notesCount: 0,
+          expenseTotal: 0,
           currency,
         },
         inclusions: {
           hasStays: t.accommodations.length > 0,
-          hasExpenses: totalExpense > 0,
-          hasChecklist: t.checklistItems.length > 0,
-          hasNotes: t.notes.length > 0,
+          hasExpenses: false,
+          hasChecklist: false,
+          hasNotes: false,
           hasStory: t.linkedBlogPosts.length > 0,
         },
         itinerary: t.itinerary.map((i) => ({
@@ -225,17 +199,15 @@ export async function getPublicTripTemplates(
           category: i.category || "Activity",
           description: i.description || undefined,
           location: i.location || undefined,
-          cost: i.cost || undefined,
         })),
         accommodations: t.accommodations.map((a) => ({
           name: a.name,
           type: a.type || "Hotel",
           address: a.address || undefined,
-          cost: a.cost || undefined,
-          currency: a.currency || "USD",
+          currency: "USD",
         })),
-        checklistHighlights: t.checklistItems.slice(0, 5).map((c) => c.title),
-        tips: t.notes.slice(0, 4).map((n) => n.title),
+        checklistHighlights: [],
+        tips: [],
         linkedStory: t.linkedBlogPosts[0]
           ? {
               slug: t.linkedBlogPosts[0].slug,
@@ -357,14 +329,11 @@ export async function cloneTripTemplate(
     const sourceTrip = await db.trip.findFirst({
       where: {
         id: templateId,
-        OR: [{ isPublic: true }, { isTemplate: true }],
+        isPublic: true,
       },
       include: {
         itinerary: { orderBy: [{ dayNumber: "asc" }, { order: "asc" }] },
-        accommodations: true,
-        expenses: true,
-        checklistItems: true,
-        notes: true,
+        accommodations: { select: { name: true, type: true, address: true } },
       },
     });
 
@@ -380,7 +349,7 @@ export async function cloneTripTemplate(
       description: i.description,
       location: i.location,
       category: i.category || "Activity",
-      cost: i.cost,
+      cost: null,
       order: i.order,
     }));
 
@@ -438,7 +407,7 @@ export async function cloneTripTemplate(
             description: i.description,
             location: i.location,
             category: i.category,
-            cost: i.cost,
+            cost: null,
             order: i.order,
           })),
         });
@@ -452,51 +421,6 @@ export async function cloneTripTemplate(
             name: a.name,
             type: a.type,
             address: a.address,
-            contactPhone: a.contactPhone,
-            cost: a.cost,
-            currency: a.currency,
-            notes: a.notes,
-          })),
-        });
-      }
-
-      // Clone Expenses
-      if (sourceTrip.expenses.length > 0) {
-        await tx.expense.createMany({
-          data: sourceTrip.expenses.map((e) => ({
-            tripId: createdTrip.id,
-            title: e.title,
-            amount: e.amount,
-            currency: e.currency,
-            category: e.category,
-            date: new Date(),
-            notes: e.notes,
-          })),
-        });
-      }
-
-      // Clone Checklist Items
-      if (sourceTrip.checklistItems.length > 0) {
-        await tx.checklistItem.createMany({
-          data: sourceTrip.checklistItems.map((c) => ({
-            tripId: createdTrip.id,
-            title: c.title,
-            category: c.category,
-            isCompleted: false, // reset for fresh trip
-            order: c.order,
-          })),
-        });
-      }
-
-      // Clone Notes
-      if (sourceTrip.notes.length > 0) {
-        await tx.note.createMany({
-          data: sourceTrip.notes.map((n) => ({
-            tripId: createdTrip.id,
-            title: n.title,
-            content: n.content,
-            category: n.category,
-            isPinned: n.isPinned,
           })),
         });
       }

@@ -6,11 +6,9 @@ import { useMemo, useState, useTransition } from "react";
 import {
   Calendar,
   Check,
-  CheckSquare,
   ChevronDown,
   Clock,
   Compass,
-  FileText,
   Loader2,
   MapPin,
   Sparkles,
@@ -74,7 +72,7 @@ export function TemplatePreviewDialog({
 
   const previewDescription =
     trip.description ||
-    "Review the full day-by-day schedule, stays, and packing list before cloning.";
+    "Review the full day-by-day schedule and stays before cloning.";
   const canExpandDescription = previewDescription.length > 180;
   const currencySymbol =
     SUPPORTED_CURRENCIES.find(
@@ -158,7 +156,7 @@ export function TemplatePreviewDialog({
         {/* Modal Body with Tabs */}
         <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-3.5 sm:p-5">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-4 grid h-9 w-full grid-cols-3 rounded-md border border-border bg-background p-0 sm:h-10">
+            <TabsList className="mb-4 grid h-9 w-full grid-cols-2 rounded-md border border-border bg-background p-0 sm:h-10">
               <TabsTrigger
                 value="itinerary"
                 className="gap-1 rounded-sm py-1 text-[11px] data-[state=active]:!bg-white data-[state=active]:!text-slate-950 data-[state=active]:shadow-none dark:data-[state=active]:!bg-black dark:data-[state=active]:!text-white sm:gap-1.5 sm:text-xs"
@@ -175,13 +173,6 @@ export function TemplatePreviewDialog({
                 <span>Stays ({trip.metrics.accommodationCount})</span>
               </TabsTrigger>
 
-              <TabsTrigger
-                value="prep"
-                className="gap-1 rounded-sm py-1 text-[11px] data-[state=active]:!bg-white data-[state=active]:!text-slate-950 data-[state=active]:shadow-none dark:data-[state=active]:!bg-black dark:data-[state=active]:!text-white sm:gap-1.5 sm:text-xs"
-              >
-                <CheckSquare className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                <span>Packing & Tips</span>
-              </TabsTrigger>
             </TabsList>
 
             {/* Tab 1: Day-by-day Itinerary */}
@@ -295,53 +286,6 @@ export function TemplatePreviewDialog({
               )}
             </TabsContent>
 
-            {/* Tab 3: Packing & Tips */}
-            <TabsContent value="prep" className="mt-0 space-y-4">
-              {trip.checklistHighlights.length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    <CheckSquare className="h-3.5 w-3.5 text-primary" /> Recommended
-                    Packing Checklist
-                  </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                    {trip.checklistHighlights.map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center gap-2 rounded-sm border border-border/60 bg-muted/30 p-2 text-xs text-foreground"
-                      >
-                        <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                        <span className="truncate">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {trip.tips.length > 0 && (
-                <div className="space-y-2 pt-2">
-                  <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    <FileText className="h-3.5 w-3.5 text-primary" /> Local Tips &
-                    Notes
-                  </h4>
-                  <div className="space-y-1.5">
-                    {trip.tips.map((tip, idx) => (
-                      <div
-                        key={idx}
-                        className="rounded-sm border border-primary/20 bg-primary/5 p-2.5 text-xs text-foreground"
-                      >
-                        {tip}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {trip.checklistHighlights.length === 0 && trip.tips.length === 0 && (
-                <div className="py-8 text-center text-xs text-muted-foreground">
-                  No packing checklist or notes attached to this template.
-                </div>
-              )}
-            </TabsContent>
           </Tabs>
 
           {/* Optional AI Tailor Accordion */}

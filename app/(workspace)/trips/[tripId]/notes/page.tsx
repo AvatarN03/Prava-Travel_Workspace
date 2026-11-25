@@ -18,9 +18,9 @@ export const metadata = {
 
 export default async function NotesPage({ params }: NotesPageProps) {
   const { tripId } = await params;
-  const { authorized, trip } = await verifyTripOwnership(tripId);
+  const { authorized, trip, isOwner } = await verifyTripOwnership(tripId);
 
-  if (!authorized || !trip) {
+  if (!authorized || !trip || !isOwner) {
     notFound();
   }
 

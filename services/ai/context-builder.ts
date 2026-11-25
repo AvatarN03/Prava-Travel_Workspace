@@ -30,7 +30,7 @@ export async function buildTripContext(
   const trip = await db.trip.findFirst({
     where: {
       id: tripId,
-      OR: [{ profileId }, { isPublic: true }],
+      profileId,
     },
     include: {
       profile: {

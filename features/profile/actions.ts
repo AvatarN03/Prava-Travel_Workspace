@@ -361,7 +361,6 @@ export async function getPublicCreatorProfile(username: string) {
                 category: true,
                 description: true,
                 location: true,
-                cost: true,
               },
             },
             accommodations: {
@@ -369,18 +368,7 @@ export async function getPublicCreatorProfile(username: string) {
                 name: true,
                 type: true,
                 address: true,
-                cost: true,
-                currency: true,
               },
-            },
-            expenses: {
-              select: { amount: true, currency: true },
-            },
-            checklistItems: {
-              select: { title: true },
-            },
-            notes: {
-              select: { title: true },
             },
             linkedBlogPosts: {
               where: { status: "PUBLISHED" },
@@ -409,6 +397,7 @@ export async function getPublicCreatorProfile(username: string) {
                 id: true,
                 title: true,
                 destination: true,
+                isPublic: true,
               },
             },
           },
@@ -501,7 +490,7 @@ export async function getPublicCreatorProfile(username: string) {
             avatarUrl: profile.avatarUrl,
             isPublic: profile.isPublic,
           },
-          linkedTrip: post.linkedTrip
+          linkedTrip: post.linkedTrip?.isPublic
             ? {
                 id: post.linkedTrip.id,
                 title: post.linkedTrip.title,
@@ -525,14 +514,7 @@ export async function getPublicCreatorProfile(username: string) {
                     ? Math.max(...t.itinerary.map((item) => item.dayNumber || 1))
                     : 1
                 );
-          const expenseTotal = Math.round(
-            t.expenses.reduce((total, expense) => total + (expense.amount || 0), 0) +
-              t.accommodations.reduce((total, stay) => total + (stay.cost || 0), 0)
-          );
-          const currency =
-            t.expenses.find((expense) => expense.currency)?.currency ||
-            t.accommodations.find((stay) => stay.currency)?.currency ||
-            "INR";
+          const currency = "INR";
           const isCloned =
             isOwnProfile ||
             currentUserTrips.some(
@@ -568,16 +550,16 @@ export async function getPublicCreatorProfile(username: string) {
             metrics: {
               activityCount: t.itinerary.length,
               accommodationCount: t.accommodations.length,
-              checklistCount: t.checklistItems.length,
-              notesCount: t.notes.length,
-              expenseTotal,
+              checklistCount: 0,
+              notesCount: 0,
+              expenseTotal: 0,
               currency,
             },
             inclusions: {
               hasStays: t.accommodations.length > 0,
-              hasExpenses: expenseTotal > 0,
-              hasChecklist: t.checklistItems.length > 0,
-              hasNotes: t.notes.length > 0,
+              hasExpenses: false,
+              hasChecklist: false,
+              hasNotes: false,
               hasStory: t.linkedBlogPosts.length > 0,
             },
             itinerary: t.itinerary.map((item) => ({
@@ -586,17 +568,15 @@ export async function getPublicCreatorProfile(username: string) {
               category: item.category,
               description: item.description,
               location: item.location,
-              cost: item.cost,
             })),
             accommodations: t.accommodations.map((stay) => ({
               name: stay.name,
               type: stay.type,
               address: stay.address,
-              cost: stay.cost,
-              currency: stay.currency || currency,
+              currency,
             })),
-            checklistHighlights: t.checklistItems.slice(0, 5).map((item) => item.title),
-            tips: t.notes.slice(0, 4).map((note) => note.title),
+            checklistHighlights: [],
+            tips: [],
             linkedStory: t.linkedBlogPosts[0]
               ? {
                   slug: t.linkedBlogPosts[0].slug,

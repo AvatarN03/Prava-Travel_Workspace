@@ -46,10 +46,10 @@ DROP POLICY IF EXISTS "Trips insert policy" ON public.trips;
 DROP POLICY IF EXISTS "Trips update policy" ON public.trips;
 DROP POLICY IF EXISTS "Trips delete policy" ON public.trips;
 
--- Viewable if public, if community template, or owned by the user
+-- Full trip rows contain private fields; public previews are served by the application.
 CREATE POLICY "Trips view policy"
 ON public.trips FOR SELECT
-USING (is_public = true OR is_template = true OR auth.uid() = profile_id);
+USING (auth.uid() = profile_id);
 
 CREATE POLICY "Trips insert policy"
 ON public.trips FOR INSERT
@@ -80,7 +80,7 @@ ON public.itinerary_items FOR SELECT
 USING (EXISTS (
   SELECT 1 FROM public.trips 
   WHERE trips.id = itinerary_items.trip_id 
-    AND (trips.is_public = true OR trips.is_template = true OR trips.profile_id = auth.uid())
+    AND trips.profile_id = auth.uid()
 ));
 
 CREATE POLICY "Itinerary items insert policy"
@@ -120,7 +120,7 @@ DROP POLICY IF EXISTS "Accommodations update policy" ON public.accommodations;
 DROP POLICY IF EXISTS "Accommodations delete policy" ON public.accommodations;
 
 CREATE POLICY "Accommodations select policy" ON public.accommodations FOR SELECT
-USING (EXISTS (SELECT 1 FROM public.trips WHERE trips.id = accommodations.trip_id AND (trips.is_public = true OR trips.is_template = true OR trips.profile_id = auth.uid())));
+USING (EXISTS (SELECT 1 FROM public.trips WHERE trips.id = accommodations.trip_id AND trips.profile_id = auth.uid()));
 
 CREATE POLICY "Accommodations insert policy" ON public.accommodations FOR INSERT
 WITH CHECK (EXISTS (SELECT 1 FROM public.trips WHERE trips.id = accommodations.trip_id AND trips.profile_id = auth.uid()));
@@ -200,7 +200,7 @@ DROP POLICY IF EXISTS "Links update policy" ON public.links;
 DROP POLICY IF EXISTS "Links delete policy" ON public.links;
 
 CREATE POLICY "Links select policy" ON public.links FOR SELECT
-USING (auth.uid() = profile_id OR EXISTS (SELECT 1 FROM public.trips WHERE trips.id = links.trip_id AND (trips.is_public = true OR trips.is_template = true OR trips.profile_id = auth.uid())));
+USING (auth.uid() = profile_id OR EXISTS (SELECT 1 FROM public.trips WHERE trips.id = links.trip_id AND trips.profile_id = auth.uid()));
 
 CREATE POLICY "Links insert policy" ON public.links FOR INSERT
 WITH CHECK (auth.uid() = profile_id OR EXISTS (SELECT 1 FROM public.trips WHERE trips.id = links.trip_id AND trips.profile_id = auth.uid()));

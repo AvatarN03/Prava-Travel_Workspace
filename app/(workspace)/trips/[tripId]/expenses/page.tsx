@@ -19,9 +19,9 @@ export const metadata = {
 
 export default async function ExpensesPage({ params }: ExpensesPageProps) {
   const { tripId } = await params;
-  const { authorized, trip, user } = await verifyTripOwnership(tripId);
+  const { authorized, trip, user, isOwner } = await verifyTripOwnership(tripId);
 
-  if (!authorized || !trip) {
+  if (!authorized || !trip || !isOwner) {
     notFound();
   }
 
