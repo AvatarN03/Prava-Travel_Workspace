@@ -14,10 +14,11 @@ DROP POLICY IF EXISTS "Profiles update policy" ON public.profiles;
 DROP POLICY IF EXISTS "Profiles insert policy" ON public.profiles;
 DROP POLICY IF EXISTS "Profiles delete policy" ON public.profiles;
 
--- Allow reading own profile, or any profile marked as public (creator view)
+-- Full profile rows contain private fields (email and workspace preferences).
+-- Public creator projections are served by the application server instead.
 CREATE POLICY "Profiles view policy"
 ON public.profiles FOR SELECT
-USING (auth.uid() = id OR is_public = true);
+USING (auth.uid() = id);
 
 -- Only user can update their own profile
 CREATE POLICY "Profiles update policy"
@@ -352,6 +353,14 @@ CREATE POLICY "Subscriptions view policy" ON public.subscriptions FOR SELECT USI
 
 -- Webhook Events: Strictly internal (Only accessible via postgres service role)
 ALTER TABLE public.webhook_events ENABLE ROW LEVEL SECURITY;
+
+-- AI credit usage: private accounting history. The server uses the privileged
+-- Prisma role; authenticated client reads are restricted to the current user.
+ALTER TABLE public.ai_credit_usage ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "AI credit usage owner read policy" ON public.ai_credit_usage;
+CREATE POLICY "AI credit usage owner read policy"
+ON public.ai_credit_usage FOR SELECT
+USING (auth.uid() = profile_id);
 
 -- Prisma Migrations: Strictly internal
 ALTER TABLE public._prisma_migrations ENABLE ROW LEVEL SECURITY;

@@ -78,6 +78,8 @@ const getCachedForumPostRecords = unstable_cache(
         linkedTrip: {
           select: {
             id: true,
+            profileId: true,
+            isPublic: true,
             title: true,
             destination: true,
             startDate: true,
@@ -96,6 +98,37 @@ const getCachedForumPostRecords = unstable_cache(
 
 function invalidateForumFeed() {
   revalidateTag("forum-feed", "max");
+}
+
+/**
+ * A forum post may reference a trip only when the author owns it or the trip
+ * is explicitly public. This keeps client-supplied trip IDs from becoming a
+ * way to attach private workspace data to a community post.
+ */
+async function resolveAllowedLinkedTripId(
+  profileId: string,
+  linkedTripId?: string | null
+): Promise<string | null | false> {
+  const normalizedTripId = linkedTripId?.trim() || null;
+  if (!normalizedTripId) return null;
+
+  if (
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      normalizedTripId
+    )
+  ) {
+    return false;
+  }
+
+  const trip = await db.trip.findFirst({
+    where: {
+      id: normalizedTripId,
+      OR: [{ profileId }, { isPublic: true }],
+    },
+    select: { id: true },
+  });
+
+  return trip?.id ?? false;
 }
 
 /** Fetch forum discussions with author profiles, attached trips, and saved-state overlays. */
@@ -137,7 +170,10 @@ export async function getForumDiscussions(
 
     return posts.map((post) => {
       let linkedTrip = null;
-      if (post.linkedTrip) {
+      if (
+        post.linkedTrip &&
+        (post.linkedTrip.profileId === currentUserId || post.linkedTrip.isPublic)
+      ) {
         const days =
           post.linkedTrip.startDate && post.linkedTrip.endDate
             ? Math.max(
@@ -230,6 +266,8 @@ export async function getForumPostBySlug(slugOrId: string): Promise<ForumPost | 
         linkedTrip: {
           select: {
             id: true,
+            profileId: true,
+            isPublic: true,
             title: true,
             destination: true,
             startDate: true,
@@ -284,7 +322,10 @@ export async function getForumPostBySlug(slugOrId: string): Promise<ForumPost | 
     }));
 
     let linkedTrip = null;
-    if (post.linkedTrip) {
+    if (
+      post.linkedTrip &&
+      (post.linkedTrip.profileId === currentUserId || post.linkedTrip.isPublic)
+    ) {
       const days =
         post.linkedTrip.startDate && post.linkedTrip.endDate
           ? Math.max(
@@ -391,6 +432,17 @@ export async function createForumDiscussion(input: CreateDiscussionInput) {
       return { success: false, error: "Description must be at least 10 characters long." };
     }
 
+    const linkedTripId = await resolveAllowedLinkedTripId(
+      profile.id,
+      input.linkedTripId
+    );
+    if (linkedTripId === false) {
+      return {
+        success: false,
+        error: "You can only link your own trip or a public trip.",
+      };
+    }
+
     // Generate unique slug
     const shortId = Math.random().toString(36).substring(2, 8);
     const baseSlug = generateSlug(input.title).replace(/-+$/, "");
@@ -407,7 +459,7 @@ export async function createForumDiscussion(input: CreateDiscussionInput) {
         tags: input.tags || [],
         images: input.images || [],
         coverImageUrl: input.coverImageUrl || (input.images && input.images[0]) || null,
-        linkedTripId: input.linkedTripId || null,
+        linkedTripId,
       },
       select: {
         id: true,
@@ -458,6 +510,17 @@ export async function updateForumDiscussion(postId: string, input: UpdateDiscuss
       return { success: false, error: "You can only edit your own discussions." };
     }
 
+    const linkedTripId = await resolveAllowedLinkedTripId(
+      profile.id,
+      input.linkedTripId
+    );
+    if (linkedTripId === false) {
+      return {
+        success: false,
+        error: "You can only link your own trip or a public trip.",
+      };
+    }
+
     const updated = await db.communityPost.update({
       where: { id: postId },
       data: {
@@ -468,7 +531,7 @@ export async function updateForumDiscussion(postId: string, input: UpdateDiscuss
         tags: input.tags || [],
         images: input.images || [],
         coverImageUrl: input.coverImageUrl || (input.images && input.images[0]) || null,
-        linkedTripId: input.linkedTripId || null,
+        linkedTripId,
         isEdited: true,
       },
       select: { slug: true },
