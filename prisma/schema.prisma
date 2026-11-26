@@ -38,6 +38,7 @@ model Profile {
   communityPostUpvotes CommunityPostUpvote[]
   communitySavedPosts CommunitySavedPost[]
   subscriptions   Subscription[]
+  aiCreditUsage   AiCreditUsage[]
 
   @@map("profiles")
 }
@@ -217,6 +218,24 @@ model AiMessage {
   proposals    AiProposal[]
 
   @@map("ai_messages")
+}
+
+// Durable accounting records deliberately do not reference a trip, conversation,
+// or message. Users can delete those workspace records without restoring spent
+// credits. Account deletion still removes the ledger through its Profile relation.
+model AiCreditUsage {
+  id          String   @id @default(uuid()) @db.Uuid
+  profileId   String   @map("profile_id") @db.Uuid
+  tripId      String?  @map("trip_id") @db.Uuid
+  messageId   String?  @unique @map("message_id") @db.Uuid
+  creditsCost Int      @map("credits_cost")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId, createdAt])
+  @@index([profileId, tripId, createdAt])
+  @@map("ai_credit_usage")
 }
 
 enum ProposalStatus {

@@ -268,13 +268,10 @@ export async function getUserAiCredits(userId: string): Promise<UserAiQuotaDTO> 
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
 
-    const agg = await db.aiMessage.aggregate({
+    const agg = await db.aiCreditUsage.aggregate({
       where: {
-        role: "user",
         createdAt: { gte: startOfMonth },
-        conversation: {
-          profileId: userId,
-        },
+        profileId: userId,
       },
       _sum: {
         creditsCost: true,

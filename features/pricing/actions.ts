@@ -157,10 +157,9 @@ export async function getAccountUsage(): Promise<{
     });
 
     // Real-time AI credits consumed in active billing cycle
-    const aggAi = await db.aiMessage.aggregate({
+    const aggAi = await db.aiCreditUsage.aggregate({
       where: {
-        role: "user",
-        conversation: { profileId: user.id },
+        profileId: user.id,
         createdAt: { gte: activeCycle.start, lte: activeCycle.end },
       },
       _sum: {
@@ -208,10 +207,9 @@ export async function getAccountUsage(): Promise<{
         });
       } else {
         try {
-          const aggPastAi = await db.aiMessage.aggregate({
+          const aggPastAi = await db.aiCreditUsage.aggregate({
             where: {
-              role: "user",
-              conversation: { profileId: user.id },
+              profileId: user.id,
               createdAt: { gte: cycle.start, lte: cycle.end },
             },
             _sum: {
@@ -279,27 +277,26 @@ export async function getAccountUsage(): Promise<{
         destination: true,
         createdAt: true,
         coverImageUrl: true,
-        aiConversations: {
-          select: {
-            messages: {
-              where: {
-                role: "user",
-                createdAt: { gte: activeCycle.start, lte: activeCycle.end },
-              },
-              select: { creditsCost: true },
-            },
-          },
-        },
       },
       orderBy: { createdAt: "desc" },
       take: 20,
     });
 
+    const creditsByTrip = await db.aiCreditUsage.groupBy({
+      by: ["tripId"],
+      where: {
+        profileId: user.id,
+        tripId: { in: userTrips.map((trip) => trip.id) },
+        createdAt: { gte: activeCycle.start, lte: activeCycle.end },
+      },
+      _sum: { creditsCost: true },
+    });
+    const creditsByTripId = new Map(
+      creditsByTrip.map((usage) => [usage.tripId, usage._sum.creditsCost ?? 0])
+    );
+
     const tripUsage: TripAiUsageItem[] = userTrips.map((t) => {
-      const credits = t.aiConversations.reduce(
-        (sum, c) => sum + c.messages.reduce((messageTotal, message) => messageTotal + message.creditsCost, 0),
-        0
-      );
+      const credits = creditsByTripId.get(t.id) ?? 0;
       return {
         id: t.id,
         title: t.title,

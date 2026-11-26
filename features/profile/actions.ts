@@ -58,10 +58,9 @@ const getCachedProfile = cache(async (): Promise<{ success: boolean; profile?: P
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 
     const [aiCreditsAgg, publishedStoriesCount, communityDiscussionsCount] = await Promise.all([
-      db.aiMessage.aggregate({
+      db.aiCreditUsage.aggregate({
         where: {
-          role: "user",
-          conversation: { profileId: user.id },
+          profileId: user.id,
           createdAt: { gte: startOfMonth, lte: endOfMonth },
         },
         _sum: {
