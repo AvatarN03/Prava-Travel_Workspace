@@ -19,6 +19,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import { createClient } from "@/lib/supabase/client";
+
+import { clearPwaUserData } from "./pwa-cache";
+
 // ─── Types & Interfaces ────────────────────────────────────────────────────────
 
 interface BeforeInstallPromptEvent extends Event {
@@ -59,6 +63,31 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+
+    const supabase = createClient();
+    let previousUserId = window.localStorage.getItem("prava-active-user-id");
+
+    // Clear offline data whenever a session ends or changes accounts. This
+    // also removes legacy service-worker caches created before navigation
+    // responses were made network-only.
+    const {
+      data: { subscription: authSubscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      const nextUserId = session?.user?.id ?? null;
+      const sessionChanged = previousUserId !== nextUserId;
+
+      if (!nextUserId || sessionChanged) {
+        void clearPwaUserData();
+      }
+
+      if (nextUserId) {
+        window.localStorage.setItem("prava-active-user-id", nextUserId);
+      } else {
+        window.localStorage.removeItem("prava-active-user-id");
+      }
+
+      previousUserId = nextUserId;
+    });
 
     // 1. Register Service Worker for PWA compliance and offline fallback
     if ("serviceWorker" in navigator) {
@@ -113,6 +142,7 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
     window.addEventListener("appinstalled", handleAppInstalled);
 
     return () => {
+      authSubscription.unsubscribe();
       mediaQuery.removeEventListener("change", handleMediaChange);
       window.removeEventListener(
         "beforeinstallprompt",

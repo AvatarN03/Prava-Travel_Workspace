@@ -49,6 +49,7 @@ next-env.d.ts
 /chatgpt-mockups
 
 memory.md
+task.md
 
 # documentation (tracked on GitHub separately)
 /docs/

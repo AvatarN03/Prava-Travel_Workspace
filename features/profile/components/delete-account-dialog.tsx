@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
+import { clearPwaUserData } from "@/components/pwa/pwa-cache";
 import { createClient } from "@/lib/supabase/client";
 import { deleteAccountAction } from "../actions";
 
@@ -132,6 +133,7 @@ export function DeleteAccountDialog({
         setErrorMessage(result.error || "Failed to delete account.");
         setIsDeleting(false);
       } else {
+        await clearPwaUserData();
         // Show farewell note toast
         toast.success(
           "Your Prava account and workspace data have been deleted. Thank you for traveling with us.",

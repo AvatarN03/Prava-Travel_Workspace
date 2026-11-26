@@ -1,5 +1,6 @@
 // Prava Travel Workspace Service Worker
-const CACHE_NAME = "prava-pwa-v1";
+const CACHE_PREFIX = "prava-pwa-";
+const CACHE_NAME = "prava-pwa-static-v2";
 const OFFLINE_FALLBACK_URL = "/offline";
 
 const PRECACHE_ASSETS = [
@@ -24,7 +25,8 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Clean up previous cache versions upon activation
+// Clean up previous Prava cache versions upon activation. Only the current
+// static cache is retained; navigation responses are never cached.
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
@@ -32,13 +34,29 @@ self.addEventListener("activate", (event) => {
       .then((cacheNames) =>
         Promise.all(
           cacheNames.map((name) => {
-            if (name !== CACHE_NAME) {
+            if (name.startsWith(CACHE_PREFIX) && name !== CACHE_NAME) {
               return caches.delete(name);
             }
           })
         )
       )
       .then(() => self.clients.claim())
+  );
+});
+
+// Allow the client to remove legacy/runtime caches when an account signs out
+// or changes. The static asset cache contains no user data and is preserved.
+self.addEventListener("message", (event) => {
+  if (event.data?.type !== "CLEAR_USER_CACHE") return;
+
+  event.waitUntil(
+    caches.keys().then((cacheNames) =>
+      Promise.all(
+        cacheNames
+          .filter((name) => name.startsWith(CACHE_PREFIX) && name !== CACHE_NAME)
+          .map((name) => caches.delete(name))
+      )
+    )
   );
 });
 
@@ -75,26 +93,14 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // 5. HTML Page Navigations: Network-first with offline fallback
+  // 5. HTML Page Navigations: network-only with an offline fallback.
+  // Never cache authenticated HTML because CacheStorage is shared across
+  // accounts in the same browser profile.
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
-        .then((networkResponse) => {
-          // If network succeeded, optionally keep a clone in cache for offline visits
-          if (networkResponse && networkResponse.status === 200) {
-            const responseClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseClone);
-            });
-          }
-          return networkResponse;
-        })
+        .then((networkResponse) => networkResponse)
         .catch(async () => {
-          // Device is offline
-          const cachedPage = await caches.match(request);
-          if (cachedPage) {
-            return cachedPage;
-          }
           const offlineFallback = await caches.match(OFFLINE_FALLBACK_URL);
           if (offlineFallback) {
             return offlineFallback;
