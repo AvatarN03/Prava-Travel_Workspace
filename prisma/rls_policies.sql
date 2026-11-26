@@ -141,17 +141,62 @@ DROP POLICY IF EXISTS "Expenses update policy" ON public.expenses;
 DROP POLICY IF EXISTS "Expenses delete policy" ON public.expenses;
 
 CREATE POLICY "Expenses select policy" ON public.expenses FOR SELECT
-USING (auth.uid() = profile_id OR EXISTS (SELECT 1 FROM public.trips WHERE trips.id = expenses.trip_id AND trips.profile_id = auth.uid()));
+USING (
+  auth.uid() = profile_id
+  AND (
+    expenses.trip_id IS NULL
+    OR EXISTS (
+      SELECT 1 FROM public.trips
+      WHERE trips.id = expenses.trip_id AND trips.profile_id = auth.uid()
+    )
+  )
+);
 
 CREATE POLICY "Expenses insert policy" ON public.expenses FOR INSERT
-WITH CHECK (auth.uid() = profile_id OR EXISTS (SELECT 1 FROM public.trips WHERE trips.id = expenses.trip_id AND trips.profile_id = auth.uid()));
+WITH CHECK (
+  auth.uid() = profile_id
+  AND (
+    expenses.trip_id IS NULL
+    OR EXISTS (
+      SELECT 1 FROM public.trips
+      WHERE trips.id = expenses.trip_id AND trips.profile_id = auth.uid()
+    )
+  )
+);
 
 CREATE POLICY "Expenses update policy" ON public.expenses FOR UPDATE
-USING (auth.uid() = profile_id OR EXISTS (SELECT 1 FROM public.trips WHERE trips.id = expenses.trip_id AND trips.profile_id = auth.uid()))
-WITH CHECK (auth.uid() = profile_id OR EXISTS (SELECT 1 FROM public.trips WHERE trips.id = expenses.trip_id AND trips.profile_id = auth.uid()));
+USING (
+  auth.uid() = profile_id
+  AND (
+    expenses.trip_id IS NULL
+    OR EXISTS (
+      SELECT 1 FROM public.trips
+      WHERE trips.id = expenses.trip_id AND trips.profile_id = auth.uid()
+    )
+  )
+)
+WITH CHECK (
+  auth.uid() = profile_id
+  AND (
+    expenses.trip_id IS NULL
+    OR EXISTS (
+      SELECT 1 FROM public.trips
+      WHERE trips.id = expenses.trip_id AND trips.profile_id = auth.uid()
+    )
+  )
+);
 
 CREATE POLICY "Expenses delete policy" ON public.expenses FOR DELETE
-USING (auth.uid() = profile_id OR EXISTS (SELECT 1 FROM public.trips WHERE trips.id = expenses.trip_id AND trips.profile_id = auth.uid()));
+USING (
+  auth.uid() = profile_id
+  AND (
+    expenses.trip_id IS NULL
+    OR EXISTS (
+      SELECT 1 FROM public.trips
+      WHERE trips.id = expenses.trip_id AND trips.profile_id = auth.uid()
+    )
+  )
+);
 
 -- Notes (Private notes and travel documents)
 ALTER TABLE public.notes ENABLE ROW LEVEL SECURITY;
@@ -201,17 +246,62 @@ DROP POLICY IF EXISTS "Links update policy" ON public.links;
 DROP POLICY IF EXISTS "Links delete policy" ON public.links;
 
 CREATE POLICY "Links select policy" ON public.links FOR SELECT
-USING (auth.uid() = profile_id OR EXISTS (SELECT 1 FROM public.trips WHERE trips.id = links.trip_id AND trips.profile_id = auth.uid()));
+USING (
+  auth.uid() = profile_id
+  AND (
+    links.trip_id IS NULL
+    OR EXISTS (
+      SELECT 1 FROM public.trips
+      WHERE trips.id = links.trip_id AND trips.profile_id = auth.uid()
+    )
+  )
+);
 
 CREATE POLICY "Links insert policy" ON public.links FOR INSERT
-WITH CHECK (auth.uid() = profile_id OR EXISTS (SELECT 1 FROM public.trips WHERE trips.id = links.trip_id AND trips.profile_id = auth.uid()));
+WITH CHECK (
+  auth.uid() = profile_id
+  AND (
+    links.trip_id IS NULL
+    OR EXISTS (
+      SELECT 1 FROM public.trips
+      WHERE trips.id = links.trip_id AND trips.profile_id = auth.uid()
+    )
+  )
+);
 
 CREATE POLICY "Links update policy" ON public.links FOR UPDATE
-USING (auth.uid() = profile_id OR EXISTS (SELECT 1 FROM public.trips WHERE trips.id = links.trip_id AND trips.profile_id = auth.uid()))
-WITH CHECK (auth.uid() = profile_id OR EXISTS (SELECT 1 FROM public.trips WHERE trips.id = links.trip_id AND trips.profile_id = auth.uid()));
+USING (
+  auth.uid() = profile_id
+  AND (
+    links.trip_id IS NULL
+    OR EXISTS (
+      SELECT 1 FROM public.trips
+      WHERE trips.id = links.trip_id AND trips.profile_id = auth.uid()
+    )
+  )
+)
+WITH CHECK (
+  auth.uid() = profile_id
+  AND (
+    links.trip_id IS NULL
+    OR EXISTS (
+      SELECT 1 FROM public.trips
+      WHERE trips.id = links.trip_id AND trips.profile_id = auth.uid()
+    )
+  )
+);
 
 CREATE POLICY "Links delete policy" ON public.links FOR DELETE
-USING (auth.uid() = profile_id OR EXISTS (SELECT 1 FROM public.trips WHERE trips.id = links.trip_id AND trips.profile_id = auth.uid()));
+USING (
+  auth.uid() = profile_id
+  AND (
+    links.trip_id IS NULL
+    OR EXISTS (
+      SELECT 1 FROM public.trips
+      WHERE trips.id = links.trip_id AND trips.profile_id = auth.uid()
+    )
+  )
+);
 
 
 -- ------------------------------------------------------------------------------

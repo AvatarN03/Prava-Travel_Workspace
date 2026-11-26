@@ -23,9 +23,15 @@ USING (EXISTS (
 
 DROP POLICY IF EXISTS "Links select policy" ON public.links;
 CREATE POLICY "Links select policy" ON public.links FOR SELECT
-USING (auth.uid() = profile_id OR EXISTS (
-  SELECT 1 FROM public.trips
-  WHERE trips.id = links.trip_id AND trips.profile_id = auth.uid()
-));
+USING (
+  auth.uid() = profile_id
+  AND (
+    links.trip_id IS NULL
+    OR EXISTS (
+      SELECT 1 FROM public.trips
+      WHERE trips.id = links.trip_id AND trips.profile_id = auth.uid()
+    )
+  )
+);
 
 COMMIT;
