@@ -1,10 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import { LandingIntroLoader } from "./landing-intro-loader";
 
 import { cn } from "@/lib/utils";
+
+interface LandingIntroContextValue {
+  isIntroDissolving: boolean;
+  isIntroComplete: boolean;
+}
+
+const LandingIntroContext = createContext<LandingIntroContextValue>({
+  isIntroDissolving: true,
+  isIntroComplete: true,
+});
+
+export function useLandingIntro() {
+  return useContext(LandingIntroContext);
+}
 
 interface LandingContentWrapperProps {
   children: React.ReactNode;
@@ -23,15 +37,12 @@ export function LandingContentWrapper({ children }: LandingContentWrapperProps) 
 
     if (!isIntroComplete) {
       document.documentElement.style.overflow = "hidden";
-      document.body.style.overflow = "hidden";
     } else {
       document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
     }
 
     return () => {
       document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
     };
   }, [isIntroComplete]);
 
@@ -43,12 +54,16 @@ export function LandingContentWrapper({ children }: LandingContentWrapperProps) 
   const handleComplete = () => {
     setIsIntroComplete(true);
     document.documentElement.style.overflow = "";
-    document.body.style.overflow = "";
     window.scrollTo(0, 0);
   };
 
   return (
-    <>
+    <LandingIntroContext.Provider
+      value={{
+        isIntroDissolving: isDissolving,
+        isIntroComplete,
+      }}
+    >
       {!isIntroComplete && (
         <LandingIntroLoader
           onDissolve={handleDissolve}
@@ -59,15 +74,12 @@ export function LandingContentWrapper({ children }: LandingContentWrapperProps) 
       <div
         id="prava-landing-root"
         className={cn(
-          "transform-gpu transition-[opacity,transform,filter] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[opacity,transform,filter]",
-          !isDissolving
-            ? "pointer-events-none opacity-0 scale-[0.985] blur-[3px]"
-            : "pointer-events-auto opacity-100 scale-100 blur-0"
+          !isDissolving ? "pointer-events-none" : "pointer-events-auto"
         )}
       >
         {children}
       </div>
-    </>
+    </LandingIntroContext.Provider>
   );
 }
 

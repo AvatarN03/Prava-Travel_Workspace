@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 
+import { cn } from "@/lib/utils";
+
 interface LandingIntroLoaderProps {
   onDissolve?: () => void;
   onComplete?: () => void;
@@ -53,11 +55,12 @@ export function LandingIntroLoader({ onDissolve, onComplete }: LandingIntroLoade
           initial={{ opacity: 1 }}
           exit={{
             opacity: 0,
-            scale: 1.015,
-            filter: "blur(4px)",
-            transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+            transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
           }}
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#070B12] text-zinc-50 overflow-hidden select-none pointer-events-auto touch-none transform-gpu will-change-[opacity,transform,filter]"
+          className={cn(
+            "fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#070B12] text-zinc-50 overflow-hidden select-none touch-none will-change-[opacity]",
+            stage === "dissolve" ? "pointer-events-none" : "pointer-events-auto"
+          )}
         >
           {/* Ambient Cerulean Radial Glow */}
           <div

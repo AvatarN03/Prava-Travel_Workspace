@@ -15,11 +15,13 @@ import {
 } from "@/components/ui/tooltip";
 
 import { HeroBackgroundPattern } from "./hero-background-pattern";
+import { useLandingIntro } from "./landing-content-wrapper";
 import { INDIAN_JOURNEYS } from "../hero-journeys";
 
 const easeDecelerate = [0.16, 1, 0.3, 1] as const;
 
 export function HeroSection() {
+  const { isIntroDissolving } = useLandingIntro();
   const [selectedJourneyIndex, setSelectedJourneyIndex] = useState(0);
   const [photoIndex, setPhotoIndex] = useState(0);
 
@@ -53,7 +55,11 @@ export function HeroSection() {
               {/* Eyebrow Pill */}
               <motion.div
                 initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                animate={
+                  isIntroDissolving
+                    ? { opacity: 1, y: 0, filter: "blur(0px)" }
+                    : { opacity: 0, y: 10, filter: "blur(4px)" }
+                }
                 transition={{ duration: 0.6, ease: easeDecelerate }}
               >
                 <span className="inline-block font-sans text-[11px] font-semibold tracking-widest text-[#2D9BF0] uppercase bg-[#2D9BF0]/10 px-2.5 py-1 rounded-sm border border-[#2D9BF0]/20">
@@ -75,7 +81,7 @@ export function HeroSection() {
                   },
                 }}
                 initial="hidden"
-                animate="visible"
+                animate={isIntroDissolving ? "visible" : "hidden"}
               >
                 <span className="block">
                   {["Your", "journey,"].map((word) => (
@@ -121,7 +127,11 @@ export function HeroSection() {
               <motion.p
                 className="text-sm sm:text-base lg:text-lg text-zinc-600 font-normal leading-relaxed max-w-lg pt-1 break-words [text-wrap:balance]"
                 initial={{ opacity: 0, y: 14, filter: "blur(4px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                animate={
+                  isIntroDissolving
+                    ? { opacity: 1, y: 0, filter: "blur(0px)" }
+                    : { opacity: 0, y: 14, filter: "blur(4px)" }
+                }
                 transition={{ duration: 0.7, delay: 0.45, ease: easeDecelerate }}
               >
                 Plan the route. Organize the details.
@@ -133,7 +143,7 @@ export function HeroSection() {
             <motion.div
               className="flex flex-wrap items-center gap-3 sm:gap-4 pt-1"
               initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={isIntroDissolving ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
               transition={{ duration: 0.6, delay: 0.55, ease: easeDecelerate }}
             >
               <Button
@@ -158,7 +168,7 @@ export function HeroSection() {
             <motion.div
               className="pt-2 sm:pt-4 space-y-2.5"
               initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={isIntroDissolving ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
               transition={{ duration: 0.6, delay: 0.65, ease: easeDecelerate }}
             >
               <div className="flex items-center justify-between max-w-md">
@@ -205,7 +215,7 @@ export function HeroSection() {
             <motion.div
               className="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-6 sm:pt-8 border-t border-zinc-200/80"
               initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={isIntroDissolving ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
               transition={{ duration: 0.7, delay: 0.52, ease: easeDecelerate }}
             >
               <div className="space-y-1 group">
@@ -241,7 +251,11 @@ export function HeroSection() {
           <motion.div
             className="hidden lg:block lg:col-span-6 w-full"
             initial={{ opacity: 0, y: 24, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
+            animate={
+              isIntroDissolving
+                ? { opacity: 1, y: 0, scale: 1 }
+                : { opacity: 0, y: 24, scale: 0.98 }
+            }
             transition={{ duration: 0.8, delay: 0.2, ease: easeDecelerate }}
           >
             <div className="rounded-md border border-zinc-200/90 bg-white/95 backdrop-blur-md p-4 sm:p-5 transition-all shadow-xl shadow-zinc-950/5">
