@@ -84,7 +84,7 @@ export function TemplatePreviewDialog({
       const res = await cloneTripTemplate(trip.id, aiPrompt.trim() || undefined);
       if (res.success && res.newTripId) {
         toast.success(
-          aiPrompt.trim()
+          res.aiCustomized
             ? `Tailored and cloned "${trip.title}" into your workspace!`
             : `Cloned "${trip.title}" into your workspace!`
         );

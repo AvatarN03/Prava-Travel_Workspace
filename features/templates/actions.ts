@@ -3,10 +3,14 @@
 import { revalidatePath } from "next/cache";
 import type { Prisma } from "@prisma/client";
 
-import { callOpenRouterFree } from "@/lib/ai";
+import { callOpenRouterFree, hasOpenRouterKey } from "@/lib/ai";
 import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
+import {
+  refundStandaloneAiCredits,
+  reserveStandaloneAiCredits,
+} from "@/services/ai/credit-reservation";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
 import { assertTripCapacity } from "@/services/trips/trip-capacity";
 
@@ -84,6 +88,32 @@ export interface TemplateDiscoveryFilters {
 const durationFilters: DurationFilter[] = ["ALL", "WEEKEND", "SHORT", "EXTENDED", "LONG"];
 const inclusionFilters: InclusionFilter[] = ["ALL", "HAS_STAYS", "HAS_STORY"];
 const sortOptions: SortOption[] = ["NEWEST", "MOST_ACTIONABLE", "DURATION"];
+const TEMPLATE_CUSTOMIZATION_CREDIT_COST = 1;
+const MAX_TEMPLATE_CUSTOMIZATION_PROMPT_LENGTH = 1000;
+
+interface TemplateCloneQuota {
+  used: number;
+  quota: number;
+  remaining: number;
+  isPro: boolean;
+}
+
+type TemplateCloneResult =
+  | {
+      success: false;
+      error: string;
+      creditDepleted?: boolean;
+      userQuota?: TemplateCloneQuota;
+    }
+  | {
+      success: true;
+      newTripId: string;
+      tripId: string;
+      aiCustomized: boolean;
+      error?: string;
+      creditsDeducted?: number;
+      creditsRemaining?: number;
+    };
 
 /**
  * Fetch all authentic public trips and templates from PostgreSQL.
@@ -254,7 +284,7 @@ async function customizeItineraryWithAi(
 ) {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey || !prompt.trim()) {
-    return rawItinerary;
+    return null;
   }
 
   const systemMessage = `You are a professional travel planner assistant for Prava.
@@ -297,12 +327,11 @@ CRITICAL INSTRUCTIONS:
         return parsed;
       }
     } catch {
-      // Fallback to original activities on parse error
+      // Treat malformed provider output as an unsuccessful customization.
     }
   }
 
-  // Graceful fallback to original activities
-  return rawItinerary;
+  return null;
 }
 
 /**
@@ -312,7 +341,9 @@ CRITICAL INSTRUCTIONS:
 export async function cloneTripTemplate(
   templateId: string,
   aiCustomizationPrompt?: string
-) {
+): Promise<TemplateCloneResult> {
+  let reservationToRefund: { userId: string; usageId: string } | null = null;
+
   try {
     const supabase = await createClient();
     const {
@@ -344,6 +375,15 @@ export async function cloneTripTemplate(
     }
 
     const isPro = await hasActiveProSubscription(user.id);
+    const customizationPrompt =
+      typeof aiCustomizationPrompt === "string" ? aiCustomizationPrompt.trim() : "";
+
+    if (customizationPrompt.length > MAX_TEMPLATE_CUSTOMIZATION_PROMPT_LENGTH) {
+      return {
+        success: false,
+        error: `Customization instructions must be ${MAX_TEMPLATE_CUSTOMIZATION_PROMPT_LENGTH} characters or fewer.`,
+      };
+    }
 
     // Optional AI customization on activities
     let activitiesToCreate = sourceTrip.itinerary.map((i) => ({
@@ -357,13 +397,35 @@ export async function cloneTripTemplate(
       order: i.order,
     }));
 
-    if (aiCustomizationPrompt && aiCustomizationPrompt.trim().length > 0) {
+    let creditsDeducted = 0;
+    let creditsRemaining: number | undefined;
+    let aiCustomized = false;
+
+    if (customizationPrompt && hasOpenRouterKey()) {
+      const reservation = await reserveStandaloneAiCredits(
+        user.id,
+        TEMPLATE_CUSTOMIZATION_CREDIT_COST
+      );
+
+      if (!reservation.success) {
+        return {
+          success: false,
+          error: `Insufficient AI credits (${reservation.userQuota.remaining}/${reservation.userQuota.quota}). Template customization requires ${TEMPLATE_CUSTOMIZATION_CREDIT_COST} credit.`,
+          creditDepleted: true,
+          userQuota: reservation.userQuota,
+        };
+      }
+
+      reservationToRefund = { userId: user.id, usageId: reservation.usageId };
+      creditsDeducted = TEMPLATE_CUSTOMIZATION_CREDIT_COST;
+      creditsRemaining = reservation.userQuota.remaining;
+
       try {
         const tailored = await customizeItineraryWithAi(
           sourceTrip.title,
           sourceTrip.destination,
           sourceTrip.itinerary,
-          aiCustomizationPrompt.trim()
+          customizationPrompt
         );
 
         if (Array.isArray(tailored) && tailored.length > 0) {
@@ -377,8 +439,18 @@ export async function cloneTripTemplate(
             cost: null,
             order: idx,
           }));
+          aiCustomized = true;
+        } else {
+          await refundStandaloneAiCredits(user.id, reservation.usageId);
+          reservationToRefund = null;
+          creditsDeducted = 0;
+          creditsRemaining = undefined;
         }
       } catch (err) {
+        await refundStandaloneAiCredits(user.id, reservation.usageId);
+        reservationToRefund = null;
+        creditsDeducted = 0;
+        creditsRemaining = undefined;
         console.warn("AI Customization skipped due to error, cloning original:", err);
       }
     }
@@ -445,6 +517,9 @@ export async function cloneTripTemplate(
       return createdTrip;
     });
 
+    // The clone committed successfully; keep the ledger charge.
+    reservationToRefund = null;
+
     revalidatePath("/trips");
     revalidatePath("/dashboard");
     revalidatePath("/templates");
@@ -453,8 +528,19 @@ export async function cloneTripTemplate(
       success: true,
       newTripId: newTrip.id,
       tripId: newTrip.id,
+      aiCustomized,
+      ...(creditsDeducted > 0
+        ? { creditsDeducted, creditsRemaining }
+        : {}),
     };
   } catch (error) {
+    if (reservationToRefund) {
+      try {
+        await refundStandaloneAiCredits(reservationToRefund.userId, reservationToRefund.usageId);
+      } catch (refundError) {
+        console.error("Error refunding template customization credits:", refundError);
+      }
+    }
     console.error("Error cloning trip template:", error);
     return {
       success: false,
