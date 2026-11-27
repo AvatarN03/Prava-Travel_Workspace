@@ -7,6 +7,8 @@ import { callOpenRouterFree } from "@/lib/ai";
 import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
+import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
+import { assertTripCapacity } from "@/services/trips/trip-capacity";
 
 import type {
   DurationFilter,
@@ -341,6 +343,8 @@ export async function cloneTripTemplate(
       return { success: false, error: "Template not found or not publicly available." };
     }
 
+    const isPro = await hasActiveProSubscription(user.id);
+
     // Optional AI customization on activities
     let activitiesToCreate = sourceTrip.itinerary.map((i) => ({
       dayNumber: i.dayNumber || 1,
@@ -381,6 +385,8 @@ export async function cloneTripTemplate(
 
     // Execute atomic cloning transaction
     const newTrip = await db.$transaction(async (tx) => {
+      await assertTripCapacity(tx, user.id, isPro, "clone");
+
       const createdTrip = await tx.trip.create({
         data: {
           profileId: user.id,

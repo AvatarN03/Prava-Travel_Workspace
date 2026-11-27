@@ -7,6 +7,7 @@ import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 import { hasActiveProSubscription } from "@/services/subscription/subscription-service";
+import { assertTripCapacity, getTripLimit } from "@/services/trips/trip-capacity";
 import { searchTourCoverImages } from "@/services/unsplash";
 
 import type { UnsplashImage } from "@/services/unsplash";
@@ -64,34 +65,22 @@ export async function createTrip(
     const { title, destination, description, startDate, endDate, status, coverImageUrl } =
       validated.data;
 
-    // Enforce Tier Trip Limits (10 for Free, 25 for Pro)
     const isPro = await hasActiveProSubscription(authData.user.id);
-    const maxTrips = isPro ? 25 : 10;
+    const trip = await db.$transaction(async (tx) => {
+      await assertTripCapacity(tx, authData.user.id, isPro, "create");
 
-    const userTripCount = await db.trip.count({
-      where: { profileId: authData.user.id },
-    });
-
-    if (userTripCount >= maxTrips) {
-      return {
-        success: false,
-        error: isPro
-          ? `Pro Wanderer workspace limit reached (${userTripCount}/${maxTrips} trips). Please archive older trips to create more.`
-          : `Free Explorer limit reached (${userTripCount}/${maxTrips} trips). Please upgrade to Pro Wanderer for up to 25 trips.`,
-      };
-    }
-
-    const trip = await db.trip.create({
-      data: {
-        profileId: authData.user.id,
-        title,
-        destination: destination || null,
-        description: description || null,
-        startDate: startDate ? new Date(startDate) : null,
-        endDate: endDate ? new Date(endDate) : null,
-        status,
-        coverImageUrl: coverImageUrl || null,
-      },
+      return tx.trip.create({
+        data: {
+          profileId: authData.user.id,
+          title,
+          destination: destination || null,
+          description: description || null,
+          startDate: startDate ? new Date(startDate) : null,
+          endDate: endDate ? new Date(endDate) : null,
+          status,
+          coverImageUrl: coverImageUrl || null,
+        },
+      });
     });
 
     revalidatePath("/trips");
@@ -268,24 +257,13 @@ export async function duplicateTrip(tripId: string): Promise<ActionResult<Trip>>
 
     // Check tier limits
     const isPro = await hasActiveProSubscription(authData.user.id);
-    const maxTrips = isPro ? 25 : 10;
-    const userTripCount = await db.trip.count({
-      where: { profileId: authData.user.id },
-    });
-
-    if (userTripCount >= maxTrips) {
-      return {
-        success: false,
-        error: isPro
-          ? `Pro Wanderer workspace limit reached (${userTripCount}/${maxTrips} trips). Please archive older trips to duplicate.`
-          : `Free Explorer limit reached (${userTripCount}/${maxTrips} trips). Please upgrade to Pro Wanderer to duplicate trips.`,
-      };
-    }
 
     const newTitle = `Copy of ${existing.title}`.slice(0, 100);
 
     // Atomic transaction cloning trip and nested entities
     const clonedTrip = await db.$transaction(async (tx) => {
+      await assertTripCapacity(tx, authData.user.id, isPro, "duplicate");
+
       const newTrip = await tx.trip.create({
         data: {
           profileId: authData.user.id,
@@ -441,7 +419,7 @@ export async function getTripUsageQuota(): Promise<{
     }
 
     const isPro = await hasActiveProSubscription(authData.user.id);
-    const maxTrips = isPro ? 25 : 10;
+    const maxTrips = getTripLimit(isPro);
     const count = await db.trip.count({
       where: { profileId: authData.user.id },
     });
