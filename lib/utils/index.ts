@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export * from "./image-resize";
+export * from "./safe-markdown-url";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

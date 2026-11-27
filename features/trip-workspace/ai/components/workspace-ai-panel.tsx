@@ -42,7 +42,7 @@ import { AiProposalCard } from "./ai-proposal-card";
 
 import { useWorkspaceAi } from "../../context/workspace-ai-context";
 
-import { cn } from "@/lib/utils";
+import { cn, getSafeMarkdownUrl } from "@/lib/utils";
 import {
   createTripConversationThread,
   deleteTripConversationThread,
@@ -138,10 +138,12 @@ function renderInlineSpans(text: string): React.ReactNode {
       );
     } else if (type === "link") {
       const label = match[1];
-      const url = match[2];
-      const isInternalTool = url.startsWith("/travel-essentials");
+      const url = getSafeMarkdownUrl(match[2], "link");
+      const isInternalTool = url?.startsWith("/travel-essentials") ?? false;
 
-      if (isInternalTool) {
+      if (!url) {
+        parts.push(label);
+      } else if (isInternalTool) {
         parts.push(
           <a
             key={`tool-btn-${key++}`}
