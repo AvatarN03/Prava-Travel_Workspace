@@ -6,20 +6,14 @@ import { syncUserProfile } from "@/lib/auth";
 import { db } from "@/lib/db";
 import {
   deleteImageFromStorage,
-  normalizeMimeType,
+  isStorageFolder,
+  isStorageReferenceAllowedForUser,
   pruneUnusedUserAvatars,
   uploadImageToStorage,
 } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
 
-import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE_BYTES } from "@/lib/storage";
-
-export type StorageFolder =
-  | "trips"
-  | "avatars"
-  | "posts"
-  | "community"
-  | "stories";
+export type { StorageFolder } from "@/lib/storage";
 
 /**
  * Server action to upload an image to Supabase Storage.
@@ -36,31 +30,22 @@ export async function uploadImageAction(formData: FormData) {
       return { success: false, error: "Unauthorized. Please sign in." };
     }
 
-    const file = formData.get("file") as File | null;
-    const folder = (formData.get("folder") as StorageFolder) || "trips";
+    if (formData.has("bucket")) {
+      return { success: false, error: "Storage bucket overrides are not allowed." };
+    }
 
-    if (!file || typeof file === "string") {
+    const fileValue = formData.get("file");
+    const folderValue = formData.get("folder");
+    const folder = folderValue === null ? "trips" : folderValue;
+
+    if (!(fileValue instanceof File)) {
       return { success: false, error: "No image file provided." };
     }
-
-    const rawMime = (file.type || "").toLowerCase();
-    const normalizedMime = normalizeMimeType(rawMime, file.name);
-
-    if (!ALLOWED_IMAGE_TYPES.includes(normalizedMime)) {
-      return {
-        success: false,
-        error: "Invalid file type. Please upload a JPG, PNG, WebP, GIF, or AVIF image.",
-      };
+    if (!isStorageFolder(folder)) {
+      return { success: false, error: "Invalid storage folder." };
     }
 
-    if (file.size > MAX_FILE_SIZE_BYTES) {
-      return {
-        success: false,
-        error: "Image exceeds 5MB size limit. Please upload a smaller image.",
-      };
-    }
-
-    const result = await uploadImageToStorage(file, folder, user.id);
+    const result = await uploadImageToStorage(fileValue, folder, user.id);
     return result;
   } catch (error) {
     console.error("Storage action error:", error);
@@ -122,6 +107,13 @@ export async function updateTripCoverImage(tripId: string, coverImageUrl: string
       return { success: false, error: "Trip not found or unauthorized" };
     }
 
+    if (
+      coverImageUrl &&
+      isStorageReferenceAllowedForUser(coverImageUrl, user.id, "trips") === false
+    ) {
+      return { success: false, error: "Cover image must use your own configured storage path." };
+    }
+
     const previousCoverImageUrl = trip.coverImageUrl;
 
     await db.trip.update({
@@ -164,6 +156,13 @@ export async function updateProfileAvatar(avatarUrl: string | null) {
 
     if (authError || !user) {
       return { success: false, error: "Unauthorized" };
+    }
+
+    if (
+      avatarUrl &&
+      isStorageReferenceAllowedForUser(avatarUrl, user.id, "avatars") === false
+    ) {
+      return { success: false, error: "Avatar must use your own configured storage path." };
     }
 
     await syncUserProfile(user);

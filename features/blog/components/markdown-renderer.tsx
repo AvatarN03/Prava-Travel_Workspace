@@ -1,5 +1,7 @@
 import React from "react";
 
+import { getSafeMarkdownUrl } from "@/lib/utils";
+
 /**
  * A lightweight, safe Markdown renderer for Prava Travel Stories.
  * Supports headings (#, ##, ###), bold (**), italics (*), bullet lists (- or *),
@@ -83,15 +85,24 @@ export function MarkdownRenderer({ content }: { content: string }) {
     else if (/^!\[(.*?)\]\((.*?)\)$/.test(line.trim())) {
       const match = line.trim().match(/^!\[(.*?)\]\((.*?)\)$/);
       if (match) {
-        elements.push(
-          <div key={index} className="my-6 rounded-md overflow-hidden border border-border">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={match[2]} alt={match[1] || "Story image"} className="w-full h-auto max-h-120 object-cover" />
-            {match[1] && (
-              <p className="text-center text-[11px] text-muted-foreground py-1.5 bg-muted/30">{match[1]}</p>
-            )}
-          </div>
-        );
+        const imageUrl = getSafeMarkdownUrl(match[2], "image");
+        if (imageUrl) {
+          elements.push(
+            <div key={index} className="my-6 rounded-md overflow-hidden border border-border">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={imageUrl} alt={match[1] || "Story image"} className="w-full h-auto max-h-120 object-cover" />
+              {match[1] && (
+                <p className="text-center text-[11px] text-muted-foreground py-1.5 bg-muted/30">{match[1]}</p>
+              )}
+            </div>
+          );
+        } else if (match[1]) {
+          elements.push(
+            <p key={index} className="my-3 text-sm text-muted-foreground leading-relaxed">
+              {match[1]}
+            </p>
+          );
+        }
       }
     }
     // Standard Paragraph
@@ -160,17 +171,22 @@ function formatInline(text: string): React.ReactNode {
     }
 
     if (earliestType === "link" && linkMatch) {
-      parts.push(
-        <a
-          key={`inline-${keyIdx++}`}
-          href={linkMatch[2]}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary underline hover:text-primary/80"
-        >
-          {linkMatch[1]}
-        </a>
-      );
+      const linkUrl = getSafeMarkdownUrl(linkMatch[2], "link");
+      if (linkUrl) {
+        parts.push(
+          <a
+            key={`inline-${keyIdx++}`}
+            href={linkUrl}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            className="text-primary underline hover:text-primary/80"
+          >
+            {linkMatch[1]}
+          </a>
+        );
+      } else {
+        parts.push(linkMatch[1]);
+      }
       remaining = remaining.substring(earliestIndex + linkMatch[0].length);
     } else if (earliestType === "bold" && boldMatch) {
       parts.push(

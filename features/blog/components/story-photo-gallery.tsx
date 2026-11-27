@@ -6,6 +6,7 @@ import { Camera, ChevronLeft, ChevronRight, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { getSafeMarkdownUrl } from "@/lib/utils";
 
 interface StoryPhotoGalleryProps {
   images: string[];
@@ -14,8 +15,13 @@ interface StoryPhotoGalleryProps {
 
 export function StoryPhotoGallery({ images, title = "Photos from this Journey" }: StoryPhotoGalleryProps) {
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
-
   if (!images || images.length === 0) return null;
+
+  const safeImages = images
+    .map((url) => getSafeMarkdownUrl(url, "image"))
+    .filter((url): url is string => Boolean(url));
+
+  if (safeImages.length === 0) return null;
 
   const openLightbox = (idx: number) => setSelectedIdx(idx);
   const closeLightbox = () => setSelectedIdx(null);
@@ -23,14 +29,14 @@ export function StoryPhotoGallery({ images, title = "Photos from this Journey" }
   const prevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (selectedIdx !== null) {
-      setSelectedIdx((selectedIdx - 1 + images.length) % images.length);
+      setSelectedIdx((selectedIdx - 1 + safeImages.length) % safeImages.length);
     }
   };
 
   const nextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (selectedIdx !== null) {
-      setSelectedIdx((selectedIdx + 1) % images.length);
+      setSelectedIdx((selectedIdx + 1) % safeImages.length);
     }
   };
 
@@ -42,12 +48,12 @@ export function StoryPhotoGallery({ images, title = "Photos from this Journey" }
           <h3 className="text-base font-bold text-foreground">{title}</h3>
         </div>
         <Badge variant="secondary" className="text-xs">
-          {images.length} {images.length === 1 ? "photo" : "photos"}
+          {safeImages.length} {safeImages.length === 1 ? "photo" : "photos"}
         </Badge>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {images.map((url, idx) => (
+        {safeImages.map((url, idx) => (
           <button
             key={url + idx}
             type="button"
@@ -87,7 +93,7 @@ export function StoryPhotoGallery({ images, title = "Photos from this Journey" }
               </button>
 
               {/* Previous Button */}
-              {images.length > 1 && (
+              {safeImages.length > 1 && (
                 <button
                   type="button"
                   onClick={prevImage}
@@ -102,14 +108,14 @@ export function StoryPhotoGallery({ images, title = "Photos from this Journey" }
               <div className="w-full h-full flex items-center justify-center p-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={images[selectedIdx]}
+                  src={safeImages[selectedIdx]}
                   alt={`Trip photo ${selectedIdx + 1}`}
                   className="max-h-[75vh] max-w-full object-contain rounded-md"
                 />
               </div>
 
               {/* Next Button */}
-              {images.length > 1 && (
+              {safeImages.length > 1 && (
                 <button
                   type="button"
                   onClick={nextImage}
@@ -122,7 +128,7 @@ export function StoryPhotoGallery({ images, title = "Photos from this Journey" }
 
               {/* Footer Counter */}
               <div className="text-xs text-white/70 pb-2">
-                Photo {selectedIdx + 1} of {images.length}
+                Photo {selectedIdx + 1} of {safeImages.length}
               </div>
             </div>
           )}

@@ -16,6 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getSafeMarkdownUrl } from "@/lib/utils";
 
 import { DEFAULT_STORY_COVER } from "../constants";
 import type { StoryCardItem } from "../types";
@@ -51,7 +52,7 @@ export function StoryCard({ story, variant = "default" }: StoryCardProps) {
     .toUpperCase()
     .substring(0, 2);
 
-  const coverUrl = story.coverImageUrl || DEFAULT_STORY_COVER;
+  const coverUrl = getSafeMarkdownUrl(story.coverImageUrl || "", "image") || DEFAULT_STORY_COVER;
 
   if (variant === "creatorProfile") {
     return (

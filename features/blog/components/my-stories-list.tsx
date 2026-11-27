@@ -27,6 +27,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { getSafeMarkdownUrl } from "@/lib/utils";
 
 import { deleteBlogPost, toggleStoryPublishStatus } from "../actions";
 
@@ -208,7 +209,7 @@ export function MyStoriesList({ posts: initialPosts }: MyStoriesListProps) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredPosts.map((post) => {
-            const coverUrl = post.coverImageUrl || DEFAULT_STORY_COVER;
+            const coverUrl = getSafeMarkdownUrl(post.coverImageUrl || "", "image") || DEFAULT_STORY_COVER;
             const wordCount = (post.content || post.excerpt || "").split(/\s+/).filter(Boolean).length;
             const readTimeMin = Math.max(1, Math.ceil(wordCount / 200));
 

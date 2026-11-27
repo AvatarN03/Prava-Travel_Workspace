@@ -18,6 +18,7 @@ import { CloneTripButton } from "@/features/templates";
 
 import { getPublishedStory } from "@/features/blog";
 import { createClient } from "@/lib/supabase/server";
+import { getSafeMarkdownUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -87,6 +88,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
     : "Draft";
 
   const imagesList = story.images || [];
+  const safeCoverImageUrl = getSafeMarkdownUrl(story.coverImageUrl || "", "image");
   return (
     <div className="space-y-8 max-w-7xl mx-auto w-full py-2 pb-20 selection:bg-primary/20 selection:text-primary">
       {/* Top Navigation & Action Bar */}
@@ -137,11 +139,11 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
       </header>
 
       {/* Hero Cover Image (Wide 7XL Aspect) */}
-      {story.coverImageUrl && (
+      {safeCoverImageUrl && (
         <div className="rounded-xl overflow-hidden border border-border shadow-xs bg-muted max-h-125">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={story.coverImageUrl}
+            src={safeCoverImageUrl}
             alt={story.title}
             className="w-full h-auto max-h-125 object-cover"
           />

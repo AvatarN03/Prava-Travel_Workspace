@@ -7,6 +7,16 @@ import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 import { formatRelativeTime, generateSlug } from "@/lib/utils";
 
+import {
+  createDiscussionSchema,
+  forumPostIdSchema,
+  forumReplyIdSchema,
+  forumReplySchema,
+  saveTipToTripNoteSchema,
+  updateDiscussionSchema,
+  updateForumReplySchema,
+} from "./forum-schema";
+
 import type {
   CreateDiscussionInput,
   ForumCategory,
@@ -424,17 +434,15 @@ export async function createForumDiscussion(input: CreateDiscussionInput) {
 
     const profile = await syncUserProfile(user);
 
-    if (!input.title || input.title.trim().length < 5) {
-      return { success: false, error: "Title must be at least 5 characters long." };
+    const parsed = createDiscussionSchema.safeParse(input);
+    if (!parsed.success) {
+      return { success: false, error: "Invalid discussion details." };
     }
-
-    if (!input.content || input.content.trim().length < 10) {
-      return { success: false, error: "Description must be at least 10 characters long." };
-    }
+    const discussion = parsed.data;
 
     const linkedTripId = await resolveAllowedLinkedTripId(
       profile.id,
-      input.linkedTripId
+      discussion.linkedTripId
     );
     if (linkedTripId === false) {
       return {
@@ -445,20 +453,20 @@ export async function createForumDiscussion(input: CreateDiscussionInput) {
 
     // Generate unique slug
     const shortId = Math.random().toString(36).substring(2, 8);
-    const baseSlug = generateSlug(input.title).replace(/-+$/, "");
+    const baseSlug = generateSlug(discussion.title).replace(/-+$/, "");
     const slug = `${baseSlug || "discussion"}-${shortId}`;
 
     const post = await db.communityPost.create({
       data: {
         profileId: profile.id,
         slug,
-        title: input.title.trim(),
-        content: input.content.trim(),
-        category: input.category || "DISCUSSIONS",
-        destination: input.destination?.trim() || null,
-        tags: input.tags || [],
-        images: input.images || [],
-        coverImageUrl: input.coverImageUrl || (input.images && input.images[0]) || null,
+        title: discussion.title,
+        content: discussion.content,
+        category: discussion.category,
+        destination: discussion.destination || null,
+        tags: discussion.tags,
+        images: discussion.images,
+        coverImageUrl: discussion.coverImageUrl || discussion.images[0] || null,
         linkedTripId,
       },
       select: {
@@ -496,9 +504,16 @@ export async function updateForumDiscussion(postId: string, input: UpdateDiscuss
 
     const profile = await syncUserProfile(user);
 
+    const postIdResult = forumPostIdSchema.safeParse(postId);
+    const parsed = updateDiscussionSchema.safeParse(input);
+    if (!postIdResult.success || !parsed.success) {
+      return { success: false, error: "Invalid discussion details." };
+    }
+    const discussion = parsed.data;
+
     // Verify ownership
     const post = await db.communityPost.findUnique({
-      where: { id: postId },
+      where: { id: postIdResult.data },
       select: { profileId: true, slug: true },
     });
 
@@ -510,10 +525,7 @@ export async function updateForumDiscussion(postId: string, input: UpdateDiscuss
       return { success: false, error: "You can only edit your own discussions." };
     }
 
-    const linkedTripId = await resolveAllowedLinkedTripId(
-      profile.id,
-      input.linkedTripId
-    );
+    const linkedTripId = await resolveAllowedLinkedTripId(profile.id, discussion.linkedTripId);
     if (linkedTripId === false) {
       return {
         success: false,
@@ -522,15 +534,15 @@ export async function updateForumDiscussion(postId: string, input: UpdateDiscuss
     }
 
     const updated = await db.communityPost.update({
-      where: { id: postId },
+      where: { id: postIdResult.data },
       data: {
-        title: input.title.trim(),
-        content: input.content.trim(),
-        category: input.category,
-        destination: input.destination?.trim() || null,
-        tags: input.tags || [],
-        images: input.images || [],
-        coverImageUrl: input.coverImageUrl || (input.images && input.images[0]) || null,
+        title: discussion.title,
+        content: discussion.content,
+        category: discussion.category,
+        destination: discussion.destination || null,
+        tags: discussion.tags,
+        images: discussion.images,
+        coverImageUrl: discussion.coverImageUrl || discussion.images[0] || null,
         linkedTripId,
         isEdited: true,
       },
@@ -555,6 +567,11 @@ export async function updateForumDiscussion(postId: string, input: UpdateDiscuss
  */
 export async function deleteForumDiscussion(postId: string) {
   try {
+    const parsedPostId = forumPostIdSchema.safeParse(postId);
+    if (!parsedPostId.success) {
+      return { success: false, error: "Invalid discussion ID." };
+    }
+
     const supabase = await createClient();
     const {
       data: { user },
@@ -568,7 +585,7 @@ export async function deleteForumDiscussion(postId: string) {
     const profile = await syncUserProfile(user);
 
     const post = await db.communityPost.findUnique({
-      where: { id: postId },
+      where: { id: parsedPostId.data },
       select: { profileId: true },
     });
 
@@ -581,7 +598,7 @@ export async function deleteForumDiscussion(postId: string) {
     }
 
     await db.communityPost.delete({
-      where: { id: postId },
+      where: { id: parsedPostId.data },
     });
 
     revalidatePath("/forum");
@@ -598,6 +615,11 @@ export async function deleteForumDiscussion(postId: string) {
  */
 export async function postForumReply(postId: string, content: string) {
   try {
+    const parsed = forumReplySchema.safeParse({ postId, content });
+    if (!parsed.success) {
+      return { success: false, error: "Invalid reply content." };
+    }
+
     const supabase = await createClient();
     const {
       data: { user },
@@ -608,17 +630,13 @@ export async function postForumReply(postId: string, content: string) {
       return { success: false, error: "Please sign in to reply." };
     }
 
-    if (!content || content.trim().length < 2) {
-      return { success: false, error: "Reply cannot be empty." };
-    }
-
     const profile = await syncUserProfile(user);
 
     const reply = await db.communityReply.create({
       data: {
-        postId,
+        postId: parsed.data.postId,
         profileId: profile.id,
-        content: content.trim(),
+        content: parsed.data.content,
       },
       include: {
         post: {
@@ -643,6 +661,11 @@ export async function postForumReply(postId: string, content: string) {
  */
 export async function updateForumReply(replyId: string, content: string) {
   try {
+    const parsed = updateForumReplySchema.safeParse({ replyId, content });
+    if (!parsed.success) {
+      return { success: false, error: "Invalid reply content." };
+    }
+
     const supabase = await createClient();
     const {
       data: { user },
@@ -653,14 +676,10 @@ export async function updateForumReply(replyId: string, content: string) {
       return { success: false, error: "Please sign in to edit your reply." };
     }
 
-    if (!content || content.trim().length < 2) {
-      return { success: false, error: "Reply cannot be empty." };
-    }
-
     const profile = await syncUserProfile(user);
 
     const reply = await db.communityReply.findUnique({
-      where: { id: replyId },
+      where: { id: parsed.data.replyId },
       include: {
         post: {
           select: { slug: true },
@@ -677,9 +696,9 @@ export async function updateForumReply(replyId: string, content: string) {
     }
 
     await db.communityReply.update({
-      where: { id: replyId },
+      where: { id: parsed.data.replyId },
       data: {
-        content: content.trim(),
+        content: parsed.data.content,
         isEdited: true,
       },
     });
@@ -700,6 +719,11 @@ export async function updateForumReply(replyId: string, content: string) {
  */
 export async function deleteForumReply(replyId: string) {
   try {
+    const parsedReplyId = forumReplyIdSchema.safeParse(replyId);
+    if (!parsedReplyId.success) {
+      return { success: false, error: "Invalid reply ID." };
+    }
+
     const supabase = await createClient();
     const {
       data: { user },
@@ -713,7 +737,7 @@ export async function deleteForumReply(replyId: string) {
     const profile = await syncUserProfile(user);
 
     const reply = await db.communityReply.findUnique({
-      where: { id: replyId },
+      where: { id: parsedReplyId.data },
       include: {
         post: {
           select: { slug: true },
@@ -730,7 +754,7 @@ export async function deleteForumReply(replyId: string) {
     }
 
     await db.communityReply.delete({
-      where: { id: replyId },
+      where: { id: parsedReplyId.data },
     });
 
     if (reply.post?.slug) {
@@ -749,6 +773,11 @@ export async function deleteForumReply(replyId: string) {
  */
 export async function toggleForumPostUpvote(postId: string) {
   try {
+    const parsedPostId = forumPostIdSchema.safeParse(postId);
+    if (!parsedPostId.success) {
+      return { success: false, error: "Invalid discussion ID." };
+    }
+
     const supabase = await createClient();
     const {
       data: { user },
@@ -765,7 +794,7 @@ export async function toggleForumPostUpvote(postId: string) {
       where: {
         profileId_postId: {
           profileId: profile.id,
-          postId,
+          postId: parsedPostId.data,
         },
       },
     });
@@ -776,12 +805,12 @@ export async function toggleForumPostUpvote(postId: string) {
           where: {
             profileId_postId: {
               profileId: profile.id,
-              postId,
+              postId: parsedPostId.data,
             },
           },
         }),
         db.communityPost.update({
-          where: { id: postId },
+          where: { id: parsedPostId.data },
           data: {
             upvotes: { decrement: 1 },
           },
@@ -794,11 +823,11 @@ export async function toggleForumPostUpvote(postId: string) {
         db.communityPostUpvote.create({
           data: {
             profileId: profile.id,
-            postId,
+            postId: parsedPostId.data,
           },
         }),
         db.communityPost.update({
-          where: { id: postId },
+          where: { id: parsedPostId.data },
           data: {
             upvotes: { increment: 1 },
           },
@@ -818,6 +847,11 @@ export async function toggleForumPostUpvote(postId: string) {
  */
 export async function toggleSaveDiscussion(postId: string) {
   try {
+    const parsedPostId = forumPostIdSchema.safeParse(postId);
+    if (!parsedPostId.success) {
+      return { success: false, error: "Invalid discussion ID." };
+    }
+
     const supabase = await createClient();
     const {
       data: { user },
@@ -834,7 +868,7 @@ export async function toggleSaveDiscussion(postId: string) {
       where: {
         profileId_postId: {
           profileId: profile.id,
-          postId,
+          postId: parsedPostId.data,
         },
       },
     });
@@ -844,7 +878,7 @@ export async function toggleSaveDiscussion(postId: string) {
         where: {
           profileId_postId: {
             profileId: profile.id,
-            postId,
+            postId: parsedPostId.data,
           },
         },
       });
@@ -855,7 +889,7 @@ export async function toggleSaveDiscussion(postId: string) {
       await db.communitySavedPost.create({
         data: {
           profileId: profile.id,
-          postId,
+          postId: parsedPostId.data,
         },
       });
 
@@ -873,6 +907,11 @@ export async function toggleSaveDiscussion(postId: string) {
  */
 export async function saveForumTipToTripNote(input: SaveTipToTripInput) {
   try {
+    const parsed = saveTipToTripNoteSchema.safeParse(input);
+    if (!parsed.success) {
+      return { success: false, error: "Invalid tip details." };
+    }
+
     const supabase = await createClient();
     const {
       data: { user },
@@ -887,7 +926,7 @@ export async function saveForumTipToTripNote(input: SaveTipToTripInput) {
 
     // Verify trip ownership
     const trip = await db.trip.findFirst({
-      where: { id: input.tripId, profileId: profile.id },
+      where: { id: parsed.data.tripId, profileId: profile.id },
       select: { id: true, title: true },
     });
 
@@ -895,12 +934,12 @@ export async function saveForumTipToTripNote(input: SaveTipToTripInput) {
       return { success: false, error: "Target trip not found in your workspace." };
     }
 
-    const noteContent = `${input.tipContent.trim()}\n\n---\n*Community Tip via Prava Forum on "${input.sourceTitle}" (by @${input.authorName})*`;
+    const noteContent = `${parsed.data.tipContent}\n\n---\n*Community Tip via Prava Forum on "${parsed.data.sourceTitle}" (by @${parsed.data.authorName})*`;
 
     await db.note.create({
       data: {
         tripId: trip.id,
-        title: `Tip: ${input.sourceTitle.slice(0, 45)}...`,
+        title: `Tip: ${parsed.data.sourceTitle.slice(0, 45)}...`,
         content: noteContent,
         category: "Advice",
         isPinned: false,
